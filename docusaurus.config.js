@@ -11,8 +11,8 @@ const darkCodeTheme = require('prism-react-renderer/themes/dracula');
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
   favicon: 'img/openkruise.ico',
-  organizationName: 'openkruise', // Usually your GitHub org/user name.
-  projectName: 'openkruise.io', // Usually your repo name.
+  organizationName: 'openkruise',
+  projectName: 'openkruise.io',
 
   presets: [
     [
@@ -22,11 +22,12 @@ const darkCodeTheme = require('prism-react-renderer/themes/dracula');
         docs: {
           sidebarPath: require.resolve('./sidebars.js'),
           // Please change this to your repo.
+          editUrl:  `https://github.com/openkruise/openkruise.io/tree/master`,
           editUrl: function ({
             locale,
             docPath,
           }) {
-            return `https://github.com/openkruise/kruise/edit/master/docs/${locale}/${docPath}`;
+            return `https://github.com/openkruise/openkruise.io/edit/master/docs/${docPath}`;
           },
           showLastUpdateAuthor: true,
           showLastUpdateTime: true,
@@ -37,7 +38,7 @@ const darkCodeTheme = require('prism-react-renderer/themes/dracula');
           showReadingTime: true,
           // Please change this to your repo.
           editUrl:
-            'https://github.com/openkruise/kruise/edit/master/blog/',
+            'https://github.com/openkruise/openkruise.io/tree/master/blog',
         },
         theme: {
           customCss: require.resolve('./src/css/custom.css'),
@@ -96,14 +97,13 @@ const darkCodeTheme = require('prism-react-renderer/themes/dracula');
         ],
       },
       footer: {
-        style: 'dark',
         links: [
           {
-            title: 'Docs',
+            title: 'Documentation',
             items: [
               {
-                label: 'Documentation',
-                to: '/docs',
+                label: 'Getting Started',
+                to: '/docs/installation',
               },
             ],
           },
@@ -111,16 +111,16 @@ const darkCodeTheme = require('prism-react-renderer/themes/dracula');
             title: 'Community',
             items: [
               {
-                label: 'Stack Overflow',
-                href: 'https://stackoverflow.com/questions/tagged/docusaurus',
+                label: 'Kubernetes Slack ( #openkruise channel )',
+                href: 'https://kubernetes.slack.com/channels/openkruise',
               },
               {
-                label: 'Discord',
-                href: 'https://discordapp.com/invite/docusaurus',
+                label: 'DingTalk (Group ID: 23330762 )',
+                href: 'https://www.dingtalk.com/',
               },
               {
-                label: 'Twitter',
-                href: 'https://twitter.com/docusaurus',
+                label: 'Bi-week Meeting (APAC, Chinese)',
+                href: 'https://shimo.im/docs/gXqmeQOYBehZ4vqo',
               },
             ],
           },
@@ -128,17 +128,20 @@ const darkCodeTheme = require('prism-react-renderer/themes/dracula');
             title: 'More',
             items: [
               {
-                label: 'Blog',
-                to: '/blog',
+                label: 'GitHub',
+                href: 'https://github.com/openkruise/kruise',
               },
               {
-                label: 'GitHub',
-                href: 'https://github.com/facebook/docusaurus',
+                label: 'Community Membership',
+                href: 'https://github.com/openkruise/community/blob/master/community-membership.md',
               },
             ],
           },
         ],
-        copyright: `Copyright © ${new Date().getFullYear()} My Project, Inc. Built with Docusaurus.`,
+        copyright: `
+        <br />
+        <strong>© ${new Date().getFullYear()} The OpenKruise Authors. All rights reserved. The Linux Foundation has registered trademarks and uses trademarks. For a list of trademarks of The Linux Foundation, please see our <a href="https://www.linuxfoundation.org/trademark-usage/"> Trademark Usage</a> page.</strong
+        `,
       },
       prism: {
         theme: lightCodeTheme,

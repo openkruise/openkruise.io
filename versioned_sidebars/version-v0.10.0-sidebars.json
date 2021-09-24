@@ -1,0 +1,172 @@
+{
+  "version-v0.10.0/docs": [
+    {
+      "type": "category",
+      "label": "Getting Started",
+      "collapsed": false,
+      "items": [
+        {
+          "type": "doc",
+          "id": "version-v0.10.0/introduction"
+        },
+        {
+          "type": "doc",
+          "id": "version-v0.10.0/installation"
+        }
+      ],
+      "collapsible": true
+    },
+    {
+      "type": "category",
+      "label": "Core Concepts",
+      "collapsed": false,
+      "items": [
+        {
+          "type": "doc",
+          "id": "version-v0.10.0/core-concepts/architecture"
+        }
+      ],
+      "collapsible": true
+    },
+    {
+      "type": "category",
+      "label": "User Manuals",
+      "collapsed": true,
+      "items": [
+        {
+          "type": "category",
+          "collapsed": true,
+          "collapsible": true,
+          "label": "Typical Workloads",
+          "items": [
+            {
+              "type": "doc",
+              "id": "version-v0.10.0/user-manuals/cloneset"
+            },
+            {
+              "type": "doc",
+              "id": "version-v0.10.0/user-manuals/advancedstatefulset"
+            },
+            {
+              "type": "doc",
+              "id": "version-v0.10.0/user-manuals/advanceddaemonset"
+            }
+          ]
+        },
+        {
+          "type": "category",
+          "collapsed": true,
+          "collapsible": true,
+          "label": "Job Workloads",
+          "items": [
+            {
+              "type": "doc",
+              "id": "version-v0.10.0/user-manuals/broadcastjob"
+            },
+            {
+              "type": "doc",
+              "id": "version-v0.10.0/user-manuals/advancedcronjob"
+            }
+          ]
+        },
+        {
+          "type": "category",
+          "collapsed": true,
+          "collapsible": true,
+          "label": "Sidecar container Management",
+          "items": [
+            {
+              "type": "doc",
+              "id": "version-v0.10.0/user-manuals/sidecarset"
+            }
+          ]
+        },
+        {
+          "type": "category",
+          "collapsed": true,
+          "collapsible": true,
+          "label": "Multi-domain Management",
+          "items": [
+            {
+              "type": "doc",
+              "id": "version-v0.10.0/user-manuals/workloadspread"
+            },
+            {
+              "type": "doc",
+              "id": "version-v0.10.0/user-manuals/uniteddeployment"
+            }
+          ]
+        },
+        {
+          "type": "category",
+          "collapsed": true,
+          "collapsible": true,
+          "label": "Enhanced Operations",
+          "items": [
+            {
+              "type": "doc",
+              "id": "version-v0.10.0/user-manuals/containerrecreaterequest"
+            },
+            {
+              "type": "doc",
+              "id": "version-v0.10.0/user-manuals/imagepulljob"
+            }
+          ]
+        },
+        {
+          "type": "category",
+          "collapsed": true,
+          "collapsible": true,
+          "label": "Application Protection",
+          "items": [
+            {
+              "type": "doc",
+              "id": "version-v0.10.0/user-manuals/deletionprotection"
+            },
+            {
+              "type": "doc",
+              "id": "version-v0.10.0/user-manuals/podunavailablebudget"
+            }
+          ]
+        }
+      ],
+      "collapsible": true
+    },
+    {
+      "type": "category",
+      "label": "Best Practices",
+      "collapsed": true,
+      "items": [
+        {
+          "type": "doc",
+          "id": "version-v0.10.0/best-practices/hpa-configuration"
+        }
+      ],
+      "collapsible": true
+    },
+    {
+      "type": "category",
+      "label": "Developer Manuals",
+      "collapsed": true,
+      "items": [
+        {
+          "type": "doc",
+          "id": "version-v0.10.0/developer-manuals/go-client"
+        },
+        {
+          "type": "doc",
+          "id": "version-v0.10.0/developer-manuals/java-client"
+        },
+        {
+          "type": "doc",
+          "id": "version-v0.10.0/developer-manuals/other-languages"
+        }
+      ],
+      "collapsible": true
+    },
+    {
+      "type": "doc",
+      "id": "version-v0.10.0/faq"
+    }
+  ]
+}

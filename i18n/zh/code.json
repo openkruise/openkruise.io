@@ -1,0 +1,260 @@
+{
+    "theme.NotFound.title": {
+      "message": "Page Not Found",
+      "description": "The title of the 404 page"
+    },
+    "theme.NotFound.p1": {
+      "message": "We could not find what you were looking for.",
+      "description": "The first paragraph of the 404 page"
+    },
+    "theme.NotFound.p2": {
+      "message": "Please contact the owner of the site that linked you to the original URL and let them know their link is broken.",
+      "description": "The 2nd paragraph of the 404 page"
+    },
+    "theme.blog.paginator.navAriaLabel": {
+      "message": "Blog list page navigation",
+      "description": "The ARIA label for the blog pagination"
+    },
+    "theme.blog.paginator.newerEntries": {
+      "message": "Newer Entries",
+      "description": "The label used to navigate to the newer blog posts page (previous page)"
+    },
+    "theme.blog.paginator.olderEntries": {
+      "message": "Older Entries",
+      "description": "The label used to navigate to the older blog posts page (next page)"
+    },
+    "theme.AnnouncementBar.closeButtonAriaLabel": {
+      "message": "Close",
+      "description": "The ARIA label for close button of announcement bar"
+    },
+    "theme.blog.post.paginator.navAriaLabel": {
+      "message": "Blog post page navigation",
+      "description": "The ARIA label for the blog posts pagination"
+    },
+    "theme.blog.post.paginator.newerPost": {
+      "message": "Newer Post",
+      "description": "The blog post button label to navigate to the newer/previous post"
+    },
+    "theme.blog.post.paginator.olderPost": {
+      "message": "Older Post",
+      "description": "The blog post button label to navigate to the older/next post"
+    },
+    "theme.blog.post.readingTime.plurals": {
+      "message": "阅读需要 1 分钟|阅读需要 {readingTime} 分钟",
+      "description": "Pluralized label for \"{readingTime} min read\". Use as much plural forms (separated by \"|\") as your language support (see https://www.unicode.org/cldr/cldr-aux/charts/34/supplemental/language_plural_rules.html)"
+    },
+    "theme.tags.tagsListLabel": {
+      "message": "Tags:",
+      "description": "The label alongside a tag list"
+    },
+    "theme.blog.post.readMore": {
+      "message": "更多",
+      "description": "The label used in blog post item excerpts to link to full blog posts"
+    },
+    "theme.tags.tagsPageTitle": {
+      "message": "Tags",
+      "description": "The title of the tag list page"
+    },
+    "theme.blog.post.plurals": {
+      "message": "One post|{count} posts",
+      "description": "Pluralized label for \"{count} posts\". Use as much plural forms (separated by \"|\") as your language support (see https://www.unicode.org/cldr/cldr-aux/charts/34/supplemental/language_plural_rules.html)"
+    },
+    "theme.blog.tagTitle": {
+      "message": "{nPosts} tagged with \"{tagName}\"",
+      "description": "The title of the page for a blog tag"
+    },
+    "theme.tags.tagsPageLink": {
+      "message": "View All Tags",
+      "description": "The label of the link targeting the tag list page"
+    },
+    "theme.CodeBlock.copyButtonAriaLabel": {
+      "message": "Copy code to clipboard",
+      "description": "The ARIA label for copy code blocks button"
+    },
+    "theme.CodeBlock.copied": {
+      "message": "Copied",
+      "description": "The copied button label on code blocks"
+    },
+    "theme.CodeBlock.copy": {
+      "message": "Copy",
+      "description": "The copy button label on code blocks"
+    },
+    "theme.docs.sidebar.expandButtonTitle": {
+      "message": "Expand sidebar",
+      "description": "The ARIA label and title attribute for expand button of doc sidebar"
+    },
+    "theme.docs.sidebar.expandButtonAriaLabel": {
+      "message": "Expand sidebar",
+      "description": "The ARIA label and title attribute for expand button of doc sidebar"
+    },
+    "theme.docs.paginator.navAriaLabel": {
+      "message": "Docs pages navigation",
+      "description": "The ARIA label for the docs pagination"
+    },
+    "theme.docs.paginator.previous": {
+      "message": "上一篇",
+      "description": "The label used to navigate to the previous doc"
+    },
+    "theme.docs.paginator.next": {
+      "message": "下一篇",
+      "description": "The label used to navigate to the next doc"
+    },
+    "theme.docs.sidebar.responsiveCloseButtonLabel": {
+      "message": "Close menu",
+      "description": "The ARIA label for close button of mobile doc sidebar"
+    },
+    "theme.docs.sidebar.responsiveOpenButtonLabel": {
+      "message": "Open menu",
+      "description": "The ARIA label for open button of mobile doc sidebar"
+    },
+    "theme.docs.sidebar.collapseButtonTitle": {
+      "message": "Collapse sidebar",
+      "description": "The title attribute for collapse button of doc sidebar"
+    },
+    "theme.docs.sidebar.collapseButtonAriaLabel": {
+      "message": "Collapse sidebar",
+      "description": "The title attribute for collapse button of doc sidebar"
+    },
+    "theme.docs.versions.unreleasedVersionLabel": {
+      "message": "This is unreleased documentation for {siteTitle} {versionLabel} version.",
+      "description": "The label used to tell the user that he's browsing an unreleased doc version"
+    },
+    "theme.docs.versions.unmaintainedVersionLabel": {
+      "message": "This is documentation for {siteTitle} {versionLabel}, which is no longer actively maintained.",
+      "description": "The label used to tell the user that he's browsing an unmaintained doc version"
+    },
+    "theme.docs.versions.latestVersionSuggestionLabel": {
+      "message": "For up-to-date documentation, see the {latestVersionLink} ({versionLabel}).",
+      "description": "The label userd to tell the user that he's browsing an unmaintained doc version"
+    },
+    "theme.docs.versions.latestVersionLinkLabel": {
+      "message": "最新版本",
+      "description": "The label used for the latest version suggestion link label"
+    },
+    "theme.common.editThisPage": {
+      "message": "编辑本页",
+      "description": "The link label to edit the current page"
+    },
+    "theme.common.headingLinkTitle": {
+      "message": "Direct link to heading",
+      "description": "Title for link to heading"
+    },
+    "theme.lastUpdated.atDate": {
+      "message": " on {date}",
+      "description": "The words used to describe on which date a page has been last updated"
+    },
+    "theme.lastUpdated.byUser": {
+      "message": " by {user}",
+      "description": "The words used to describe by who the page has been last updated"
+    },
+    "theme.lastUpdated.lastUpdatedAtBy": {
+      "message": "Last updated{atDate}{byUser}",
+      "description": "The sentence used to display when a page has been last updated, and by who"
+    },
+    "theme.common.skipToMainContent": {
+      "message": "Skip to main content",
+      "description": "The skip to content label used for accessibility, allowing to rapidly navigate to main content with keyboard tab/enter navigation"
+    },
+    "Get Started": {
+      "message": "快速开始"
+    },
+    "Learn More": {
+      "message": "了解更多"
+    },
+    "What is OpenKruise?": {
+      "message": "OpenKruise 是什么？"
+    },
+    "OpenKruise is a": {
+      "message": "OpenKruise 是"
+    },
+    "sandbox project": {
+      "message": " sandbox 项目"
+    },
+    ".": {
+      "message": "."
+    },
+    "OpenKruise is an extended component suite for Kubernetes, which mainly focuses on application automations, such as": {
+      "message": "OpenKruise 是一个基于 Kubernetes 的扩展套件，主要聚焦于云原生应用的自动化，比如"
+    },
+    "deployment, upgrade, ops and avalibility protection.": {
+      "message": "部署、发布、运维以及可用性防护。"
+    },
+    "Mostly features provided by OpenKruise are built primarily based on CRD extensions. They can work in pure Kubernetes clusters without any other dependences.": {
+      "message": "OpenKruise 提供的绝大部分能力都是基于 CRD 扩展来定义，它们不存在于任何外部依赖，可以运行在任意纯净的 Kubernetes 集群中。"
+    },
+    "Advanced Workloads": {
+      "message": "增强版本的 Workloads"
+    },
+    "OpenKruise contains a set of advanced workloads, such as CloneSet, Advanced StatefulSet, Advanced DaemonSet, BroadcastJob.": {
+      "message": "OpenKruise 包含了一系列增强版本的 Workloads（工作负载），比如 CloneSet、Advanced StatefulSet、Advanced DaemonSet、BroadcastJob 等。"
+    },
+    "They all support not only the basic features which are similar to the original Workloads in Kubernetes, but also more advanced abilities like in-place update, configurable scale/upgrade strategies, parallel operations.": {
+      "message": "它们不仅支持类似于 Kubernetes 原生 Workloads 的基础功能，还提供了如原地升级、可配置的扩缩容/发布策略、并发操作等。"
+    },
+    "In-place Update is a new methodology to update container images and even environments.": {
+      "message": "原地升级是一种升级应用容器镜像甚至环境变量的全新方式。"
+    },
+    "It only restarts the specific container with the new image and the Pod will not be recreated, which leads to much faster update process and much less side effects on other sub-systems such as scheduler, CNI or CSI.": {
+      "message": "它只会用新的镜像重建 Pod 中的特定容器，整个 Pod 以及其中的其他容器都不会被影响。因此它带来了更快的发布速度，以及避免了对其他 Scheduler、CNI、CSI 等组件的负面影响。"
+    },
+    "Bypass Application Management": {
+      "message": "应用的旁路管理"
+    },
+    "OpenKruise provides several bypass ways to manage sidecar container, multi-domain deployment for applications, which means you can manage these things without modifying the Workloads of applications.": {
+      "message": "OpenKruise 提供了多种通过旁路管理应用 sidecar 容器、多区域部署的方式，“旁路” 意味着你可以不需要修改应用的 Workloads 来实现它们。"
+    },
+    "For example, SidecarSet can help you inject sidecar containers into all matching Pods during creation and even update them in-place with no effect on other containers in Pod.": {
+      "message": "比如，SidecarSet 能帮助你在所有匹配的 Pod 创建的时候都注入特定的 sidecar 容器，甚至可以原地升级已经注入的 sidecar 容器镜像、并且对 Pod 中其他容器不造成影响。"
+    },
+    "WorkloadSpread constrains the spread of stateless workload, which empowers single workload the abilities for multi-domain and elastic deployment.": {
+      "message": "而 WorkloadSpread 可以约束无状态 Workload 扩容出来 Pod 的区域分布，赋予单一 workload 的多区域和弹性部署的能力。"
+    },
+    "High-avalibility Protection": {
+      "message": "高可用性防护"
+    },
+    "OpenKruise works hard on protecting high-avalibility for applications.": {
+      "message": "OpenKruise 在为应用的高可用性防护方面也做出了很多努力。"
+    },
+    "Now it can prevent your Kubernetes resources from the cascading deletion mechanism, including CRD, Namespace and almost all kinds of Workloads.": {
+      "message": "目前它可以保护你的 Kubernetes 资源不受级联删除机制的干扰，包括 CRD、Namespace、以及几乎全部的 Workloads 类型资源。"
+    },
+    "In voluntary disruption scenarios, PodUnavailableBudget can achieve the effect of preventing application disruption or SLA degradation, which is not only compatible with Kubernetes PDB protection for Eviction API, but also able to support the protection ability of above scenarios.": {
+      "message": "相比于 Kubernetes 原生的 PDB 只提供针对 Pod Eviction 的防护，PodUnavailableBudget 能够防护 Pod Deletion、Eviction、Update 等许多种 voluntary disruption 场景。"
+    },
+    "theme.SearchPage.documentsFound.plurals": {
+      "message": "One document found|{count} documents found",
+      "description": "Pluralized label for \"{count} documents found\". Use as much plural forms (separated by \"|\") as your language support (see https://www.unicode.org/cldr/cldr-aux/charts/34/supplemental/language_plural_rules.html)"
+    },
+    "theme.SearchPage.existingResultsTitle": {
+      "message": "Search results for \"{query}\"",
+      "description": "The search page title for non-empty query"
+    },
+    "theme.SearchPage.emptyResultsTitle": {
+      "message": "Search the documentation",
+      "description": "The search page title for empty query"
+    },
+    "theme.SearchPage.inputPlaceholder": {
+      "message": "Type your search here",
+      "description": "The placeholder for search page input"
+    },
+    "theme.SearchPage.inputLabel": {
+      "message": "Search",
+      "description": "The ARIA label for search page input"
+    },
+    "theme.SearchPage.algoliaLabel": {
+      "message": "Search by Algolia",
+      "description": "The ARIA label for Algolia mention"
+    },
+    "theme.SearchPage.noResultsText": {
+      "message": "No results were found",
+      "description": "The paragraph for empty search result"
+    },
+    "theme.SearchPage.fetchingNewResults": {
+      "message": "Fetching new results...",
+      "description": "The paragraph for fetching new search results"
+    },
+    "theme.SearchBar.label": {
+      "message": "Search",
+      "description": "The ARIA label and placeholder for search button"
+    }
+  }
