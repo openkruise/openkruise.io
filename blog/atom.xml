@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <id>https://openkruise.io/blog</id>
+    <title>OpenKruise Blog</title>
+    <updated>2019-11-20T00:00:00.000Z</updated>
+    <generator>https://github.com/jpmonette/feed</generator>
+    <link rel="alternate" href="https://openkruise.io/blog"/>
+    <subtitle>OpenKruise Blog</subtitle>
+    <icon>https://openkruise.io/img/openkruise.ico</icon>
+    <entry>
+        <title type="html"><![CDATA[UnitedDeploymemt - Supporting Multi-domain Workload Management]]></title>
+        <id>uniteddeployment</id>
+        <link href="https://openkruise.io/blog/uniteddeployment"/>
+        <updated>2019-11-20T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[Ironically, probably every cloud user knew (or should realized that) failures in Cloud resources]]></summary>
+        <author>
+            <name>Fei Guo</name>
+            <uri>https://github.com/Fei-Guo</uri>
+        </author>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Learning Concurrent Reconciling]]></title>
+        <id>learning-concurrent-reconciling</id>
+        <link href="https://openkruise.io/blog/learning-concurrent-reconciling"/>
+        <updated>2019-11-10T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[The concept of controller in Kubernete is one of the most important reasons that make it successful.]]></summary>
+        <author>
+            <name>Fei Guo</name>
+            <uri>https://github.com/Fei-Guo</uri>
+        </author>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Kruise Workload Classification Guidance]]></title>
+        <id>workload-classification-guidance</id>
+        <link href="https://openkruise.io/blog/workload-classification-guidance"/>
+        <updated>2019-10-10T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[Kubernetes does not provide a clear guidance about which controller is the best fit for]]></summary>
+        <author>
+            <name>Fei Guo</name>
+            <uri>https://github.com/Fei-Guo</uri>
+        </author>
+        <author>
+            <name>Siyu Wang</name>
+            <uri>https://github.com/FillZpp</uri>
+        </author>
+    </entry>
+</feed>

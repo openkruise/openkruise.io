@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0">
+    <channel>
+        <title>OpenKruise Blog</title>
+        <link>https://openkruise.io/zh/blog</link>
+        <description>OpenKruise Blog</description>
+        <lastBuildDate>Wed, 20 Nov 2019 00:00:00 GMT</lastBuildDate>
+        <docs>https://validator.w3.org/feed/docs/rss2.html</docs>
+        <generator>https://github.com/jpmonette/feed</generator>
+        <item>
+            <title><![CDATA[UnitedDeploymemt - Supporting Multi-domain Workload Management]]></title>
+            <link>https://openkruise.io/zh/blog/uniteddeployment</link>
+            <guid>uniteddeployment</guid>
+            <pubDate>Wed, 20 Nov 2019 00:00:00 GMT</pubDate>
+            <description><![CDATA[Ironically, probably every cloud user knew (or should realized that) failures in Cloud resources]]></description>
+        </item>
+        <item>
+            <title><![CDATA[Learning Concurrent Reconciling]]></title>
+            <link>https://openkruise.io/zh/blog/learning-concurrent-reconciling</link>
+            <guid>learning-concurrent-reconciling</guid>
+            <pubDate>Sun, 10 Nov 2019 00:00:00 GMT</pubDate>
+            <description><![CDATA[The concept of controller in Kubernete is one of the most important reasons that make it successful.]]></description>
+        </item>
+        <item>
+            <title><![CDATA[Kruise Workload Classification Guidance]]></title>
+            <link>https://openkruise.io/zh/blog/workload-classification-guidance</link>
+            <guid>workload-classification-guidance</guid>
+            <pubDate>Thu, 10 Oct 2019 00:00:00 GMT</pubDate>
+            <description><![CDATA[Kubernetes 目前并没有为一个应用应该使用哪个控制器提供明确的指引，这尤其不利于用户理解应用和 workload 的关系。]]></description>
+        </item>
+    </channel>
+</rss>

@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkopenkruise_io=self.webpackChunkopenkruise_io||[]).push([[1314],{7003:function(e){e.exports=JSON.parse('{"allTagsPath":"/zh/blog/tags","slug":"/zh/blog/tags/controller","name":"controller","count":1,"permalink":"/zh/blog/tags/controller"}')}}]);

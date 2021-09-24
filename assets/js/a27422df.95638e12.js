@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkopenkruise_io=self.webpackChunkopenkruise_io||[]).push([[4187],{8645:function(e){e.exports=JSON.parse('{"allTagsPath":"/blog/tags","slug":"/blog/tags/uniteddeployment","name":"uniteddeployment","count":1,"permalink":"/blog/tags/uniteddeployment"}')}}]);
