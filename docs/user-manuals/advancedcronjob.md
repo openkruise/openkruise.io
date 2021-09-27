@@ -3,7 +3,7 @@ title: AdvancedCronJob
 ---
 
 AdvancedCronJob is an enhanced version of CronJob.
-The original CronJob creates Job reriodically according to schedule rule, but AdvancedCronJob provides template supported multpile job resources.
+The original CronJob creates Job periodically according to schedule rule, but AdvancedCronJob provides template supported multpile job resources.
 
 ```yaml
 apiVersion: apps.kruise.io/v1alpha1
@@ -22,8 +22,8 @@ spec:
     # Options 3(future): ...
 ```
 
-- jobTemplate：create Jobs reriodically, which is equivalent to original CronJob
-- broadcastJobTemplate：create [BroadcastJobs](./broadcastjob) reriodically, which support to dispatch Jobs on every node
+- jobTemplate：create Jobs periodically, which is equivalent to original CronJob
+- broadcastJobTemplate：create [BroadcastJobs](./broadcastjob) periodically, which support to dispatch Jobs on every node
 
 ![AdvancedCronjob](/img/docs/user-manuals/advancedcronjob.png)
 
