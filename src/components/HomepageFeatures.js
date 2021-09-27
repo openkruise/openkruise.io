@@ -28,13 +28,13 @@ const features = [
     ),
   },
   {
-    title: <><Translate>Bypass Application Management</Translate></>,
+    title: <><Translate>Decoupled Application Management</Translate></>,
     imgUrl: 'img/feature2.png',
     description: (
       <>
         <p>
           <Translate>
-            OpenKruise provides several bypass ways to manage sidecar container, multi-domain deployment for applications,
+            OpenKruise provides several decoupled ways to manage sidecar container, multi-domain deployment for applications,
             which means you can manage these things without modifying the Workloads of applications.
           </Translate>
           <br />
