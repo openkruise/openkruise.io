@@ -54,4 +54,5 @@ jobs:
           else
           npm i
           fi
-          npm run deploy
+          npm run build
+          npm run deploy -- --out-dir $(pwd)/build --skip-build true
