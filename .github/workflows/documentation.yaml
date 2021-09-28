@@ -55,4 +55,4 @@ jobs:
           npm i
           fi
           npm run build
-          npm run deploy -- --out-dir $(pwd)/build --skip-build true
+          npm run deploy -- $(pwd) --out-dir build --skip-build true
