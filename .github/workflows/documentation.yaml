@@ -56,5 +56,7 @@ jobs:
           fi
           npm run build
           find ./build -type f -name "*.html" -exec sed -i 's/src="\/zh\/img\//src="https:\/\/cdn.jsdelivr.net\/gh\/openkruise\/openkruise.io@gh-pages\/zh\/img\//g' {} +
+          find ./build -type f -name "*.html" -exec sed -i 's/src="\/zh\/assets\//src="https:\/\/cdn.jsdelivr.net\/gh\/openkruise\/openkruise.io@gh-pages\/zh\/assets\//g' {} +
           find ./build -type f -name "*.html" -exec sed -i 's/href="\/zh\/assets\//href="https:\/\/cdn.jsdelivr.net\/gh\/openkruise\/openkruise.io@gh-pages\/zh\/assets\//g' {} +
+          find ./build -type f -name "*.js" -exec sed -i 's/n.Z=r.p+"assets/n.Z="https:\/\/cdn.jsdelivr.net\/gh\/openkruise\/openkruise.io@gh-pages"+r.p+"assets/g' {} +
           npm run deploy -- $(pwd) --out-dir build --skip-build true
