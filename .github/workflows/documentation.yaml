@@ -62,4 +62,5 @@ jobs:
           find ./build -type f -name "*.html" -exec sed -i 's/href="\/assets\//href="https:\/\/cdn.jsdelivr.net\/gh\/openkruise\/openkruise.io@gh-pages\/assets\//g' {} +
           find ./build -type f -name "*.html" -exec sed -i 's/href="\/zh\/assets\//href="https:\/\/cdn.jsdelivr.net\/gh\/openkruise\/openkruise.io@gh-pages\/zh\/assets\//g' {} +
           find ./build -type f -name "*.js" -exec sed -i 's/n.Z=r.p+"assets/n.Z="https:\/\/cdn.jsdelivr.net\/gh\/openkruise\/openkruise.io@gh-pages"+r.p+"assets/g' {} +
+          find ./build -type f -name "*.html" -exec sed -i 's/r.setAttribute("rel","prefetch")/console.log(">>> e: ",e);console.log(">>> t: ",t);r.setAttribute("rel","prefetch")/g' {} +
           npm run deploy -- $(pwd) --out-dir build --skip-build true
