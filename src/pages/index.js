@@ -84,7 +84,7 @@ export default function Home() {
       
         <div className="container text--center">
           <h3 className="hero__subtitle">
-            <Translate>OpenKruise is a</Translate> <a href="https://cncf.io/">Cloud Native Computing Foundation</a> <Translate>Sandbox project</Translate>
+            <Translate>OpenKruise is a</Translate> <a href="https://cncf.io/">Cloud Native Computing Foundation</a> <Translate>sandbox project</Translate>
           </h3>
           <div className={clsx('cncf-logo', styles.cncfLogo)} />
         </div>
