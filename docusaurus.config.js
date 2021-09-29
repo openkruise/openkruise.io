@@ -69,8 +69,8 @@ const darkCodeTheme = require('prism-react-renderer/themes/dracula');
           '⭐️ If you like OpenKruise, give it a star on <a target="_blank" rel="noopener noreferrer" href="https://github.com/openkruise/kruise">GitHub</a>! ⭐️',
       },
       algolia: {
-        apiKey: '25626fae796133dc1e734c6bcaaeac3c',
-        indexName: 'docsearch',
+        apiKey: '1ea72f0766570fbc0d6f9e6f269c64eb',
+        indexName: 'openkruise',
       },
       navbar: {
         title: 'OpenKruise',
