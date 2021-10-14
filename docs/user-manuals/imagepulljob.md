@@ -124,4 +124,4 @@ spec:
 2. `kubectl patch nodeimage node-xxx --type=merge -p '{"spec":{"images":{"ubuntu":{"tags":[{"tag":"latest","pullPolicy":{"ttlSecondsAfterFinished":300}}]}}}}'`
 
 You can read the NodeImage status using `kubectl get nodeimage node-xxx -o yaml`,
-and you will find the task removed from spec and status after it has finished over 600s.
+and you will find the task removed from spec and status after it has finished over 300s.
