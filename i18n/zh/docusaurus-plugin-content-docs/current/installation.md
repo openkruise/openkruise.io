@@ -95,6 +95,7 @@ Feature-gate 控制了 Kruise 中一些有影响性的功能：
 | `PodUnavailableBudgetDeleteGate` | 启用 PodUnavailableBudget 保护 pod 删除、驱逐   | `false` | 不防护 pod 删除、驱逐 |
 | `PodUnavailableBudgetUpdateGate` | 启用 PodUnavailableBudget 保护 pod 原地升级   | `false` | 不防护 pod 原地升级 |
 | `WorkloadSpread`                 | 启用 WorkloadSpread 管理应用多分区弹性与拓扑部署 | `false` | 不支持 WorkloadSpread | 
+| `InPlaceUpdateEnvFromMetadata`   | 启用 Kruise 原地升级容器当它存在 env from 的 labels/annotations 发生了变化 | `false` | 容器中只有 image 能够原地升级 |
 
 如果你要配置 feature-gate，只要在安装或升级时配置参数即可，比如：
 
@@ -111,6 +112,12 @@ $ helm install kruise https://... --set featureGates="ResourcesDeletionProtectio
 ```bash
 $ helm install kruise https://... --set  manager.image.repository=openkruise-registry.cn-hangzhou.cr.aliyuncs.com/openkruise/kruise-manager
 ```
+
+## 最佳实践
+
+### k3s 安装参数
+
+通常来说 k3s 有着与默认 `/var/run` 不同的 runtime socket 路径。所以你需要将 `daemon.socketLocation` 参数设置为你的 k3s 节点上真实的路径（比如 `/run/k3s` 或 `/var/run/k3s/`）。
 
 ## 卸载
 

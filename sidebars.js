@@ -63,6 +63,14 @@ module.exports = {
     },
     {
       type: 'category',
+      label: 'Reference',
+      collapsed: true,
+      items: [
+        'reference/inplace-update',
+      ],
+    },
+    {
+      type: 'category',
       label: 'Best Practices',
       collapsed: true,
       items: [

@@ -64,15 +64,12 @@ Advanced StatefulSet adds a `podUpdatePolicy` field in `spec.updateStrategy.roll
 which controls recreate or in-place update for Pods.
 
 - `ReCreate` controller will delete old Pods and create new ones. This is the same behavior as default StatefulSet.
-- `InPlaceIfPossible` controller will try to in-place update Pod instead of recreating them if possible. Currently, only `spec.template.metadata.*` and `spec.template.spec.containers[x].image` field can be in-place updated.
-- `InPlaceOnly` controller will in-place update Pod instead of recreating them. With `InPlaceOnly` policy, user cannot modify any fields in `spec.template` other than `spec.template.spec.containers[x].image`.
+- `InPlaceIfPossible` controller will try to in-place update Pod instead of recreating them if possible. Please ready the reference doc below.
+- `InPlaceOnly` controller will in-place update Pod instead of recreating them. With `InPlaceOnly` policy, user cannot modify any fields other than the fields that supported to in-place update.
 
-When a Pod being in-place update, controller will firstly update Pod status to make it become not-ready using readinessGate,
-and then update images in Pod spec to trigger Kubelet recreate the container on Node.
-However, sometimes Kubelet recreate containers so fast that other controllers such as endpoints-controller in kcm
-have not noticed the Pod has turned to not-ready. This may lead to requests damaged.
+**You may need to read the [reference doc](../reference/inplace-update) for more details of in-place update.**
 
-So we bring **graceful period** into in-place update. Advanced StatefulSet has supported `gracePeriodSeconds`, which is a period
+We also bring **graceful period** into in-place update. Advanced StatefulSet has supported `gracePeriodSeconds`, which is a period
 duration between controller update pod status and update pod images.
 So that endpoints-controller could have enough time to remove this Pod from endpoints.
 

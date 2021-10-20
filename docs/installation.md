@@ -98,7 +98,8 @@ Feature-gate controls some influential features in Kruise:
 | `TemplateNoDefaults` | Whether to disable defaults injection for pod/pvc template in workloads | `false` | Should not close this feature if it has open |
 | `PodUnavailableBudgetDeleteGate` | Enables PodUnavailableBudget for pod deletion, eviction              | `false` | No protection for pod deletion, eviction |
 | `PodUnavailableBudgetUpdateGate` | Enables PodUnavailableBudget for pod.Spec update              | `false` | No protection for in-place update |
-| `WorkloadSpread`                 | Enables WorkloadSpread to manage multi-domain and elastic deploy  | `false` | WorkloadSpread disabled | 
+| `WorkloadSpread`                 | Enables WorkloadSpread to manage multi-domain and elastic deploy  | `false` | WorkloadSpread disabled |
+| `InPlaceUpdateEnvFromMetadata`   | Enables Kruise to in-place update a container in Pod when its env from labels/annotations changed and pod is in-place updating | `false` | Only container image can be in-place update |
 
 If you want to configure the feature-gate, just set the parameter when install or upgrade. Such as:
 
@@ -115,6 +116,12 @@ If you are in China and have problem to pull image from official DockerHub, you 
 ```bash
 $ helm install kruise https://... --set  manager.image.repository=openkruise-registry.cn-hangzhou.cr.aliyuncs.com/openkruise/kruise-manager
 ```
+
+## Best Practices
+
+### Installation parameters for k3s
+
+Usually k3s has the different runtime path from the default `/var/run`. So you have to set `daemon.socketLocation` to the real runtime socket path on your k3s node (e.g. `/run/k3s` or `/var/run/k3s/`).
 
 ## Uninstall
 
