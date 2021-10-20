@@ -197,10 +197,10 @@
     "It only restarts the specific container with the new image and the Pod will not be recreated, which leads to much faster update process and much less side effects on other sub-systems such as scheduler, CNI or CSI.": {
       "message": "它只会用新的镜像重建 Pod 中的特定容器，整个 Pod 以及其中的其他容器都不会被影响。因此它带来了更快的发布速度，以及避免了对其他 Scheduler、CNI、CSI 等组件的负面影响。"
     },
-    "Bypass Application Management": {
+    "Decoupled Application Management": {
       "message": "应用的旁路管理"
     },
-    "OpenKruise provides several bypass ways to manage sidecar container, multi-domain deployment for applications, which means you can manage these things without modifying the Workloads of applications.": {
+    "OpenKruise provides several decoupled ways to manage sidecar container, multi-domain deployment for applications, which means you can manage these things without modifying the Workloads of applications.": {
       "message": "OpenKruise 提供了多种通过旁路管理应用 sidecar 容器、多区域部署的方式，“旁路” 意味着你可以不需要修改应用的 Workloads 来实现它们。"
     },
     "For example, SidecarSet can help you inject sidecar containers into all matching Pods during creation and even update them in-place with no effect on other containers in Pod.": {

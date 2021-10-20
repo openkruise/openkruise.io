@@ -30,6 +30,12 @@
   "sidebar.docs.category.Application Protection": {
     "message": "应用安全防护"
   },
+  "sidebar.docs.category.Reference": {
+    "message": "参考"
+  },
+  "sidebar.docs.category.Best Practices": {
+    "message": "最佳实践"
+  },
   "sidebar.docs.category.Developer Manuals": {
     "message": "开发者手册"
   }

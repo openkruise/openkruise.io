@@ -165,18 +165,17 @@ metadata:
 
 ## 升级功能
 
-### 原地升级
+### 升级类型
 
-CloneSet 提供了和 `Advanced StatefulSet` 相同的 3 个升级方式，默认为 `ReCreate`：
+CloneSet 提供了 3 种升级方式，默认为 `ReCreate`：
 
 - `ReCreate`: 控制器会删除旧 Pod 和它的 PVC，然后用新版本重新创建出来。
-- `InPlaceIfPossible`: 控制器会优先尝试原地升级 Pod，如果不行再采用重建升级。目前，只有修改 `spec.template.metadata.*` 和 `spec.template.spec.containers[x].image` 这些字段才可以走原地升级。
+- `InPlaceIfPossible`: 控制器会优先尝试原地升级 Pod，如果不行再采用重建升级。具体参考下方阅读文档。
 - `InPlaceOnly`: 控制器只允许采用原地升级。因此，用户只能修改上一条中的限制字段，如果尝试修改其他字段会被 Kruise 拒绝。
 
-当一个 Pod 被原地升级时，控制器会先利用 readinessGates 把 Pod status 中修改为 not-ready 状态，然后再更新 Pod spec 中的 image 字段来触发 Kubelet 重建对应的容器。
-不过这样可能存在的一个风险：有时候 Kubelet 重建容器太快，还没等到其他控制器如 endpoints-controller 感知到 Pod not-ready，可能会导致流量受损。
+**请阅读[该文档](../reference/inplace-update)了解更多原地升级的细节。**
 
-因此我们又在原地升级中提供了 **graceful period** 选项，作为优雅原地升级的策略。用户如果配置了 `gracePeriodSeconds` 这个字段，控制器在原地升级的过程中会先把 Pod status 改为 not-ready，然后等一段时间（`gracePeriodSeconds`），最后再去修改 Pod spec 中的镜像版本。
+我们还在原地升级中提供了 **graceful period** 选项，作为优雅原地升级的策略。用户如果配置了 `gracePeriodSeconds` 这个字段，控制器在原地升级的过程中会先把 Pod status 改为 not-ready，然后等一段时间（`gracePeriodSeconds`），最后再去修改 Pod spec 中的镜像版本。
 这样，就为 endpoints-controller 这些控制器留出了充足的时间来将 Pod 从 endpoints 端点列表中去除。
 
 ```yaml

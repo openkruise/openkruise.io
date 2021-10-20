@@ -60,15 +60,19 @@ table td {
 }
 
 .markdown {
-  font-size: 1.0rem;
+  font-size: 0.9rem;
 }
 
 .markdown h1:first-child {
-  --ifm-h1-font-size: 2.6rem;
+  --ifm-h1-font-size: 2.0rem;
+}
+
+.markdown > h2 {
+  --ifm-h2-font-size: 1.8rem;
 }
 
 .theme-doc-sidebar-menu {
-  font-size: 0.9rem;
+  font-size: 0.8rem;
 }
 
 .blogPostTitle_node_modules-\@docusaurus-theme-classic-lib-next-theme-BlogPostItem-styles-module:first-child {
