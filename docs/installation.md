@@ -2,35 +2,30 @@
 title: Installation
 ---
 
-Although OpenKruise now can work with Kubernetes version >= `1.13`, we strongly recommend you to use Kruise with **Kubernetes version >= 1.16**. 
+Since v1.0.0 (alpha/beta), OpenKruise requires **Kubernetes version >= 1.16**.
 
-Note that:
-1. For Kubernetes 1.13 and 1.14, users must enable `CustomResourceWebhookConversion` feature-gate in kube-apiserver before install or upgrade Kruise.
-2. Currently Kruise can not be installed into Kubernetes 1.22, for it has dropped v1beta1 version of some resources like CRD/WebhookConfiguration.
-   The comming Kruise v1.0 will fix it and do not support Kubernetes version lower than 1.16 any more.
-
-## Install with helm charts
+## Install with helm
 
 Kruise can be simply installed by helm v3.1+, which is a simple command-line tool and you can get it from [here](https://github.com/helm/helm/releases).
 
 ```bash
-# Kubernetes 1.13 and 1.14
-helm install kruise https://github.com/openkruise/kruise/releases/download/v0.10.0/kruise-chart.tgz --disable-openapi-validation
+# Firstly add openkruise charts repository if you haven't do this.
+$ helm repo add openkruise https://openkruise.github.io/charts/
 
-# Kubernetes 1.15 and newer versions
-helm install kruise https://github.com/openkruise/kruise/releases/download/v0.10.0/kruise-chart.tgz
+# Install the latest version.
+$ helm install kruise openkruise/kruise --version 1.0.0-alpha.1
 ```
 
-## Upgrade with helm charts
+*If you want to install the stable version, read [doc](/docs/installation).*
 
-If you are using Kruise with an old version, it is recommended that you should upgrade to the latest version for safety and more features:
+## Upgrade with helm
 
 ```bash
-# Kubernetes 1.13 and 1.14
-helm upgrade kruise https://github.com/openkruise/kruise/releases/download/v0.10.0/kruise-chart.tgz --disable-openapi-validation
+# Firstly add openkruise charts repository if you haven't do this.
+$ helm repo add openkruise https://openkruise.github.io/charts/
 
-# Kubernetes 1.15 and newer versions
-helm upgrade kruise https://github.com/openkruise/kruise/releases/download/v0.10.0/kruise-chart.tgz
+# Upgrade the latest version.
+$ helm upgrade kruise openkruise/kruise --version 1.0.0-alpha.1
 ```
 
 Note that:
@@ -39,6 +34,7 @@ Note that:
    to make sure that you have understand the breaking changes in the new version.
 2. If you want to drop the chart parameters you configured for the old release or set some new parameters,
    it is recommended to add `--reset-values` flag in `helm upgrade` command.
+   Otherwise you should use `--reuse-values` flag to reuse the last release's values.
 
 ## Options
 
@@ -78,6 +74,8 @@ The following table lists the configurable parameters of the chart and their def
 | `webhookConfiguration.failurePolicy.pods` | The failurePolicy for pods in mutating webhook configuration | `Ignore`                      |
 | `webhookConfiguration.timeoutSeconds`     | The timeoutSeconds for all webhook configuration             | `30`                          |
 | `crds.managed`                            | Kruise will not install CRDs with chart if this is false     | `true`                        |
+| `manager.resyncPeriod`                    | Resync period of informer kruise-manager, defaults no resync | `0`                           |
+| `manager.hostNetwork`                     | Whether kruise-manager pod should run with hostnetwork       | `false`                       |
 
 Specify each parameter using the `--set key=value[,key=value]` argument to `helm install` or `helm upgrade`.
 

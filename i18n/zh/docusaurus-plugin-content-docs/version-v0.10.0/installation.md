@@ -6,31 +6,32 @@ title: 安装
 
 注意:
 1. 在 1.13 和 1.14 版本中必须先在 kube-apiserver 中打开 `CustomResourceWebhookConversion` feature-gate。
-2. 由于 Kubernetes 1.22 版本中去除了 CRD/WebhookConfiguration 等资源的 v1beta1 版本，目前 Kruise 无法部署到该版本的集群中。
-   即将到来的 Kruise v1.0 会解决这个兼容性问题，并不再支持 Kubernetes 1.16 之前的版本。
+2. 如果要安装到 **Kubernetes >= 1.22** 版本的集群中，你需要使用[最新版本](/docs/next/installation)。
 
-## 通过 helm charts 安装
+## 通过 helm 安装
 
 建议采用 helm v3.1+ 来安装 Kruise，helm 是一个简单的命令行工具可以从 [这里](https://github.com/helm/helm/releases) 获取。
 
 ```bash
-# Kubernetes 1.13 或 1.14 版本
-helm install kruise https://github.com/openkruise/kruise/releases/download/v0.10.0/kruise-chart.tgz --disable-openapi-validation
+# Firstly add openkruise charts repository if you haven't do this.
+$ helm repo add openkruise https://openkruise.github.io/charts/
 
-# Kubernetes 1.15 和更新的版本
-helm install kruise https://github.com/openkruise/kruise/releases/download/v0.10.0/kruise-chart.tgz
+# Install the stable version.
+# Note that if the Kubernetes version < 1.15, you may need to add --disable-openapi-validation
+$ helm install kruise openkruise/kruise --version 0.10.0
 ```
 
-## 通过 helm charts 升级
+## 通过 helm 升级
 
 如果你在使用旧版本的 Kruise，建议为了安全性和更丰富的功能，升级到最新版本：
 
 ```bash
-# Kubernetes 1.13 and 1.14
-helm upgrade kruise https://github.com/openkruise/kruise/releases/download/v0.10.0/kruise-chart.tgz --disable-openapi-validation
+# Firstly add openkruise charts repository if you haven't do this.
+$ helm repo add openkruise https://openkruise.github.io/charts/
 
-# Kubernetes 1.15 and newer versions
-helm upgrade kruise https://github.com/openkruise/kruise/releases/download/v0.10.0/kruise-chart.tgz
+# Upgrade the latest version.
+# Note that if the Kubernetes version < 1.15, you may need to add --disable-openapi-validation
+$ helm upgrade kruise openkruise/kruise --version 0.10.0
 ```
 
 注意：
