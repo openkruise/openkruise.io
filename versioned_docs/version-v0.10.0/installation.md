@@ -5,32 +5,33 @@ title: Installation
 Although OpenKruise now can work with Kubernetes version >= `1.13`, we strongly recommend you to use Kruise with **Kubernetes version >= 1.16**. 
 
 Note that:
-1. For Kubernetes 1.13 and 1.14, users must enable `CustomResourceWebhookConversion` feature-gate in kube-apiserver before install or upgrade Kruise.
-2. Currently Kruise can not be installed into Kubernetes 1.22, for it has dropped v1beta1 version of some resources like CRD/WebhookConfiguration.
-   The comming Kruise v1.0 will fix it and do not support Kubernetes version lower than 1.16 any more.
+1. For **Kubernetes 1.13 and 1.14**, users must enable `CustomResourceWebhookConversion` feature-gate in kube-apiserver before install or upgrade Kruise.
+2. To install it in **Kubernetes >= 1.22**, you have to use the [latest version](/docs/next/installation).
 
-## Install with helm charts
+## Install with helm
 
 Kruise can be simply installed by helm v3.1+, which is a simple command-line tool and you can get it from [here](https://github.com/helm/helm/releases).
 
 ```bash
-# Kubernetes 1.13 and 1.14
-helm install kruise https://github.com/openkruise/kruise/releases/download/v0.10.0/kruise-chart.tgz --disable-openapi-validation
+# Firstly add openkruise charts repository if you haven't do this.
+$ helm repo add openkruise https://openkruise.github.io/charts/
 
-# Kubernetes 1.15 and newer versions
-helm install kruise https://github.com/openkruise/kruise/releases/download/v0.10.0/kruise-chart.tgz
+# Install the stable version.
+# Note that if the Kubernetes version < 1.15, you may need to add --disable-openapi-validation
+$ helm install kruise openkruise/kruise --version 0.10.0
 ```
 
-## Upgrade with helm charts
+## Upgrade with helm
 
 If you are using Kruise with an old version, it is recommended that you should upgrade to the latest version for safety and more features:
 
 ```bash
-# Kubernetes 1.13 and 1.14
-helm upgrade kruise https://github.com/openkruise/kruise/releases/download/v0.10.0/kruise-chart.tgz --disable-openapi-validation
+# Firstly add openkruise charts repository if you haven't do this.
+$ helm repo add openkruise https://openkruise.github.io/charts/
 
-# Kubernetes 1.15 and newer versions
-helm upgrade kruise https://github.com/openkruise/kruise/releases/download/v0.10.0/kruise-chart.tgz
+# Upgrade the latest version.
+# Note that if the Kubernetes version < 1.15, you may need to add --disable-openapi-validation
+$ helm upgrade kruise openkruise/kruise --version 0.10.0
 ```
 
 Note that:

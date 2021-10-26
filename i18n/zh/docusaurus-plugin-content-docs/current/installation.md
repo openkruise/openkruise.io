@@ -2,35 +2,30 @@
 title: 安装
 ---
 
-尽管目前 OpenKruise 能够兼容 Kubernetes >= 1.13 版本的集群，但我们强烈建议在 **Kubernetes >= 1.16** 以上版本的集群中使用。
+从 v1.0.0 (alpha/beta) 开始，OpenKruise 要求在 **Kubernetes >= 1.16** 以上版本的集群中安装和使用。
 
-注意:
-1. 在 1.13 和 1.14 版本中必须先在 kube-apiserver 中打开 `CustomResourceWebhookConversion` feature-gate。
-2. 由于 Kubernetes 1.22 版本中去除了 CRD/WebhookConfiguration 等资源的 v1beta1 版本，目前 Kruise 无法部署到该版本的集群中。
-   即将到来的 Kruise v1.0 会解决这个兼容性问题，并不再支持 Kubernetes 1.16 之前的版本。
-
-## 通过 helm charts 安装
+## 通过 helm 安装
 
 建议采用 helm v3.1+ 来安装 Kruise，helm 是一个简单的命令行工具可以从 [这里](https://github.com/helm/helm/releases) 获取。
 
 ```bash
-# Kubernetes 1.13 或 1.14 版本
-helm install kruise https://github.com/openkruise/kruise/releases/download/v0.10.0/kruise-chart.tgz --disable-openapi-validation
+# Firstly add openkruise charts repository if you haven't do this.
+$ helm repo add openkruise https://openkruise.github.io/charts/
 
-# Kubernetes 1.15 和更新的版本
-helm install kruise https://github.com/openkruise/kruise/releases/download/v0.10.0/kruise-chart.tgz
+# Install the latest version.
+$ helm install kruise openkruise/kruise --version 1.0.0-alpha.1
 ```
 
-## 通过 helm charts 升级
+*如果你希望安装稳定版本，阅读[文档](/docs/installation)。*
 
-如果你在使用旧版本的 Kruise，建议为了安全性和更丰富的功能，升级到最新版本：
+## 通过 helm 升级
 
 ```bash
-# Kubernetes 1.13 and 1.14
-helm upgrade kruise https://github.com/openkruise/kruise/releases/download/v0.10.0/kruise-chart.tgz --disable-openapi-validation
+# Firstly add openkruise charts repository if you haven't do this.
+$ helm repo add openkruise https://openkruise.github.io/charts/
 
-# Kubernetes 1.15 and newer versions
-helm upgrade kruise https://github.com/openkruise/kruise/releases/download/v0.10.0/kruise-chart.tgz
+# Upgrade the latest version.
+$ helm upgrade kruise openkruise/kruise --version 1.0.0-alpha.1
 ```
 
 注意：
@@ -74,6 +69,8 @@ helm upgrade kruise https://github.com/openkruise/kruise/releases/download/v0.10
 | `webhookConfiguration.failurePolicy.pods` | Pod webhook 的失败策略                                         | `Ignore`                      |
 | `webhookConfiguration.timeoutSeconds`     | 所有 Kruise webhook 的调用超时时间                               | `30`                          |
 | `crds.managed`                            | 是否安装 Kruise CRD (如何关闭则 chart 不会安装任何 CRD)            | `true`                        |
+| `manager.resyncPeriod`                    | kruise-manager 中 informer 的 resync 周期，默认不做 resync       | `0`                           |
+| `manager.hostNetwork`                     | kruise-manager pod 是否采用 hostnetwork 网络                    | `false`                       |
 
 这些参数可以通过 `--set key=value[,key=value]` 参数在 `helm install` 或 `helm upgrade` 命令中生效。
 
