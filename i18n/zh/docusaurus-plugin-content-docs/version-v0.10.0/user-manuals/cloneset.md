@@ -121,7 +121,7 @@ spec:
 
 **FEATURE STATE:** Kruise v0.9.0
 
-[controller.kubernetes.io/pod-deletion-cost](https://kubernetes.io/docs/reference/labels-annotations-taints/#pod-deletion-cost)
+[controller.kubernetes.io/pod-deletion-cost](https://kubernetes.io/docs/core-concepts/labels-annotations-taints/#pod-deletion-cost)
 是从 Kubernetes 1.21 版本后加入的 annotation，Deployment/ReplicaSet 在缩容时会参考这个 cost 数值来排序。
 CloneSet 从 Kruise v0.9.0 版本后也同样支持了这个功能。
 

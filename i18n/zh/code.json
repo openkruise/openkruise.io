@@ -116,7 +116,7 @@
       "description": "The title attribute for collapse button of doc sidebar"
     },
     "theme.docs.versions.unreleasedVersionLabel": {
-      "message": "This is unreleased documentation for {siteTitle} {versionLabel} version.",
+      "message": "这是 OpenKruise 的最新文档，可能包含一些未发布或处于 alpha/beta 版本的功能。",
       "description": "The label used to tell the user that he's browsing an unreleased doc version"
     },
     "theme.docs.versions.unmaintainedVersionLabel": {
@@ -124,11 +124,11 @@
       "description": "The label used to tell the user that he's browsing an unmaintained doc version"
     },
     "theme.docs.versions.latestVersionSuggestionLabel": {
-      "message": "For up-to-date documentation, see the {latestVersionLink} ({versionLabel}).",
+      "message": "稳定版本的文档, 参考 {latestVersionLink} ({versionLabel}).",
       "description": "The label userd to tell the user that he's browsing an unmaintained doc version"
     },
     "theme.docs.versions.latestVersionLinkLabel": {
-      "message": "最新版本",
+      "message": "Stable",
       "description": "The label used for the latest version suggestion link label"
     },
     "theme.common.editThisPage": {

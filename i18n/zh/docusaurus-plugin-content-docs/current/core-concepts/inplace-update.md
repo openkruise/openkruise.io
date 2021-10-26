@@ -19,7 +19,7 @@ title: 原地升级
 
 当我们要升级一个存量 Pod 中的镜像时，这是 *重建升级* 和 *原地升级* 的区别：
 
-![alt](/img/docs/reference/inplace-update-comparation.png)
+![alt](/img/docs/core-concepts/inplace-update-comparation.png)
 
 **重建升级**时我们要删除旧 Pod、创建新 Pod：
 
@@ -50,7 +50,7 @@ title: 原地升级
 
 可以在下图中看到原地升级的整体工作流程（*你可能需要右击在新标签页中打开*）：
 
-![alt](/img/docs/reference/inplace-update-workflow.png)
+![alt](/img/docs/core-concepts/inplace-update-workflow.png)
 
 ## 使用要求
 
