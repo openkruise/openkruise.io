@@ -127,7 +127,7 @@ will have CloneSet protection by `maxUnavailable`/`maxSurge` and lifecycle `Prep
 
 **FEATURE STATE:** Kruise v0.9.0
 
-The [controller.kubernetes.io/pod-deletion-cost](https://kubernetes.io/docs/reference/labels-annotations-taints/#pod-deletion-cost) annotation
+The [controller.kubernetes.io/pod-deletion-cost](https://kubernetes.io/docs/core-concepts/labels-annotations-taints/#pod-deletion-cost) annotation
 is defined in Kubernetes since `v1.21`, Deployment/ReplicaSet will remove pods according to this cost when downscaling.
 And CloneSet has also supported it since Kruise `v0.9.0`.
 

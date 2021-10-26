@@ -19,7 +19,7 @@ Note that the in-place update workflow of `SidecarSet` is a little different fro
 
 Once we are going to update image in a existing Pod, look at the comparation between *Recreate* and *InPlace* Update:
 
-![alt](/img/docs/reference/inplace-update-comparation.png)
+![alt](/img/docs/core-concepts/inplace-update-comparation.png)
 
 In **ReCreate** way we have to delete the old Pod and create a new Pod:
 
@@ -50,7 +50,7 @@ Otherwise, the changes to other fields such as `spec.template.spec.containers[x]
 
 You can see the whole workflow of in-place update below (*you may need to right click and open it in a new tab*):
 
-![alt](/img/docs/reference/inplace-update-workflow.png)
+![alt](/img/docs/core-concepts/inplace-update-workflow.png)
 
 ## Requirements
 

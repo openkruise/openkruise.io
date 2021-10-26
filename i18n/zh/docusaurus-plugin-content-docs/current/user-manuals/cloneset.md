@@ -121,7 +121,7 @@ spec:
 
 **FEATURE STATE:** Kruise v0.9.0
 
-[controller.kubernetes.io/pod-deletion-cost](https://kubernetes.io/docs/reference/labels-annotations-taints/#pod-deletion-cost)
+[controller.kubernetes.io/pod-deletion-cost](https://kubernetes.io/docs/core-concepts/labels-annotations-taints/#pod-deletion-cost)
 是从 Kubernetes 1.21 版本后加入的 annotation，Deployment/ReplicaSet 在缩容时会参考这个 cost 数值来排序。
 CloneSet 从 Kruise v0.9.0 版本后也同样支持了这个功能。
 
@@ -173,7 +173,7 @@ CloneSet 提供了 3 种升级方式，默认为 `ReCreate`：
 - `InPlaceIfPossible`: 控制器会优先尝试原地升级 Pod，如果不行再采用重建升级。具体参考下方阅读文档。
 - `InPlaceOnly`: 控制器只允许采用原地升级。因此，用户只能修改上一条中的限制字段，如果尝试修改其他字段会被 Kruise 拒绝。
 
-**请阅读[该文档](../reference/inplace-update)了解更多原地升级的细节。**
+**请阅读[该文档](../core-concepts/inplace-update)了解更多原地升级的细节。**
 
 我们还在原地升级中提供了 **graceful period** 选项，作为优雅原地升级的策略。用户如果配置了 `gracePeriodSeconds` 这个字段，控制器在原地升级的过程中会先把 Pod status 改为 not-ready，然后等一段时间（`gracePeriodSeconds`），最后再去修改 Pod spec 中的镜像版本。
 这样，就为 endpoints-controller 这些控制器留出了充足的时间来将 Pod 从 endpoints 端点列表中去除。

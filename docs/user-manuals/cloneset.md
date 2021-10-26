@@ -127,7 +127,7 @@ will have CloneSet protection by `maxUnavailable`/`maxSurge` and lifecycle `Prep
 
 **FEATURE STATE:** Kruise v0.9.0
 
-The [controller.kubernetes.io/pod-deletion-cost](https://kubernetes.io/docs/reference/labels-annotations-taints/#pod-deletion-cost) annotation
+The [controller.kubernetes.io/pod-deletion-cost](https://kubernetes.io/docs/core-concepts/labels-annotations-taints/#pod-deletion-cost) annotation
 is defined in Kubernetes since `v1.21`, Deployment/ReplicaSet will remove pods according to this cost when downscaling.
 And CloneSet has also supported it since Kruise `v0.9.0`.
 
@@ -179,10 +179,10 @@ Don't worry. Even if you enable the `CloneSetShortHash`, CloneSet will still rec
 CloneSet provides three update types, defaults to `ReCreate`.
 
 - `ReCreate`: controller will delete old Pods and PVCs and create new ones.
-- `InPlaceIfPossible`: controller will try to in-place update Pod instead of recreating them if possible. Please ready the reference doc below.
+- `InPlaceIfPossible`: controller will try to in-place update Pod instead of recreating them if possible. Please ready the concept doc below.
 - `InPlaceOnly`: controller will in-place update Pod instead of recreating them. With `InPlaceOnly` policy, user cannot modify any fields other than the fields that supported to in-place update.
 
-**You may need to read the [reference doc](../reference/inplace-update) for more details of in-place update.**
+**You may need to read the [concept doc](../core-concepts/inplace-update) for more details of in-place update.**
 
 We also bring **graceful period** into in-place update. CloneSet has supported `gracePeriodSeconds`, which is a period
 duration between controller update pod status and update pod images.

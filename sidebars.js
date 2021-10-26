@@ -25,7 +25,8 @@ module.exports = {
       label: 'Core Concepts',
       collapsed: false,
       items: [
-        'core-concepts/architecture'
+        'core-concepts/architecture',
+        'core-concepts/inplace-update'
       ],
     },
     {
@@ -53,20 +54,13 @@ module.exports = {
           'Enhanced Operations': [
             'user-manuals/containerrecreaterequest',
             'user-manuals/imagepulljob',
+            'user-manuals/containerlaunchpriority',
           ],
           "Application Protection": [
             'user-manuals/deletionprotection',
             'user-manuals/podunavailablebudget',
           ]
         },
-      ],
-    },
-    {
-      type: 'category',
-      label: 'Reference',
-      collapsed: true,
-      items: [
-        'reference/inplace-update',
       ],
     },
     {
