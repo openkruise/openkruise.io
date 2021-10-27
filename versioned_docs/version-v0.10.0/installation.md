@@ -16,6 +16,9 @@ Kruise can be simply installed by helm v3.1+, which is a simple command-line too
 # Firstly add openkruise charts repository if you haven't do this.
 $ helm repo add openkruise https://openkruise.github.io/charts/
 
+# [Optional]
+$ helm repo update
+
 # Install the stable version.
 # Note that if the Kubernetes version < 1.15, you may need to add --disable-openapi-validation
 $ helm install kruise openkruise/kruise --version 0.10.0
@@ -29,6 +32,9 @@ If you are using Kruise with an old version, it is recommended that you should u
 # Firstly add openkruise charts repository if you haven't do this.
 $ helm repo add openkruise https://openkruise.github.io/charts/
 
+# [Optional]
+$ helm repo update
+
 # Upgrade the latest version.
 # Note that if the Kubernetes version < 1.15, you may need to add --disable-openapi-validation
 $ helm upgrade kruise openkruise/kruise --version 0.10.0
@@ -41,9 +47,9 @@ Note that:
 2. If you want to drop the chart parameters you configured for the old release or set some new parameters,
    it is recommended to add `--reset-values` flag in `helm upgrade` command.
 
-## Download charts manually
+## Optional: download charts manually
 
-If you have problem with connecting to `https://openkruise.github.io/charts/` in production, you might need to download the chart manually and install or upgrade with it.
+If you have problem with connecting to `https://openkruise.github.io/charts/` in production, you might need to download the chart from [here](https://github.com/openkruise/charts/releases) manually and install or upgrade with it.
 
 Charts releases: https://github.com/openkruise/charts/releases
 

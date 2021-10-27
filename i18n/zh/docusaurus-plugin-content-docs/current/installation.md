@@ -12,6 +12,9 @@ title: 安装
 # Firstly add openkruise charts repository if you haven't do this.
 $ helm repo add openkruise https://openkruise.github.io/charts/
 
+# [Optional]
+$ helm repo update
+
 # Install the latest version.
 $ helm install kruise openkruise/kruise --version 1.0.0-alpha.1
 ```
@@ -24,6 +27,9 @@ $ helm install kruise openkruise/kruise --version 1.0.0-alpha.1
 # Firstly add openkruise charts repository if you haven't do this.
 $ helm repo add openkruise https://openkruise.github.io/charts/
 
+# [Optional]
+$ helm repo update
+
 # Upgrade the latest version.
 $ helm upgrade kruise openkruise/kruise --version 1.0.0-alpha.1
 ```
@@ -33,11 +39,13 @@ $ helm upgrade kruise openkruise/kruise --version 1.0.0-alpha.1
 1. 在升级之前，**必须** 先阅读 [Change Log](https://github.com/openkruise/kruise/blob/master/CHANGELOG.md) ，确保你已经了解新版本的不兼容变化。
 2. 如果你要重置之前旧版本上用的参数或者配置一些新参数，建议在 `helm upgrade` 命令里加上 `--reset-values`。
 
-## 手工下载 charts 包
+## 可选的：手工下载 charts 包
 
-如果你在生产环境无法连接到 `https://openkruise.github.io/charts/`，可以先手工下载 chart 包，再用它安装或更新。
+如果你在生产环境无法连接到 `https://openkruise.github.io/charts/`，可以先在[这里](https://github.com/openkruise/charts/releases)手工下载 chart 包，再用它安装或更新到集群中。
 
-Charts releases: https://github.com/openkruise/charts/releases
+```bash
+$ helm install/upgrade kruise /PATH/TO/CHART
+```
 
 ## 可选项
 
