@@ -41,6 +41,12 @@ Note that:
 2. If you want to drop the chart parameters you configured for the old release or set some new parameters,
    it is recommended to add `--reset-values` flag in `helm upgrade` command.
 
+## Download charts manually
+
+If you have problem with connecting to `https://openkruise.github.io/charts/` in production, you might need to download the chart manually and install or upgrade with it.
+
+Charts releases: https://github.com/openkruise/charts/releases
+
 ## Options
 
 Note that installing this chart directly means it will use the default template values for Kruise.

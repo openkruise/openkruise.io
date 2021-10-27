@@ -39,6 +39,12 @@ $ helm upgrade kruise openkruise/kruise --version 0.10.0
 1. 在升级之前，**必须** 先阅读 [Change Log](https://github.com/openkruise/kruise/blob/master/CHANGELOG.md) ，确保你已经了解新版本的不兼容变化。
 2. 如果你要重置之前旧版本上用的参数或者配置一些新参数，建议在 `helm upgrade` 命令里加上 `--reset-values`。
 
+## 手工下载 charts 包
+
+如果你在生产环境无法连接到 `https://openkruise.github.io/charts/`，可以先手工下载 chart 包，再用它安装或更新。
+
+Charts releases: https://github.com/openkruise/charts/releases
+
 ## 可选项
 
 注意直接安装 chart 会使用默认的 template values，你也可以根据你的集群情况指定一些特殊配置，比如修改 resources 限制或者配置 feature-gates。
