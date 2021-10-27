@@ -36,6 +36,12 @@ Note that:
    it is recommended to add `--reset-values` flag in `helm upgrade` command.
    Otherwise you should use `--reuse-values` flag to reuse the last release's values.
 
+## Download charts manually
+
+If you have problem with connecting to `https://openkruise.github.io/charts/` in production, you might need to download the chart manually and install or upgrade with it.
+
+Charts releases: https://github.com/openkruise/charts/releases
+
 ## Options
 
 Note that installing this chart directly means it will use the default template values for Kruise.
