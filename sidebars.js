@@ -82,6 +82,18 @@ module.exports = {
       ],
     },
     {
+      type: 'category',
+      label: 'Reference',
+      collapsed: true,
+      items: [
+        {
+          'CLI tools': [
+            "cli-tool/kubectl-plugin",
+          ],
+        },
+      ],
+    },
+    {
       type: 'doc',
       id: 'faq'
     },
