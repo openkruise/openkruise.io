@@ -13,6 +13,143 @@
         <link href="https://openkruise.io/zh/blog/uniteddeployment"/>
         <updated>2019-11-20T00:00:00.000Z</updated>
         <summary type="html"><![CDATA[Ironically, probably every cloud user knew (or should realized that) failures in Cloud resources]]></summary>
+        <content type="html"><![CDATA[<p>Ironically, probably every cloud user knew (or should realized that) failures in Cloud resources
+are inevitable. Hence, high availability is probably one of the most desirable features that
+Cloud Provider offers for cloud users. For example, in AWS, each geographic region has
+multiple isolated locations known as Availability Zones (AZs).
+AWS provides various AZ-aware solutions to allow the compute or storage resources of the user
+applications to be distributed across multiple AZs in order to tolerate AZ failure, which indeed
+happened in the past. </p><p>In Kubernetes, the concept of AZ is not realized by an API object. Instead,
+an AZ is usually represented by a group of hosts that have the same location label.
+Although hosts within the same AZ can be identified by labels, the capability of distributing Pods across
+AZs was missing in Kubernetes default scheduler. Hence it was difficult to use single
+<code>StatefulSet</code> or <code>Deployment</code> to perform  AZ-aware Pods deployment. Fortunately,
+in Kubernetes 1.16, a new feature called <a href="https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/">&quot;Pod Topology Spread Constraints&quot;</a>
+was introduced. Users now can add new constraints in the Pod Spec, and scheduler
+will enforce the constraints so that Pods can be distributed across failure
+domains such as AZs, regions or nodes, in a uniform fashion.</p><p>In Kruise, <strong>UnitedDeploymemt</strong> provides an alternative to achieve high availability in
+a cluster that consists of multiple fault domains - that is, managing multiple homogeneous
+workloads, and each workload is dedicated to a single <code>Subset</code>. Pod distribution across AZs is
+determined by the replica number of each workload.
+Since each <code>Subset</code> is associated with a workload, UnitedDeployment can support
+finer-grained rollout and deployment strategies.
+In addition, UnitedDeploymemt can be further extended to support
+multiple clusters! Let us reveal how UnitedDeployment is designed.</p><h2>Using <code>Subsets</code> to describe domain topology</h2><p>UnitedDeploymemt uses <code>Subset</code> to represent a failure domain. <code>Subset</code> API
+primarily specifies the nodes that forms the domain and the number of replicas, or
+the percentage of total replicas, run in this domain. UnitedDeployment manages
+subset workloads against a specific domain topology, described by a <code>Subset</code> array.</p><pre><code>type Topology struct {
+    // Contains the details of each subset.
+    Subsets []Subset
+}
+
+type Subset struct {
+    // Indicates the name of this subset, which will be used to generate
+    // subset workload name prefix in the format &#x27;&lt;deployment-name&gt;-&lt;subset-name&gt;-&#x27;.
+    Name string
+
+    // Indicates the node select strategy to form the subset.
+    NodeSelector corev1.NodeSelector
+
+    // Indicates the number of the subset replicas or percentage of it on the
+    // UnitedDeployment replicas.
+    Replicas *intstr.IntOrString
+}
+</code></pre><p>The specification of the subset workload is saved in <code>Spec.Template</code>. UnitedDeployment
+only supports <code>StatefulSet</code> subset workload as of now. An interesting part of <code>Subset</code>
+design is that now user can specify <strong>customized Pod distribution</strong> across AZs, which is not
+necessarily a uniform distribution in some cases. For example, if the AZ
+utilization or capacity are not homogeneous, evenly distributing Pods may lead to Pod deployment
+failure due to lack of resources. If users have prior knowledge about AZ resource capacity/usage,
+UnitedDeployment can help to apply an optimal Pod distribution to ensure overall
+cluster utilization remains balanced. Of course, if not specified, a uniform Pod distribution
+will be applied to maximize availability.</p><h2>Customized subset rollout <code>Partitions</code></h2><p>User can update all the UnitedDeployment subset workloads by providing a
+new version of subset workload template.
+Note that UnitedDeployment does not control
+the entire rollout process of all subset workloads, which is typically done by another rollout
+controller built on top of it. Since the replica number in each <code>Subset</code> can be different,
+it will be much more convenient to allow user to specify the individual rollout <code>Partition</code> of each
+subset workload instead of using one <code>Partition</code> to rule all, so that they can be upgraded in the same pace.
+UnitedDeployment provides <code>ManualUpdate</code> strategy to customize per subset rollout <code>Partition</code>.</p><pre><code>type UnitedDeploymentUpdateStrategy struct {
+    // Type of UnitedDeployment update.
+    Type UpdateStrategyType
+    // Indicates the partition of each subset.
+    ManualUpdate *ManualUpdate
+}
+
+type ManualUpdate struct {
+    // Indicates number of subset partition.
+    Partitions map[string]int32
+}
+</code></pre><p><img src="/img/blog/2019-11-20-uniteddeployment/uniteddeployment-1.png" alt="multi-cluster controller"/></p><p>This makes it fairly easy to coordinate multiple subsets rollout. For example,
+as illustrated in Figure 1, assuming UnitedDeployment manages three subsets and
+their replica numbers are 4, 2, 2 respectively, a rollout
+controller can realize a canary release plan of upgrading 50% of Pods in each
+subset at a time by setting subset partitions to 2, 1, 1 respectively.
+The same cannot be easily achieved by using a single workload controller like <code>StatefulSet</code>
+or <code>Deployment</code>.</p><h2>Multi-Cluster application management (In future)</h2><p>UnitedDeployment can be extended to support multi-cluster workload
+management. The idea is that <code>Subsets</code> may not only
+reside in one cluster, but also spread over multiple clusters.
+More specifically, domain topology specification will associate
+a <code>ClusterRegistryQuerySpec</code>, which describes the clusters that UnitedDeployment
+may distribute Pods to. Each cluster is represented by a custom resource managed by a
+ClusterRegistry controller using Kubernetes <a href="https://github.com/kubernetes/cluster-registry">cluster registry APIs</a>.</p><pre><code>type Topology struct {
+  // ClusterRegistryQuerySpec is used to find the all the clusters that
+  // the workload may be deployed to. 
+  ClusterRegistry *ClusterRegistryQuerySpec
+  // Contains the details of each subset including the target cluster name and
+  // the node selector in target cluster.
+  Subsets []Subset
+}
+
+type ClusterRegistryQuerySpec struct {
+  // Namespaces that the cluster objects reside.
+  // If not specified, default namespace is used.
+  Namespaces []string
+  // Selector is the label matcher to find all qualified clusters.
+  Selector   map[string]string
+  // Describe the kind and APIversion of the cluster object.
+  ClusterType metav1.TypeMeta
+}
+
+type Subset struct {
+  Name string
+
+  // The name of target cluster. The controller will validate that
+  // the TargetCluster exits based on Topology.ClusterRegistry.
+  TargetCluster *TargetCluster
+
+  // Indicate the node select strategy in the Subset.TargetCluster.
+  // If Subset.TargetCluster is not set, node selector strategy refers to
+  // current cluster.
+  NodeSelector corev1.NodeSelector
+
+  Replicas *intstr.IntOrString 
+}
+
+type TargetCluster struct {
+  // Namespace of the target cluster CRD
+  Namespace string
+  // Target cluster name
+  Name string
+}
+</code></pre><p>A new <code>TargetCluster</code> field is added to the <code>Subset</code> API. If it presents, the
+<code>NodeSelector</code> indicates the node selection logic in the target cluster. Now
+UnitedDeployment controller can distribute application Pods to multiple clusters by
+instantiating a <code>StatefulSet</code> workload in each target cluster with a specific
+replica number (or a percentage of total replica), as illustrated in Figure 2.</p><p><img src="/img/blog/2019-11-20-uniteddeployment/uniteddeployment-2.png" alt="multi-cluster	controller"/></p><p>At a first glance, UnitedDeployment looks more like a federation
+controller following the design pattern of <a href="https://github.com/kubernetes-sigs/kubefed">Kubefed</a>,
+but it isn&#x27;t. The fundamental difference is that Kubefed focuses on propagating arbitrary
+object types to remote clusters instead of managing an application across clusters.
+In this example, had a Kubefed style controller been used, each <code>StatefulSet</code> workload in
+individual cluster would have a replica of 100. UnitedDeployment focuses more on
+providing the ability of managing multiple workloads in multiple clusters on behalf
+of one application, which is absent in Kubernetes community to the best of our
+knowledge.</p><h2>Summary</h2><p>This blog post introduces UnitedDeployment, a new controller which helps managing
+application spread over multiple domains (in arbitrary clusters).
+It not only allows evenly distributing Pods over AZs,
+which arguably can be more efficiently done using the new Pod Topology Spread
+Constraint APIs though, but also enables flexible workload deployment/rollout and
+supports multi-cluster use cases in the future.</p>]]></content>
         <author>
             <name>Fei Guo</name>
             <uri>https://github.com/Fei-Guo</uri>
@@ -24,6 +161,56 @@
         <link href="https://openkruise.io/zh/blog/learning-concurrent-reconciling"/>
         <updated>2019-11-10T00:00:00.000Z</updated>
         <summary type="html"><![CDATA[The concept of controller in Kubernete is one of the most important reasons that make it successful.]]></summary>
+        <content type="html"><![CDATA[<p>The concept of controller in Kubernete is one of the most important reasons that make it successful.
+Controller is the core mechanism that supports Kubernetes APIs to ensure the system reaches
+the desired state. By leveraging CRDs/controllers and operators, it is fairly easy for
+other systems to integrate with Kubernetes. </p><p>Controller runtime library and the corresponding controller tool <a href="https://book.kubebuilder.io/introduction.html">KubeBuilder</a>
+are widely used by many developers to build their customized Kubernetes controllers. In Kruise project,
+we also use Kubebuilder to generate scaffolding codes that implement the &quot;reconciling&quot; logic.
+In this blog post, I will share some learnings from
+Kruise controller development, particularly, about concurrent reconciling. </p><p>Some people may already notice that controller runtime supports concurrent reconciling.
+Check for the options (<a href="https://github.com/kubernetes-sigs/controller-runtime/blob/81842d0e78f7111f0566156189806e2801e3adf1/pkg/controller/controller.go#L32">source</a>)
+used to create new controller:  </p><pre><code>type Options struct {
+    // MaxConcurrentReconciles is the maximum number of concurrent Reconciles which can be run. Defaults to 1.
+    MaxConcurrentReconciles int
+
+    // Reconciler reconciles an object
+    Reconciler reconcile.Reconciler
+}
+</code></pre><p>Concurrent reconciling is quite useful when the states of the controller&#x27;s watched objects change so
+frequently that a large amount of reconcile requests are sent to and queued in the reconcile queue.
+Multiple reconcile loops do help drain the reconcile queue much more quickly compared to the default single
+reconcile loop case. Although this is a great feature for performance, without digging into the code,
+an immediate concern that a developer may raise is that will this introduce consistency issue?
+i.e., is it possible that two reconcile loops handle the same object at the same time?</p><p>The answer is NO, as you may expect. The &quot;magic&quot; is enforced by the workqueue
+implementation in Kubernetes <code>client-go</code>, which is used by controller runtime reconcile queue.
+The workqueue algorithm (<a href="https://github.com/kubernetes/client-go/blob/a57d0056dbf1d48baaf3cee876c123bea745591f/util/workqueue/queue.go#L65">source</a>)
+is demonstrated in Figure 1.</p><p><img src="/img/blog/2019-11-10-learning-concurrent-reconciling/workqueue.png" alt="workqueue"/></p><p>Basically, the workqueue uses a <code>queue</code> and two <code>sets</code> to coordinate the process of handling multiple reconciling
+requests against the same object. Figure 1(a) presents the initial state of handling four reconcile requests,
+two of which target the same object A. When a request arrives, the target object is first added to the <code>dirty set</code>
+or dropped if it presents in <code>dirty set</code>,  and then pushed to the <code>queue</code> only if it is not presented in
+<code>processing set</code>. Figure 1(b) shows the case of adding three requests consecutively.
+When a reconciling loop is ready to serve a request, it gets the target object from the <code>front</code> of the queue. The
+object is also added to the <code>processing set</code> and removed from the <code>dirty set</code> (Figure 1(c)).
+Now if a request of the processing object arrives, the object is only added to the <code>dirty set</code>, not
+to the <code>queue</code> (Figure 1(d)). This guarantees that an object is only handled by one reconciling
+loop. When reconciling is done, the object is removed from the <code>processing set</code>. If the object is also
+shown in the <code>dirty set</code>, it is added back to the <code>back</code> of the <code>queue</code> (Figure 1(e)).</p><p>The above algorithm has following implications:</p><ul><li>It avoids concurrent reconciling for the same object.</li><li>The object processing order can be different from arriving order even if there is only one reconciling thread.
+This usually would not be a problem since the controller still reconciles to the final cluster state. However,
+the out of order reconciling may cause a significant delay for a request.
+<img src="/img/blog/2019-11-10-learning-concurrent-reconciling/workqueue-starve.png" alt="workqueue-starve"/>.... For example, as illustrated in
+Figure 2, assuming there is only one reconciling thread and two requests targeting the same object A arrive, one of
+them will be processed and object A will be added to the <code>dirty set</code> (Figure 2(b)).
+If the reconciling takes a long time and during which a large number of new reconciling requests arrive,
+the queue will be filled up by the new requests (Figure 2(c)). When reconciling is done, object A will be
+added to the <code>back</code> of the <code>queue</code> (Figure 2(d)). It would not be handled until all the requests coming after had been
+handled, which can cause a noticeable long delay. The workaround is actually simple - <strong>USE CONCURRENT RECONCILES</strong>.
+Since the cost of an idle go routine is fairly small, the overhead of having multiple reconcile threads is
+low even if the controller is idle. It seems that the <code>MaxConcurrentReconciles</code> value should
+be overwritten to a value larger than the default 1 (CloneSet uses 10 for example).</li><li>Last but not the least, reconcile requests can be dropped (if the target exists in <code>dirty set</code>). This means
+that we cannot assume that the controller can track all the object state change events. Recalling a presentation
+given by <a href="https://speakerdeck.com/thockin/edge-vs-level-triggered-logic">Tim Hockin</a>, Kubernetes controller
+is level triggered, not edge triggered. It reconciles for state, not for events. </li></ul><p>Thanks for reading the post, hope it helps.</p>]]></content>
         <author>
             <name>Fei Guo</name>
             <uri>https://github.com/Fei-Guo</uri>
@@ -35,6 +222,9 @@
         <link href="https://openkruise.io/zh/blog/workload-classification-guidance"/>
         <updated>2019-10-10T00:00:00.000Z</updated>
         <summary type="html"><![CDATA[Kubernetes 目前并没有为一个应用应该使用哪个控制器提供明确的指引，这尤其不利于用户理解应用和 workload 的关系。]]></summary>
+        <content type="html"><![CDATA[<p>Kubernetes 目前并没有为一个应用应该使用哪个控制器提供明确的指引，这尤其不利于用户理解应用和 workload 的关系。
+比如说，用户通常知道什么时候应该用 <code>Job/CronJob</code> 或者 <code>DaemonSet</code>，这些 workload 的概念是非常明确的 -- 前者是为了任务类型的应用部署、后者则是面向需要分发到每个 node 上的长期运行 Pod。</p><p>但是另一些 workload 比如 <code>Deployment</code> 和 <code>StatefulSet</code> 之间的界限是比较模糊的。一个通过 <code>Deployment</code> 部署的应用也可以通过 <code>StatefulSet</code> 部署，<code>StatefulSet</code> 对 Pod 的 <code>OrderedReady</code> 策略并非是强制的。而且，随着 Kubernetes 社区中越来越多的自定义 controllers/operators 变的成熟，用户就越难以为自己的应用找到一个最合适的 workload 来管理，尤其是一些控制器的功能上都存在重合部分。</p><p>Kruise 尝试在两个方面来缓解这个问题：</p><ul><li>在 Kruise 中谨慎设计新的控制器，避免不必要的功能重复给用户来带困扰</li><li>为所有提供出来的 workload 控制器创建一个分类机制，方便用户更容易理解它们的使用场景。我们下面会详细描述一下，首先是 controller 命名上的规范：</li></ul><h3>Controller 命名惯例</h3><p>一个易于理解的 controller 名字对于用户选用是非常有帮助的。经过对内外部不少 Kubernetes 用户的咨询，我们决定在 Kruise 中实行以下的命名惯例（这些惯例与目前上游的 controller 命名并不冲突）：</p><ul><li><strong>Set</strong> 后缀：这类 controller 会直接操作和管理 Pod，比如 <code>CloneSet</code>, <code>ReplicaSet</code>, <code>SidecarSet</code> 等。它们提供了 Pod 维度的多种部署、发布策略。</li><li><strong>Deployment</strong> 后缀：这类 controller 不会直接地操作 Pod，它们通过操作一个或多个 <strong>Set</strong> 类型的 workload 来间接管理 Pod，比如 <code>Deployment</code> 管理 <code>ReplicaSet</code> 来提供一些额外的滚动策略，以及 <code>UnitedDeployment</code> 支持管理多个 <code>StatefulSet</code>/<code>AdvancedStatefulSet</code> 来将应用部署到不同的可用区。</li><li><strong>Job</strong> 后缀：这类 controller 主要管理短期执行的任务，比如 <code>BroadcastJob</code> 支持将任务类型的 Pod 分发到集群中所有 Node 上。</li></ul><p><strong>Set</strong>, <strong>Deployment</strong> 和 <strong>Job</strong> 都是被 Kubernetes 社区广泛接受的概念，在 Kruise 中给他们定义了明确的扩展规范。</p><p>我们能否对有相同后缀的 controller 做进一步区分呢？通常来说前缀前面的名字应该是让人能一目了然的，不过也有一些情况下很难一语描述 controller 自身的行为。可以看一下 <code>StatefulSet</code> 来源的这个 <a href="https://github.com/kubernetes/kubernetes/issues/27430">issue</a>，社区用了四个月的时间才决定用 <code>StatefulSet</code> 这个名字代替过去的 <code>PetSet</code>，尽管新名字也让人看起来比较困惑。</p><p>这个例子说明了有时候一个精心计划的名字也不一定有助于标识这个 controller。因此，Kruise 并不打算解决这个问题，而是通过以下的标准来帮助对 <strong>Set</strong> 类型的 controller 分类。</p><h3>固定 Pod 名字</h3><p><code>StatefulSet</code> 的一个独有的特性是支持一致的 Pod 网络和存储标识，这在本质上是通过固定 Pod 名字来实现的。Pod 名字可以用于标识网络和存储，因为它是 DNS record 的一部分，并且可以作为 PVC 的名字。既然 <code>StatefulSet</code> 下的 Pod 都是通过同一个模板创建出来的，为什么需要这个特性呢？一个常见的例子就是用于管理分布式一致性服务，比如 etcd 或 Zookeeper。这类应用需要知道集群构成的所有成员，并且在重建、发布后都需要保持原有的网络标识和磁盘数据。而像 <code>ReplicaSet</code>, <code>DaemonSet</code> 这类的控制器是面向无状态的，它们并不会新建 Pod 时并不会复用过去的 Pod 名字。</p><p>为了支持有状态，控制器的实现上会比较固定。<code>StatefulSet</code> 依赖于给每个 Pod 名字中加入一个序号，在扩缩容和滚动升级的时候都需要按照这个序号的顺序来执行。但这样一来，<code>StatefulSet</code> 也就无法做到另一些增强功能，比如：</p><ul><li>当缩小 replicas 时选择特定的 Pod 来删除，这个功能在跨多个可用区部署的时候会用到。</li><li>把一个存量的 Pod 接管到另一个 workload 下面（比如 <code>StatefulSet</code>）</li></ul><p>我们发现很多云原生应用并不需要这个有状态的特性来固定 Pod 名字，而 <code>StatefulSet</code> 又很难在其他方面做扩展。为了解决这个问题，Kruise 发布了一个新的控制器 <code>CloneSet</code> 来管理无状态应用，<code>CloneSet</code> 提供了对 PVC 模板的支持，并且为应用部署提供了丰富的可选策略。以下表中比较了 Advanced StatefulSet 和 CloneSet 一些方面的能力：</p><table><thead><tr><th>Features</th><th align="center">Advanced StatefulSet</th><th align="center">CloneSet</th></tr></thead><tbody><tr><td>PVC</td><td align="center">Yes</td><td align="center">Yes</td></tr><tr><td>Pod name</td><td align="center">Ordered</td><td align="center">Random</td></tr><tr><td>Inplace upgrade</td><td align="center">Yes</td><td align="center">Yes</td></tr><tr><td>Max unavailable</td><td align="center">Yes</td><td align="center">Yes</td></tr><tr><td>Selective deletion</td><td align="center">No</td><td align="center">Yes</td></tr><tr><td>Selective upgrade</td><td align="center">No</td><td align="center">Yes</td></tr><tr><td>Change Pod ownership</td><td align="center">No</td><td align="center">Yes</td></tr></tbody></table><p>目前对于 Kruise 用户的建议是，如果你的应用需要固定的 Pod 名字（网络和存储标识），你可以使用 <code>Advanced StatefulSet</code>，否则 <code>CloneSet</code> 应该是 <strong>Set</strong> 类型控制器的首选。</p><h3>总结</h3><p>Kruise 会为各种 workload 选择明确的名字，本文目标是能为 Kruise 用户提供选择正确 controller 部署应用的指引。
+希望对你有帮助！</p>]]></content>
         <author>
             <name>Fei Guo</name>
             <uri>https://github.com/Fei-Guo</uri>
