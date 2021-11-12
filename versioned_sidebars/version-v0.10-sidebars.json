@@ -1,5 +1,5 @@
 {
-  "version-v0.10.0/docs": [
+  "version-v0.10/docs": [
     {
       "type": "category",
       "label": "Getting Started",
@@ -7,11 +7,11 @@
       "items": [
         {
           "type": "doc",
-          "id": "version-v0.10.0/introduction"
+          "id": "version-v0.10/introduction"
         },
         {
           "type": "doc",
-          "id": "version-v0.10.0/installation"
+          "id": "version-v0.10/installation"
         }
       ],
       "collapsible": true
@@ -23,7 +23,7 @@
       "items": [
         {
           "type": "doc",
-          "id": "version-v0.10.0/core-concepts/architecture"
+          "id": "version-v0.10/core-concepts/architecture"
         }
       ],
       "collapsible": true
@@ -41,15 +41,15 @@
           "items": [
             {
               "type": "doc",
-              "id": "version-v0.10.0/user-manuals/cloneset"
+              "id": "version-v0.10/user-manuals/cloneset"
             },
             {
               "type": "doc",
-              "id": "version-v0.10.0/user-manuals/advancedstatefulset"
+              "id": "version-v0.10/user-manuals/advancedstatefulset"
             },
             {
               "type": "doc",
-              "id": "version-v0.10.0/user-manuals/advanceddaemonset"
+              "id": "version-v0.10/user-manuals/advanceddaemonset"
             }
           ]
         },
@@ -61,11 +61,11 @@
           "items": [
             {
               "type": "doc",
-              "id": "version-v0.10.0/user-manuals/broadcastjob"
+              "id": "version-v0.10/user-manuals/broadcastjob"
             },
             {
               "type": "doc",
-              "id": "version-v0.10.0/user-manuals/advancedcronjob"
+              "id": "version-v0.10/user-manuals/advancedcronjob"
             }
           ]
         },
@@ -77,7 +77,7 @@
           "items": [
             {
               "type": "doc",
-              "id": "version-v0.10.0/user-manuals/sidecarset"
+              "id": "version-v0.10/user-manuals/sidecarset"
             }
           ]
         },
@@ -89,11 +89,11 @@
           "items": [
             {
               "type": "doc",
-              "id": "version-v0.10.0/user-manuals/workloadspread"
+              "id": "version-v0.10/user-manuals/workloadspread"
             },
             {
               "type": "doc",
-              "id": "version-v0.10.0/user-manuals/uniteddeployment"
+              "id": "version-v0.10/user-manuals/uniteddeployment"
             }
           ]
         },
@@ -105,11 +105,11 @@
           "items": [
             {
               "type": "doc",
-              "id": "version-v0.10.0/user-manuals/containerrecreaterequest"
+              "id": "version-v0.10/user-manuals/containerrecreaterequest"
             },
             {
               "type": "doc",
-              "id": "version-v0.10.0/user-manuals/imagepulljob"
+              "id": "version-v0.10/user-manuals/imagepulljob"
             }
           ]
         },
@@ -121,11 +121,11 @@
           "items": [
             {
               "type": "doc",
-              "id": "version-v0.10.0/user-manuals/deletionprotection"
+              "id": "version-v0.10/user-manuals/deletionprotection"
             },
             {
               "type": "doc",
-              "id": "version-v0.10.0/user-manuals/podunavailablebudget"
+              "id": "version-v0.10/user-manuals/podunavailablebudget"
             }
           ]
         }
@@ -139,7 +139,7 @@
       "items": [
         {
           "type": "doc",
-          "id": "version-v0.10.0/best-practices/hpa-configuration"
+          "id": "version-v0.10/best-practices/hpa-configuration"
         }
       ],
       "collapsible": true
@@ -151,22 +151,22 @@
       "items": [
         {
           "type": "doc",
-          "id": "version-v0.10.0/developer-manuals/go-client"
+          "id": "version-v0.10/developer-manuals/go-client"
         },
         {
           "type": "doc",
-          "id": "version-v0.10.0/developer-manuals/java-client"
+          "id": "version-v0.10/developer-manuals/java-client"
         },
         {
           "type": "doc",
-          "id": "version-v0.10.0/developer-manuals/other-languages"
+          "id": "version-v0.10/developer-manuals/other-languages"
         }
       ],
       "collapsible": true
     },
     {
       "type": "doc",
-      "id": "version-v0.10.0/faq"
+      "id": "version-v0.10/faq"
     }
   ]
 }

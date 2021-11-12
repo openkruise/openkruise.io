@@ -21,7 +21,7 @@ $ helm repo update
 
 # Install the stable version.
 # Note that if the Kubernetes version < 1.15, you may need to add --disable-openapi-validation
-$ helm install kruise openkruise/kruise --version 0.10.0
+$ helm install kruise openkruise/kruise --version 0.10.1
 ```
 
 ## Upgrade with helm
@@ -37,7 +37,7 @@ $ helm repo update
 
 # Upgrade the latest version.
 # Note that if the Kubernetes version < 1.15, you may need to add --disable-openapi-validation
-$ helm upgrade kruise openkruise/kruise --version 0.10.0
+$ helm upgrade kruise openkruise/kruise --version 0.10.1
 ```
 
 Note that:
@@ -70,7 +70,7 @@ The following table lists the configurable parameters of the chart and their def
 | `manager.log.level`                       | Log level that kruise-manager printed                        | `4`                           |
 | `manager.replicas`                        | Replicas of kruise-controller-manager deployment             | `2`                           |
 | `manager.image.repository`                | Repository for kruise-manager image                          | `openkruise/kruise-manager`   |
-| `manager.image.tag`                       | Tag for kruise-manager image                                 | `v0.10.0`                     |
+| `manager.image.tag`                       | Tag for kruise-manager image                                 | `v0.10.1`                     |
 | `manager.resources.limits.cpu`            | CPU resource limit of kruise-manager container               | `100m`                        |
 | `manager.resources.limits.memory`         | Memory resource limit of kruise-manager container            | `256Mi`                       |
 | `manager.resources.requests.cpu`          | CPU resource request of kruise-manager container             | `100m`                        |
@@ -91,6 +91,7 @@ The following table lists the configurable parameters of the chart and their def
 | `webhookConfiguration.failurePolicy.pods` | The failurePolicy for pods in mutating webhook configuration | `Ignore`                      |
 | `webhookConfiguration.timeoutSeconds`     | The timeoutSeconds for all webhook configuration             | `30`                          |
 | `crds.managed`                            | Kruise will not install CRDs with chart if this is false     | `true`                        |
+| `manager.hostNetwork`                     | Whether kruise-manager pod should run with hostnetwork       | `false`                       |
 
 Specify each parameter using the `--set key=value[,key=value]` argument to `helm install` or `helm upgrade`.
 
