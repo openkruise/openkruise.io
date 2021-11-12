@@ -32,7 +32,7 @@ const darkCodeTheme = require('prism-react-renderer/themes/dracula');
           showLastUpdateAuthor: true,
           showLastUpdateTime: true,
           includeCurrentVersion: true,
-          lastVersion: 'v0.10.0',
+          lastVersion: 'v0.10',
         },
         blog: {
           showReadingTime: true,
