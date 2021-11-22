@@ -55,6 +55,7 @@ module.exports = {
             'user-manuals/containerrecreaterequest',
             'user-manuals/imagepulljob',
             'user-manuals/containerlaunchpriority',
+            "user-manuals/resourcedistribution",
           ],
           "Application Protection": [
             'user-manuals/deletionprotection',
