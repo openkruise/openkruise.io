@@ -16,7 +16,7 @@ $ helm repo add openkruise https://openkruise.github.io/charts/
 $ helm repo update
 
 # Install the latest version.
-$ helm install kruise openkruise/kruise --version 1.0.0-alpha.2
+$ helm install kruise openkruise/kruise --version 1.0.0-beta.0
 ```
 
 *If you want to install the stable version, read [doc](/docs/installation).*
@@ -31,7 +31,7 @@ $ helm repo add openkruise https://openkruise.github.io/charts/
 $ helm repo update
 
 # Upgrade the latest version.
-$ helm upgrade kruise openkruise/kruise --version 1.0.0-alpha.2
+$ helm upgrade kruise openkruise/kruise --version 1.0.0-beta.0
 ```
 
 Note that:
@@ -67,7 +67,7 @@ The following table lists the configurable parameters of the chart and their def
 | `manager.log.level`                       | Log level that kruise-manager printed                        | `4`                           |
 | `manager.replicas`                        | Replicas of kruise-controller-manager deployment             | `2`                           |
 | `manager.image.repository`                | Repository for kruise-manager image                          | `openkruise/kruise-manager`   |
-| `manager.image.tag`                       | Tag for kruise-manager image                                 | `v1.0.0-alpha.2`              |
+| `manager.image.tag`                       | Tag for kruise-manager image                                 | `v1.0.0-beta.0`               |
 | `manager.resources.limits.cpu`            | CPU resource limit of kruise-manager container               | `100m`                        |
 | `manager.resources.limits.memory`         | Memory resource limit of kruise-manager container            | `256Mi`                       |
 | `manager.resources.requests.cpu`          | CPU resource request of kruise-manager container             | `100m`                        |
