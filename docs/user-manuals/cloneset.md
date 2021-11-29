@@ -172,6 +172,29 @@ So there will be no limit to CloneSet name.
 
 Don't worry. Even if you enable the `CloneSetShortHash`, CloneSet will still recognize and manage the old Pods with full revision label.
 
+## Scale features
+
+### Scale up with rate limit
+
+**FEATURE STATE:** Kruise v1.0.0
+
+Users can specify `ScaleStrategy.MaxUnavailable` to limit the step size of CloneSet **Scaling Up**, so as to minimize the impact on application services.
+This value can be an absolute number (e.g., 5) or a percentage of desired number of Pods (e.g., 10%). Default value is `nil` (i.e., empty pointer), which indicates non-limitation.
+
+`ScaleStrategy.MaxUnavailable` field can cooperate with 'Spec.MinReadySeconds' field to work, for example:
+
+```yaml
+apiVersion: apps.kruise.io/v1alpha1
+kind: CloneSet
+spec:
+  # ...
+  minReadySeconds: 60
+  scaleStrategy:
+    maxUnavailable: 1
+```
+
+The effect of the above configuration is that during scaling up, CloneSet will not create the next pod until the previous pod has been ready for more than one minute.
+
 ## Update features
 
 ### Update types
