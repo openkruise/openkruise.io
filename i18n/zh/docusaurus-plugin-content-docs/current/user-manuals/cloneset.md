@@ -163,6 +163,29 @@ metadata:
 
 不用担心，即使打开了 `CloneSetShortHash`，CloneSet 仍然会识别和管理过去存量的 revision label 为完整格式的 Pod。
 
+## 扩缩容功能
+
+### 流式扩容
+
+**FEATURE STATE:** Kruise v1.0.0
+
+CloneSet **扩容**时可以指定 `ScaleStrategy.MaxUnavailable` 来限制扩容的步长，以达到服务应用影响最小化的目的。
+它可以设置为一个**绝对值**或者**百分比**，如果不填，则 Kruise 会设置为默认值为 `nil`，即表示不设限制。
+
+该字段可以配合 `Spec.MinReadySeconds` 字段使用, 例如：
+
+```yaml
+apiVersion: apps.kruise.io/v1alpha1
+kind: CloneSet
+spec:
+  # ...
+  minReadySeconds: 60
+  scaleStrategy:
+    maxUnavailable: 1
+```
+
+上述配置能达到的效果是：在扩容时，只有当上一个扩容出的 Pod 已经 Ready 超过一分钟后，CloneSet 才会执行创建下一个 Pod 的操作。
+
 ## 升级功能
 
 ### 升级类型
