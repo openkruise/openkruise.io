@@ -285,7 +285,7 @@ spec:
     type: RollingUpdate
     selector:
       matchLabels:
-      - canary.release: true
+        canary.release: true
 ```
 
 ### sidecarset update order

@@ -277,7 +277,7 @@ spec:
     type: RollingUpdate
     selector:
       matchLabels:
-      - canary.release: true
+        canary.release: true
 ```
 
 ### 发布顺序控制
