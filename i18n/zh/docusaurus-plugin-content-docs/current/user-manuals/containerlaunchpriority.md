@@ -20,7 +20,7 @@ Container Launch Priority 提供了控制一个 Pod 中容器启动顺序的方�
 ```yaml
 apiVersion: v1
 kind: Pod
-  labels:
+  annotations:
     apps.kruise.io/container-launch-priority: Ordered
 spec:
   containers:

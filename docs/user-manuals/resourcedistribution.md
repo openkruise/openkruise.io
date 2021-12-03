@@ -14,7 +14,7 @@ Currently, ResourceDistribution supports the two kind resources --- **Secret & C
 
 ## API Description
 
-ResourceDistribution is a kind of **cluster-scoped CRD**, which is mainly composed of two fields: **`resource` and `targets`**.  
+ResourceDistribution is a kind of **cluster-scoped CRD**, which is mainly composed of two fields: **`resource` and `targets`**.
 
 The **`resource`** field is used to describe the resource to be distributed by the user, and **`targets`** is used to describe the destination namespaces.
 ```yaml

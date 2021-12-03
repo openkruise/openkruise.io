@@ -46,6 +46,39 @@ What changes does it consider to be possilble to in-place update?
 
 Otherwise, the changes to other fields such as `spec.template.spec.containers[x].env` or `spec.template.spec.containers[x].resources` will go back to ReCreate Update.
 
+Take the CloneSet YAML below as an example:
+
+1. Modify `app-image:v1` image, will trigger in-place update.
+2. Modify the value of `app-config` in annotations, will trigger in-place update (Read the [Requirements](#requirements) below).
+3. Modify the two fields above together, will tigger in-place update both image and environment.
+4. Directly modify the value of `APP_NAME` in env or add a new env, will trigger recreate update.
+
+```yaml
+apiVersion: apps.kruise.io/v1alpha1
+kind: CloneSet
+metadata:
+  ...
+spec:
+  replicas: 1
+  template:
+    metadata:
+      annotations:
+        app-config: "... the real env value ..."
+    spec:
+      containers:
+      - name: app
+        image: app-image:v1
+        env:
+        - name: APP_CONFIG
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.annotations['app-config']
+        - name: APP_NAME
+          value: xxx
+  updateStrategy:
+    type: InPlaceIfPossible
+```
+
 ## Workflow overview
 
 You can see the whole workflow of in-place update below (*you may need to right click and open it in a new tab*):

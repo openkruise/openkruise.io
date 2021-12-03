@@ -46,6 +46,39 @@ title: 原地升级
 
 否则，其他字段的改动，比如 `spec.template.spec.containers[x].env` 或 `spec.template.spec.containers[x].resources`，都是会回退为重建升级。
 
+例如对下述 CloneSet YAML：
+
+1. 修改 `app-image:v1` 镜像，会触发原地升级。
+2. 修改 annotations 中 `app-config` 的 value 内容，会触发原地升级（参考下文[使用要求](#使用要求)）。
+3. 同时修改上述两个字段，会在原地升级中同时更新镜像和环境变量。
+4. 直接修改 env 中 `APP_NAME` 的 value 内容或者新增 env 等其他操作，会触发 Pod 重建升级。
+
+```yaml
+apiVersion: apps.kruise.io/v1alpha1
+kind: CloneSet
+metadata:
+  ...
+spec:
+  replicas: 1
+  template:
+    metadata:
+      annotations:
+        app-config: "... the real env value ..."
+    spec:
+      containers:
+      - name: app
+        image: app-image:v1
+        env:
+        - name: APP_CONFIG
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.annotations['app-config']
+        - name: APP_NAME
+          value: xxx
+  updateStrategy:
+    type: InPlaceIfPossible
+```
+
 ## 工作流程总览
 
 可以在下图中看到原地升级的整体工作流程（*你可能需要右击在新标签页中打开*）：
