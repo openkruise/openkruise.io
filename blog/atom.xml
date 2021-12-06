@@ -2,11 +2,141 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://openkruise.io/blog</id>
     <title>OpenKruise Blog</title>
-    <updated>2019-11-20T00:00:00.000Z</updated>
+    <updated>2021-09-06T00:00:00.000Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://openkruise.io/blog"/>
     <subtitle>OpenKruise Blog</subtitle>
     <icon>https://openkruise.io/img/openkruise.ico</icon>
+    <entry>
+        <title type="html"><![CDATA[OpenKruise 0.10.0, New features of multi-domain management, application protection]]></title>
+        <id>openkruise-0.10.0</id>
+        <link href="https://openkruise.io/blog/openkruise-0.10.0"/>
+        <updated>2021-09-06T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[On Sep 6th, 2021, OpenKruise released the latest version v0.10.0, with new features, such as WorkloadSpread and PodUnavailableBudget. This article provides an overview of this new version.]]></summary>
+        <content type="html"><![CDATA[<p>On Sep 6th, 2021, OpenKruise released the latest version v0.10.0, with new features, such as WorkloadSpread and PodUnavailableBudget. This article provides an overview of this new version.</p><h2>WorkloadSpread</h2><p>WorkloadSpread can distribute Pods of workload to different types of Node according to some polices, which empowers single workload the abilities for
+multi-domain deployment and elastic deployment.</p><p>Some common policies include:</p><ul><li>fault toleration spread (for example, spread evenly among hosts, az, etc)</li><li>spread according to the specified ratio (for example, deploy Pod to several specified az according to the proportion)</li><li>subset management with priority, such as<ul><li>deploy Pods to ecs first, and then deploy to eci when its resources are insufficient.</li><li>deploy a fixed number of Pods to ecs first, and the rest Pods are deployed to eci.</li></ul></li><li>subset management with customization, such as<ul><li>control how many pods in a workload are deployed in different cpu arch</li><li>enable pods in different cpu arch to have different resource requirements</li></ul></li></ul><p>The feature of WorkloadSpread is similar with UnitedDeployment in OpenKruise community. Each WorkloadSpread defines multi-domain
+called <code>subset</code>. Each domain may provide the limit to run the replicas number of pods called <code>maxReplicas</code>.
+WorkloadSpread injects the domain configuration into the Pod by Webhook, and it also controls the order of scale in and scale out.</p><pre><code class="language-yaml">apiVersion: apps.kruise.io/v1alpha1
+kind: WorkloadSpread
+metadata:
+  name: workloadspread-demo
+spec:
+  targetRef:
+    apiVersion: apps/v1 | apps.kruise.io/v1alpha1
+    kind: Deployment | CloneSet
+    name: workload-xxx
+  subsets:
+  - name: subset-a
+    requiredNodeSelectorTerm:
+      matchExpressions:
+      - key: topology.kubernetes.io/zone
+        operator: In
+        values:
+        - zone-a
+    maxReplicas: 10 | 30%
+  - name: subset-b
+    requiredNodeSelectorTerm:
+      matchExpressions:
+      - key: topology.kubernetes.io/zone
+        operator: In
+        values:
+        - zone-b
+</code></pre><p>The WorkloadSpread is related to a Workload via <code>targetRef</code>. When a Pod is created by the Workload, it will be injected topology policies by Kruise according to the rules in WorkloadSpread.</p><p>Note that WorkloadSpread uses <a href="https://kubernetes.io/docs/reference/labels-annotations-taints/#pod-deletion-cost">Pod Deletion Cost</a> to control the priority of scale down. So:</p><ul><li>If the Workload type is CloneSet, it already supports the feature.</li><li>If the Workload type is Deployment or ReplicaSet, it requires your Kubernetes version &gt;= 1.22.</li></ul><p>Also you have to enable <code>WorkloadSpread</code> feature-gate when you install or upgrade Kruise.</p><h2>PodUnavailableBudget</h2><p>Kubernetes offers <a href="https://kubernetes.io/docs/tasks/run-application/configure-pdb/">Pod Disruption Budget</a> to help you run highly available applications even when you introduce frequent <a href="https://kubernetes.io/docs/concepts/workloads/pods/disruptions/">voluntary disruptions</a>.
+PDB limits the number of Pods of a replicated application that are down simultaneously from voluntary disruptions. However, it can only constrain the voluntary disruption triggered by the <a href="https://kubernetes.io/docs/tasks/administer-cluster/safely-drain-node/#eviction-api">Eviction API</a>.
+For example, when you run kubectl drain, the tool tries to evict all of the Pods on the Node you&#x27;re taking out of service.</p><p>In the following voluntary disruption scenarios, there are still business disruption or SLA degradation situations:</p><ol><li>The application owner update deployment&#x27;s pod template for general upgrading, while cluster administrator drain nodes to scale the cluster down(learn about <a href="https://github.com/kubernetes/autoscaler/#readme">Cluster Autoscaling</a>).</li><li>The middleware team is using SidecarSet to rolling upgrade the sidecar containers of the cluster, e.g. ServiceMesh envoy, while HPA triggers the scale-down of business applications.</li><li>The application owner and middleware team release the same Pods at the same time based on OpenKruise cloneSet, sidecarSet in-place upgrades</li></ol><p>In voluntary disruption scenarios, PodUnavailableBudget can achieve the effect of preventing application disruption or SLA degradation, which greatly improves the high availability of application services.</p><pre><code class="language-yaml">apiVersion: apps.kruise.io/v1alpha1
+kind: PodUnavailableBudget
+metadata:
+  name: web-server-pub
+  namespace: web
+spec:
+  targetRef:
+    apiVersion: apps/v1 | apps.kruise.io/v1alpha1
+    kind: Deployment | CloneSet | StatefulSet | ...
+    name: web-server
+  # selector label query over pods managed by the budget
+  # selector and TargetReference are mutually exclusive, targetRef is priority to take effect.
+  # selector is commonly used in scenarios where applications are deployed using multiple workloads,
+  # and targetRef is used for protection against a single workload.
+# selector:
+#   matchLabels:
+#     app: web-server
+  # maximum number of Pods unavailable for the current cloneset, the example is cloneset.replicas(5) * 60% = 3
+  # maxUnavailable and minAvailable are mutually exclusive, maxUnavailable is priority to take effect
+  maxUnavailable: 60%
+  # Minimum number of Pods available for the current cloneset, the example is cloneset.replicas(5) * 40% = 2
+# minAvailable: 40%
+</code></pre><p>You have to enable the feature-gates when install or upgrade Kruise:</p><ul><li>PodUnavailableBudgetDeleteGate: protect Pod deletion or eviction.</li><li>PodUnavailableBudgetUpdateGate: protect Pod update operations, such as in-place update.</li></ul><h2>CloneSet supports scaledown priority by Spread Constraints</h2><p>When <code>replicas</code> of a CloneSet decreased, it has the arithmetic to choose Pods and delete them.</p><ol><li>Node unassigned &lt; assigned</li><li>PodPending &lt; PodUnknown &lt; PodRunning</li><li>Not ready &lt; ready</li><li><strong>Lower pod-deletion cost &lt; higher pod-deletion-cost</strong></li><li><strong>Higher spread rank &lt; lower spread rank</strong></li><li>Been ready for empty time &lt; less time &lt; more time</li><li>Pods with containers with higher restart counts &lt; lower restart counts</li><li>Empty creation time pods &lt; newer pods &lt; older pods</li></ol><p>&quot;4&quot; has provided in Kruise v0.9.0 and it is also used by WorkloadSpread to control the Pod deletion. <strong>&quot;5&quot; is added in Kruise v0.10.0 to sort Pods by their Topology Spread Constraints during scaledown.</strong></p><h2>Advanced StatefulSet supports scaleup with rate limit</h2><p>To avoid a large amount of failed Pods after user created an incorrect Advanced StatefulSet, Kruise add a <code>maxUnavailable</code> field into its <code>scaleStrategy</code>.</p><pre><code class="language-yaml">apiVersion: apps.kruise.io/v1beta1
+kind: StatefulSet
+spec:
+  # ...
+  replicas: 100
+  scaleStrategy:
+    maxUnavailable: 10% # percentage or absolute number
+</code></pre><p>When the field is set, Advanced StatefulSet will guarantee that the number of unavailable Pods should not bigger than the strategy number during Pod creation.</p><p>Note that the feature can only be used in StatefulSet with <code>podManagementPolicy=Parallel</code>.</p><h2>More</h2><p>For more changes, please refer to the <a href="https://github.com/openkruise/kruise/releases">release page</a> or <a href="https://github.com/openkruise/kruise/blob/master/CHANGELOG.md">ChangeLog</a>.</p>]]></content>
+        <author>
+            <name>Siyu Wang</name>
+            <uri>https://github.com/FillZpp</uri>
+        </author>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[OpenKruise 0.9.0, Supports Pod Restart and Deletion Protection]]></title>
+        <id>openkruise-0.9.0</id>
+        <link href="https://openkruise.io/blog/openkruise-0.9.0"/>
+        <updated>2021-05-20T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[On May 20, 2021, OpenKruise released the latest version v0.9.0, with new features, such as Pod restart and resource cascading deletion protection. This article provides an overview of this new version.]]></summary>
+        <content type="html"><![CDATA[<p>On May 20, 2021, OpenKruise released the latest version v0.9.0, with new features, such as Pod restart and resource cascading deletion protection. This article provides an overview of this new version.</p><h2>Pod Restart and Recreation</h2><p>Restarting container is a necessity in daily operation and a common technical method for recovery. In the native Kubernetes, the container granularity is inoperable. Pod, as the minimum operation unit, can only be created or deleted.</p><p>Some may ask: <em>why do users still need to pay attention to the operation such as container restart in the cloud-native era? Aren&#x27;t the services the only thing for users to focus on in the ideal Serverless model?</em></p><p>To answer this question, we need to see the differences between cloud-native architecture and traditional infrastructures. In the era of traditional physical and virtual machines, multiple application instances are deployed and run on one machine, but the lifecycles of the machine and applications are separated. Thus, application instance restart may only require a <code>systemctl</code> or <code>supervisor</code> command but not the restart of the entire machine. However, in the era of containers and cloud-native, the lifecycle of the application is bound to that of the Pod container. In other words, under normal circumstances, one container only runs one application process, and one Pod provides services for only one application instance.</p><p>Due to these restrictions, current native Kubernetes provides no API for the container (application) restart for upper-layer services. OpenKruise v0.9.0 supports restarting containers in a single Pod, compatible with standard Kubernetes clusters of version 1.16 or later. After installing or upgrading OpenKruise, users only need to create a <code>ContainerRecreateRequest</code> (CRR) object to initiate a restart process. The simplest YAML file is listed below:</p><pre><code class="language-yaml">apiVersion: apps.kruise.io/v1alpha1
+kind: ContainerRecreateRequest
+metadata:
+  namespace: pod-namespace
+  name: xxx
+spec:
+  podName: pod-name
+  containers:
+  - name: app
+  - name: sidecar
+</code></pre><p>The value of namespace must be the same as the namespace of the Pod to be operated. The name can be set as needed. The <code>podName</code> in the spec clause indicates the Pod name. The containers indicate a list that specifies one or more container names in the Pod to restart.</p><p>In addition to the required fields above, CRR also provides a variety of optional restart policies:</p><pre><code class="language-yaml">spec:
+  # ...
+  strategy:
+    failurePolicy: Fail
+    orderedRecreate: false
+    terminationGracePeriodSeconds: 30
+    unreadyGracePeriodSeconds: 3
+    minStartedSeconds: 10
+  activeDeadlineSeconds: 300
+  ttlSecondsAfterFinished: 1800
+</code></pre><ul><li><code>failurePolicy</code>: Values: Fail or Ignore. Default value: Fail. If any container stops or fails to recreate, CRR ends immediately.</li><li><code>orderedRecreate</code>: Default value: false. Value true indicates when the list contains multiple containers, the new container will only be recreated after the previous recreation is finished.</li><li><code>terminationGracePeriodSeconds</code>: The time for the container to gracefully exit. If this parameter is not specified, the time defined for the Pod is used.</li><li><code>unreadyGracePeriodSeconds</code>: Set the Pod to the unready state before recreation and wait for the time expiration to execute recreation.<ul><li><code>Note</code>: This feature needs the feature-gate <code>KruisePodReadinessGate</code> to be enabled, which will inject a readinessGate when a Pod is created. Otherwise, only the pods created by the OpenKruise workload are injected with readinessGate by default. It means only these Pods can use the <code>unreadyGracePeriodSeconds</code> parameter during the CRR recreation.</li></ul></li><li><code>minStartedSeconds</code>: The minimal period that the new container remains running to judge whether the container is recreated successfully.</li><li><code>activeDeadlineSeconds</code>: The expiration period set for CRR execution to mark as ended (unfinished container will be marked as failed.)</li><li><code>ttlSecondsAfterFinished</code>: The period after which the CRR will be deleted automatically after the execution ends.</li></ul><p><strong>How it works under the hood:</strong> After it is created, a CRR is processed by the kruise-manager. Then, it will be sent to the kruise-daemon (contained by the node where Pod resides) for execution. The execution process is listed below:</p><ol><li>If <code>preStop</code> is specified for a Pod, the kruise-daemon will first call the CRI to run the command specified by <code>preStop</code> in the container.</li><li>If no <code>preStop</code> exists or <code>preStop</code> execution is completed, the kruise-daemon will call the CRI to stop the container.</li><li>When the kubelet detects the container exiting, it creates a new container with an increasing &quot;serial number&quot; and starts it. <code>postStart</code> will be executed at the same time.</li><li>When the kruise-daemon detects the start of the new container, it reports to CRR that the restart is completed.</li></ol><p><img src="/img/docs/user-manuals/containerrecreaterequest.png" alt="ContainerRecreateRequest"/></p><p>The container &quot;serial number&quot; corresponds to the <code>restartCount</code> reported by kubelet in the Pod status. Therefore, the <code>restartCount</code> of the Pod increases after the container is restarted. Temporary files written to the <code>rootfs</code> in the old container will be lost due to the container recreation, but data in the volume mount remains.</p><h2>Cascading Deletion Protection</h2><p>The level triggered automation of Kubernetes is a double-edged sword. It brings declarative deployment capabilities to applications while potentially enlarging the influence of mistakes at a final-state scale. For example, with the cascading deletion mechanism, once an owning resource is deleted under normal circumstances (non-orphan deletion), all owned resources associated will be deleted by the following rules:</p><ol><li>If a CRD is deleted, all its corresponding CR will be cleared.</li><li>If a namespace is deleted, all resources in this namespace, including Pods, will be cleared.</li><li>If a workload (Deployment, StatefulSet, etc) is deleted, all Pods under it will be cleared.</li></ol><p>Due to failures caused by cascading deletion, we have heard many complaints from Kubernetes users and developers in the community. It is unbearable for any enterprise to mistakenly delete objects at such a large scale in the production environment.</p><p>Therefore, in OpenKruise v0.9.0, we applied the feature of cascading deletion protection to community in the hope of ensuring stability for more users. If you want to use this feature in the current version, the feature-gate of <code>ResourcesDeletionProtection</code> needs to be explicitly enabled when installing or upgrading OpenKruise.</p><p>A label of <code>policy.kruise.io/delete-protection</code> can be given on the resource objects that require protection. Its value can be the following two things:</p><ul><li><strong>Always</strong>: The object cannot be deleted unless the label is removed.</li><li><strong>Cascading</strong>: The object cannot be deleted if any subordinate resources are available.</li></ul><p>The following table lists the supported resource types and cascading relationships:</p><table><thead><tr><th>Kind</th><th>Group</th><th>Version</th><th><strong>Cascading</strong> judgement</th></tr></thead><tbody><tr><td><code>Namespace</code></td><td>core</td><td>v1</td><td>whether there is active Pods in this namespace</td></tr><tr><td><code>CustomResourceDefinition</code></td><td>apiextensions.k8s.io</td><td>v1beta1, v1</td><td>whether there is existing CRs of this CRD</td></tr><tr><td><code>Deployment</code></td><td>apps</td><td>v1</td><td>whether the replicas is 0</td></tr><tr><td><code>StatefulSet</code></td><td>apps</td><td>v1</td><td>whether the replicas is 0</td></tr><tr><td><code>ReplicaSet</code></td><td>apps</td><td>v1</td><td>whether the replicas is 0</td></tr><tr><td><code>CloneSet</code></td><td>apps.kruise.io</td><td>v1alpha1</td><td>whether the replicas is 0</td></tr><tr><td><code>StatefulSet</code></td><td>apps.kruise.io</td><td>v1alpha1, v1beta1</td><td>whether the replicas is 0</td></tr><tr><td><code>UnitedDeployment</code></td><td>apps.kruise.io</td><td>v1alpha1</td><td>whether the replicas is 0</td></tr></tbody></table><h2>New Features of CloneSet</h2><h3>Deletion Priority</h3><p>The <code>controller.kubernetes.io/pod-deletion-cost</code> annotation was added to Kubernetes after version 1.21. <code>ReplicaSet</code> will sort the Kubernetes resources according to this cost value during scale in. CloneSet has supported the same feature since OpenKruise v0.9.0.</p><p>Users can configure this annotation in the pod. The int type of its value indicates the deletion cost of a certain pod compared to other pods under the same CloneSet. Pods with a lower cost have a higher deletion priority. If this annotation is not set, the deletion cost of the pod is 0 by default.</p><p><em>Note</em>: This deletion order is not determined solely by deletion cost. The real order serves like this:</p><ol><li>Not scheduled &lt; scheduled</li><li>PodPending &lt; PodUnknown &lt; PodRunning</li><li>Not ready &lt; ready</li><li><strong>Smaller pod-deletion cost &lt; larger pod-deletion cost</strong></li><li>Period in the Ready state: short &lt; long</li><li>Containers restart: more times &lt; fewer times</li><li>Creation time: short &lt; long</li></ol><h3>Image Pre-Download for In-Place Update</h3><p>When CloneSet is used for the in-place update of an application, only the container image is updated, while the Pod is not rebuilt. This ensures that the node where the Pod is located will not change. Therefore, if the CloneSet pulls the new image from all the Pod nodes in advance, the Pod in-place update speed will be improved substantially in subsequent batch releases.</p><p>If you want to use this feature in the current version, the feature-gate of <code>PreDownloadImageForInPlaceUpdate</code> needs to be explicitly enabled when installing or upgrading OpenKruise. If you update the images in the CloneSet template and the publish policy supports in-place update, CloneSet will create an <code>ImagePullJob</code> object automatically (the batch image pre-download function provided by OpenKruise) to download new images in advance on the node where the Pod is located.</p><p>By default, CloneSet sets the parallelism to 1 for <code>ImagePullJob</code>, which means images are pulled for one node and then another. For any adjustment, you can set the parallelism in the CloneSet annotation by executing the following code:</p><pre><code class="language-yaml">apiVersion: apps.kruise.io/v1alpha1
+kind: CloneSet
+metadata:
+  annotations:
+    apps.kruise.io/image-predownload-parallelism: &quot;5&quot;
+</code></pre><h3>Pod Replacement by Scale Out and Scale In</h3><p>In previous versions, the <code>maxUnavailable</code> and <code>maxSurge</code> policies of CloneSet only take effect during the application release process. In OpenKruise v0.9.0 and later versions, these two policies also function when deleting a specified Pod.</p><p>When the user specifies one or more Pods to be deleted through <code>podsToDelete</code> or <code>apps.kruise.io/specified-delete</code>: true, CloneSet will only execute deletion when the number of unavailable Pods (of the total replicas) is less than the value of <code>maxUnavailable</code>. In addition, if the user has configured the <code>maxSurge</code> policy, the CloneSet will possibly create a new Pod first, wait for the new Pod to be ready, and then delete the old specified Pod.</p><p>The replacement method depends on the value of maxUnavailable and the number of unavailable Pods. For example:</p><ul><li>For a CloneSet, <code>maxUnavailable=2, maxSurge=1</code> and only <code>pod-a</code> is unavailable. If you specify <code>pod-b</code> to be deleted, CloneSet will delete it promptly and create a new Pod.</li><li>For a CloneSet, <code>maxUnavailable=1, maxSurge=1</code> and only <code>pod-a</code> is unavailable. If you specify <code>pod-b</code> to be deleted, CloneSet will create a new Pod, wait for it to be ready, and then delete the pod-b.</li><li>For a CloneSet, <code>maxUnavailable=1, maxSurge=1</code> and only <code>pod-a</code> is unavailable. If you specify this <code>pod-a</code> to be deleted, CloneSet will delete it promptly and create a new Pod.</li></ul><h3>Efficient Rollback Based on Partition Final State</h3><p>In the native workload, Deployment does not support phased release, while StatefulSet provides partition semantics to allow users to control the times of gray scale upgrades. OpenKruise workloads, such as CloneSet and Advanced StatefulSet, also provide partitions to support phased release.</p><p>For CloneSet, the semantics of Partition is <strong>the number or percentage of Pods remaining in the old version</strong>. For example, for a CloneSet with 100 replicas, if the partition value is changed in the sequence of 80 :arrow_right: 60 :arrow_right: 40 :arrow_right: 20 :arrow_right: 0 by steps during the image upgrade, the CloneSet is released in five batches.</p><p>However, in the past, whether it is Deployment, StatefulSet, or CloneSet, if rollback is required during the release process, the template information (image) must be changed back to the old version. During the phased release of StatefulSet and CloneSet, reducing partition value will trigger the upgrade to a new version. Increasing partition value will not trigger rollback to the old version.</p><p>The partition of CloneSet supports the &quot;final state rollback&quot; function after v0.9.0. If the feature-gate <code>CloneSetPartitionRollback</code> is enabled when installing or upgrading OpenKruise, increasing the partition value will trigger CloneSet to roll back the corresponding number of new Pods to the old version.</p><p>There is a clear advantage here. During the phased release, only the partition value needs to be adjusted to flexibly control the numbers of old and new versions. However, the &quot;old and new versions&quot; for CloneSet correspond to <code>updateRevision</code> and <code>currentRevision</code> in its status:</p><ul><li>updateRevision: The version of the template defined by the current CloneSet.</li><li>currentRevision: The template version of CloneSet during the <strong>previous successful full release</strong>.</li></ul><h3>Short Hash</h3><p>By default, the value of <code>controller-revision-hash</code> in Pod label set by CloneSet is the full name of the <code>ControllerRevision</code>. For example:</p><pre><code class="language-yaml">apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    controller-revision-hash: demo-cloneset-956df7994
+</code></pre><p>The name is concatenated with the CloneSet name and the <code>ControllerRevision</code> hash value. Generally, the hash value is 8 to 10 characters in length. In Kubernetes, a label cannot exceed 63 characters in length. Therefore, the name of CloneSet cannot exceed 52 characters in length, or the Pod cannot be created.</p><p>In v0.9.0, the new feature-gate <code>CloneSetShortHash</code> is introduced. If it is enabled, CloneSet will set the value of <code>controller-revision-hash</code> in the Pod to a hash value only, like 956df7994. Therefore, the length restriction of the CloneSet name is eliminated. (CloneSet can still recognize and manage the Pod with revision labels in the full format, even if this function is enabled.)</p><h2>New Features of SidecarSet</h2><h3>Sidecar Hot Upgrade Function</h3><p>SidecarSet is a workload provided by OpenKruise to manage sidecar containers separately. Users can inject and upgrade specified sidecar containers within a certain range of Pods using <code>SidecarSet</code>.</p><p>By default, for the independent in-place sidecar upgrade, the sidecar stops the container of the old version first and then creates a container of the new version. This method applies to sidecar containers that do not affect the Pod service availability, such as the log collection agent. However, for sidecar containers acting as a proxy such as Istio Envoy, this upgrade method is defective. Envoy, as a proxy container in the Pod, handles all the traffic. If users restart and upgrade directly, service availability will be affected. Thus, you need a complex grace termination and coordination mechanism to upgrade the envoy sidecar separately. Therefore, we offer a new solution for the upgrade of this kind of sidecar containers, namely, hot upgrade:</p><pre><code class="language-yaml">apiVersion: apps.kruise.io/v1alpha1
+kind: SidecarSet
+spec:
+  # ...
+  containers:
+  - name: nginx-sidecar
+    image: nginx:1.18
+    lifecycle:
+      postStart:
+        exec:
+          command:
+          - /bin/bash
+          - -c
+          - /usr/local/bin/nginx-agent migrate
+    upgradeStrategy:
+      upgradeType: HotUpgrade
+      hotUpgradeEmptyImage: empty:1.0.0
+</code></pre><ul><li><code>upgradeType</code>: <code>HotUpgrade</code> indicates that the type of the sidecar container is a hot upgrade, so the hot upgrade solution, <code>hotUpgradeEmptyImage</code>, will be executed. When performing a hot upgrade on the sidecar container, an empty container is required to switch services during the upgrade. The empty container has almost the same configuration as the sidecar container, except the image address, for example, command, lifecycle, and probe, but it does no actual work.</li><li><code>lifecycle.postStart</code>: State migration. This procedure completes the state migration during the hot upgrade. The script needs to be executed according to business characteristics. For example, NGINX hot upgrade requires shared Listen FD and traffic reloading.</li></ul><h2>More</h2><p>For more changes, please refer to the <a href="https://github.com/openkruise/kruise/releases">release page</a> or <a href="https://github.com/openkruise/kruise/blob/master/CHANGELOG.md">ChangeLog</a>.</p>]]></content>
+        <author>
+            <name>Siyu Wang</name>
+            <uri>https://github.com/FillZpp</uri>
+        </author>
+    </entry>
     <entry>
         <title type="html"><![CDATA[UnitedDeploymemt - Supporting Multi-domain Workload Management]]></title>
         <id>uniteddeployment</id>
