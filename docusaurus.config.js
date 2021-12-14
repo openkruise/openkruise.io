@@ -119,8 +119,12 @@ const darkCodeTheme = require('prism-react-renderer/themes/dracula');
                 href: 'https://kubernetes.slack.com/channels/openkruise',
               },
               {
-                label: 'DingTalk (Group ID: 23330762 )',
-                href: 'https://www.dingtalk.com/',
+                label: 'DingTalk (GroupID: 23330762 )',
+                href: '.',
+              },
+              {
+                label: 'WeChat (User: openkruise )',
+                href: '.',
               },
               {
                 label: 'Bi-week Meeting (APAC, Chinese)',
