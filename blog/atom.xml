@@ -2,11 +2,68 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://openkruise.io/blog</id>
     <title>OpenKruise Blog</title>
-    <updated>2021-09-06T00:00:00.000Z</updated>
+    <updated>2021-12-13T00:00:00.000Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://openkruise.io/blog"/>
     <subtitle>OpenKruise Blog</subtitle>
     <icon>https://openkruise.io/img/openkruise.ico</icon>
+    <entry>
+        <title type="html"><![CDATA[OpenKruise v1.0, Reaching New Peaks of application automation]]></title>
+        <id>openkruise-1.0</id>
+        <link href="https://openkruise.io/blog/openkruise-1.0"/>
+        <updated>2021-12-13T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[OpenKruise, a  cloud-native project for application automation and one of the sandbox projects of CNCF, has newly released version 1.0.]]></summary>
+        <content type="html"><![CDATA[<p>OpenKruise, a  cloud-native project for application automation and one of the sandbox projects of CNCF, has newly released version 1.0.</p><p><a href="https://openkruise.io">OpenKruise</a> is an extended component suite for Kubernetes, which mainly focuses on application automations, such as deployment, upgrade, ops and avalibility protection. Mostly features provided by OpenKruise are built primarily based on CRD extensions. They can work in pure Kubernetes clusters without any other dependences.</p><p><img src="/img/blog/2021-12-13-release-1.0/features-en.png" alt="openkruise-features|center|450x400"/></p><p>Overall, OpenKruise currently provides features in these areas:</p><ul><li><strong>Application workloads</strong>: Enhanced strategies of deploy and upgrade for stateless/stateful/daemon applications, such as in-place update, canary/flowing upgrade.</li><li><strong>Sidecar container management</strong>: supports to define sidecar container alone, which means it can inject sidecar containers, upgrade them with no effect on application containers and even hot upgrade.</li><li><strong>Enhanced operations</strong>: such as restart containers in-place, pre-download images on specific nodes, keep containers launch priority in a Pod, distribute one resource to multiple namespaces.</li><li><strong>Application availability protection</strong>: protect avalibility for applications that deployed in Kubernetes.</li></ul><h2>What&#x27;s new?</h2><h3>1. InPlace Update for environments</h3><p><em>Author: <a href="https://github.com/FillZpp">@FillZpp</a></em></p><p>OpenKruise has supported <strong>InPlace Update</strong> since very early version, mostly for workloads like CloneSet and Advanced StatefulSet. Comparing to recreate Pods during upgrade, in-place update only has to modify the fields in existing Pods.</p><p><img src="/img/docs/core-concepts/inplace-update-comparation.png" alt="inplace-update-comparation|center|450x400"/></p><p>As the picture shows above, we only modify the <code>image</code> field in Pod during in-place update. So that:</p><ul><li>Avoid additional cost of <em>scheduling</em>, <em>allocating IP</em>, <em>allocating and mounting volumes</em>.</li><li>Faster image pulling, because of we can re-use most of image layers pulled by the old image and only to pull several new layers.</li><li>When a container is in-place updating, the other containers in Pod will not be affected and remain running.</li></ul><p>However, OpenKruise only supports to in-place update <code>image</code> field in Pod and has to recreate Pods if other fields need to update. All the way through, more and more users hope OpenKruise could support in-place update more fields such as <code>env</code> -- which is hard to implement, for it is limited by kube-apiserver.</p><p>After our unremitting efforts, OpenKruise finally support in-place update environments via Downward API since version v1.0. Take the CloneSet YAML below as an example, user has to set the configuration in annotation and write a env from it. After that, he just needs to modify the annotation value when changing the configuration. Kruise will restart all containers with env from the annotation in such Pod to enable the new configuration.</p><pre><code class="language-yaml">apiVersion: apps.kruise.io/v1alpha1
+kind: CloneSet
+metadata:
+  ...
+spec:
+  replicas: 1
+  template:
+    metadata:
+      annotations:
+        app-config: &quot;... the real env value ...&quot;
+    spec:
+      containers:
+      - name: app
+        env:
+        - name: APP_CONFIG
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.annotations[&#x27;app-config&#x27;]
+  updateStrategy:
+    type: InPlaceIfPossible
+</code></pre><p><em>At the same time, we have removed the limit of <code>imageID</code> for in-place update, which means you can update a new image with the same imageID to the old image.</em></p><p>For more details please read <a href="/docs/core-concepts/inplace-update">documentation</a>.</p><h3>2. Distribute resources over multiple namespaces</h3><p><em>Author: <a href="https://github.com/veophi">@veophi</a></em></p><p>For the scenario, where the namespace-scoped resources such as Secret and ConfigMap need to be distributed or synchronized to different namespaces, the native k8s currently only supports manual distribution and synchronization by users one-by-one, which is very inconvenient. </p><p>Typical examples: </p><ul><li>When users want to use the imagePullSecrets capability of SidecarSet, they must repeatedly create corresponding Secrets in relevant namespaces, and ensure the correctness and consistency of these Secret configurations;</li><li>When users want to configure some common environment variables, they probably need to distribute ConfigMaps to multiple namespaces, and the subsequent modifications of these ConfigMaps might require synchronization among these namespaces.</li></ul><p>Therefore, in the face of these scenarios that require the resource distribution and <strong>continuously synchronization across namespaces</strong>, we provide a tool, namely <strong>ResourceDistribution</strong>, to do this automatically. </p><p>Currently, ResourceDistribution supports the two kind resources --- <strong>Secret &amp; ConfigMap</strong>. </p><pre><code class="language-yaml">apiVersion: apps.kruise.io/v1alpha1
+kind: ResourceDistribution
+metadata:
+  name: sample
+spec:
+  resource:
+    apiVersion: v1
+    kind: ConfigMap
+    metadata:
+      name: game-demo
+    data:
+      ...
+  targets:
+    namespaceLabelSelector:
+      ...
+    # or includedNamespaces, excludedNamespaces
+</code></pre><p>So you can see ResourceDistribution is a kind of <strong>cluster-scoped CRD</strong>, which is mainly composed of two fields: <strong><code>resource</code> and <code>targets</code></strong>.</p><ul><li><code>resource</code> is a <strong>complete</strong> and <strong>correct</strong> resource structure in YAML style.</li><li><code>targets</code> indicates the target namespaces that the resource should be distributed into.</li></ul><p>For more details please read <a href="/docs/user-manuals/resourcedistribution">documentation</a>.</p><h3>3. Container launch priority</h3><p><em>Author: <a href="https://github.com/Concurrensee">@Concurrensee</a></em></p><p>Containers in a same Pod in it might have dependence, which means the application in one container runs depending on another container. For example:</p><ol><li>Container A has to start first. Container B can start only if A is already running.</li><li>Container B has to exit first. Container A can stop only if B has already exited.</li></ol><p>Currently, the sequences of containers start and stop are controlled by Kubelet.
+Kubernetes used to have a KEP, which plans to add a type field for container to identify the priority of start and stop. However, it has been refused because of sig-node thought it may bring a huge change to code.</p><p>So OpenKruise provides a feature named <strong>Container Launch Priority</strong>, which helps user control the sequence of containers start in a Pod.</p><ol><li>User only has to put the annotation <code>apps.kruise.io/container-launch-priority: Ordered</code> in a Pod, then Kruise will ensure all containers in this Pod should be started by the sequence of <code>pod.spec.containers</code> list.</li><li>If you want to customize the launch sequence, you can add <code>KRUISE_CONTAINER_PRIORITY</code> environment in container. The range of the value is <code>[-2147483647, 2147483647]</code>. The container with higher priority will be guaranteed to start before the others with lower priority.</li></ol><p>For more details please read <a href="/docs/user-manuals/containerlaunchpriority">documentation</a>.</p><h3>4. <code>kubectl-kruise</code> commandline tool</h3><p><em>Author: <a href="https://github.com/hantmac">@hantmac</a></em></p><p>OpenKruise used to provide SDK like <code>kruise-api</code> and <code>client-java</code> for some programming languages, which can be imported into users&#x27; projects. On the other hand, some users also need to operate the workload resources with commandline in test environment.</p><p>However, the <code>rollout</code>, <code>set image</code> commands in original <code>kubectl</code> can only work for built-in workloads, such as Deployment and StatefulSet.</p><p>So, OpenKruise now provide a commandline tool named <code>kubectl-kruise</code>, which is a standard plugin of <code>kubectl</code> and can work for OpenKruise workload types.</p><pre><code class="language-bash"># rollout undo cloneset
+$ kubectl kruise rollout undo cloneset/nginx
+
+#  rollout status advanced statefulset
+$ kubectl kruise rollout status statefulsets.apps.kruise.io/sts-demo
+
+# set image of a cloneset
+$ kubectl kruise set image cloneset/nginx busybox=busybox nginx=nginx:1.9.1
+</code></pre><p>For more details please read <a href="/docs/cli-tool/kubectl-plugin">documentation</a>.</p><h3>5. Other changes</h3><p><strong>CloneSet:</strong></p><ul><li>Add <code>maxUnavailable</code> field in <code>scaleStrategy</code> to support rate limiting of scaling up.</li><li>Mark revision stable when all pods updated to it, won&#x27;t wait all pods to be ready.</li></ul><p><strong>WorkloadSpread:</strong></p><ul><li>Manage the pods that have created before WorkloadSpread.</li><li>Optimize the update and retry logic for webhook injection.</li></ul><p><strong>Advanced DaemonSet:</strong></p><ul><li>Support in-place update Daemon Pod.</li><li>Support progressive annotation to control if pods creation should be limited by partition.</li></ul><p><strong>SidecarSet:</strong></p><ul><li>Fix SidecarSet filter active pods.</li><li>Add <code>SourceContainerNameFrom</code> and <code>EnvNames</code> fields in <code>transferenv</code> to make the container name flexible and the list shorter.</li></ul><p><strong>PodUnavailableBudget:</strong></p><ul><li>Add no pub-protection annotation to skip validation for the specific Pod.</li><li>PodUnavailableBudget controller watches workload replicas changed.</li></ul><p><strong>NodeImage:</strong></p><ul><li>Add <code>--nodeimage-creation-delay</code> flag to delay NodeImage creation after Node ready.</li></ul><p><strong>UnitedDeployment:</strong></p><ul><li>Fix pod NodeSelectorTerms length 0 when UnitedDeployment NodeSelectorTerms is nil.</li></ul><p><strong>Other optimization:</strong></p><ul><li>kruise-daemon list and watch pods using protobuf.</li><li>Export cache resync args and defaults to be 0 in chart value.</li><li>Fix http checker reloading after webhook certs updated.</li><li>Generate CRDs with original controller-tools and markers.</li></ul>]]></content>
+        <author>
+            <name>Siyu Wang</name>
+            <uri>https://github.com/FillZpp</uri>
+        </author>
+    </entry>
     <entry>
         <title type="html"><![CDATA[OpenKruise 0.10.0, New features of multi-domain management, application protection]]></title>
         <id>openkruise-0.10.0</id>
