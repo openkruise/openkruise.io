@@ -5,7 +5,21 @@ title: Kubectl Plugin
 [Kruise-tools](https://github.com/openkruise/kruise-tools) provides commandline tools for kruise features, such as `kubectl-kruise`, which is a standard plugin of `kubectl`.
 
 ## Install
+### krew install
+1. Krew itself is a kubectl plugin that is installed and updated via Krew (yes, Krew self-hosts).
+First, [install krew](https://krew.sigs.k8s.io/docs/user-guide/setup/install/).
 
+2. Run `kubectl krew install kruise` to install kruise plugin via Krew.
+
+3. Then you can use it with `kubectl-kruise` or `kubectl kruise`.
+
+```bash
+$ kubectl-kruise --help
+
+# or
+$ kubectl kruise --help
+```
+### Download binary
 1. You can simply download the binary from the [releases](https://github.com/openkruise/kruise-tools/releases) page. Currently `linux`, `darwin`(OS X), `windows` with `x86_64` and `arm64` are provided. If you are using some other systems or architectures, you have to download the source code and execute `make build` to build the binary.
 
 2. Extract and move it to system PATH.
