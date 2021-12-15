@@ -5,7 +5,14 @@ title: Kubectl Plugin
 [Kruise-tools](https://github.com/openkruise/kruise-tools) 为 Kruise 的功能提供了一系列命令行工具，包括 `kubectl-kruise`，它的是 `kubectl` 的标准插件。
 
 ## 安装
+### Install via Krew
+1. [Krew](https://krew.sigs.k8s.io/) 是一个 kubectl 的插件，krew 本身可以自举安装和升级。
+首先, [安装 krew](https://krew.sigs.k8s.io/docs/user-guide/setup/install/)。
 
+2. 执行 `kubectl krew install kruise` 来安装 kruise 插件。
+
+3. 你可以通过 `kubectl-kruise` 或 `kubectl kruise` 来使用。
+### Install manually
 1. 你可以从 [releases](https://github.com/openkruise/kruise-tools/releases) 页面下载二进制文件，目前提供 `linux`、`darwin`（OS X）、`windows` 系统以及 `x86_64`、`arm64` 架构。如果你在使用其他的操作系统或架构，需要下载 [kruise-tools](https://github.com/openkruise/kruise-tools) 源码并通过 `make build` 打包。
 
 2. 解压缩，并移动到系统 PATH 路径中。
@@ -15,7 +22,7 @@ $ tar xvf kubectl-kruise-darwin-amd64.tar.gz
 $ mv darwin-amd64/kubectl-kruise /usr/local/bin/
 ```
 
-3. 你可以通过 `kubectl-kruise` 或 `kubectl kruise` 命令来使用.
+3. 你可以通过 `kubectl-kruise` 或 `kubectl kruise` 命令来使用。
 
 ```bash
 $ kubectl-kruise --help
