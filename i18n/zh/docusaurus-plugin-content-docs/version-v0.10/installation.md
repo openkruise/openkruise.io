@@ -21,7 +21,7 @@ $ helm repo update
 
 # Install the stable version.
 # Note that if the Kubernetes version < 1.15, you may need to add --disable-openapi-validation
-$ helm install kruise openkruise/kruise --version 0.10.1
+$ helm install kruise openkruise/kruise --version 0.10.2
 ```
 
 ## 通过 helm 升级
@@ -37,7 +37,7 @@ $ helm repo update
 
 # Upgrade the latest version.
 # Note that if the Kubernetes version < 1.15, you may need to add --disable-openapi-validation
-$ helm upgrade kruise openkruise/kruise --version 0.10.1
+$ helm upgrade kruise openkruise/kruise --version 0.10.2
 ```
 
 注意：
@@ -68,7 +68,7 @@ $ helm install/upgrade kruise /PATH/TO/CHART
 | `manager.log.level`                       | kruise-manager 日志输出级别                                    | `4`                           |
 | `manager.replicas`                        | kruise-manager 的期望副本数                                    | `2`                           |
 | `manager.image.repository`                | kruise-manager/kruise-daemon 镜像仓库                         | `openkruise/kruise-manager`   |
-| `manager.image.tag`                       | kruise-manager/kruise-daemon 镜像版本                         | `v0.10.1`                     |
+| `manager.image.tag`                       | kruise-manager/kruise-daemon 镜像版本                         | `v0.10.2`                     |
 | `manager.resources.limits.cpu`            | kruise-manager 的 limit CPU 资源                              | `100m`                        |
 | `manager.resources.limits.memory`         | kruise-manager 的 limit memory 资源                           | `256Mi`                       |
 | `manager.resources.requests.cpu`          | kruise-manager 的 request CPU 资源                            | `100m`                        |
