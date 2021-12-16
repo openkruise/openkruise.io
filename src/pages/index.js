@@ -104,7 +104,7 @@ const WhatIs = () => (
               <Translate>
                 OpenKruise is an extended component suite for Kubernetes,
                 which mainly focuses on application automations, such as
-              </Translate> <i><Translate>deployment, upgrade, ops and avalibility protection.</Translate></i>
+              </Translate> <i><Translate>deployment, upgrade, ops and availability protection.</Translate></i>
               <br />
               <br />
               <Translate>

@@ -5,7 +5,7 @@ slug: /
 
 Welcome to OpenKruise!
 
-OpenKruise is an extended component suite for Kubernetes, which mainly focuses on application automations, such as *deployment, upgrade, ops and avalibility protection*.
+OpenKruise is an extended component suite for Kubernetes, which mainly focuses on application automations, such as *deployment, upgrade, ops and availability protection*.
 
 Mostly features provided by OpenKruise are built primarily based on CRD extensions. They can work in pure Kubernetes clusters without any other dependences.
 
@@ -28,9 +28,9 @@ Mostly features provided by OpenKruise are built primarily based on CRD extensio
 
     WorkloadSpread constrains the spread of stateless workload, which empowers single workload the abilities for multi-domain and elastic deployment.
 
-- **High-avalibility Protection**
+- **High-availability Protection**
 
-    OpenKruise works hard on protecting high-avalibility for applications.
+    OpenKruise works hard on protecting high-availability for applications.
 
     Now it can prevent your Kubernetes resources from the cascading deletion mechanism, including CRD, Namespace and almost all kinds of Workloads.
 

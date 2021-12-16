@@ -176,7 +176,7 @@
     "OpenKruise is an extended component suite for Kubernetes, which mainly focuses on application automations, such as": {
       "message": "OpenKruise 是一个基于 Kubernetes 的扩展套件，主要聚焦于云原生应用的自动化，比如"
     },
-    "deployment, upgrade, ops and avalibility protection.": {
+    "deployment, upgrade, ops and availability protection.": {
       "message": "部署、发布、运维以及可用性防护。"
     },
     "Mostly features provided by OpenKruise are built primarily based on CRD extensions. They can work in pure Kubernetes clusters without any other dependences.": {
@@ -185,11 +185,17 @@
     "Advanced Workloads": {
       "message": "增强版本的 Workloads"
     },
+    "OpenKruise contains a set of advanced workloads, such as CloneSet, Advanced StatefulSet, Advanced DaemonSet, BroadcastJob. They all support not only the basic features which are similar to the original Workloads in Kubernetes, but also more advanced abilities like in-place update, configurable scale/upgrade strategies, parallel operations.": {
+      "message": "OpenKruise 包含了一系列增强版本的 Workloads（工作负载），比如 CloneSet、Advanced StatefulSet、Advanced DaemonSet、BroadcastJob 等。它们不仅支持类似于 Kubernetes 原生 Workloads 的基础功能，还提供了如原地升级、可配置的扩缩容/发布策略、并发操作等。"
+    },
     "OpenKruise contains a set of advanced workloads, such as CloneSet, Advanced StatefulSet, Advanced DaemonSet, BroadcastJob.": {
       "message": "OpenKruise 包含了一系列增强版本的 Workloads（工作负载），比如 CloneSet、Advanced StatefulSet、Advanced DaemonSet、BroadcastJob 等。"
     },
     "They all support not only the basic features which are similar to the original Workloads in Kubernetes, but also more advanced abilities like in-place update, configurable scale/upgrade strategies, parallel operations.": {
       "message": "它们不仅支持类似于 Kubernetes 原生 Workloads 的基础功能，还提供了如原地升级、可配置的扩缩容/发布策略、并发操作等。"
+    },
+    "In-place Update is a new methodology to update container images and even environments. It only restarts the specific container with the new image and the Pod will not be recreated, which leads to much faster update process and much less side effects on other sub-systems such as scheduler, CNI or CSI.": {
+      "message": "原地升级是一种升级应用容器镜像甚至环境变量的全新方式。它只会用新的镜像重建 Pod 中的特定容器，整个 Pod 以及其中的其他容器都不会被影响。因此它带来了更快的发布速度，以及避免了对其他 Scheduler、CNI、CSI 等组件的负面影响。"
     },
     "In-place Update is a new methodology to update container images and even environments.": {
       "message": "原地升级是一种升级应用容器镜像甚至环境变量的全新方式。"
@@ -203,16 +209,22 @@
     "OpenKruise provides several decoupled ways to manage sidecar container, multi-domain deployment for applications, which means you can manage these things without modifying the Workloads of applications.": {
       "message": "OpenKruise 提供了多种通过旁路管理应用 sidecar 容器、多区域部署的方式，“旁路” 意味着你可以不需要修改应用的 Workloads 来实现它们。"
     },
+    "For example, SidecarSet can help you inject sidecar containers into all matching Pods during creation and even update them in-place with no effect on other containers in Pod. WorkloadSpread constrains the spread of stateless workload, which empowers single workload the abilities for multi-domain and elastic deployment.": {
+      "message": "比如，SidecarSet 能帮助你在所有匹配的 Pod 创建的时候都注入特定的 sidecar 容器，甚至可以原地升级已经注入的 sidecar 容器镜像、并且对 Pod 中其他容器不造成影响。而 WorkloadSpread 可以约束无状态 Workload 扩容出来 Pod 的区域分布，赋予单一 workload 的多区域和弹性部署的能力。"
+    },
     "For example, SidecarSet can help you inject sidecar containers into all matching Pods during creation and even update them in-place with no effect on other containers in Pod.": {
       "message": "比如，SidecarSet 能帮助你在所有匹配的 Pod 创建的时候都注入特定的 sidecar 容器，甚至可以原地升级已经注入的 sidecar 容器镜像、并且对 Pod 中其他容器不造成影响。"
     },
     "WorkloadSpread constrains the spread of stateless workload, which empowers single workload the abilities for multi-domain and elastic deployment.": {
       "message": "而 WorkloadSpread 可以约束无状态 Workload 扩容出来 Pod 的区域分布，赋予单一 workload 的多区域和弹性部署的能力。"
     },
-    "High-avalibility Protection": {
+    "High-availability Protection": {
       "message": "高可用性防护"
     },
-    "OpenKruise works hard on protecting high-avalibility for applications.": {
+    "OpenKruise works hard on protecting high-availability for applications. Now it can prevent your Kubernetes resources from the cascading deletion mechanism, including CRD, Namespace and almost all kinds of Workloads. In voluntary disruption scenarios, PodUnavailableBudget can achieve the effect of preventing application disruption or SLA degradation, which is not only compatible with Kubernetes PDB protection for Eviction API, but also able to support the protection ability of above scenarios.": {
+      "message": "OpenKruise 在为应用的高可用性防护方面也做出了很多努力。目前它可以保护你的 Kubernetes 资源不受级联删除机制的干扰，包括 CRD、Namespace、以及几乎全部的 Workloads 类型资源。相比于 Kubernetes 原生的 PDB 只提供针对 Pod Eviction 的防护，PodUnavailableBudget 能够防护 Pod Deletion、Eviction、Update 等许多种 voluntary disruption 场景。"
+    },
+    "OpenKruise works hard on protecting high-availability for applications.": {
       "message": "OpenKruise 在为应用的高可用性防护方面也做出了很多努力。"
     },
     "Now it can prevent your Kubernetes resources from the cascading deletion mechanism, including CRD, Namespace and almost all kinds of Workloads.": {
