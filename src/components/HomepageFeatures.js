@@ -10,16 +10,12 @@ const features = [
         <p>
           <Translate>
             OpenKruise contains a set of advanced workloads, such as CloneSet, Advanced StatefulSet, Advanced DaemonSet, BroadcastJob.
-          </Translate>
-          <Translate>
             They all support not only the basic features which are similar to the original Workloads in Kubernetes,
             but also more advanced abilities like in-place update, configurable scale/upgrade strategies, parallel operations.
           </Translate>
             <br />
           <Translate>
             In-place Update is a new methodology to update container images and even environments.
-          </Translate>
-          <Translate>
             It only restarts the specific container with the new image and the Pod will not be recreated, 
             which leads to much faster update process and much less side effects on other sub-systems such as scheduler, CNI or CSI.
           </Translate>
@@ -41,8 +37,6 @@ const features = [
           <Translate>
             For example, SidecarSet can help you inject sidecar containers into all matching Pods during creation and
             even update them in-place with no effect on other containers in Pod.
-          </Translate>
-          <Translate>
             WorkloadSpread constrains the spread of stateless workload, which empowers single workload the abilities for multi-domain and elastic deployment.
           </Translate>
         </p>
@@ -51,19 +45,15 @@ const features = [
     reverse: true,
   },
   {
-    title: <><Translate>High-avalibility Protection</Translate></>,
+    title: <><Translate>High-availability Protection</Translate></>,
     imgUrl: 'img/feature3.png',
     description: (
       <>
         <p>
           <Translate>
-            OpenKruise works hard on protecting high-avalibility for applications.
-          </Translate>
-          <Translate>
+            OpenKruise works hard on protecting high-availability for applications.
             Now it can prevent your Kubernetes resources from the cascading deletion mechanism,
             including CRD, Namespace and almost all kinds of Workloads.
-          </Translate>
-          <Translate>
             In voluntary disruption scenarios, PodUnavailableBudget can achieve the effect of preventing application disruption or SLA degradation,
             which is not only compatible with Kubernetes PDB protection for Eviction API, but also able to support the protection ability of above scenarios.
           </Translate>
