@@ -202,7 +202,7 @@ The effect of the above configuration is that during scaling up, CloneSet will n
 CloneSet provides three update types, defaults to `ReCreate`.
 
 - `ReCreate`: controller will delete old Pods and PVCs and create new ones.
-- `InPlaceIfPossible`: controller will try to in-place update Pod instead of recreating them if possible. Please ready the concept doc below.
+- `InPlaceIfPossible`: controller will try to in-place update Pod instead of recreating them if possible. Please read the concept doc below.
 - `InPlaceOnly`: controller will in-place update Pod instead of recreating them. With `InPlaceOnly` policy, user cannot modify any fields other than the fields that supported to in-place update.
 
 **You may need to read the [concept doc](../core-concepts/inplace-update) for more details of in-place update.**
