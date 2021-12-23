@@ -63,7 +63,7 @@ Have something you’d like to broadcast to our community?
 Share your voice at our <a href="https://shimo.im/docs/gXqmeQOYBehZ4vqo">Bi-weekly community meeting (Chinese)</a>, or through the channels below:</p><ul><li>Join the community on <a href="https://kubernetes.slack.com/channels/openkruise">Slack</a> (English).</li><li>Join the community on DingTalk: Search GroupID <code>23330762</code> (Chinese).</li><li>Join the community on WeChat: Search User <code>openkruise</code> and let the robot invite you (Chinese).</li></ul>]]></content:encoded>
         </item>
         <item>
-            <title><![CDATA[OpenKruise v0.10.0 新特性WorkloadSpread解读]]></title>
+            <title><![CDATA[WorkloadSpread - Interpretation for OpenKruise v0.10.0 new feature]]></title>
             <link>https://openkruise.io/blog/workloadspread</link>
             <guid>workloadspread</guid>
             <pubDate>Wed, 22 Sep 2021 00:00:00 GMT</pubDate>

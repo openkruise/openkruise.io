@@ -62,7 +62,7 @@ $ kubectl kruise set image cloneset/nginx busybox=busybox nginx=nginx:1.9.1
 可以在我们的<a href="https://shimo.im/docs/gXqmeQOYBehZ4vqo">社区双周会</a>上分享你的声音，或通过以下渠道参与讨论：</p><ul><li>加入社区 <a href="https://kubernetes.slack.com/channels/openkruise">Slack channel</a> (English)</li><li>加入社区钉钉群：搜索群号 <code>23330762</code> (Chinese)</li><li>加入社区微信群：添加用户 <code>openkruise</code> 并让机器人拉你入群 (Chinese)</li></ul>]]></content:encoded>
         </item>
         <item>
-            <title><![CDATA[Interpretation for OpenKruise v0.10.0 new feature --- WorkloadSpread]]></title>
+            <title><![CDATA[OpenKruise v0.10.0 新特性WorkloadSpread解读]]></title>
             <link>https://openkruise.io/zh/blog/workloadspread</link>
             <guid>workloadspread</guid>
             <pubDate>Wed, 22 Sep 2021 00:00:00 GMT</pubDate>
