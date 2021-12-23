@@ -1,6 +1,6 @@
 ---
 slug: workloadspread
-title: OpenKruise v0.10.0 新特性WorkloadSpread解读 
+title: WorkloadSpread - Interpretation for OpenKruise v0.10.0 new feature  
 authors: [BoltsLei, veophi]
 tags: [workload, workloadspread, multi-domain]
 ---
