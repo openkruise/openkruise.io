@@ -255,6 +255,94 @@ spec:
         </author>
     </entry>
     <entry>
+        <title type="html"><![CDATA[OpenKruise 0.9.0, SidecarSet Helps Mesh Container Hot Upgrade]]></title>
+        <id>SidecarSet</id>
+        <link href="https://openkruise.io/zh/blog/SidecarSet"/>
+        <updated>2021-06-10T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[OpenKruise 是阿里云开源的云原生应用自动化管理套件，也是当前托管在 Cloud Native Computing Foundation (CNCF) 下的Sandbox项目。它来自阿里巴巴多年来容器化、云原生的技术沉淀，是阿里内部生产环境大规模应用的基于Kubernetes之上的标准扩展组件，也是紧贴上游社区标准、适应互联网规模化场景的技术理念与最佳实践。]]></summary>
+        <content type="html"><![CDATA[<p>OpenKruise 是阿里云开源的云原生应用自动化管理套件，也是当前托管在 Cloud Native Computing Foundation (CNCF) 下的Sandbox项目。它来自阿里巴巴多年来容器化、云原生的技术沉淀，是阿里内部生产环境大规模应用的基于Kubernetes之上的标准扩展组件，也是紧贴上游社区标准、适应互联网规模化场景的技术理念与最佳实践。</p><p>OpenKruise在2021.5.20发布了最新的v0.9.0版本，其中sidecarSet基于上一个版本扩展了特别针对Service Mesh场景的支持。</p><h1>背景 - 如何独立升级Mesh容器</h1><p>SidecarSet 是 Kruise 提供的独立管理 sidecar 容器的 workload。用户通过 SidecarSet 能够便利的完成对Sidecar容器的自动注入和独立升级。</p><p>默认情况下，sidecar 的独立升级顺序是先停止旧版本的容器，然后再创建新版本的容器。这种方式尤其适合不影响Pod服务可用性的sidecar容器，例如日志收集 agent，但是对于很多代理或运行时的 sidecar 容器，如 Istio Envoy，这种升级方法就有问题了。Envoy 作为 Pod 中的一个Proxy容器代理了所有的流量，这种场景下如果直接重启升级，Pod服务的可用性必然会受到影响，因此需要考虑应用自身的发布和容量情况，无法完全独立于应用做sidecar的发布。</p><p><img src="../../../static/img/blog/2021-06-10-sidecarset-hot-update/how_update_mesh.png" alt="how update mesh sidecar"/></p><p>阿里巴巴集团内部拥有上万的Pod都是基于Service Mesh来实现相互间的通信，由于mesh容器升级会导致业务pod的不可用，因而mesh容器的升级将会极大阻碍Service Mesh的迭代。针对这种场景，我们同集团内部的Service Mesh团队一起合作实现了mesh容器的热升级能力。本文将重点介绍在实现mesh容器热升级能力的过程中SidecarSet是扮演了怎样的重要角色。</p><h1>SidecarSet助力Mesh容器无损热升级</h1><p>Mesh容器不能像日志采集类容器直接原地升级，其原因在于：mesh容器必须要不间断地对外提供服务，而独立升级方式会导致mesh服务存在一段不可用时间。虽然社区中已有一些知名的mesh服务如Envoy、Mosn等默认能够提供平滑升级的能力，但是这些升级方式无法与云原生进行恰当地结合，且kubernetes本身也缺乏对此类sidecar容器的升级方案。</p><p>OpenKruise SidecarSet为此类mesh容器提供了sidecar热升级机制，能够通过云原生的方式助力Mesh容器实现无损热升级。</p><pre><code class="language-yaml">apiVersion: apps.kruise.io/v1alpha1
+kind: SidecarSet
+metadata:
+  name: hotupgrade-sidecarset
+spec:
+  selector:
+    matchLabels:
+      app: hotupgrade
+  containers:
+  - name: sidecar
+    image: openkruise/hotupgrade-sample:sidecarv1
+    imagePullPolicy: Always
+    lifecycle:
+      postStart:
+        exec:
+          command:
+          - /bin/sh
+          - /migrate.sh
+    upgradeStrategy:
+      upgradeType: HotUpgrade
+      hotUpgradeEmptyImage: openkruise/hotupgrade-sample:empty
+</code></pre><ul><li>upgradeType: HotUpgrade代表该sidecar容器的类型是hot upgrade，即热升级方案</li><li>hotUpgradeEmptyImage: 当热升级sidecar容器时，业务须要提供一个empty容器用于热升级过程中的容器切换。Empty容器同sidecar容器具有相同的配置（镜像地址除外），例如command, lifecycle, probe等。</li></ul><p>SidecarSet热升级机制主要包含注入热升级Sidecar容器和Mesh容器平滑升级两个过程。</p><h2>注入热升级Sidecar容器</h2><p>针对热升级类型的Sidecar容器，在Pod创建时SidecarSet Webhook将会注入两个容器：</p><ul><li>{sidecar.name}-1: 如下图所示 envoy-1，这个容器代表正在实际工作的sidecar容器，例如：envoy:1.16.0</li><li>{sidecar.name}-2: 如下图所示 envoy-2，这个容器是业务提供的hotUpgradeEmptyImage容器，例如：empty:1.0</li></ul><p><img src="../../../static/img/blog/2021-06-10-sidecarset-hot-update/inject_sidecar.png" alt="inject sidecar"/></p><p>上述Empty容器在Mesh容器运行过程中，并没有做任何实际的工作。</p><h2>Mesh容器平滑升级</h2><p>热升级流程主要分为一下三个步骤：</p><ol><li>Upgrade: 将Empty容器替换为最新版本的sidecar容器，例如：envoy-2.Image = envoy:1.17.0</li><li>Migration: 执行sidecar容器的PostStartHook脚本，完成mesh服务的平滑升级</li><li>Reset: mesh服务平滑升级后，将老版本sidecar容器替换为Empty容器，例如：envoy-1.Image = empty:1.0</li></ol><p><img src="../../../static/img/blog/2021-06-10-sidecarset-hot-update/update_sidecar.png" alt="update sidecar"/></p><p>仅需上述三个步骤即可完成热升级中的全部流程，若对Pod执行多次热升级，则重复执行上述三个步骤即可。</p><h2>Migration核心逻辑</h2><p>SidecarSet热升级机制不仅完成了mesh容器的切换，并且提供了新老版本的协调机制（PostStartHook），但是至此还只是万里长征的第一步，Mesh容器同时还需要提供PostSartHook脚本来完成mesh服务自身的平滑升级（上述Migration过程），如：Envoy热重启、Mosn无损重启。</p><p>mesh容器一般都是通过监听固定端口来对外提供服务，此类mesh容器的migration过程可以概括为：通过UDS传递ListenFD和停止Accpet、开始排水。针对不支持热重启的mesh容器可以参考此过程完成改造，逻辑图如下：</p><p><img src="../../../static/img/blog/2021-06-10-sidecarset-hot-update/migration.png" alt="migration"/></p><h2>Migration Demo</h2><p>不同mesh容器对外提供的服务以及内部实现逻辑各有差异，进而具体的Migration也有所不同，上述逻辑只是对其中一些要点做了一些总结，希望能对有需要的各位有所裨益，同时在github上面我们也提供了一个热升级Migration Demo以供参考，下面将对其中的一些关键代码进行介绍。</p><ol><li>协商机制
+Mesh容器启动逻辑首先就需要判断第一次启动还是热升级平滑迁移过程，为了减少mesh容器沟通成本，Kruise在两个sidecar容器中注入了两个环境变量SIDECARSET_VERSION和SIDECARSET_VERSION_ALT，通过判断两个环境变量的值来判断是否是热升级过程以及当前sidecar容器是新版本还是老版本。</li></ol><pre><code>// return two parameters:
+// 1. (bool) indicates whether it is hot upgrade process
+// 2. (bool ) when isHotUpgrading=true, the current sidecar is newer or older
+func isHotUpgradeProcess() (bool, bool) {
+  // Version of the current sidecar container
+  version := os.Getenv(&quot;SIDECARSET_VERSION&quot;)
+  // Version of the peer sidecar container
+  versionAlt := os.Getenv(&quot;SIDECARSET_VERSION_ALT&quot;)
+  // If the version of the peer sidecar container is &quot;0&quot;, hot upgrade is not underway
+  if versionAlt == &quot;0&quot; {
+    return false, false
+  }
+  // Hot upgrade is underway
+  versionInt, _ := strconv.Atoi(version)
+  versionAltInt, _ := strconv.Atoi(versionAlt)
+  // version is of int type and monotonically increases, which means the version value of the new-version container will be greater
+  return true, versionInt &gt; versionAltInt
+}
+</code></pre><ol start="2"><li>ListenFD迁移
+通过Unix Domain Socket实现ListenFD在不同容器间的迁移，此步同样也是热升级中非常关键的一步，代码示例如下：</li></ol><pre><code>  // For code conciseness, all failures will not be captured
+
+  /* The old sidecar migrates ListenFD to the new sidecar through Unix Domain Socket */
+  // tcpLn *net.TCPListener
+  f, _ := tcpLn.File()
+  fdnum := f.Fd()
+  data := syscall.UnixRights(int(fdnum))
+  // Establish a connection with the new sidecar container through Unix Domain Socket
+  raddr, _ := net.ResolveUnixAddr(&quot;unix&quot;, &quot;/dev/shm/migrate.sock&quot;)
+  uds, _ := net.DialUnix(&quot;unix&quot;, nil, raddr)
+  // Use UDS to send ListenFD to the new sidecar container
+  uds.WriteMsgUnix(nil, data, nil)
+  // Stop receiving new requests and start the drainage phase, for example, http2 GOAWAY
+  tcpLn.Close()
+
+  /* The new sidecar receives ListenFD and starts to provide external services */
+  // Listen to UDS
+  addr, _ := net.ResolveUnixAddr(&quot;unix&quot;, &quot;/dev/shm/migrate.sock&quot;)
+  unixLn, _ := net.ListenUnix(&quot;unix&quot;, addr)
+  conn, _ := unixLn.AcceptUnix()
+  buf := make([]byte, 32)
+  oob := make([]byte, 32)
+  // Receive ListenFD
+  _, oobn, _, _, _ := conn.ReadMsgUnix(buf, oob)
+  scms, _ := syscall.ParseSocketControlMessage(oob[:oobn])
+  if len(scms) &gt; 0 {
+    // Parse FD and convert to *net.TCPListener
+    fds, _ := syscall.ParseUnixRights(&amp;(scms[0]))
+    f := os.NewFile(uintptr(fds[0]), &quot;&quot;)
+    ln, _ := net.FileListener(f)
+    tcpLn, _ := ln.(*net.TCPListener)
+    // Start to provide external services based on the received Listener. The http service is used as an example
+    http.Serve(tcpLn, serveMux)
+  }
+
+</code></pre><h1>已知Mesh容器热升级案例</h1><p>阿里云服务网格（Alibaba Cloud Service Mesh，简称ASM）提供了一个全托管式的服务网格平台，兼容社区Istio开源服务网格。当前，基于OpenKruise SidecarSet的热升级能力，ASM实现了数据平面Sidecar热升级能力（Beta），用户可以在应用无感的情况下完成服务网格的数据平面版本升级，正式版也将于近期上线。除热升级能力外，ASM还支持配置诊断、操作审计、访问日志、监控、服务注册接入等能力，全方位提升服务网格使用体验，欢迎您前往试用。</p><h1>总结</h1><p>云原生中mesh容器的热升级一直都是迫切却又棘手的问题，本文中的方案也只是阿里巴巴集团在此问题上的一次探索，在反馈社区的同时也希望能够抛砖引玉，引发各位对此中场景的思考。同时，我们也欢迎更多的同学参与到 OpenKruise 社区来，共同建设一个场景更加丰富、完善的 K8s 应用管理、交付扩展能力，能够面向更加规模化、复杂化、极致性能的场景。</p>]]></content>
+        <author>
+            <name>Mingshan Zhao</name>
+            <uri>https://github.com/zmberg</uri>
+        </author>
+    </entry>
+    <entry>
         <title type="html"><![CDATA[OpenKruise 0.9.0：新增Pod容器重启、资源删除防护等功能]]></title>
         <id>openkruise-0.9.0</id>
         <link href="https://openkruise.io/zh/blog/openkruise-0.9.0"/>
@@ -311,6 +399,96 @@ spec:
         <author>
             <name>Siyu Wang</name>
             <uri>https://github.com/FillZpp</uri>
+        </author>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[OpenKruise 0.8.0, A Powerful Tool for Sidecar Container Management]]></title>
+        <id>SidecarSet</id>
+        <link href="https://openkruise.io/zh/blog/SidecarSet"/>
+        <updated>2021-03-15T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[OpenKruise 是阿里云开源的云原生应用自动化管理套件，也是当前托管在 Cloud Native Computing Foundation (CNCF) 下的Sandbox项目。它来自阿里巴巴多年来容器化、云原生的技术沉淀，是阿里内部生产环境大规模应用的基于Kubernetes之上的标准扩展组件，也是紧贴上游社区标准、适应互联网规模化场景的技术理念与最佳实践。]]></summary>
+        <content type="html"><![CDATA[<p>OpenKruise 是阿里云开源的云原生应用自动化管理套件，也是当前托管在 Cloud Native Computing Foundation (CNCF) 下的Sandbox项目。它来自阿里巴巴多年来容器化、云原生的技术沉淀，是阿里内部生产环境大规模应用的基于Kubernetes之上的标准扩展组件，也是紧贴上游社区标准、适应互联网规模化场景的技术理念与最佳实践。</p><p>OpenKruise在2021.3.4发布了最新的v0.8.0版本，其中增强了SidecarSet的能力，特别是对日志管理类Sidecar有了更加完善的支持。</p><h1>背景</h1><p>Sidecar是云原生中一种非常重要的容器设计模式，它将辅助能力从主容器中剥离出来成为单独的sidecar容器。在微服务架构中，通常也使用sidecar模式将微服务中的配置管理、服务发现、路由、熔断等通用能力从主程序中剥离出来，从而极大降低了微服务架构中的复杂性。随着Service Mesh的逐步风靡，sidecar模式也日益深入人心，在阿里巴巴集团内部也大量使用sidecar模式来管理诸如运维、安全、消息中间件等通用组件。</p><p>在Kubernetes集群中，Pod不仅可以实现主容器与sidecar容器的构建，同时提供了许多功能强大的workload（例如：deployment、statefulset）来对Pod进行管理、升级。但是随着kubernetes集群上的业务日益增多，sidecar容器的种类与规模也随之日益庞大，对线上sidecar容器的管理和升级成为了愈发繁杂的工作：</p><ol><li>业务Pod里面包含了运维、安全、代理等多个sidecar容器，业务线同学不仅要完成自身主容器的配置，而且还需要熟悉这些sidecar容器的配置，这不仅增加了业务同学的工作量，同时也无形增加了sidecar容器配置的风险。</li><li>sidecar容器的升级需要连同业务主容器一起重启（deployment、statefulset等workload基于Pod销毁、重建的模式，来实现Pod的滚动升级），推动和升级支撑着线上数百款业务的sidecar容器，必然存在着极大的业务阻力。</li><li>作为sidecar容器的提供者对线上诸多各种配置以及版本的sidecar容器没有直接有效的升级手段，这对sidecar容器的管理意味着极大的潜在风险。</li></ol><p>阿里巴巴集团内部拥有着百万级的容器数量连同上面承载的上千个业务，因此，sidecar容器的管理与升级也就成为了亟待完善的主题。因此，我们总结了内部许多sidecar容器的通用化需求，并将其沉淀到OpenKruise上面，最终抽象为SidecarSet作为管理和升级种类繁多sidecar容器的利器。</p><h1>OpenKruise SidecarSet</h1><p>SidecarSet是OpenKruise中针对sidecar抽象出来的概念，负责注入和升级kubernetes集群中的sidecar容器，是OpenKruise的核心workload之一。它提供了非常丰富的功能，用户使用SidecarSet可以非常方便实现sidecar容器的管理。主要特性如下：</p><ol><li>配置单独管理：为每一个sidecar容器配置单独的SidecarSet配置，方便管理</li><li>自动注入：在新建、扩容、重建pod的场景中，实现sidecar容器的自动注入</li><li>原地升级：支持不重建pod的方式完成sidecar容器的原地升级，不影响业务主容器，并包含丰富的灰度发布策略</li></ol><p>注意：针对Pod中包含多个容器的模式，其中对外提供主要业务逻辑能力的容器称之为 主容器，其它一些如日志采集、安全、代理等辅助能力的容器称之为 Sidecar容器。例如：一个对外提供web能力的pod，nginx容器提供主要的web server能力即为 主容器，logtail容器负责采集、上报nginx日志即为 Sidecar容器。本文中的SidecarSet资源抽象也是为解决 Sidecar容器 的一些问题。</p><h2>Sidecar logging architectures</h2><p>应用日志可以让你了解应用内部的运行状况，日志对调试问题和监控集群活动非常有用。应用容器化后，最简单且最广泛采用的日志记录方式就是写入标准输出和标准错误。</p><p>但是，在当前分布式系统、大规模集群的时代下，上述方案还不足以达到生产环境的标准。首先，对于分布式系统而言，日志都是分散在单个容器里面，没有一个统一汇总的地方。其次，如果发生容器崩溃、Pod被驱逐等场景，会出现日志丢失的情况。因此，需要一种更加可靠，独立于容器生命周期的日志解决方案。</p><p>Sidecar logging architectures 是将logging agent放到一个独立的sidecar容器中，通过共享日志目录的方式，实现容器日志的采集，然后存储到日志平台的后端存储。</p><p><img src="../../../static/img/blog/2021-03-15-sidecarset/logsidecar.png" alt="logsidecar"/></p><p>阿里巴巴以及蚂蚁集团内部同样也是基于这种架构实现了容器的日志采集，下面我将介绍OpenKruise SidecarSet如何助力 Sidecar日志架构在kubernetes集群中的大规模落地实践。</p><h2>自动注入</h2><p>OpenKruise SidecarSet基于kubernetes AdmissionWebhook机制实现了sidecar容器的自动注入，因此只要将sidecar配置到SidecarSet中，不管用户用 CloneSet、Deployment、StatefulSet 等任何方式部署，扩出来的 Pod 中都会注入定义好的 sidecar 容器。</p><p><img src="../../../static/img/blog/2021-03-15-sidecarset/inject_sidecar.png" alt="inject sidecar"/></p><p>Sidecar容器的所有者只需要配置自身的SidecarSet，就可以在业务无感知的情况下完成sidecar容器的注入，这种方式极大的降低了sidecar容器使用的门槛，也方便了sidecar所有者的管理工作。为了满足sidecar注入的多种场景，SidecarSet除containers之外还扩展了如下字段：</p><pre><code># sidecarset.yaml
+apiVersion: apps.kruise.io/v1alpha1
+kind: SidecarSet
+metadata:
+  name: test-sidecarset
+spec:
+  # 通过selector选择pod
+  selector:
+    matchLabels:
+      app: web-server
+  # 指定 namespace 生效
+  namespace: ns-1
+  # container definition
+  containers:
+  - name: logtail
+    image: logtail:1.0.0
+    # 共享指定卷
+    volumeMounts:
+    - name: web-log
+      mountPath: /var/log/web
+    # 共享所有卷
+    shareVolumePolicy: disabled
+    # 环境变量共享
+    transferEnv:
+    - sourceContainerName: web-server
+    # TZ代表时区，例如：web-server容器中存在环境变量 TZ=Asia/Shanghai
+    envName: TZ
+    volumes:
+    - name: web-log
+      emptyDir: {}
+</code></pre><ul><li>Pod选择器<ul><li>支持selector来选择要注入的Pod，如示例中将选择labels<!-- -->[app]<!-- --> = web-server的pod，将logtail容器注入进去，也可以在所有的pod中添加一个labels<!-- -->[inject/logtail]<!-- --> = true的方式，来实现全局性的sidecar注入。</li><li>namespace：sidecarSet默认是全局生效的，如果只想对某一个namespace生效，则配置该参数</li></ul></li><li>数据卷共享：<ul><li>共享指定卷：通过volumeMounts和volumes可以完成与主容器的特定卷的共享，如示例中通过共享web-log volume来达到日志采集的效果</li><li>共享所有卷：通过 shareVolumePolicy = enabled | disabled 来控制是否挂载pod主容器的所有卷卷，常用于日志收集等 sidecar，配置为 enabled 后会把应用容器中所有挂载点注入 sidecar 同一路经下(sidecar中本身就有声明的数据卷和挂载点除外）</li></ul></li><li>环境变量共享 可以通过 transferEnv 从其它容器中获取环境变量，会把名为 sourceContainerName 容器中名为 envName 的环境变量拷贝到本sidecar容器，如示例中 日志sidecar容器共享了主容器的时区TZ，这在海外环境中尤其常见</li></ul><p>注意：kubernetes社区对于已经创建的Pod不允许修改container数量，所以上述注入能力只能发生在Pod创建阶段，对于已经创建的Pod需要通过重建的方式来注入。</p><h2>原地升级</h2><p>SidecarSet不仅实现sidecar容器的注入，而且复用了OpenKruise中原地升级的特性，实现了在不重启Pod和主容器的前提下单独升级sidecar容器的能力。由于这种升级方式基本上能做到业务方无感知的程度，所以sidecar容器的升级已不再是上下交困的难题，从而极大解放了sidecar的所有者，提升了sidecar版本迭代的速度。</p><p><img src="../../../static/img/blog/2021-03-15-sidecarset/inplace_sidecar.png" alt="inplace sidecar"/></p><p>注意：kubernetes社区对于已经创建的Pod只允许修改 container.image 字段，因此对于sidecar容器的修改包含除 container.image 的其它字段，则需要通过Pod重建的方式，不能直接原地升级。</p><p>为了满足一些复杂的sidecar升级场景，SidecarSet除了原地升级以外，还提供了非常丰富的灰度发布策略。</p><h2>灰度发布</h2><p>灰度发布应该算是日常发布中最常见的一种手段，它能够比较平滑的完成sidecar容器的发布，尤其是在大规模集群的场景下，强烈建议使用这种方式。下面是 首批暂停，后续基于 最大不可用 滚动发布 的例子，假设一个有1000个pod需要发布：</p><pre><code class="language-yaml">apiVersion: apps.kruise.io/v1alpha1
+kind: SidecarSet
+metadata:
+  name: sidecarset
+spec:
+  # ...
+  updateStrategy:
+    type: RollingUpdate
+    partition: 980
+    maxUnavailable: 10%
+</code></pre><p>上述配置首先发布（1000 - 980）= 20 个pod之后就会暂停发布，业务可以观察一段时间发现 sidecar 容器正常后，调整重新 update SidecarSet 配置：</p><pre><code class="language-yaml">apiVersion: apps.kruise.io/v1alpha1
+kind: SidecarSet
+metadata:
+  name: sidecarset
+spec:
+  # ...
+  updateStrategy:
+    type: RollingUpdate
+    maxUnavailable: 10%
+</code></pre><p>这样调整后，对于余下的 980 个pod，将会按照最大不可用的数量（10% * 1000 = 100）的顺序进行发布，直到所有的pod都发布完成。</p><p>Partition 的语义是 保留旧版本 Pod 的数量或百分比，默认为 0。这里的 partition 不表示任何 order 序号。如果在发布过程中设置了 partition:</p><ul><li>如果是数字，控制器会将 (replicas - partition) 数量的 Pod 更新到最新版本。</li><li>如果是百分比，控制器会将 (replicas * (100% - partition)) 数量的 Pod 更新到最新版本。</li></ul><p>MaxUnavailable 是发布过程中保证的，同一时间下最大不可用的 Pod 数量，默认值为 1。用户可以将其设置为绝对值或百分比（百分比会被控制器按照selected pod做基数来计算出一个背后的绝对值）。</p><p>注意：maxUnavailable 和 partition 两个值是没有必然关联。举例：</p><ul><li>当 {matched pod}=100,partition=50,maxUnavailable=10，控制器会发布 50 个 Pod 到新版本，但是发布窗口为 10，即同一时间只会发布 10 个 Pod，每发布好一个 Pod 才会再找一个发布，直到 50 个发布完成。</li><li>当 {matched pod}=100,partition=80,maxUnavailable=30，控制器会发布 20 个 Pod 到新版本，因为满足 maxUnavailable 数量，所以这 20 个 Pod 会同时发布。</li></ul><h2>金丝雀发布</h2><p>对于有金丝雀发布需求的业务，可以通过strategy.selector来实现。方式：对于需要率先金丝雀灰度的pod打上固定的labels<!-- -->[canary.release]<!-- --> = true，再通过strategy.selector.matchLabels来选中该pod</p><pre><code class="language-yaml">apiVersion: apps.kruise.io/v1alpha1
+kind: SidecarSet
+metadata:
+  name: sidecarset
+spec:
+  # ...
+  updateStrategy:
+    type: RollingUpdate
+    selector:
+      matchLabels:
+      - canary.release: true
+    maxUnavailable: 10%
+</code></pre><p>上述配置只会发布打上金丝雀labels的容器，在完成金丝雀验证之后，通过将 updateStrategy.selector 配置去掉，就会继续通过 最大不可用 来滚动发布。</p><h2>打散发布</h2><p>SidecarSet对于pod的升级顺序，默认按照如下规则：</p><ul><li>对升级的pod集合，保证多次升级的顺序一致</li><li>选择优先顺序是（越小优先级越高）： unscheduled &lt; scheduled, pending &lt; unknown &lt; running, not-ready &lt; ready, newer pods &lt; older pods</li></ul><p>除了上述默认发布顺序之外，scatter打散策略允许用户 自定义将符合某些标签的 Pod 打散 到整个发布过程中。比如，对于像 logtail 这种全局性的 sidecar container，一个集群当中很可能注入了几十个业务pod，因此可以使用基于 应用名 的方式来打散logtail的方式进行发布，实现 不同应用间打散灰度发布 的效果，并且这种方式可以同 最大不可用 一起使用。</p><pre><code class="language-yaml">apiVersion: apps.kruise.io/v1alpha1
+kind: SidecarSet
+metadata:
+  name: sidecarset
+spec:
+# ...
+  updateStrategy:
+    type: RollingUpdate
+    # 配置pod labels，假设所有的pod都包含labels[app_name]
+    scatterStrategy:
+    - key: app_name
+      value: nginx
+    - key: app_name
+      value: web-server
+    - key: app_name
+      value: api-gateway
+    maxUnavailable: 10%
+</code></pre><p>注意：当前版本必须要列举所有的应用名称，我们将在下个版本支持 只配置label key 的智能打散方式。</p><h1>总结</h1><p>本次 OpenKruise v0.8.0 版本的升级，SidecarSet特性主要是完善了 日志管理类Sidecar 场景的能力，后续我们在持续深耕SidecarSet稳定性、性能的同时，也将覆盖更多的场景，比如下一个版本将会增加针对 Service Mesh场景 的支持。同时，我们也欢迎更多的同学参与到 OpenKruise 社区来，共同建设一个场景更加丰富、完善的 K8s 应用管理、交付扩展能力，能够面向更加规模化、复杂化、极致性能的场景。</p>]]></content>
+        <author>
+            <name>Mingshan Zhao</name>
+            <uri>https://github.com/zmberg</uri>
         </author>
     </entry>
     <entry>
