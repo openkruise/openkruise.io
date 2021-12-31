@@ -18,7 +18,7 @@ In voluntary disruption scenarios, PodUnavailableBudget can achieve the effect o
 A sample PodUnavailableBudget yaml looks like following:
 
 ```yaml
-apiVersion: apps.kruise.io/v1alpha1
+apiVersion: policy.kruise.io/v1alpha1
 kind: PodUnavailableBudget
 metadata:
   name: web-server-pub
