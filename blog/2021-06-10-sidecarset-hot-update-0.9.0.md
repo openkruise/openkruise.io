@@ -1,5 +1,5 @@
 ---
-slug: SidecarSet
+slug: sidecarset-hotupdate
 title: OpenKruise 0.9.0, SidecarSet Helps Mesh Container Hot Upgrade
 authors: [zmberg]
 tags: [workload, sidecar, istio, mosn, HotUpgrade]

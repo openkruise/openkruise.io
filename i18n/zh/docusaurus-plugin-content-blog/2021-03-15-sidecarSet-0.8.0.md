@@ -1,5 +1,5 @@
 ---
-slug: SidecarSet
+slug: sidecarset
 title: OpenKruise 0.8.0, A Powerful Tool for Sidecar Container Management
 authors: [zmberg]
 tags: [workload, sidecar]
