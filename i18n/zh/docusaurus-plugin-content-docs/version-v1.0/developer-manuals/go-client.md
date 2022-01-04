@@ -13,7 +13,7 @@ title: Golang client
 首先，在你的 `go.mod` 中引入 `kruise-api` 依赖 （版本号最好和你安装的 Kruise 版本相同）：
 
 ```
-require github.com/openkruise/kruise-api v0.10.0
+require github.com/openkruise/kruise-api v1.0.0
 ```
 
 | Kubernetes Version in your Project | Import Kruise-api < v0.10    | Import Kruise-api >= v0.10   |
