@@ -140,6 +140,10 @@
         {
           "type": "doc",
           "id": "version-v0.10/best-practices/hpa-configuration"
+        },
+        {
+          "type": "doc",
+          "id": "version-v0.10/best-practices/elastic-deployment"
         }
       ],
       "collapsible": true
