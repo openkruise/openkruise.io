@@ -58,7 +58,8 @@
       "label": "Best Practices",
       "collapsed": true,
       "items": [
-        "best-practices/hpa-configuration"
+        "best-practices/hpa-configuration",
+        "best-practices/gitops-with-kruise"
       ]
     },
     {

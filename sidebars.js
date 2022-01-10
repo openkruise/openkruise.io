@@ -70,6 +70,7 @@ module.exports = {
       collapsed: true,
       items: [
         'best-practices/hpa-configuration',
+        'best-practices/gitops-with-kruise',
       ],
     },
     {
