@@ -71,6 +71,7 @@ module.exports = {
       items: [
         'best-practices/hpa-configuration',
         'best-practices/gitops-with-kruise',
+        'best-practices/elastic-deployment',
       ],
     },
     {
