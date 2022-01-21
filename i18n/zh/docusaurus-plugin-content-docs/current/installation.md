@@ -16,10 +16,8 @@ $ helm repo add openkruise https://openkruise.github.io/charts/
 $ helm repo update
 
 # Install the latest version.
-$ helm install kruise openkruise/kruise --version 1.0.0
+$ helm install kruise openkruise/kruise --version 1.0.1
 ```
-
-*如果你希望安装稳定版本，阅读[文档](/docs/installation)。*
 
 ## 通过 helm 升级
 
@@ -31,7 +29,7 @@ $ helm repo add openkruise https://openkruise.github.io/charts/
 $ helm repo update
 
 # Upgrade the latest version.
-$ helm upgrade kruise openkruise/kruise --version 1.0.0 [--force]
+$ helm upgrade kruise openkruise/kruise --version 1.0.1 [--force]
 ```
 
 注意：
@@ -63,7 +61,7 @@ $ helm install/upgrade kruise /PATH/TO/CHART
 | `manager.log.level`                       | kruise-manager 日志输出级别                                    | `4`                           |
 | `manager.replicas`                        | kruise-manager 的期望副本数                                    | `2`                           |
 | `manager.image.repository`                | kruise-manager/kruise-daemon 镜像仓库                         | `openkruise/kruise-manager`   |
-| `manager.image.tag`                       | kruise-manager/kruise-daemon 镜像版本                         | `1.0.0`                       |
+| `manager.image.tag`                       | kruise-manager/kruise-daemon 镜像版本                         | `1.0.1`                       |
 | `manager.resources.limits.cpu`            | kruise-manager 的 limit CPU 资源                              | `100m`                        |
 | `manager.resources.limits.memory`         | kruise-manager 的 limit memory 资源                           | `256Mi`                       |
 | `manager.resources.requests.cpu`          | kruise-manager 的 request CPU 资源                            | `100m`                        |
