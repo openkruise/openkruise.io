@@ -15,7 +15,22 @@ GitOps是一种持续交付的方式。它的核心思想是将应用系统的�
 ### 前置条件
 - Kubernetes集群，从v1.0.0(alpha/beta)开始，OpenKruise要求在Kubernetes >= 1.16以上版本的集群中安装和使用。
 - 安装argo-cd, 参考[官方文档](https://argo-cd.readthedocs.io/en/stable/getting_started/)
-- 安装OpenKruise，参考[官方文档](https://openkruise.io/docs/installation/)
+
+### Install OpenKruise（Enable: TemplateNoDefaults）
+默认安装的OpenKruise会进行pod/pvc template的默认值注入，这个行为会跟argo-cd的sync判断逻辑冲突，所以在安装OpenKruise需要打开Gates **TemplateNoDefaults**，如下：
+```
+# Firstly add openkruise charts repository if you haven't do this.
+$ helm repo add openkruise https://openkruise.github.io/charts/
+
+# [Optional]
+$ helm repo update
+
+# Install the latest version.
+$ helm install kruise openkruise/kruise --set featureGates="TemplateNoDefaults=true"
+
+# Those that have been installed need to be upgraded
+$ helm upgrade kruise openkruise/kruise --set featureGates="TemplateNoDefaults=true"
+```
 
 ### 把应用编排作为Git Repository
 1. 本文提供了一个guestbook的[demo](https://github.com/openkruise/samples)，它由guestbook、redis组成，通过kruise cloneSet、service完成应用的部署。如下：
@@ -120,7 +135,6 @@ metadata:
   namespace: argocd
 data:
   resource.customizations.health.apps.kruise.io_CloneSet: |
-
     hs = {}
     -- if paused
     if obj.spec.updateStrategy.paused then
