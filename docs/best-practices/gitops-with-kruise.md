@@ -13,7 +13,23 @@ With Git at the core of the delivery pipeline, every developer can submit Pull R
 ### Requirements
 - Install Kubernetes Cluster, Since v1.0.0 (alpha/beta), OpenKruise requires Kubernetes version >= 1.16.
 - Install argo-cd, Reference [Official Documents](https://argo-cd.readthedocs.io/en/stable/getting_started/)
-- Install OpenKruise，Reference [Official Documents](https://openkruise.io/docs/installation/)
+
+### Install OpenKruise（Enable: TemplateNoDefaults）
+Openkruse installed by default will inject the default value of pod / PVC template, which will conflict with the sync judgment logic of Argo CD.
+Therefore, when installing openkruse, you need to open gates **TemplateNoDefaults**, as follows:
+```
+# Firstly add openkruise charts repository if you haven't do this.
+$ helm repo add openkruise https://openkruise.github.io/charts/
+
+# [Optional]
+$ helm repo update
+
+# Install the latest version.
+$ helm install kruise openkruise/kruise --set featureGates="TemplateNoDefaults=true"
+
+# Those that have been installed need to be upgraded
+$ helm upgrade kruise openkruise/kruise --set featureGates="TemplateNoDefaults=true"
+```
 
 ### Declarative Applications in Git Repository
 1. OpenKruise provides a guestbook application [demo](https://github.com/openkruise/samples).
@@ -118,7 +134,6 @@ metadata:
   namespace: argocd
 data:
   resource.customizations.health.apps.kruise.io_CloneSet: |
-
     hs = {}
     -- if paused
     if obj.spec.updateStrategy.paused then
