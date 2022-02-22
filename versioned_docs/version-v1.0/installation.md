@@ -134,6 +134,12 @@ $ helm install kruise https://... --set  manager.image.repository=openkruise-reg
 
 Usually k3s has the different runtime path from the default `/var/run`. So you have to set `daemon.socketLocation` to the real runtime socket path on your k3s node (e.g. `/run/k3s` or `/var/run/k3s/`).
 
+### Installation parameters for AWS EKS
+
+When using a custom CNI (such as Weave or Calico) on EKS, the webhook cannot be reached by default. This happens because the control plane cannot be configured to run on a custom CNI on EKS, so the CNIs differ between control plane and worker nodes.
+
+To address this, the webhook can be run in the host network so it can be reached, by setting `--set manager.hostNetwork=true` when use helm install or upgrade.
+
 ## Uninstall
 
 Note that this will lead to all resources created by Kruise, including webhook configurations, services, namespace, CRDs, CR instances and Pods managed by Kruise controller, to be deleted!
