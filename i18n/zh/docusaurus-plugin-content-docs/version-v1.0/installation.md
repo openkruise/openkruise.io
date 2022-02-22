@@ -129,6 +129,12 @@ $ helm install kruise https://... --set  manager.image.repository=openkruise-reg
 
 通常来说 k3s 有着与默认 `/var/run` 不同的 runtime socket 路径。所以你需要将 `daemon.socketLocation` 参数设置为你的 k3s 节点上真实的路径（比如 `/run/k3s` 或 `/var/run/k3s/`）。
 
+### AWS EKS 安装参数
+
+当在 EKS 上使用自定义 CNI 插件（如 Weave 或 Calico）时，默认情况下 webhook 无法被连接到。这是因为在 EKS 上 control plane 不能被配置为运行到一个自定义的 CNI 上，所以 control plane 和 worker 节点的 CNI 是不同的。
+
+可以通过给 webhook 配置 host network 网络来解决这个问题，在 helm install/upgrade 的时候加入 `--set manager.hostNetwork=true` 参数即可。
+
 ## 卸载
 
 注意：卸载会导致所有 Kruise 下的资源都会删除掉，包括 webhook configurations, services, namespace, CRDs, CR instances 以及所有 Kruise workload 下的 Pod。 请务必谨慎操作！
