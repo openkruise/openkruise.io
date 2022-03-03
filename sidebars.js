@@ -72,6 +72,7 @@ module.exports = {
         'best-practices/hpa-configuration',
         'best-practices/gitops-with-kruise',
         'best-practices/elastic-deployment',
+        'best-practices/ci-pipeline-image-predownload',
       ],
     },
     {
