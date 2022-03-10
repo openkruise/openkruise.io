@@ -73,6 +73,7 @@ module.exports = {
         'best-practices/gitops-with-kruise',
         'best-practices/elastic-deployment',
         'best-practices/ci-pipeline-image-predownload',
+        'best-practices/log-container-sidecarset',
       ],
     },
     {
