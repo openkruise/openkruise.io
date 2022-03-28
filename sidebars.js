@@ -74,6 +74,8 @@ module.exports = {
         'best-practices/elastic-deployment',
         'best-practices/ci-pipeline-image-predownload',
         'best-practices/log-container-sidecarset',
+        'best-practices/cloneset-lifecycle',
+        'best-practices/acronjob+broadcastjob',
       ],
     },
     {
