@@ -70,11 +70,11 @@ module.exports = {
       collapsed: true,
       items: [
         'best-practices/hpa-configuration',
-        'best-practices/gitops-with-kruise',
-        'best-practices/elastic-deployment',
         'best-practices/ci-pipeline-image-predownload',
+        'best-practices/gitops-with-kruise',
         'best-practices/log-container-sidecarset',
         'best-practices/cloneset-lifecycle',
+        'best-practices/elastic-deployment',
         'best-practices/acronjob+broadcastjob',
       ],
     },
