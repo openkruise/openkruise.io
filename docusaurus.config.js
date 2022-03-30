@@ -1,5 +1,19 @@
 const lightCodeTheme = require('prism-react-renderer/themes/github');
 const darkCodeTheme = require('prism-react-renderer/themes/dracula');
+const versions = require('./versions.json');
+
+function getNextVersionName() {
+  const expectedPrefix = 'v1.';
+
+  const lastReleasedVersion = versions[0];
+  if (!lastReleasedVersion.includes(expectedPrefix)) {
+    throw new Error(
+      'this code is only meant to be used during the 2.0 phase.',
+    );
+  }
+  const version = parseInt(lastReleasedVersion.replace(expectedPrefix, ''), 10);
+  return `${expectedPrefix}${version + 1}`;
+}
 
 // With JSDoc @type annotations, IDEs can provide config autocompletion
 /** @type {import('@docusaurus/types').DocusaurusConfig} */
@@ -32,7 +46,15 @@ const darkCodeTheme = require('prism-react-renderer/themes/dracula');
           showLastUpdateAuthor: true,
           showLastUpdateTime: true,
           includeCurrentVersion: true,
-          lastVersion: 'v1.1',
+          lastVersion: undefined,
+          onlyIncludeVersions: (() => {
+            return ['current', ...versions.slice(0, 2)];
+          })(),
+          versions: {
+            current: {
+              label: `${getNextVersionName()} 🚧`,
+            },
+          },
         },
         blog: {
           blogSidebarTitle: 'All posts',
@@ -85,7 +107,6 @@ const darkCodeTheme = require('prism-react-renderer/themes/dracula');
           {
             type: 'docsVersionDropdown',
             position: 'right',
-            dropdownActiveClassDisabled: true,
           },
           {
             to: "docs/",
