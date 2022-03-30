@@ -80,18 +80,12 @@ table td {
   font-size: 0.8rem;
 }
 
-.blogPostTitle_node_modules-\@docusaurus-theme-classic-lib-next-theme-BlogPostItem-styles-module:first-child {
-  font-size: 1.8rem;
-}
-/* .sidebarItemLink_node_modules-\@docusaurus-theme-classic-lib-next-theme-BlogSidebar-styles-module {
-  font-size: 0.7rem;
-} */
 .sidebarItem_node_modules-\@docusaurus-theme-classic-lib-next-theme-BlogSidebar-styles-module {
   font-size: 0.7rem;
   margin-top: 2.0rem;
 }
-.blogPostTitle_GeHD:first-child .blogPostTitle_rzP5:first-child {
-  font-size: 1.6rem;
+[class*='blogPostTitle_']:first-child {
+  font-size: 1.8rem;
 }
 .table-of-contents__link {
   font-size: 0.7rem;
