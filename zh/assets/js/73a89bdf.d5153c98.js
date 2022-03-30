@@ -1,1 +1,0 @@
-"use strict";(self.webpackChunkopenkruise_io=self.webpackChunkopenkruise_io||[]).push([[9931],{2552:function(a){a.exports=JSON.parse('{"allTagsPath":"/zh/blog/tags","slug":"/zh/blog/tags/multi-domain","name":"multi-domain","count":1,"permalink":"/zh/blog/tags/multi-domain"}')}}]);

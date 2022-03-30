@@ -1,1 +1,0 @@
-"use strict";(self.webpackChunkopenkruise_io=self.webpackChunkopenkruise_io||[]).push([[7970],{1144:function(a){a.exports=JSON.parse('{"allTagsPath":"/zh/blog/tags","slug":"/zh/blog/tags/workloadspread","name":"workloadspread","count":1,"permalink":"/zh/blog/tags/workloadspread"}')}}]);
