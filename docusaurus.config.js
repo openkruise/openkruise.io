@@ -85,6 +85,7 @@ const darkCodeTheme = require('prism-react-renderer/themes/dracula');
           {
             type: 'docsVersionDropdown',
             position: 'right',
+            dropdownActiveClassDisabled: true,
           },
           {
             to: "docs/",
