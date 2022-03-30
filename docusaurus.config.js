@@ -32,7 +32,7 @@ const darkCodeTheme = require('prism-react-renderer/themes/dracula');
           showLastUpdateAuthor: true,
           showLastUpdateTime: true,
           includeCurrentVersion: true,
-          lastVersion: 'v1.0',
+          lastVersion: 'v1.1',
         },
         blog: {
           blogSidebarTitle: 'All posts',
@@ -71,8 +71,9 @@ const darkCodeTheme = require('prism-react-renderer/themes/dracula');
           '⭐️ If you like OpenKruise, give it a star on <a target="_blank" rel="noopener noreferrer" href="https://github.com/openkruise/kruise">GitHub</a>! ⭐️',
       },
       algolia: {
-        apiKey: '1ea72f0766570fbc0d6f9e6f269c64eb',
+        apiKey: '72ec0a3c892141cf32490c676bb66628',
         indexName: 'openkruise',
+        appId: 'FKASWWQYOP',
       },
       navbar: {
         title: 'OpenKruise',
