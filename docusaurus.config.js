@@ -62,7 +62,7 @@ function getNextVersionName() {
           showReadingTime: true,
           // Please change this to your repo.
           editUrl:
-            'https://github.com/openkruise/openkruise.io/tree/master/blog',
+            'https://github.com/openkruise/openkruise.io/edit/master/',
         },
         theme: {
           customCss: require.resolve('./src/css/custom.css'),
