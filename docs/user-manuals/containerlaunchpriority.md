@@ -20,6 +20,7 @@ It only requires you to add an annotation in Pod:
 ```yaml
 apiVersion: v1
 kind: Pod
+metadata:
   annotations:
     apps.kruise.io/container-launch-priority: Ordered
 spec:
