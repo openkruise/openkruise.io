@@ -37,6 +37,14 @@ $ kubectl-kruise --help
 # or
 $ kubectl kruise --help
 ```
+## Upgrade 
+### Upgrade via Krew
+
+Run `kubectl krew upgrade kruise` to upgrade kruise plugin via Krew.
+
+### Upgrade manually
+Same to install plugin manaully.
+
 
 ## Usage
 
@@ -60,7 +68,7 @@ It equals to `kubectl scale --replicas=3 cloneset nginx`.
 
 ### rollout
 
-Available commands: `history`, `pause`, `restart`, `resume`, `status`, `undo`.
+Available commands: `history`, `pause`, `restart`, `resume`, `status`, `undo`, `approve`.
 
 ```bash
 $ kubectl kruise rollout undo cloneset/nginx
@@ -70,6 +78,9 @@ $ kubectl kruise rollout status statefulsets/sts1
 
 # kruise statefulsets
 $ kubectl kruise rollout status statefulsets.apps.kruise.io/sts2
+
+# approve a kruise rollout resource named "rollout-demo" in "ns-demo" namespace
+$ kubectl-kruise rollout approve rollout-demo -n ns-demo
 ```
 
 ### set
@@ -95,6 +106,15 @@ $ kubectl kruise migrate CloneSet --from Deployment -n default --dst-name deploy
 
 # Migrate replicas from an existing Deployment to an existing CloneSet.
 $ kubectl-kruise migrate CloneSet --from Deployment -n default --src-name cloneset-name --dst-name deployment-name --replicas 10 --max-surge=2
+```
+
+### exec
+
+Support switch to raw terminal mode, sends stdin to 'bash' in working sidecar container from cloneset myclone or pod and sends stdout/stderr from 'bash' back to the client
+
+```bash
+# exec sidecar in pod
+$ kubectl kruise exec mypod -S sidecar-container -i -t -- bash
 ```
 
 ### scaledown

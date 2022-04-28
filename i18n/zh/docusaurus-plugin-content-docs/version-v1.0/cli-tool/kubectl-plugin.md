@@ -22,7 +22,7 @@ $ tar xvf kubectl-kruise-darwin-amd64.tar.gz
 $ mv darwin-amd64/kubectl-kruise /usr/local/bin/
 ```
 
-3. 你可以通过 `kubectl-kruise` 或 `kubectl kruise` 命令来使用.
+3. 你可以通过 `kubectl-kruise` 或 `kubectl kruise` 命令来使用。
 
 ```bash
 $ kubectl-kruise --help
@@ -30,6 +30,15 @@ $ kubectl-kruise --help
 # or
 $ kubectl kruise --help
 ```
+
+## 升级插件 
+### 通过 Krew 升级
+
+执行 `kubectl krew upgrade kruise` 即可升级插件。
+
+### 手动升级
+
+手动升级的方式与安装过程一致。
 
 ## Usage
 
@@ -53,7 +62,7 @@ $ kubectl kruise scale --replicas=3 cloneset nginx
 
 ### rollout
 
-可用的子命令: `history`, `pause`, `restart`, `resume`, `status`, `undo`.
+可用的子命令: `history`, `pause`, `restart`, `resume`, `status`, `undo`, `approve`。
 
 ```bash
 $ kubectl kruise rollout undo cloneset/nginx
@@ -63,16 +72,26 @@ $ kubectl kruise rollout status statefulsets/sts1
 
 # kruise statefulsets
 $ kubectl kruise rollout status statefulsets.apps.kruise.io/sts2
+
+# approve a kruise rollout resource named "rollout-demo" in "ns-demo" namespace
+$ kubectl-kruise rollout approve rollout-demo -n ns-demo
 ```
 
 ### set
 
-可用的子命令: `env`, `image`, `resources`, `selector`, `serviceaccount`, `subject`.
+可用的子命令: `env`, `image`, `resources`, `selector`, `serviceaccount`, `subject`。
 
 ```bash
 $ kubectl kruise set env cloneset/nginx STORAGE_DIR=/local
 
 $ kubectl kruise set image cloneset/nginx busybox=busybox nginx=nginx:1.9.1
+```
+### exec
+通过 `exec` 命令直接进入到 Pod 的 sidecar 中。
+
+```bash
+# exec sidecar in pod
+$ kubectl kruise exec mypod -S sidecar-container -i -t -- bash
 ```
 
 ### migrate
