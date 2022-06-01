@@ -253,3 +253,9 @@ spec:
 你可以使用 `.spec.persistentVolumeClaimRetentionPolicy` 字段来控制在StatefulSet生命周期中是否以及合适删除它所创建的PVC。
 
 这个功能与上游 StatefulSet (K8s >= 1.23 [alpha]) 提供的相同，可以参考[上游文档](https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#persistentvolumeclaim-retention)。
+
+## 生命周期钩子
+
+**FEATURE STATE:** Kruise v0.8.0
+
+与 [CloneSet 提供的生命周期钩子](./cloneset#lifecycle-hook) 能力相似。

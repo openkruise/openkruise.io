@@ -244,11 +244,13 @@ status:
 
 - `status.replicas`: Pod 总数
 - `status.readyReplicas`: **ready** Pod 数量
-- `status.availableReplicas`: **ready and available** Pod 数量 (满足 `minReadySeconds`)
+- `status.availableReplicas`: **ready and available** Pod 数量 (满足 `minReadySeconds`, 且 lifecycle state 为 `Normal`)
 - `status.currentRevision`: 最近一次全量 Pod 推平版本的 revision hash 值
 - `status.updateRevision`: 最新版本的 revision hash 值
 - `status.updatedReplicas`: 最新版本的 Pod 数量
 - `status.updatedReadyReplicas`: 最新版本的 **ready** Pod 数量
+  **FEATURE STATE:** Kruise v1.2.0
+- `status.expectedUpdatedReplicas`: 需要升级到最新版本 Pod 的数量(包含已经升级的数量)，该字段根据用户当前设置的 `.spec.updateStrategy.partition` 字段计算得到。
 
 ### Partition 分批灰度
 
@@ -258,6 +260,10 @@ Partition 的语义是 **保留旧版本 Pod 的数量或百分比**，默认为
 
 - 如果是数字，控制器会将 `(replicas - partition)` 数量的 Pod 更新到最新版本。
 - 如果是百分比，控制器会将 `(replicas * (100% - partition))` 数量的 Pod 更新到最新版本。
+
+**FEATURE STATE:** Kruise v1.2.0
+- 如果 `partition` 是百分比, 并且满足 `partition < 100% && replicas > 1` , CloneSet 会保证 **至少有一个 Pod 会被升级到最新版本**。
+- 用户可以使用 `.status.updatedReplicas >= .status.ExpectedUpdatedReplicas` 条件，来判断在当前 `partition` 字段的限制下，CloneSet 是否已经完成了预期数量 Pod 的版本升级。
 
 比如，我们将 CloneSet 例子的 image 更新为 `nginx:mainline` 并且设置 `partition=3`。过了一会，查到的 CloneSet 如下：
 
@@ -491,16 +497,24 @@ metadata:
 type LifecycleStateType string
 
 // Lifecycle contains the hooks for Pod lifecycle.
-type Lifecycle struct {
-    // PreDelete is the hook before Pod to be deleted.
-    PreDelete *LifecycleHook `json:"preDelete,omitempty"`
-    // InPlaceUpdate is the hook before Pod to update and after Pod has been updated.
+type Lifecycle struct 
+    // PreDelete is the hook before Pod to be deleted. 
+    PreDelete *LifecycleHook `json:"preDelete,omitempty"` 
+    // InPlaceUpdate is the hook before Pod to update and after Pod has been updated. 
     InPlaceUpdate *LifecycleHook `json:"inPlaceUpdate,omitempty"`
 }
 
 type LifecycleHook struct {
     LabelsHandler     map[string]string `json:"labelsHandler,omitempty"`
     FinalizersHandler []string          `json:"finalizersHandler,omitempty"`
+	
+    /**********************  FEATURE STATE: 1.2.0 ************************/
+    // MarkPodNotReady = true means:
+    // - Pod will be set to 'NotReady' at preparingDelete/preparingUpdate state.
+    // - Pod will be restored to 'Ready' at Updated state if it was set to 'NotReady' at preparingUpdate state.
+    // Default to false.
+    MarkPodNotReady bool `json:"markPodNotReady,omitempty"`
+    /*********************************************************************/	
 }
 ```
 
@@ -526,6 +540,30 @@ spec:
       labelsHandler:
         example.io/block-unready: "true"
 ```
+
+### 升级/删除 Pod 前将其置为 NotReady
+**FEATURE STATE:** Kruise v1.2.0
+
+```yaml
+  lifecycle:
+    preDelete:
+      markPodNotReady: true
+      finalizersHandler:
+      - example.io/unready-blocker
+    inPlaceUpdate:
+      markPodNotReady: true
+      finalizersHandler:
+      - example.io/unready-blocker
+```
+- 如果设置 `preDelete.markPodNotReady=true`:
+  - Kruise 将会在 Pod 进入 `PreparingDelete` 状态时，将 `KruisePodReady` 这个 Pod Condition 设置为 `False`, Pod 将变为 **NotReady**。
+- 如果设置 `inPlaceUpdate.markPodNotReady=true`:
+  - Kruise 将会在 Pod 进入 `PreparingUpdate` 状态时，将 `KruisePodReady` 这个 Pod Condition 设置为 `False`, Pod 将变为 **NotReady**。
+  - Kruise 将会尝试将 `KruisePodReady` 这个 Pod Condition 设置回 `True`。
+
+**用户可以利用这一特性，在容器真正被停止之前将 Pod 上的流量先行排除，防止流量损失。**
+
+*注意: 该特性仅在 Pod 被注入 `KruisePodReady` 这个 ReadinessGate 时生效。*
 
 ### 流转示意
 

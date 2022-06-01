@@ -180,6 +180,14 @@ type Lifecycle struct {
 type LifecycleHook struct {
     LabelsHandler     map[string]string `json:"labelsHandler,omitempty"`
     FinalizersHandler []string          `json:"finalizersHandler,omitempty"`
+	
+    /**********************  FEATURE STATE: 1.2.0 ************************/
+    // MarkPodNotReady = true means:
+    // - Pod will be set to 'NotReady' at preparingDelete/preparingUpdate state.
+    // - Pod will be restored to 'Ready' at Updated state if it was set to 'NotReady' at preparingUpdate state.
+    // Default to false.
+    MarkPodNotReady bool `json:"markPodNotReady,omitempty"`
+    /*********************************************************************/	
 }
 ```
 
@@ -209,6 +217,22 @@ metadata:
     example.io/block-deleting: "true"                   # the pod is hooked by PreDelete hook label
     lifecycle.apps.kruise.io/state: PreparingDelete     # so we update it to `PreparingDelete` state and wait for user controller to do something and remove the label
 ```
+
+#### 删除 Pod 前将其置为 NotReady
+**FEATURE STATE:** Kruise v1.2.0
+
+```yaml
+  lifecycle:
+    preDelete:
+      markPodNotReady: true
+      finalizersHandler:
+      - example.io/unready-blocker
+```
+如果设置 `preDelete.markPodNotReady=true`, Kruise 将会在 Pod 进入 `PreparingDelete` 状态时，将 `KruisePodReady` 这个 Pod Condition 设置为 `False`, Pod 将变为 **NotReady**。
+
+**用户可以利用这一特性，在容器真正被停止之前将 Pod 上的流量先行排除，防止流量损失。**
+
+*注意: 该特性仅在 Pod 被注入 `KruisePodReady` 这个 ReadinessGate 时生效。*
 
 #### 用户 controller 逻辑示例
 
