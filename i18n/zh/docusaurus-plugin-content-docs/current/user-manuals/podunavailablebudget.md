@@ -4,7 +4,7 @@ title: PodUnavailableBudget
 
 **FEATURE STATE:** Kruise v0.10.0
 
-在诸多[Voluntary Disruption](https://kubernetes.io/docs/concepts/workloads/pods/disruptions/) 场景中 Kubernetes [Pod Disruption Budget](https://kubernetes.io/docs/tasks/run-application/configure-pdb/) 
+在诸多[Voluntary Disruption](https://kubernetes.io/docs/concepts/workloads/pods/disruptions/) 场景中 Kubernetes [Pod Disruption Budget](https://kubernetes.io/docs/tasks/run-application/configure-pdb/)
 通过限制同时中断的Pod数量，来保证应用的高可用性。然而，PDB只能防控通过 [Eviction API](https://kubernetes.io/docs/tasks/administer-cluster/safely-drain-node/#eviction-api) 来触发的Pod Disruption，例如：kubectl drain驱逐node上面的所有Pod。
 
 但在如下voluntary disruption场景中，即便有kubernetes PDB防护依然将会导致业务中断、服务降级：
@@ -15,7 +15,7 @@ title: PodUnavailableBudget
 
 在上面这些 kubernetes PDB 无法很好防护的场景中，Kruise PodUnavailableBudget 通过对Pod Mutating Webhook的拦截，能够覆盖更多的Voluntary Disruption场景，进而提供应用更加强大的防护能力。
 
-一个简单的例子如下：
+## API定义
 
 ```yaml
 apiVersion: apps.kruise.io/v1alpha1
@@ -65,8 +65,27 @@ spec:
         image: nginx:alpine
 ```
 
+### 支持自定义Workload
+
+**FEATURE STATE:** Kruise v1.2.0
+
+很多公司为满足复杂性更高的应用部署需求，往往会通过实现定制化Workload的方式来管理业务Pod。从kruise v1.2.0开始，pub能够防护实现了scale子资源的自定义Workload，如下防护Argo-Rollout：
+
+```yaml
+apiVersion: policy.kruise.io/v1alpha1
+kind: PodUnavailableBudget
+metadata:
+  name: rollouts-demo
+spec:
+  targetRef:
+    apiVersion: argoproj.io/v1alpha1
+    kind: Rollout
+    name: rollouts-demo
+  minAvailable: 80%
+```
+
 ## Implementation
-PUB实现原理如下，详细设计请参考：[Pub Proposal](https://github.com/openkruise/kruise/blob/master/docs/proposals/20210614-podunavailablebudget.md) 
+PUB实现原理如下，详细设计请参考：[Pub Proposal](https://github.com/openkruise/kruise/blob/master/docs/proposals/20210614-podunavailablebudget.md)
 
 ![PodUnavailableBudget](/img/docs/user-manuals/podunavailablebudget.png)
 

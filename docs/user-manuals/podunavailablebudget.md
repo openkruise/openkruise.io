@@ -15,7 +15,7 @@ In the following voluntary disruption scenarios, there are still business disrup
 
 In voluntary disruption scenarios, PodUnavailableBudget can achieve the effect of preventing application disruption or SLA degradation, which greatly improves the high availability of application services.
 
-A sample PodUnavailableBudget yaml looks like following:
+## API Definition
 
 ```yaml
 apiVersion: policy.kruise.io/v1alpha1
@@ -64,6 +64,27 @@ spec:
       - name: nginx
         image: nginx:alpine
 ```
+
+### Support Custom Workload
+
+**FEATURE STATE:** Kruise v1.2.0
+
+Many companies to meet the needs of more complex application deployment, often through the implementation of custom Workload to manage business Pod.
+From kruise v1.2.0, PodUnavailableBudget(PUB) support protect any custom workload with scale sub-resource, e.g. Argo-Rollout:
+
+```yaml
+apiVersion: policy.kruise.io/v1alpha1
+kind: PodUnavailableBudget
+metadata:
+  name: rollouts-demo
+spec:
+  targetRef:
+    apiVersion: argoproj.io/v1alpha1
+    kind: Rollout
+    name: rollouts-demo
+  minAvailable: 80%
+```
+
 ## Implementation
 This program customizes the PodUnavailableBudget (later referred to as PUB) CRD resource to describe the desired state of the application, and the working mechanism is shown below:
 
