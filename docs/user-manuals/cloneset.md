@@ -255,11 +255,14 @@ Here are the explanations for the counters presented in CloneSet status:
 
 - `status.replicas`: Number of pods
 - `status.readyReplicas`: Number of **ready** pods
-- `status.availableReplicas`: Number of **ready and available** pods (satisfied with `minReadySeconds`)
+- `status.availableReplicas`: Number of **ready and available** pods (satisfied with `minReadySeconds` and pod lifecycle state is `Normal`)
 - `status.currentRevision`: Latest revision hash that has used to be updated to all Pods
 - `status.updateRevision`: Latest revision hash of this CloneSet
 - `status.updatedReplicas`: Number of pods with the latest revision
 - `status.updatedReadyReplicas`: Number of **ready** pods with the latest revision
+
+**FEATURE STATE:** Kruise v1.2.0
+- `status.expectedUpdatedReplicas`: Number of the pods that were updated or will be updated with the latest revision under the current `partition` settings.
 
 ### Partition
 
@@ -269,6 +272,10 @@ When `partition` is set during update:
 
 - If it is a number: `(replicas - partition)` number of pods will be updated with the new version.
 - If it is a percent: `(replicas * (100% - partition))` number of pods will be updated with the new version.
+
+**FEATURE STATE:** Kruise v1.2.0
+- If `partition` is a percent, and `partition < 100% && replicas > 1` , CloneSet will ensure **at least one pod** will be updated with the new version.
+- One can use the condition `.status.updatedReplicas >= .status.expectedUpdatedReplicas` to decide whether workload had finish rolling out new revision under partition restriction.
 
 For example, when we update sample CloneSet's container image to `nginx:mainline` and set `partition=3`, after a while, the sample CloneSet yaml looks like the following:
 
@@ -512,16 +519,24 @@ Lifecycle hook allows users to do something (for example remove pod from service
 type LifecycleStateType string
 
 // Lifecycle contains the hooks for Pod lifecycle.
-type Lifecycle struct {
-    // PreDelete is the hook before Pod to be deleted.
-    PreDelete *LifecycleHook `json:"preDelete,omitempty"`
-    // InPlaceUpdate is the hook before Pod to update and after Pod has been updated.
+type Lifecycle struct 
+    // PreDelete is the hook before Pod to be deleted. 
+    PreDelete *LifecycleHook `json:"preDelete,omitempty"` 
+    // InPlaceUpdate is the hook before Pod to update and after Pod has been updated. 
     InPlaceUpdate *LifecycleHook `json:"inPlaceUpdate,omitempty"`
 }
 
 type LifecycleHook struct {
     LabelsHandler     map[string]string `json:"labelsHandler,omitempty"`
     FinalizersHandler []string          `json:"finalizersHandler,omitempty"`
+	
+    /**********************  FEATURE STATE: 1.2.0 ************************/
+    // MarkPodNotReady = true means:
+    // - Pod will be set to 'NotReady' at preparingDelete/preparingUpdate state.
+    // - Pod will be restored to 'Ready' at Updated state if it was set to 'NotReady' at preparingUpdate state.
+    // Default to false.
+    MarkPodNotReady bool `json:"markPodNotReady,omitempty"`
+    /*********************************************************************/	
 }
 ```
 
@@ -547,6 +562,30 @@ spec:
       labelsHandler:
         example.io/block-unready: "true"
 ```
+
+### MarkPodNotReady 
+**FEATURE STATE:** Kruise v1.2.0
+
+```yaml
+  lifecycle:
+    preDelete:
+      markPodNotReady: true
+      finalizersHandler:
+      - example.io/unready-blocker
+    inPlaceUpdate:
+      markPodNotReady: true
+      finalizersHandler:
+      - example.io/unready-blocker
+```
+- If you set `markPodNotReady=true` for `preDelete`:
+  - Kruise will try to set `KruisePodReady` condition to `False` when Pods enter `PreparingDelete` lifecycle state, and Pods will be set to **NotReady**, but containers still `Running`.
+- If you set `markPodNotReady=true` for `inPlaceUpdate`:
+  - Kruise will try to set `KruisePodReady` condition to `False` when Pods enter `PreparingUpdate` lifecycle state, and Pods will be set to **NotReady**, but containers still `Running`.
+  - Kruise will try to set `KruisePodReady` condition to `True` when Pods enter `Updated` lifecycle state.
+
+**One can use this `markPodNotReady` feature to drain service traffic before terminating containers.**
+
+*Note: this feature only works when pod has `KruisePodReady` ReadinessGate.*
 
 ### State circulation
 

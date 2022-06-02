@@ -274,3 +274,9 @@ If you have enabled the `StatefulSetAutoDeletePVC` feature-gate during [Kruise i
 you can use `.spec.persistentVolumeClaimRetentionPolicy` field to control if and how PVCs are deleted during the lifecycle of a StatefulSet.
 
 This is same to the upstream StatefulSet (K8s >= 1.23 [alpha]), please refer to [the upstream document for it](https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#persistentvolumeclaim-retention).
+
+## Lifecycle hook
+
+**FEATURE STATE:** Kruise v0.8.0
+
+This is similar to [Lifecycle hook of CloneSet](./cloneset#lifecycle-hook).
