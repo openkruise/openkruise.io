@@ -482,7 +482,7 @@ metadata:
 
 而生命周期钩子，则是通过在上述状态流转中卡点，来实现原地升级前后、删除前的自定义操作（比如开关流量、告警等）。
 
-```golang
+```go
 type LifecycleStateType string
 
 // Lifecycle contains the hooks for Pod lifecycle.

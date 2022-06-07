@@ -508,7 +508,7 @@ Each Pod managed by CloneSet has a clear state defined in `lifecycle.apps.kruise
 
 Lifecycle hook allows users to do something (for example remove pod from service endpoints) during Pod deleting and before/after in-place update.
 
-```golang
+```go
 type LifecycleStateType string
 
 // Lifecycle contains the hooks for Pod lifecycle.
