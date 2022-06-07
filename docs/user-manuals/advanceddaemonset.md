@@ -175,7 +175,7 @@ This is similar to [Lifecycle hook of CloneSet](./cloneset#lifecycle-hook).
 Now Advanced DaemonSet only supports PreDelete hook,
 which means it allows users to do something (for example check node resources) before Pod deleting.
 
-```golang
+```go
 type LifecycleStateType string
 
 // Lifecycle contains the hooks for Pod lifecycle.

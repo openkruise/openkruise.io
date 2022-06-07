@@ -168,7 +168,7 @@ spec:
 
 目前 Advanced DaemonSet 只支持 PreDelete hook，它允许用户在 daemon Pod 被删除前执行一些自定义的逻辑。
 
-```golang
+```go
 type LifecycleStateType string
 
 // Lifecycle contains the hooks for Pod lifecycle.
