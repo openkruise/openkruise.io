@@ -59,11 +59,11 @@ export default function Home() {
             Star
           </GitHubButton>
           <p className="hero__subtitle">{siteConfig.tagline}</p>
-          <div
+          {/* <div
             className={clsx(styles.heroButtons, 'name', 'margin-vert--md')}>
             <Button href={useBaseUrl('docs/installation')}><Translate>Getting Started</Translate></Button>
             <Button href={useBaseUrl('docs/')}><Translate>Learn More</Translate></Button>
-          </div>
+          </div> */}
         </div>
       </header>
 
