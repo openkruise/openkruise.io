@@ -7,7 +7,7 @@ Welcome to OpenKruise!
 
 OpenKruise is an extended component suite for Kubernetes, which mainly focuses on application automations, such as *deployment, upgrade, ops and availability protection*.
 
-Mostly features provided by OpenKruise are built primarily based on CRD extensions. They can work in pure Kubernetes clusters without any other dependences.
+Most features provided by OpenKruise are built primarily based on CRD extensions. They can work in pure Kubernetes clusters without any other dependencies.
 
 ## Key features
 
