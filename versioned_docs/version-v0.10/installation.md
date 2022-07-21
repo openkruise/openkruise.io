@@ -35,7 +35,7 @@ $ helm repo add openkruise https://openkruise.github.io/charts/
 # [Optional]
 $ helm repo update
 
-# Upgrade the latest version.
+# Upgrade to the latest version.
 # Note that if the Kubernetes version < 1.15, you may need to add --disable-openapi-validation
 $ helm upgrade kruise openkruise/kruise --version 0.10.2
 ```

@@ -28,7 +28,7 @@ $ helm repo add openkruise https://openkruise.github.io/charts/
 # [Optional]
 $ helm repo update
 
-# Upgrade the latest version.
+# Upgrade to the latest version.
 $ helm upgrade kruise openkruise/kruise --version 1.1.0 [--force]
 ```
 
