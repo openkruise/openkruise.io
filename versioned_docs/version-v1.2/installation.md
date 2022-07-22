@@ -134,9 +134,9 @@ $ helm install kruise https://... --set  manager.image.repository=openkruise-reg
 
 ## Best Practices
 
-### Installation parameters for k3s
+### Installation parameters for K3s
 
-Usually k3s has the different runtime path from the default `/var/run`. So you have to set `daemon.socketLocation` to the real runtime socket path on your k3s node (e.g. `/run/k3s` or `/var/run/k3s/`).
+Usually K3s has the different runtime path from the default `/var/run`. So you have to set `daemon.socketLocation` to the real runtime socket path on your K3s node (e.g. `/run/k3s` or `/var/run/k3s/`).
 
 ### Installation parameters for AWS EKS
 

@@ -129,9 +129,9 @@ $ helm install kruise https://... --set  manager.image.repository=openkruise-reg
 
 ## 最佳实践
 
-### k3s 安装参数
+### K3s 安装参数
 
-通常来说 k3s 有着与默认 `/var/run` 不同的 runtime socket 路径。所以你需要将 `daemon.socketLocation` 参数设置为你的 k3s 节点上真实的路径（比如 `/run/k3s` 或 `/var/run/k3s/`）。
+通常来说 K3s 有着与默认 `/var/run` 不同的 runtime socket 路径。所以你需要将 `daemon.socketLocation` 参数设置为你的 K3s 节点上真实的路径（比如 `/run/k3s` 或 `/var/run/k3s/`）。
 
 ### AWS EKS 安装参数
 
