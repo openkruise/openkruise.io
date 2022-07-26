@@ -35,7 +35,7 @@ three pods running in parallel. A new Pod is created only after one running Pod 
 
 `CompletionPolicy` specifies the controller behavior when reconciling the BroadcastJob.
 
-#### Always
+#### Always (default)
 
 `Always` policy means the job will eventually complete with either failed or succeeded
 condition. The following parameters take effect with this policy:
@@ -46,14 +46,6 @@ condition. The following parameters take effect with this policy:
   running for 60 seconds, all the running pods will be deleted and the job will be marked
   as Failed.
 
-- `BackoffLimit` specifies the number of retries before marking this job failed.
-  Currently, the number of retries are defined as the aggregated number of restart
-  counts across all Pods created by the job, i.e., the sum of the
-  [ContainerStatus.RestartCount](https://github.com/kruiseio/kruise/blob/d61c12451d6a662736c4cfc48682fa75c73adcbc/vendor/k8s.io/api/core/v1/types.go#L2314)
-  for all containers in every Pod.  If this value exceeds `BackoffLimit`, the job is marked
-  as Failed and all running Pods are deleted. No limit is enforced if `BackoffLimit` is
-  not set.
-
 - `TTLSecondsAfterFinished` limits the lifetime of a BroadcastJob that has finished execution
   (either Complete or Failed). For example, if TTLSecondsAfterFinished is set to 10 seconds,
   the job will be kept for 10 seconds after it finishes. Then the job along with all the Pods
@@ -62,10 +54,29 @@ condition. The following parameters take effect with this policy:
 #### Never
 
 `Never` policy means the BroadcastJob will never be marked as Failed or Succeeded even if
-all Pods run to completion. This also means above `ActiveDeadlineSeconds`, `BackoffLimit`
-and `TTLSecondsAfterFinished` parameters takes no effect if `Never` policy is used.
+all Pods run to completion. This also means above `ActiveDeadlineSeconds`, `TTLSecondsAfterFinished` and `FailurePolicy.RestartLimit` parameters takes no effect if `Never` policy is used.
 For example, if user wants to perform an initial configuration validation for every newly
 added node in the cluster, he can deploy a BroadcastJob with `Never` policy.
+
+### FailurePolicy
+
+#### Type
+
+`Type` indicates the type of `FailurePolicyType`.
+
+- `Continue` means the job will be still running, when failed pod is found.
+- `FailFast`(default) means the job will be failed, when failed pod is found.
+- `Pause` means the job will be paused, when failed pod is found.
+
+#### RestartLimit
+
+- `RestartLimit` specifies the number of retries before marking the pod failed.
+  Currently, the number of retries are defined as the aggregated number of restart
+  counts across all Pods created by the job, i.e., the sum of the
+  [ContainerStatus.RestartCount](https://github.com/kruiseio/kruise/blob/d61c12451d6a662736c4cfc48682fa75c73adcbc/vendor/k8s.io/api/core/v1/types.go#L2314)
+  for all containers in every Pod.  If this value exceeds `RestartLimit`, the job is marked
+  as Failed and all running Pods are deleted. No limit is enforced if `RestartLimit` is
+  not set.
 
 ## Examples
 
@@ -100,7 +111,7 @@ spec:
       containers:
         - name: pi
           image: perl
-          command: ["perl",  "-Mbignum=bpi", "-wle", "print bpi(2000)"]
+          command: ["perl", "-Mbignum=bpi", "-wle", "print bpi(2000)"]
       restartPolicy: Never
   completionPolicy:
     type: Always
@@ -123,7 +134,7 @@ spec:
       containers:
         - name: sleep
           image: busybox
-          command: ["sleep",  "50000"]
+          command: ["sleep", "50000"]
       restartPolicy: Never
   completionPolicy:
     type: Always
@@ -132,8 +143,7 @@ spec:
 
 ### completionPolicy
 
-Run a BroadcastJob with `Never` completionPolicy. The job will continue to run even if all Pods
-have completed on all nodes.
+Run a BroadcastJob with `Never` completionPolicy. The job will continue to run even if all Pods have completed on all nodes.
 
 ```yaml
 apiVersion: apps.kruise.io/v1alpha1
@@ -146,8 +156,34 @@ spec:
       containers:
         - name: sleep
           image: busybox
-          command: ["sleep",  "5"]
+          command: ["sleep", "5"]
       restartPolicy: Never
   completionPolicy:
     type: Never
+```
+
+### failurePolicy
+
+#### restartLimit
+
+Run a BroadcastJob with `FailFast` failurePolicy. The job will be failed, when failed pod is found.
+
+```yaml
+apiVersion: apps.kruise.io/v1alpha1
+kind: BroadcastJob
+metadata:
+  name: broadcastjob-restart-limit
+spec:
+  template:
+    spec:
+      containers:
+        - name: sleep
+          image: busybox
+          command: ["cat", "/path/not/exist"]
+      restartPolicy: Never
+  completionPolicy:
+    type: Never
+  failurePolicy:
+    type: FailFast
+    restartLimit: 3
 ```
