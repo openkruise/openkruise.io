@@ -56,7 +56,8 @@ module.exports = {
             'user-manuals/imagepulljob',
             'user-manuals/containerlaunchpriority',
             "user-manuals/resourcedistribution",
-            "user-manuals/persistentpodstate",  
+            "user-manuals/persistentpodstate",
+            "user-manuals/podprobemarker",
           ],
           "Application Protection": [
             'user-manuals/deletionprotection',
