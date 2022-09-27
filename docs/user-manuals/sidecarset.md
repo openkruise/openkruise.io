@@ -216,6 +216,51 @@ spec:
 ```
 **Note**: Users must ensure that the corresponding Secrets have already existed in the namespaces where Pods need to pull the private images. Otherwise, pulling private images will not succeed.
 
+### version control for injection
+**FEATURE STATE:** Kruise v1.3.0
+
+SidecarSet will record historical revision of some fields such as `containers`, `volumes`, `initContainers`, `imagePullSecrets` and `patchPodMetadata` via ControllerRevision. You can easily select a specific historical revision to inject when creating Pods, rather than always inject the latest revision of sidecar.
+
+Based on this feature, users can address the risk of SidecarSet publishing due to scaling and rolling workload.
+
+**Note: SidecarSet records ControllerRevision in the same namespace as Kruse Manager. You can execute `kubectl get controllerrvisions -n kruise-system -l kruise.io/sidecarset-name=<your-sidecarset-name>` to list the ControllerRevisions of your SidecarSet. Moreover, the ControllerRevision name of current SidecarSet revision is shown in `status.latestRevision` field, so you can record it very easily.** 
+
+#### select revision via ControllerRevision name
+```yaml
+apiVersion: apps.kruise.io/v1alpha1
+kind: SidecarSet
+metadata:
+  name: sidecarset
+spec:
+  ... ...
+  updateStrategy:
+    partition: 90%
+  injectionStrategy:
+    revisionName: <specific-controllerrevision-name>
+```
+
+#### select revision via custom version label
+You can add or update the label `apps.kruise.io/sidecarset-custom-version=<your-version-id>` to SidecarSet when creating or publishing SidecarSet, to mark each historical revision. SidecarSet will bring this label down to the corresponding ControllerRevision object, and you can easily use the `<your-version-id>` to describe which historical revision you want to inject.
+
+Assume that you are publishing `version-2` in canary way (you wish only 10% Pods will be upgraded), and you want to inject the stable `version-1` to newly-created Pods to reduce the risk of the canary publishing:
+```yaml
+apiVersion: apps.kruise.io/v1alpha1
+kind: SidecarSet
+metadata:
+  name: sidecarset
+  labels:
+    apps.kruise.io/sidecarset-custom-version: example/version-2
+spec:
+  ... ...
+  updateStrategy:
+    partition: 90%
+  injectionStrategy:
+    customVersion: example/version-1
+```
+
+
+*Just choose one of the ways above.*
+
 ### sidecarset update strategy
 Sidecarset not only supports the in-place update of Sidecar container, but also provides a very rich upgrade strategy.
 #### partition

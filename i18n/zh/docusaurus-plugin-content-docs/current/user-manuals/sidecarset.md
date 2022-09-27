@@ -210,6 +210,46 @@ spec:
 ```
 需要特别注意的是，**对于需要拉取私有 sidecar 镜像的 Pod，用户必需确保这些 Pod 所在的命名空间中已存在对应的 Secret**，否则会导致拉取私有镜像失败。
 
+### sidecar注入时版本控制
+**FEATURE STATE:** Kruise v1.3.0
+
+SidecarSet 通过 ControllerRevision 记录了关于 `containers`、`volumes`、`initContainers`、`imagePullSecrets` 和 `patchPodMetadata` 等字段的历史版本，并允许用户在 Pod 创建时选择特定的历史版本进行注入。
+基于这一特性，用户可以规避在 SidecarSet 灰度发布时，因Deployment 等 Workload 扩容、升级等操作带来的 SidecarSet 发布风险。如果不选择注入版本，SidecarSet 将对重建 Pod 默认全都注入最新版本 Sidecar。
+
+**注：SidecarSet 相关 ControllerRevision 资源被放置在了与 Kruise-Manager 相同的命名空间中，用户可以使用 `kubectl get controllerrvisions -n kruise-system -l kruise.io/sidecarset-name=<your-sidecarset-name>` 来查看。此外，用户还可以通过 SidecarSet 的 `status.latestRevision` 字段看到当前版本对应的 ControllerRevision 名称，以方便自行记录。**
+
+#### 通过 ControllerRevision 名称指定注入的 Sidecar 版本
+```yaml
+apiVersion: apps.kruise.io/v1alpha1
+kind: SidecarSet
+metadata:
+  name: sidecarset
+spec:
+  ... ...
+  injectionStrategy:
+    revisionName: <specific-controllerRevision-name>
+```
+
+#### 通过自定义版本标识指定注入的 Sidecar 版本
+用户可以通过在发版时，同时给 SidecarSet 打上 `apps.kruise.io/sidecarset-custom-version=<your-version-id>` 来标记每一个历史版本，SidecarSet 会将这个 label 向下带入到对应的 ControllerRevision 对象，以便用户进行筛选，并且允许用户在选择注入历史版本时，使用改 `<your-version-id>` 来进行描述。
+
+假设用户只想灰度 `10%` 的 Pods 到 `version-2`，并且对于新创建的 Pod 希望都注入更加稳定的 `version-1` 版本来控制灰度风险：
+```yaml
+apiVersion: apps.kruise.io/v1alpha1
+kind: SidecarSet
+metadata:
+  name: sidecarset
+  labels:
+    apps.kruise.io/sidecarset-custom-version: version-2
+spec:
+  ... ...
+  updateStrategy:
+    partition: 90%
+  injectionStrategy:
+    customVersion: version-1
+```
+以上两种版本选择方式，任选其一即可。
+
 ### sidecar更新策略
 SidecarSet不仅支持sidecar容器的原地升级，而且提供了非常丰富的升级、灰度策略。
 #### 分批发布
