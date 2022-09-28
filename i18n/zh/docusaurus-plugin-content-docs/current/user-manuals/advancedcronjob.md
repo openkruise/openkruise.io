@@ -52,3 +52,13 @@ spec:
 ```
 
 上述 YAML 定义了一个 AdvancedCronJob，每分钟创建一个 BroadcastJob 对象，这个 BroadcastJob 会在所有节点上运行一个 job 任务。
+
+## 时区
+
+默认情况下，所有 AdvancedCronJob schedule 调度时，都是基于 kruise-controller-manager 容器本地的时区所计算的。
+
+**FEATURE STATE:** Kruise v1.3.0
+
+不过，在 v1.3.0 版本中我们引入了 `spec.timeZone` 字段，你可以将它设置为任意合法时区的名字。例如，设置 `spec.timeZone: "Asia/Shanghai"` 则 Kruise 会根据国内的时区计算 schedule 任务触发时间。
+
+Go 标准库中内置了时区数据库，作为在容器的系统环境中没有外置数据库时的 fallback 选择。
