@@ -160,6 +160,27 @@ spec:
       paused: true
 ```
 
+### 升级镜像自动预热
+
+**FEATURE STATE:** Kruise v1.3.0
+
+如果你在[安装或升级 Kruise](../installation##optional-feature-gate) 的时候启用了 `PreDownloadImageForDaemonSetUpdate` feature-gate，
+DaemonSet 控制器会自动在所有旧版本 pod 所在 node 节点上预热你正在灰度发布的新版本镜像。 这对于应用发布加速很有帮助。
+
+默认情况下 DaemonSet 每个新镜像预热时的并发度都是 `1`，也就是一个个节点拉镜像。
+如果需要调整，你可以通过 `apps.kruise.io/image-predownload-parallelism` annotation 来设置并发度。
+
+你还可以使用 `apps.kruise.io/image-predownload-min-updated-ready-pods` 来控制在少量新版本 Pod 已经升级成功之后再执行镜像预热。它的值可能是绝对值数字或是百分比。
+
+```yaml
+apiVersion: apps.kruise.io/v1alpha1
+kind: DaemonSet
+metadata:
+  annotations:
+    apps.kruise.io/image-predownload-parallelism: "10"
+    apps.kruise.io/image-predownload-min-updated-ready-pods: "3"
+```
+
 ### 生命周期钩子
 
 **FEATURE STATE:** Kruise v1.1.0

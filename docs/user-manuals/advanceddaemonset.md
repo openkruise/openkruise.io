@@ -166,6 +166,29 @@ spec:
       paused: true
 ```
 
+### Pre-download image for update
+
+**FEATURE STATE:** Kruise v1.3.0
+
+If you have enabled the `PreDownloadImageForDaemonSetUpdate` feature-gate during [Kruise installation or upgrade](../installation#optional-feature-gate),
+DaemonSet controller will automatically pre-download the image you want to update to the nodes of all old Pods.
+It is quite useful to accelerate the progress of applications upgrade.
+
+The parallelism of each new image pre-downloading by DaemonSet is `1`, which means the image is downloaded on nodes one by one.
+You can change the parallelism using `apps.kruise.io/image-predownload-parallelism` annotation on DaemonSet according to the capability of image registry,
+for registries with more bandwidth and P2P image downloading ability, a larger parallelism can speed up the pre-download process.
+
+You can also use `apps.kruise.io/image-predownload-min-updated-ready-pods` to make sure the new image starting pre-download after a few new Pods have been updated ready. Its value can be absolute number or percentage.
+
+```yaml
+apiVersion: apps.kruise.io/v1alpha1
+kind: DaemonSet
+metadata:
+  annotations:
+    apps.kruise.io/image-predownload-parallelism: "10"
+    apps.kruise.io/image-predownload-min-updated-ready-pods: "3"
+```
+
 ### Lifecycle hook
 
 **FEATURE STATE:** Kruise v1.1.0
