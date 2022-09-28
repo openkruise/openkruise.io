@@ -637,3 +637,21 @@ User controller logic:
 - For Pod in `Normal` state, if there is `example.io/initialing: true` in annotation and ready condition in Pod status is True, then add it to endpoints and remove the annotation
 - For Pod in `PreparingDelete` and `PreparingUpdate` states, delete it from endpoints and remove `example.io/unready-blocker` finalizer
 - For Pod in `Updated` state, add it to endpoints and add `example.io/unready-blocker` finalizer
+
+### Scaling with PreparingDelete
+
+CloneSet considers Pods in `PreparingDelete` state as normal by default, which means these Pods will still be calculated in the `replicas` number.
+
+In this situation:
+
+- if you scale down `replicas` from `N` to `N-1`, when the Pod to be deleted is still in `PreparingDelete`, you scale up `replicas` to `N`, the CloneSet will move the Pod back to `Normal`.
+- if you scale down `replicas` from `N` to `N-1` and put a Pod into `podsToDelete`, when the specific Pod is still in `PreparingDelete`, you scale up `replicas` to `N`, the CloneSet will not create a new Pod until the specific Pod goes into terminating.
+- if you specificly delete a Pod without `replicas` changed, when the specific Pod is still in `PreparingDelete`, the CloneSet will not create a new Pod until the specific Pod goes into terminating.
+
+Since Kruise v1.3.0, you can put a `apps.kruise.io/cloneset-scaling-exclude-preparing-delete: "true"` label into CloneSet, which indicates Pods in `PreparingDelete` will not be calculated in the `replicas` number.
+
+In this situation:
+
+- if you scale down `replicas` from `N` to `N-1`, when the Pod to be deleted is still in `PreparingDelete`, you scale up `replicas` to `N`, the CloneSet will move the Pod back to `Normal`.
+- if you scale down `replicas` from `N` to `N-1` and put a Pod into `podsToDelete`, even if the specific Pod is still in `PreparingDelete`, you scale up `replicas` to `N`, the CloneSet will create a new Pod immediately.
+- if you specificly delete a Pod without `replicas` changed, even if the specific Pod is still in `PreparingDelete`, the CloneSet will create a new Pod immediately.
