@@ -615,3 +615,21 @@ spec:
 - 对于 `Normal` 状态的 Pod，如果 annotation 中有 `example.io/initialing: true` 并且 Pod status 中的 ready condition 为 True，则接入流量、去除这个 annotation
 - 对于 `PreparingDelete` 和 `PreparingUpdate` 状态的 Pod，切走流量，并去除 `example.io/unready-blocker` finalizer
 - 对于 `Updated` 状态的 Pod，接入流量，并打上 `example.io/unready-blocker` finalizer
+
+### 扩缩容与 PreparingDelete
+
+默认情况下，CloneSet 将处于 `PreparingDelete` 状态的 Pod 视为正常，意味着这些 Pod 仍然被计算在 `replicas` 数量中。
+
+在这种情况下：
+
+- 如果你将 `replicas` 从 `N` 改为 `N-1`，当一个要删除的 Pod 还在 `PreparingDelete` 状态中时，你重新将 `replicas` 改为 `N`，CloneSet 会将这个 Pod 重新置为 `Normal` 状态。
+- 如果你将 `replicas` 从 `N` 改为 `N-1` 的同时在 `podsToDelete` 中设置了一个 Pod，当这个 Pod 还在 `PreparingDelete` 状态中时，你重新将 `replicas` 改为 `N`，CloneSet 会等到这个 Pod 真正进入 terminating 之后再扩容一个 Pod 出来。
+- 如果你在不改变 `replicas` 的时候指定删除一个 Pod，当这个 Pod 还在 `PreparingDelete` 状态中时，CloneSet 会等到这个 Pod 真正进入 terminating 之后再扩容一个 Pod 出来。
+
+从 Kruise v1.3.0 版本开始，你可以在 CloneSet 中设置一个 `apps.kruise.io/cloneset-scaling-exclude-preparing-delete: "true"` 标签，它标志着这个 CloneSet 不会将 `PreparingDelete` 状态的 Pod 计算在 `replicas` 数量中。
+
+在这种情况下：
+
+- 如果你将 `replicas` 从 `N` 改为 `N-1`，当一个要删除的 Pod 还在 `PreparingDelete` 状态中时，你重新将 `replicas` 改为 `N`，CloneSet 会将这个 Pod 重新置为 `Normal` 状态。
+- 如果你将 `replicas` 从 `N` 改为 `N-1` 的同时在 `podsToDelete` 中设置了一个 Pod，当这个 Pod 还在 `PreparingDelete` 状态中时，你重新将 `replicas` 改为 `N`，CloneSet 会立即创建一个新 Pod。
+- 如果你在不改变 `replicas` 的时候指定删除一个 Pod，当这个 Pod 还在 `PreparingDelete` 状态中时，CloneSet 会立即创建一个新 Pod。
