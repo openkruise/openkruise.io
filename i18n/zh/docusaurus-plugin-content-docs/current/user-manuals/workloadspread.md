@@ -20,7 +20,11 @@ WorkloadSpread与OpenKruise社区的UnitedDeployment功能相似，每一个Work
 每个`subset`对应一个`maxReplicas`数量。WorkloadSpread利用Webhook注入`subset`定义的域信息，同时控制Pod的扩缩容顺序。
 与UnitedDeployment**不同**的是，UnitedDeployment是帮助用户创建并管理多个workload，WorkloadSpread仅作用在单个workload之上，用户提供workload即可。
 
-当前支持的workload类型：`CloneSet`、`Deployment`、`ReplicaSet`。
+当前支持的workload类型：`CloneSet`、`Deployment`、`ReplicaSet`、`StatefulSet`。
+
+注：`StatefulSet` 从 Kruise 1.3.0 版本开始支持。
+
+特别地，WorkloadSpread 对 `StatefulSet` 只支持扩容管理，缩容仍旧保留 StatefulSet 固有的缩容顺序, 且扩容管理时按照Pod序号进行划分 Subset, 详情可以参照[注释](https://github.com/openkruise/kruise/blob/f46097db1fa5a4ed9c002eba050b888344884e11/pkg/util/workloadspread/workloadspread.go#L305)。
 
 ## Demo
 

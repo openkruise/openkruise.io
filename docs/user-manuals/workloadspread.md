@@ -21,7 +21,11 @@ The feature of WorkloadSpread is similar with UnitedDeployment in OpenKruise com
 called `subset`. Each domain may provide the limit to run the replicas number of pods called `maxReplicas`.
 WorkloadSpread injects the domain configuration into the Pod by Webhook, and it also controls the order of scale in and scale out.
 
-Currently, supported workload: `CloneSet`、`Deployment`、`ReplicaSet`.
+Kruise with version lower than `1.3.0` supports `CloneSet`, `Deployment`, `ReplicaSet`.
+
+Sine Kruise `1.3.0`, WorkloadSpread supports `StatefulSet`.
+
+In particular, for `StatefulSet`, WorkloadSpread supports manage its subsets only when `scale up`. The order of `scale down` is still controlled by StatefulSet controller. The subset management of StatefulSet is based on ordinals of Pods, and more details can be found [here](https://github.com/openkruise/kruise/blob/f46097db1fa5a4ed9c002eba050b888344884e11/pkg/util/workloadspread/workloadspread.go#L305).
 
 ## Demo
 
