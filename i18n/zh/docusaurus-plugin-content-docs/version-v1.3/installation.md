@@ -112,7 +112,7 @@ Feature-gate 控制了 Kruise 中一些有影响性的功能：
 | `StatefulSetAutoDeletePVC`       | 启用 StatefulSet 自动删除它所创建的 PVC | `false` | StatefulSet 不会清理 PVC |
 | `PreDownloadImageForDaemonSetUpdate`       | 启用 DaemonSet 自动为原地升级过程中创建 ImagePullJob 来镜像预热  | `false` | 原地升级无镜像提前预热 |
 | `PodProbeMarkerGate`   | 启用 PodProbeMarker 能力  | `false` | PodProbeMarker 关闭 |
-| `SidecarSetPatchPodMetadataDefaultsAllowed`   | 允许 SidecarSet Patch 任意 Annotations 到 Pob Object，不再进行白名单校验 | `false` | Annotations不允许随意Patch，需要通过 SidecarSet_PatchPodMetadata_WhiteList 配置 |
+| `SidecarSetPatchPodMetadataDefaultsAllowed`   | 允许 SidecarSet Patch 任意 Annotations 到 Pob Object, no more whitelist checks | `false` | Annotations不允许随意Patch，需要通过 SidecarSet_PatchPodMetadata_WhiteList 配置 |
 
 如果你要配置 feature-gate，只要在安装或升级时配置参数即可，比如：
 
