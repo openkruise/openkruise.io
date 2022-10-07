@@ -107,9 +107,11 @@ Feature-gate 控制了 Kruise 中一些有影响性的功能：
 | `TemplateNoDefaults` | 是否取消对 workload 中 pod/pvc template 的默认值注入 | `false` | Should not close this feature if it has open |
 | `PodUnavailableBudgetDeleteGate` | 启用 PodUnavailableBudget 保护 pod 删除、驱逐   | `false` | 不防护 pod 删除、驱逐 |
 | `PodUnavailableBudgetUpdateGate` | 启用 PodUnavailableBudget 保护 pod 原地升级   | `false` | 不防护 pod 原地升级 |
-| `WorkloadSpread`                 | 启用 WorkloadSpread 管理应用多分区弹性与拓扑部署 | `false` | 不支持 WorkloadSpread | 
+| `WorkloadSpread`                 | 启用 WorkloadSpread 管理应用多分区弹性与拓扑部署 | `false` | 不支持 WorkloadSpread |
 | `InPlaceUpdateEnvFromMetadata`   | 启用 Kruise 原地升级容器当它存在 env from 的 labels/annotations 发生了变化 | `false` | 容器中只有 image 能够原地升级 |
 | `StatefulSetAutoDeletePVC`       | 启用 StatefulSet 自动删除它所创建的 PVC | `false` | StatefulSet 不会清理 PVC |
+| `PreDownloadImageForDaemonSetUpdate`       | 启用 DaemonSet 自动为原地升级过程中创建 ImagePullJob 来镜像预热  | `false` | 原地升级无镜像提前预热 |
+| `PodProbeMarkerGate`   | 启用 PodProbeMarker 能力  | `false` | PodProbeMarker 关闭 |
 
 如果你要配置 feature-gate，只要在安装或升级时配置参数即可，比如：
 

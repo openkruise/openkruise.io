@@ -115,6 +115,8 @@ Feature-gate controls some influential features in Kruise:
 | `WorkloadSpread`                 | Enables WorkloadSpread to manage multi-domain and elastic deploy  | `false` | WorkloadSpread disabled |
 | `InPlaceUpdateEnvFromMetadata`   | Enables Kruise to in-place update a container in Pod when its env from labels/annotations changed and pod is in-place updating | `false` | Only container image can be in-place update |
 | `StatefulSetAutoDeletePVC`       | Enables policies controlling deletion of PVCs created by a StatefulSet  | `false` | No deletion of PVCs by StatefulSet |
+| `PreDownloadImageForDaemonSetUpdate`       | Enables DaemonSet controller to create ImagePullJobs to pre-download images for in-place update  | `false` | No image pre-download for in-place update |
+| `PodProbeMarkerGate`   | Whether to turn on PodProbeMarker ability  | `false` | PodProbeMarker disabled |
 
 If you want to configure the feature-gate, just set the parameter when install or upgrade. Such as:
 

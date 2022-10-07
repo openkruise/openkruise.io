@@ -169,7 +169,7 @@ spec:
       type: disabled | enabled
     transferEnv:
     - sourceContainerName: main
-      envName: PROXY_IP    
+      envName: PROXY_IP
   volumes:
   - Name: nginx.conf
     hostPath: /data/nginx/conf
@@ -215,51 +215,6 @@ spec:
   - name: my-secret
 ```
 **Note**: Users must ensure that the corresponding Secrets have already existed in the namespaces where Pods need to pull the private images. Otherwise, pulling private images will not succeed.
-
-### version control for injection
-**FEATURE STATE:** Kruise v1.3.0
-
-SidecarSet will record historical revision of some fields such as `containers`, `volumes`, `initContainers`, `imagePullSecrets` and `patchPodMetadata` via ControllerRevision. You can easily select a specific historical revision to inject when creating Pods, rather than always inject the latest revision of sidecar.
-
-Based on this feature, users can address the risk of SidecarSet publishing due to scaling and rolling workload.
-
-**Note: SidecarSet records ControllerRevision in the same namespace as Kruse Manager. You can execute `kubectl get controllerrvisions -n kruise-system -l kruise.io/sidecarset-name=<your-sidecarset-name>` to list the ControllerRevisions of your SidecarSet. Moreover, the ControllerRevision name of current SidecarSet revision is shown in `status.latestRevision` field, so you can record it very easily.** 
-
-#### select revision via ControllerRevision name
-```yaml
-apiVersion: apps.kruise.io/v1alpha1
-kind: SidecarSet
-metadata:
-  name: sidecarset
-spec:
-  ... ...
-  updateStrategy:
-    partition: 90%
-  injectionStrategy:
-    revisionName: <specific-controllerrevision-name>
-```
-
-#### select revision via custom version label
-You can add or update the label `apps.kruise.io/sidecarset-custom-version=<your-version-id>` to SidecarSet when creating or publishing SidecarSet, to mark each historical revision. SidecarSet will bring this label down to the corresponding ControllerRevision object, and you can easily use the `<your-version-id>` to describe which historical revision you want to inject.
-
-Assume that you are publishing `version-2` in canary way (you wish only 10% Pods will be upgraded), and you want to inject the stable `version-1` to newly-created Pods to reduce the risk of the canary publishing:
-```yaml
-apiVersion: apps.kruise.io/v1alpha1
-kind: SidecarSet
-metadata:
-  name: sidecarset
-  labels:
-    apps.kruise.io/sidecarset-custom-version: example/version-2
-spec:
-  ... ...
-  updateStrategy:
-    partition: 90%
-  injectionStrategy:
-    customVersion: example/version-1
-```
-
-
-*Just choose one of the ways above.*
 
 ### sidecarset update strategy
 Sidecarset not only supports the in-place update of Sidecar container, but also provides a very rich upgrade strategy.
@@ -339,7 +294,7 @@ spec:
 - scatter order
 
 #### scatter
-The scatter policy allows users to define the scatters of PODs that conform to certain tags throughout the publishing process. 
+The scatter policy allows users to define the scatters of PODs that conform to certain tags throughout the publishing process.
 For example, if a SidecarSet manages 10 PODS, if there are 3 PODS below with the tag foo=bar, and the user sets this tag in the shatter policy, then these 3 PODS will be published in the 1st, 6th, and 10th positions.
 
 ```yaml
@@ -388,7 +343,7 @@ spec:
       hotUpgradeEmptyImage: openkruise/hotupgrade-sample:empty
 ```
 - upgradeType: HotUpgrade indicates hot upgrade for stateful sidecar container.
-- hotUpgradeEmptyImage: when upgradeType=HotUpgrade, user needs to provide an empty container for hot upgrades. hotUpgradeEmptyImage has the same configuration as the sidecar container, for example: command, lifecycle, probe, etc, but it doesn't do anything.        
+- hotUpgradeEmptyImage: when upgradeType=HotUpgrade, user needs to provide an empty container for hot upgrades. hotUpgradeEmptyImage has the same configuration as the sidecar container, for example: command, lifecycle, probe, etc, but it doesn't do anything.
 - lifecycle.postStart: State Migration, the process completes the state migration of stateful container, which needs to be provided by the sidecar image developer.
 
 Hot upgrade consists of the following two processes:
@@ -423,6 +378,92 @@ For design documentation, please refer to: [proposals sidecarset hot upgrade](ht
 
 Currently known cases that utilize the SidecarSet hot upgrade mechanism:
 - [ALIYUN ASM](https://help.aliyun.com/document_detail/193804.html) implements lossless upgrade of Data Plane in Service Mesh.
+
+### Inject Pod Metadata (Annotations)
+**FEATURE STATE:** Kruise v1.3.0
+
+SidecarSet support inject pod annotations, as follows:
+```yaml
+apiVersion: apps.kruise.io/v1alpha1
+kind: SidecarSet
+spec:
+  containers:
+    ...
+  patchPodMetadata:
+  - annotations:
+      oom-score: '{"log-agent": 1}'
+      custom.example.com/sidecar-configuration: '{"command": "/home/admin/bin/start.sh", "log-level": "3"}'
+    patchPolicy: MergePatchJson
+  - annotations:
+      apps.kruise.io/container-launch-priority: Ordered
+    patchPolicy: Overwrite | Retain
+```
+patchPolicy is the injected policy, as follows:
+  - **Retain:** By default, if annotation[key]=value exists in the Pod, the original value of the Pod will be retained. Inject annotations[key]=value2 only if annotation[key] does not exist in the Pod.
+  - **Overwrite:** Corresponding to Retain, when annotation[key]=value exists in the Pod, it will be overwritten value2.
+  - **MergePatchJson:** Corresponding to Overwrite, the annotations value is a json string. If the annotations[key] does not exist in the Pod, it will be injected directly. If it exists, do a json value merge.
+For example: annotations[oom-score]='{"main": 2}' exists in the Pod, after injection, the value json is merged into annotations[oom-score]='{"log-agent": 1, "main": 2}'.
+
+**Note:** When the patchPolicy is Overwrite and MergePatchJson, the annotations can be updated synchronously when the SidecarSet in-place update the Sidecar Container.
+However, if only the annotations are modified, it will not take effect. It must be in-place update together with the sidecar container image.
+When patchPolicy is Retain, the annotations will not be updated when the SidecarSet in-place update the Sidecar Container.
+
+According to the above configuration, when the sidecarSet is injected into the sidecar container, it will inject Pod annotations synchronously, as follows:
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  annotations:
+    apps.kruise.io/container-launch-priority: Ordered
+    oom-score: '{"log-agent": 1, "main": 2}'
+    custom.example.com/sidecar-configuration: '{"command": "/home/admin/bin/start.sh", "log-level": "3"}'
+name: test-pod
+spec:
+  containers:
+    ...
+```
+
+#### Permission Control
+SidecarSet should not modify any configuration outside the sidecar container from permission perspective. Metadata, as an important configuration of Pod, should not be modified by sidecarSet by default.
+
+Objectively, sidecar does need to have some annotations or labels injected into the pod as well. In order to meet the needs of sidecar and security considerations.
+if sidecarSet needs to modify the metadata, it needs to be whitelisted in kruise configmap which is maintained by the system administrator.
+
+```yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kruise-configuration
+  namespace: kube-system
+data:
+  "SidecarSet_PatchPodMetadata_WhiteList": |
+    {
+      "rules": [
+        {
+          "selector":{
+            "matchLabels":{
+              "sidecar":"log-agent"
+            }
+          },
+          "allowedAnnotationKeyExprs": [
+            "^apps.kruise.io/container-launch-priority$",
+            "^oom-score$",
+            "^custom.example.com/sidecar-configuration$"
+          ]
+        }
+      ]
+    }
+```
+- **selector:** Select matching SidecarSets based on Labels, both MatchLabels and MatchExpressions are supported.
+If not configured, it will take effect for all SidecarSets in the cluster.
+- **allowedAnnotationKeyExprs:** Whitelist of Pod annotation keys allowed to be modified, must be a regular expression.
+
+#### Feature-gate
+SidecarSet_PatchPodMetadata_WhiteList is mainly for security reasons. If the user's business cluster scenario is relatively simple,
+you can turn off the verification of the whitelist through feature-gate.
+```shell
+$ helm install kruise https://... --set featureGates="SidecarSetPatchPodMetadataDefaultsAllowed=true"
+```
 
 ### SidecarSet Status
 When upgrading sidecar containers with a SidecarSet, you can observe the process of upgrading through SidecarSet.Status
