@@ -117,7 +117,7 @@ Feature-gate controls some influential features in Kruise:
 | `StatefulSetAutoDeletePVC`       | Enables policies controlling deletion of PVCs created by a StatefulSet  | `false` | No deletion of PVCs by StatefulSet |
 | `PreDownloadImageForDaemonSetUpdate`       | Enables DaemonSet controller to create ImagePullJobs to pre-download images for in-place update  | `false` | No image pre-download for in-place update |
 | `PodProbeMarkerGate`   | Whether to turn on PodProbeMarker ability  | `false` | PodProbeMarker disabled |
-| `SidecarSetPatchPodMetadataDefaultsAllowed`   | Allow SidecarSet patch any annotations to Pod Object | `false` | Annotations are not allowed to patch randomly and need to be configured via SidecarSet_PatchPodMetadata_WhiteList |
+| `SidecarSetPatchPodMetadataDefaultsAllowed`  | Allow SidecarSet patch any annotations to Pod Object, no more whitelist checks | `false` | Annotations are not allowed to patch randomly and need to be configured via SidecarSet_PatchPodMetadata_WhiteList |
 
 If you want to configure the feature-gate, just set the parameter when install or upgrade. Such as:
 
