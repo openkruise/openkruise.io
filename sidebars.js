@@ -98,6 +98,7 @@ module.exports = {
         {
           'CLI tools': [
             "cli-tool/kubectl-plugin",
+            "cli-tool/kustomize-plugin",
           ],
         },
       ],

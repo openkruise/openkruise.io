@@ -223,3 +223,7 @@ In particular, we **DO NOT** recommend that users bypass the ResourceDistributio
 
 ### Cascading Deletion
 **ResourceDistribution controls the distributed resources through ownerReference. Therefore, it should be noted that when the ResourceDistribution is deleted, all the resources it distributed will also be deleted.**
+
+## Kustomize ResourceDistribution Generator
+
+ResourceDistribution Generator is a third-party plug-in of kustomize, similar to kustomize's configmap generator and secret generator. Using this plug-in, you can complete the work of reading files as data content to create ResourceDistribution. Refer to [this page](/docs/next/cli-tool/kustomize-plugin) for details.
