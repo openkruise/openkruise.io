@@ -86,7 +86,8 @@
       "items": [
         {
           "CLI tools": [
-            "cli-tool/kubectl-plugin"
+            "cli-tool/kubectl-plugin",
+            "cli-tool/kustomize-plugin"
           ]
         }
       ]
