@@ -200,3 +200,7 @@ metadata:
 
 ### 级联删除
 **ResourceDistribution 通过 OwnerReference 来管控所分发的资源。因此，需要特别注意，当 ResourceDistribution 被删除时，其所分发的所有资源也会被删除。**
+
+## Kustomize ResourceDistribution Generator
+
+ResourceDistribution Generator 为 kustomize 的第三方插件，类似于 kustomize 的 configmap generator 和 secret generator，使用该插件可以完成读取文件作为 data 内容来创建 ResourceDistribution 的工作。具体内容参考[此页面](/zh/docs/cli-tool/kustomize-plugin)
