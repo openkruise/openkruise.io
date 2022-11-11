@@ -236,7 +236,8 @@ spec:
   updateStrategy:
     partition: 90%
   injectionStrategy:
-    revisionName: <specific-controllerrevision-name>
+    revision:
+      revisionName: <specific-controllerrevision-name>
 ```
 
 #### select revision via custom version label
@@ -255,7 +256,8 @@ spec:
   updateStrategy:
     partition: 90%
   injectionStrategy:
-    customVersion: example/version-1
+    revision:
+      customVersion: example/version-1
 ```
 
 *Just choose one of the ways above.*
