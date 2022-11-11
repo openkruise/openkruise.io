@@ -227,7 +227,8 @@ metadata:
 spec:
   ...
   injectionStrategy:
-    revisionName: <specific-controllerRevision-name>
+    revision:
+      revisionName: <specific-controllerRevision-name>
 ```
 
 #### 通过自定义版本标识指定注入的 Sidecar 版本
@@ -246,7 +247,8 @@ spec:
   updateStrategy:
     partition: 90%
   injectionStrategy:
-    customVersion: version-1
+    revision:
+      customVersion: version-1
 ```
 以上两种版本选择方式，任选其一即可。
 
