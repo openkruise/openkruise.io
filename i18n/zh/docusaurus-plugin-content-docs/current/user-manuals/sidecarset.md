@@ -216,7 +216,7 @@ spec:
 SidecarSet 通过 ControllerRevision 记录了关于 `containers`、`volumes`、`initContainers`、`imagePullSecrets` 和 `patchPodMetadata` 等字段的历史版本，并允许用户在 Pod 创建时选择特定的历史版本进行注入。
 基于这一特性，用户可以规避在 SidecarSet 灰度发布时，因Deployment 等 Workload 扩容、升级等操作带来的 SidecarSet 发布风险。如果不选择注入版本，SidecarSet 将对重建 Pod 默认全都注入最新版本 Sidecar。
 
-**注：SidecarSet 相关 ControllerRevision 资源被放置在了与 Kruise-Manager 相同的命名空间中，用户可以使用 `kubectl get controllerrvisions -n kruise-system -l kruise.io/sidecarset-name=<your-sidecarset-name>` 来查看。此外，用户还可以通过 SidecarSet 的 `status.latestRevision` 字段看到当前版本对应的 ControllerRevision 名称，以方便自行记录。**
+**注：SidecarSet 相关 ControllerRevision 资源被放置在了与 Kruise-Manager 相同的命名空间中，用户可以使用 `kubectl get controllerrevisions -n kruise-system -l kruise.io/sidecarset-name=<your-sidecarset-name>` 来查看。此外，用户还可以通过 SidecarSet 的 `status.latestRevision` 字段看到当前版本对应的 ControllerRevision 名称，以方便自行记录。**
 
 #### 通过 ControllerRevision 名称指定注入的 Sidecar 版本
 ```yaml

@@ -223,7 +223,7 @@ SidecarSet will record historical revision of some fields such as `containers`, 
 
 Based on this feature, users can address the risk of SidecarSet publishing due to scaling and rolling workload.
 
-**Note: SidecarSet records ControllerRevision in the same namespace as Kruse Manager. You can execute `kubectl get controllerrvisions -n kruise-system -l kruise.io/sidecarset-name=<your-sidecarset-name>` to list the ControllerRevisions of your SidecarSet. Moreover, the ControllerRevision name of current SidecarSet revision is shown in `status.latestRevision` field, so you can record it very easily.**
+**Note: SidecarSet records ControllerRevision in the same namespace as Kruise Manager. You can execute `kubectl get controllerrevisions -n kruise-system -l kruise.io/sidecarset-name=<your-sidecarset-name>` to list the ControllerRevisions of your SidecarSet. Moreover, the ControllerRevision name of current SidecarSet revision is shown in `status.latestRevision` field, so you can record it very easily.**
 
 #### select revision via ControllerRevision name
 ```yaml
