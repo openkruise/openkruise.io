@@ -219,7 +219,7 @@ $ helm install kruise https://... --set featureGates="WorkloadSpread=true"
 ```yaml
 apiVersion: apps.kruise.io/v1alpha1
 kind: WorkloadSpread
-metadta:
+metadata:
   name: ws-demo
   namespace: deploy
 spec:
@@ -268,7 +268,7 @@ Deploy 100 Pods to two `zone`(zone-a, zone-b) separately.
 ```yaml
 apiVersion: apps.kruise.io/v1alpha1
 kind: WorkloadSpread
-metadta:
+metadata:
   name: ws-demo
   namespace: deploy
 spec:
