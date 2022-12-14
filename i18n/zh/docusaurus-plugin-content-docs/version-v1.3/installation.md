@@ -127,7 +127,7 @@ $ helm install kruise https://... --set featureGates="ResourcesDeletionProtectio
 如果你在中国、并且很难从官方 DockerHub 上拉镜像，那么你可以使用托管在阿里云上的镜像仓库：
 
 ```bash
-$ helm install kruise https://... --set  manager.image.repository=openkruise-registry.cn-hangzhou.cr.aliyuncs.com/openkruise/kruise-manager
+$ helm install kruise https://... --set  manager.image.repository=openkruise-registry.cn-shanghai.cr.aliyuncs.com/openkruise/kruise-manager
 ```
 
 ## 最佳实践

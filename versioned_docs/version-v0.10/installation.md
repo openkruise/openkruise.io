@@ -2,7 +2,7 @@
 title: Installation
 ---
 
-Although OpenKruise now can work with Kubernetes version >= `1.13`, we strongly recommend you to use Kruise with **Kubernetes version >= 1.16**. 
+Although OpenKruise now can work with Kubernetes version >= `1.13`, we strongly recommend you to use Kruise with **Kubernetes version >= 1.16**.
 
 Note that:
 1. For **Kubernetes 1.13 and 1.14**, users must enable `CustomResourceWebhookConversion` feature-gate in kube-apiserver before install or upgrade Kruise.
@@ -112,7 +112,7 @@ Feature-gate controls some influential features in Kruise:
 | `TemplateNoDefaults` | Whether to disable defaults injection for pod/pvc template in workloads | `false` | Should not close this feature if it has open |
 | `PodUnavailableBudgetDeleteGate` | Enables PodUnavailableBudget for pod deletion, eviction              | `false` | No protection for pod deletion, eviction |
 | `PodUnavailableBudgetUpdateGate` | Enables PodUnavailableBudget for pod.Spec update              | `false` | No protection for in-place update |
-| `WorkloadSpread`                 | Enables WorkloadSpread to manage multi-domain and elastic deploy  | `false` | WorkloadSpread disabled | 
+| `WorkloadSpread`                 | Enables WorkloadSpread to manage multi-domain and elastic deploy  | `false` | WorkloadSpread disabled |
 
 If you want to configure the feature-gate, just set the parameter when install or upgrade. Such as:
 
@@ -127,7 +127,7 @@ If you want to enable all feature-gates, set the parameter as `featureGates=AllA
 If you are in China and have problem to pull image from official DockerHub, you can use the registry hosted on Alibaba Cloud:
 
 ```bash
-$ helm install kruise https://... --set  manager.image.repository=openkruise-registry.cn-hangzhou.cr.aliyuncs.com/openkruise/kruise-manager
+$ helm install kruise https://... --set  manager.image.repository=openkruise-registry.cn-shanghai.cr.aliyuncs.com/openkruise/kruise-manager
 ```
 
 ## Uninstall
