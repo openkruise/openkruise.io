@@ -463,7 +463,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: kruise-configuration
-  namespace: kube-system
+  namespace: kruise-system
 data:
   "SidecarSet_PatchPodMetadata_WhiteList": |
     {
