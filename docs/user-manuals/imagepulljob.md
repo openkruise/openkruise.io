@@ -33,8 +33,14 @@ spec:
     - node-2
     matchLabels:
       node-type: xxx
-  # podSelector:         # [optional] label selector over pods that should pull image on nodes of these pods. Mutually exclusive with selector.
-  #  pod-label: xxx
+# podSelector:         # [optional] label selector over pods that should pull image on nodes of these pods. Mutually exclusive with selector.
+#   matchLabels:
+#     pod-label: xxx
+#   matchExpressions:
+#   - key: pod-label
+#     operator: In
+#     values:
+#     - xxx
   completionPolicy:
     type: Always                  # [optional] defaults to Always
     activeDeadlineSeconds: 1200   # [optional] no default, only work for Alway type

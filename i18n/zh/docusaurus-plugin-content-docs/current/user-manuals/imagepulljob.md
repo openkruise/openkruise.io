@@ -32,8 +32,14 @@ spec:
     - node-2
     matchLabels:
       node-type: xxx
-  # podSelector:         # [optional] pod label 选择器来在这些 pod 所在节点上拉取镜像, 与 selector 不能同时设置.
-  #  pod-label: xxx
+# podSelector:         # [optional] 通过 podSelector 匹配Pod，在这些 Pod 所在节点上拉取镜像, 与 selector 不能同时设置.
+#   matchLabels:
+#     pod-label: xxx
+#   matchExpressions:
+#   - key: pod-label
+#      operator: In
+#        values:
+#        - xxx
   completionPolicy:
     type: Always                  # [optional] 默认为 Always
     activeDeadlineSeconds: 1200   # [optional] 无默认值, 只对 Alway 类型生效
