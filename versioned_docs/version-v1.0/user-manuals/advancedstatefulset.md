@@ -3,7 +3,7 @@ title: Advanced StatefulSet
 ---
 
 This controller enhances the rolling update workflow of default [StatefulSet](https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/)
-controller from aspects, such as adding maxUnavailable and introducing in-place update strategy.
+controller in large-scale scenarios, such as adding maxUnavailable and introducing in-place update strategy.
 
 Note that Advanced StatefulSet extends the same CRD schema of default StatefulSet with newly added fields.
 The CRD kind name is still `StatefulSet`.

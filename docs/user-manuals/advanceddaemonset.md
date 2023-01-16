@@ -3,7 +3,7 @@ title: Advanced DaemonSet
 ---
 
 This controller enhances the rolling update workflow of Kubernetes [DaemonSet](https://kubernetes.io/docs/concepts/workloads/controllers/daemonset/)
-controller from aspects, such as partition, selector, pause strategies.
+controller in large-scale scenarios, such as support for image pre-download, in-place upgrade, etc.
 
 If you don't know much about the Kubernetes DaemonSet, we strongly recommend you read its documents before learning Advanced DaemonSet.
 - [Concept of Kubernetes DaemonSet](https://kubernetes.io/docs/concepts/workloads/controllers/daemonset/)
