@@ -2,9 +2,9 @@
 title: CloneSet
 ---
 
-This controller provides advanced features to efficiently manage stateless applications that
-do not have instance order requirement during scaling and rollout. Analogously,
-CloneSet can be recognized as an enhanced version of upstream `Deployment` workload, but it does many more.
+This controller provides advanced features to efficiently manage stateless applications in large-scale scenarios that
+do not have instance order requirement during scaling and rollout.
+Analogously, CloneSet can be recognized as an enhanced version of upstream `Deployment` workload, but it does many more.
 
 As name suggests, CloneSet is a [Set -suffix controller](/blog/workload-classification-guidance) which
 manages Pods directly. A sample CloneSet yaml looks like following:

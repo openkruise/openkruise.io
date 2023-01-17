@@ -3,7 +3,7 @@ title: Advanced StatefulSet
 ---
 
 This controller enhances the rolling update workflow of [Kubernetes StatefulSet](https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/)
-controller from aspects, such as adding maxUnavailable and introducing in-place update strategy.
+controller in large-scale scenarios, such as adding maxUnavailable and introducing in-place update strategy.
 
 If you don't know much about the Kubernetes StatefulSet, we strongly recommend you read its documents before learning Advanced StatefulSet.
 - [Concept of Kubernetes StatefulSet](https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/)

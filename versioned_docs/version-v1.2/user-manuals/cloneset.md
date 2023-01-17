@@ -2,9 +2,9 @@
 title: CloneSet
 ---
 
-This controller provides advanced features to efficiently manage stateless applications that
-do not have instance order requirement during scaling and rollout. Analogously,
-CloneSet can be recognized as an enhanced version of upstream `Deployment` workload, but it does many more.
+This controller provides advanced features to efficiently manage stateless applications in large-scale scenarios that
+do not have instance order requirement during scaling and rollout.
+Analogously, CloneSet can be recognized as an enhanced version of upstream `Deployment` workload, but it does many more.
 
 As name suggests, CloneSet is a [Set -suffix controller](/blog/workload-classification-guidance) which
 manages Pods directly. A sample CloneSet yaml looks like following:
@@ -519,24 +519,24 @@ Lifecycle hook allows users to do something (for example remove pod from service
 type LifecycleStateType string
 
 // Lifecycle contains the hooks for Pod lifecycle.
-type Lifecycle struct 
-    // PreDelete is the hook before Pod to be deleted. 
-    PreDelete *LifecycleHook `json:"preDelete,omitempty"` 
-    // InPlaceUpdate is the hook before Pod to update and after Pod has been updated. 
+type Lifecycle struct
+    // PreDelete is the hook before Pod to be deleted.
+    PreDelete *LifecycleHook `json:"preDelete,omitempty"`
+    // InPlaceUpdate is the hook before Pod to update and after Pod has been updated.
     InPlaceUpdate *LifecycleHook `json:"inPlaceUpdate,omitempty"`
 }
 
 type LifecycleHook struct {
     LabelsHandler     map[string]string `json:"labelsHandler,omitempty"`
     FinalizersHandler []string          `json:"finalizersHandler,omitempty"`
-	
+
     /**********************  FEATURE STATE: 1.2.0 ************************/
     // MarkPodNotReady = true means:
     // - Pod will be set to 'NotReady' at preparingDelete/preparingUpdate state.
     // - Pod will be restored to 'Ready' at Updated state if it was set to 'NotReady' at preparingUpdate state.
     // Default to false.
     MarkPodNotReady bool `json:"markPodNotReady,omitempty"`
-    /*********************************************************************/	
+    /*********************************************************************/
 }
 ```
 
@@ -563,7 +563,7 @@ spec:
         example.io/block-unready: "true"
 ```
 
-### MarkPodNotReady 
+### MarkPodNotReady
 **FEATURE STATE:** Kruise v1.2.0
 
 ```yaml

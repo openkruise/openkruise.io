@@ -3,7 +3,7 @@ title: Advanced DaemonSet
 ---
 
 This controller enhances the rolling update workflow of Kubernetes [DaemonSet](https://kubernetes.io/docs/concepts/workloads/controllers/daemonset/)
-controller from aspects, such as partition, selector, pause strategies.
+controller in large-scale scenarios, such as support for image pre-download, in-place upgrade, etc.
 
 If you don't know much about the Kubernetes DaemonSet, we strongly recommend you read its documents before learning Advanced DaemonSet.
 - [Concept of Kubernetes DaemonSet](https://kubernetes.io/docs/concepts/workloads/controllers/daemonset/)
@@ -127,7 +127,7 @@ spec:
 And if you put `daemonset.kruise.io/progressive-create-pod: "true"` annotation into Advanced DaemonSet,
 the `partition` will also control the number of pods to be created when scaling up.
 
-<!-- 
+<!--
 ### MaxSurge for rolling update
 
 MaxSurge is the maximum number of DaemonSet pods that can be scheduled above the desired number of pods during the update.
@@ -187,14 +187,14 @@ type Lifecycle struct {
 type LifecycleHook struct {
     LabelsHandler     map[string]string `json:"labelsHandler,omitempty"`
     FinalizersHandler []string          `json:"finalizersHandler,omitempty"`
-	
+
     /**********************  FEATURE STATE: 1.2.0 ************************/
     // MarkPodNotReady = true means:
     // - Pod will be set to 'NotReady' at preparingDelete/preparingUpdate state.
     // - Pod will be restored to 'Ready' at Updated state if it was set to 'NotReady' at preparingUpdate state.
     // Default to false.
     MarkPodNotReady bool `json:"markPodNotReady,omitempty"`
-    /*********************************************************************/	
+    /*********************************************************************/
 }
 ```
 

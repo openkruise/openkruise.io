@@ -3,7 +3,7 @@ title: Advanced DaemonSet
 ---
 
 This controller enhances the rolling update workflow of default [DaemonSet](https://kubernetes.io/docs/concepts/workloads/controllers/daemonset/)
-controller from aspects, such as partition, selector, pause and surging strategies.
+controller in large-scale scenarios, such as support for image pre-download, in-place upgrade, etc.
 
 Note that Advanced DaemonSet extends the same CRD schema of default DaemonSet with newly added fields.
 The CRD kind name is still `DaemonSet`.
