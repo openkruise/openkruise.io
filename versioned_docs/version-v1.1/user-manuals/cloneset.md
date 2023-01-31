@@ -174,8 +174,6 @@ Don't worry. Even if you enable the `CloneSetShortHash`, CloneSet will still rec
 
 Since Kruise v1.1.0, CloneSet will add another `pod-template-hash` label into Pods, which will always be the short hash.
 
-## Scale features
-
 ### Scale up with rate limit
 
 **FEATURE STATE:** Kruise v1.0.0

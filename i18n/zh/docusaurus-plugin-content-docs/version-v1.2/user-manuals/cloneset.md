@@ -165,8 +165,6 @@ metadata:
 
 从 Kruise v1.1.0 版本开始，CloneSet 还会给 Pod 中加入另一个 `pod-template-hash` 标签，它永远是短 hash 的形式。
 
-## 扩缩容功能
-
 ### 流式扩容
 
 **FEATURE STATE:** Kruise v1.0.0

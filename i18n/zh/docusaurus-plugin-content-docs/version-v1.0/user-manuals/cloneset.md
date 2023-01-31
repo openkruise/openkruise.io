@@ -163,8 +163,6 @@ metadata:
 
 不用担心，即使打开了 `CloneSetShortHash`，CloneSet 仍然会识别和管理过去存量的 revision label 为完整格式的 Pod。
 
-## 扩缩容功能
-
 ### 流式扩容
 
 **FEATURE STATE:** Kruise v1.0.0
