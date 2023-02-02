@@ -172,8 +172,6 @@ So there will be no limit to CloneSet name.
 
 Don't worry. Even if you enable the `CloneSetShortHash`, CloneSet will still recognize and manage the old Pods with full revision label.
 
-## Scale features
-
 ### Scale up with rate limit
 
 **FEATURE STATE:** Kruise v1.0.0
