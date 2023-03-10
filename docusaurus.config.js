@@ -71,6 +71,21 @@ function getNextVersionName() {
     ],
   ],
 
+  plugins: [
+    [
+      '@docusaurus/plugin-content-docs',
+      {
+        id: 'rollouts',
+        path: 'rollouts',
+        routeBasePath: 'rollouts',
+        include: ['**/*.md'],
+        sidebarPath: require.resolve('./sidebars-rollouts.js'),
+        showLastUpdateAuthor: true,
+        showLastUpdateTime: true,
+      },
+    ],
+  ],
+
   i18n: {
     defaultLocale: 'en',
     locales: ['en', 'zh'],
@@ -112,6 +127,12 @@ function getNextVersionName() {
             to: "docs/",
             position: 'left',
             label: 'Documentation',
+          },
+          {
+            to: 'rollouts/introduction',
+            position: 'left',
+            label: 'Rollouts',
+            activeBasePath: 'rollouts',
           },
           {to: '/blog', label: 'Blog', position: 'left'},
           {
