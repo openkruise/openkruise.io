@@ -44,6 +44,7 @@ module.exports = {
           ],
           'Sidecar container Management': [
             'user-manuals/sidecarset',
+            "user-manuals/jobsidecarterminator",
             'user-manuals/containerlaunchpriority',
           ],
           'Multi-domain Management': [

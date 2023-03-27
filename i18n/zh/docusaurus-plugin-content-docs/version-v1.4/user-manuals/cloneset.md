@@ -516,16 +516,18 @@ type Lifecycle struct
     PreDelete *LifecycleHook `json:"preDelete,omitempty"`
     // InPlaceUpdate is the hook before Pod to update and after Pod has been updated.
     InPlaceUpdate *LifecycleHook `json:"inPlaceUpdate,omitempty"`
+    // PreNormal is the hook after Pod to be created and ready to be Normal.
+    PreNormal *LifecycleHook `json:"preNormal,omitempty"`
 }
 
 type LifecycleHook struct {
     LabelsHandler     map[string]string `json:"labelsHandler,omitempty"`
-    FinalizersHandler []string          `json:"finalizersHandler,omitempty"`
-
-    /**********************  FEATURE STATE: 1.2.0 ************************/
-    // MarkPodNotReady = true means:
-    // - Pod will be set to 'NotReady' at preparingDelete/preparingUpdate state.
+    FinalizersHandler []string          `json:"finalizersHandler,omitempty"` 
+	/**********************  FEATURE STATE: 1.2.0 ************************/
+	// MarkPodNotReady = true means: 
+	//- Pod will be set to 'NotReady' at preparingDelete/preparingUpdate state.
     // - Pod will be restored to 'Ready' at Updated state if it was set to 'NotReady' at preparingUpdate state.
+    // Currently, MarkPodNotReady only takes effect on InPlaceUpdate & PreDelete hook.
     // Default to false.
     MarkPodNotReady bool `json:"markPodNotReady,omitempty"`
     /*********************************************************************/
@@ -541,6 +543,9 @@ spec:
 
   # 通过 finalizer 定义 hook
   lifecycle:
+    preNormal:
+      finalizersHandler:
+      - example.io/unready-blocker
     preDelete:
       finalizersHandler:
       - example.io/unready-blocker
@@ -582,7 +587,9 @@ spec:
 ### 流转示意
 
 ![Lifecycle circulation](/img/docs/user-manuals/cloneset-lifecycle.png)
-
+- 当 CloneSet 创建一个 Pod（包括正常扩容和重建升级）时：
+  - 如果 Pod 满足了 `PreNormal` hook 的定义，才会被认为是 `Available`，并且才会进入 `Normal` 状态;
+  - 这对于一些 Pod 创建时的后置检查很有用，比如你可以检查Pod是否已经挂载到SLB后端，从而避免滚动升级时，旧实例销毁后，新实例挂载失败导致的流量损失；
 - 当 CloneSet 删除一个 Pod（包括正常缩容和重建升级）时：
   - 如果没有定义 lifecycle hook 或者 Pod 不符合 preDelete 条件，则直接删除
   - 否则，先只将 Pod 状态改为 `PreparingDelete`。等用户 controller 完成任务去掉 label/finalizer、Pod 不符合 preDelete 条件后，kruise 才执行 Pod 删除
@@ -600,7 +607,6 @@ spec:
 按上述例子，可以定义：
 
 - `example.io/unready-blocker` finalizer 作为 hook
-- `example.io/initialing` annotation 作为初始化标记
 
 在 CloneSet template 模板里带上这个字段：
 
@@ -608,25 +614,23 @@ spec:
 apiVersion: apps.kruise.io/v1alpha1
 kind: CloneSet
 spec:
-  template:
-    metadata:
-      annotations:
-        example.io/initialing: "true"
-      finalizers:
-      - example.io/unready-blocker
-  # ...
   lifecycle:
+    preNormal:
+      finalizersHandler:
+      - example.io/unready-blocker
     preDelete:
       finalizersHandler:
       - example.io/unready-blocker
     inPlaceUpdate:
       finalizersHandler:
       - example.io/unready-blocker
+  template:
+  # ...
 ```
 
 而后用户 controller 的逻辑如下：
 
-- 对于 `Normal` 状态的 Pod，如果 annotation 中有 `example.io/initialing: true` 并且 Pod status 中的 ready condition 为 True，则接入流量、去除这个 annotation
+- 对于刚创建出来的 Pod，其会处于 `PreparingNormal` 状态，当检查该 Pod 满足`Available`的标准后，将`example.io/unready-blocker`添加到 Pod 上， Pod 会转入 `Normal` 的可用状态。
 - 对于 `PreparingDelete` 和 `PreparingUpdate` 状态的 Pod，切走流量，并去除 `example.io/unready-blocker` finalizer
 - 对于 `Updated` 状态的 Pod，接入流量，并打上 `example.io/unready-blocker` finalizer
 
