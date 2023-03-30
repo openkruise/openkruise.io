@@ -84,7 +84,20 @@ function getNextVersionName() {
         showLastUpdateTime: true,
       },
     ],
+    [
+      '@docusaurus/plugin-content-docs',
+      {
+        id: 'kruisegame',
+        path: 'kruisegame',
+        routeBasePath: 'kruisegame',
+        include: ['**/*.md'],
+        sidebarPath: require.resolve('./sidebars-kruisegame.js'),
+        showLastUpdateAuthor: true,
+        showLastUpdateTime: true,
+      },
+    ],
   ],
+
 
   i18n: {
     defaultLocale: 'en',
@@ -133,6 +146,12 @@ function getNextVersionName() {
             position: 'left',
             label: 'Rollouts',
             activeBasePath: 'rollouts',
+          },
+          {
+            to: 'kruisegame/introduction',
+            position: 'left',
+            label: 'Kruise-Game',
+            activeBasePath: 'kruisegame',
           },
           {to: '/blog', label: 'Blog', position: 'left'},
           {
