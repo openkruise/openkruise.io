@@ -35,17 +35,16 @@ module.exports = {
       collapsed: true,
       items: [
         {
-          'Typical Workloads': [
+          'Advanced Workloads': [
             'user-manuals/cloneset',
             'user-manuals/advancedstatefulset',
             'user-manuals/advanceddaemonset',
-          ],
-          'Job Workloads': [
             'user-manuals/broadcastjob',
             'user-manuals/advancedcronjob',
           ],
           'Sidecar container Management': [
             'user-manuals/sidecarset',
+            'user-manuals/containerlaunchpriority',
           ],
           'Multi-domain Management': [
             'user-manuals/workloadspread',
@@ -54,7 +53,6 @@ module.exports = {
           'Enhanced Operations': [
             'user-manuals/containerrecreaterequest',
             'user-manuals/imagepulljob',
-            'user-manuals/containerlaunchpriority',
             "user-manuals/resourcedistribution",
             "user-manuals/persistentpodstate",
             "user-manuals/podprobemarker",
