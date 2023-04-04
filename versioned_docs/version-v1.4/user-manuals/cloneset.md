@@ -539,6 +539,8 @@ type Lifecycle struct
     PreDelete *LifecycleHook `json:"preDelete,omitempty"`
     // InPlaceUpdate is the hook before Pod to update and after Pod has been updated.
     InPlaceUpdate *LifecycleHook `json:"inPlaceUpdate,omitempty"`
+    // PreNormal is the hook after Pod to be created and ready to be Normal.
+    PreNormal *LifecycleHook `json:"preNormal,omitempty"`
 }
 
 type LifecycleHook struct {
@@ -549,6 +551,7 @@ type LifecycleHook struct {
     // MarkPodNotReady = true means:
     // - Pod will be set to 'NotReady' at preparingDelete/preparingUpdate state.
     // - Pod will be restored to 'Ready' at Updated state if it was set to 'NotReady' at preparingUpdate state.
+    // Currently, MarkPodNotReady only takes effect on InPlaceUpdate & PreDelete hook.
     // Default to false.
     MarkPodNotReady bool `json:"markPodNotReady,omitempty"`
     /*********************************************************************/
@@ -564,6 +567,9 @@ spec:
 
   # define with finalizer
   lifecycle:
+    preNormal:
+      finalizersHandler:
+      - example.io/unready-blocker 
     preDelete:
       finalizersHandler:
       - example.io/unready-blocker
@@ -606,6 +612,9 @@ spec:
 
 ![Lifecycle circulation](/img/docs/user-manuals/cloneset-lifecycle.png)
 
+- When CloneSet create a Pod (including scaling up and recreate update):
+  - The Pod will be regarded as `Available` only after PreNormal hook is satisfied.
+  - `PreNormal` hook can be used for post-checks after pod creation. For example, one can check if the pod have been added as the SLB backends successfully. Without preNormal hook, one may encounter traffic loss during rolling upgrades if Operator(e.g., CCM) fails to add new pods to the SLB backends.
 - When CloneSet delete a Pod (including scale in and recreate update):
   - Delete it directly if no lifecycle hook definition or Pod not matched preDelete hook
   - Otherwise, CloneSet will firstly update Pod to `PreparingDelete` state and wait for user controller to remove the label/finalizer and Pod not matched preDelete hook
@@ -623,7 +632,6 @@ Besides, although our design supports to change a Pod from `PreparingDelete` bac
 Same as yaml example above, we can fisrtly define：
 
 - `example.io/unready-blocker` finalizer as hook
-- `example.io/initialing` annotation as identity for initializing
 
 Add these fields into CloneSet template:
 
@@ -631,25 +639,22 @@ Add these fields into CloneSet template:
 apiVersion: apps.kruise.io/v1alpha1
 kind: CloneSet
 spec:
-  template:
-    metadata:
-      annotations:
-        example.io/initialing: "true"
-      finalizers:
-      - example.io/unready-blocker
-  # ...
   lifecycle:
+    preNormal:
+      finalizersHandler:
+      - example.io/unready-blocker 
     preDelete:
       finalizersHandler:
       - example.io/unready-blocker
     inPlaceUpdate:
       finalizersHandler:
       - example.io/unready-blocker
+  template:
+  # ...
 ```
 
 User controller logic:
-
-- For Pod in `Normal` state, if there is `example.io/initialing: true` in annotation and ready condition in Pod status is True, then add it to endpoints and remove the annotation
+- For Pod in `PreparingNormal` state, if there is no `example.io/unready-blocker`, patch the finalizer to Pod, and Pod will be available for CloneSet, and will enter `Normal` state. 
 - For Pod in `PreparingDelete` and `PreparingUpdate` states, delete it from endpoints and remove `example.io/unready-blocker` finalizer
 - For Pod in `Updated` state, add it to endpoints and add `example.io/unready-blocker` finalizer
 
