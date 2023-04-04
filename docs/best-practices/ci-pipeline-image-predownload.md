@@ -263,8 +263,8 @@ spec:
     - name: app_name
       value: $(params.app_name)
   - name: helloworld-image-predownload
-  taskRef:
-    name: helloworld-image-predownload
+    taskRef:
+      name: helloworld-image-predownload
     params:
     - name: short_sha
       value: $(params.short_sha)
