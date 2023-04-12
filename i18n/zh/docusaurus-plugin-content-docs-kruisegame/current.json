@@ -1,0 +1,15 @@
+{
+  "version.label": {
+    "message": "Next",
+    "description": "The label for version current"
+  },
+  "sidebar.kruisegame.category.Getting Started": {
+    "message": "快速开始"
+  },
+  "sidebar.kruisegame.category.User Manuals": {
+    "message": "用户手册"
+  },
+  "sidebar.kruisegame.category.Developer Manuals": {
+    "message": "开发者手册"
+  }
+}
