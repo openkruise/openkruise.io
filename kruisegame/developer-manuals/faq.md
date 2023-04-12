@@ -2,7 +2,6 @@
 
 ## How to debug your code
 
-### Compile & Deploy with Yaml
 
 0) Edit Makefile. Change the value of the IMG field to the repository address of Makefile.
 

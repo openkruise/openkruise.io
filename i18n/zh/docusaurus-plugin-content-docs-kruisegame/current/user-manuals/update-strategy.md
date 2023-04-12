@@ -6,7 +6,7 @@ OKG 提供了原地升级（[热更新](./hot-update.md)）、批量更新、按
 用户可设置GameServer的更新优先级，配合partition参数，实现在实际生产场景下，把控更新范围、更新顺序、更新节奏。
 如下图所示，提高序号为1的游戏服优先级，同时设置partition为2，则会优先更新1号游戏服；随后更改partition为0，则会再更新其余游戏服。详情可参考使用示例。
 
-![update-priority.png](../../../../../static/img/kruisegame/user-manuals/update-priority.png)
+![update-priority.png](/img/kruisegame/user-manuals/update-priority.png)
 
 ## 使用示例
 

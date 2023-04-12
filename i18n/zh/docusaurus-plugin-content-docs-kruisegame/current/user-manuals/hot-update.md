@@ -7,7 +7,7 @@
 OKG 提供的原地升级能力，可以针对性定向更新pod中某一个容器，不影响整个pod的生命周期。
 如下图所示，蓝色部分为热更部分，橘色部分为非热更部分。我们将Game Script容器从版本V1更新至版本V2后，整个pod不会重建，橘色部分不受到任何影响，Game Engine正常平稳运行
 
-![hot-update.png](../../../../../static/img/kruisegame/user-manuals/hot-update.png)
+![hot-update.png](/img/kruisegame/user-manuals/hot-update.png)
 
 ## 使用示例
 
