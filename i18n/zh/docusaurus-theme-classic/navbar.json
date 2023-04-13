@@ -4,7 +4,7 @@
       "description": "The title in the navbar"
     },
     "item.label.Documentation": {
-      "message": "文档",
+      "message": "Kruise",
       "description": "Navbar item with label Documentation"
     },
     "item.label.Blog": {
