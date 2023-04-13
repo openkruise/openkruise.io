@@ -139,7 +139,7 @@ function getNextVersionName() {
           {
             to: "docs/",
             position: 'left',
-            label: 'Documentation',
+            label: 'Kruise',
           },
           {
             to: 'rollouts/introduction',

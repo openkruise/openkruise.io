@@ -2,7 +2,6 @@
 
 ## 如何调试你的代码
 
-### 使用 Yaml 编译和部署
 
 0) 编辑Makefile，将IMG字段的值修改为Makefile的仓库地址。
 

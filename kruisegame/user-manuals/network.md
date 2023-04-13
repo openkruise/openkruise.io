@@ -136,23 +136,23 @@ OpenKruiseGame supports the following network plugins:
 - AlibabaCloud-SLB-SharedPort
 
 ---
-
-### Plugin name
+### Kubernetes-HostPort
+#### Plugin name
 
 `Kubernetes-HostPort`
 
-### Cloud Provider
+#### Cloud Provider
 
 Kubernetes
 
-### Plugin description
+#### Plugin description
 - HostPort enables game servers to be accessed from the Internet by forwarding Internet traffic to the game servers by using the external IP address and ports exposed by the host where the game servers are located. The exposed IP address of the host must be a public IP address so that the host can be accessed from the Internet.
 
 - In the configuration file, you can specify a custom range of available host ports. The default port range is 8000 to 9000. This network plugin can help you allocate and manage host ports to prevent port conflicts.
 
 - This network plugin does not support network isolation.
 
-### Network parameters
+#### Network parameters
 
 ContainerPorts
 
@@ -160,7 +160,7 @@ ContainerPorts
 - Value: in the format of containerName:port1/protocol1,port2/protocol2,... The protocol names must be in uppercase letters. Example: `game-server:25565/TCP`.
 - Configuration change supported or not: no. The value of this parameter is effective until the pod lifecycle ends.
 
-### Plugin configuration
+#### Plugin configuration
 
 ```
 [kubernetes]
@@ -172,22 +172,22 @@ min_port = 8000
 ```
 
 ---
-
-### Plugin name
+### AlibabaCloud-NATGW
+#### Plugin name
 
 `AlibabaCloud-NATGW`
 
-### Cloud Provider
+#### Cloud Provider
 
 AlibabaCloud
 
-### Plugin description
+#### Plugin description
 
 - AlibabaCloud-NATGW enables game servers to be accessed from the Internet by using an Internet NAT gateway of Alibaba Cloud. Internet traffic is forwarded to the corresponding game servers based on DNAT rules.
 
 - This network plugin does not support network isolation.
 
-### Network parameters
+#### Network parameters
 
 Ports
 
@@ -207,21 +207,21 @@ Fixed
 - Value: false or true.
 - Configuration change supported or not: no.
 
-### Plugin configuration
+#### Plugin configuration
 
 None
 
 ---
-
-### Plugin name
+### AlibabaCloud-SLB
+#### Plugin name
 
 `AlibabaCloud-SLB`
 
-### Cloud Provider
+#### Cloud Provider
 
 AlibabaCloud
 
-### Plugin description
+#### Plugin description
 
 - AlibabaCloud-SLB enables game servers to be accessed from the Internet by using Layer 4 Classic Load Balancer (CLB) of Alibaba Cloud. CLB is a type of Server Load Balancer (SLB). AlibabaCloud-SLB uses different ports of the same CLB instance to forward Internet traffic to different game servers. The CLB instance only forwards traffic, but does not implement load balancing.
 
@@ -229,7 +229,7 @@ AlibabaCloud
 
 Related design: https://github.com/openkruise/kruise-game/issues/20
 
-### Network parameters
+#### Network parameters
 
 SlbIds
 
@@ -249,7 +249,7 @@ Fixed
 - Value: false or true.
 - Configuration change supported or not: no.
 
-### Plugin configuration
+#### Plugin configuration
 ```
 [alibabacloud]
 enable = true
@@ -260,23 +260,23 @@ min_port = 500
 ```
 
 ---
-
-### Plugin name
+### AlibabaCloud-SLB-SharedPort
+#### Plugin name
 
 `AlibabaCloud-SLB-SharedPort`
 
-### Cloud Provider
+#### Cloud Provider
 
 AlibabaCloud
 
-### Plugin description
+#### Plugin description
 
 - AlibabaCloud-SLB-SharedPort enables game servers to be accessed from the Internet by using Layer 4 CLB of Alibaba Cloud. Unlike AlibabaCloud-SLB, `AlibabaCloud-SLB-SharedPort` uses the same port of a CLB instance to forward traffic to game servers, and the CLB instance implements load balancing.
   This network plugin applies to stateless network services, such as proxy or gateway, in gaming scenarios.
 
 - This network plugin supports network isolation.
 
-### Network parameters
+#### Network parameters
 
 SlbIds
 
@@ -290,6 +290,6 @@ PortProtocols
 - Value: in the format of port1/protocol1,port2/protocol2,... The protocol names must be in uppercase letters.
 - Configuration change supported or not: no. The configuration change can be supported in future.
 
-### Plugin configuration
+#### Plugin configuration
 
 None

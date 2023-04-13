@@ -123,6 +123,6 @@ demo-gs-2   Ready   None         0     0
 
 此时gameserver controller会发出 GameServer demo-gs-0 Warning 的 event，配合[kube-event项目](https://github.com/AliyunContainerService/kube-eventer)可实现异常通知：
 
-![](../../../../../static/img/kruisegame/user-manuals/warning-ding.png)
+![](/img/kruisegame/user-manuals/warning-ding.png)
 
 此外，OKG 未来会集成游戏服自动排障/恢复工具，进一步丰富游戏服的自动化运维能力。

@@ -23,9 +23,10 @@
 >在尝试对游戏服进行云原生化改造的过程中，网络是首要考虑的问题。由于游戏服从虚拟机迁移至容器，基于机器IP的运维方式在k8s中难以保障，衍生出固定IP的需求；对外服务的方式也不像直接在虚拟机暴露端口那么简单，增加了许多复杂性。除了网络问题之外，一个游戏服的各个进程在pod中的状态难以感知，原生k8s重建的策略太过“粗暴”，不利于游戏稳定运行，亟需一种针对性的感知策略，针对不同的探测结果执行不同的动作。
 
 <p align="right">	来自 盛浩 冠赢互娱游戏云平台负责人</p>
+
 ## 为什么OpenKruiseGame（OKG）是一个工作负载
 
-![kruise-game-workload](../../../../static/img/kruisegame/workload.png)
+![kruise-game-workload](/img/kruisegame/workload.png)
 
 游戏服云原生化核心要解决两个问题，游戏服的生命周期管理与游戏服的运维管理。Kubernetes内置了一些通用的工作负载模型，例如：无状态（Deployment）、有状态（StatefulSet）、任务（Job）等。但是，游戏服的状态管理不论从粒度还是确定性上面都有更高的要求。例如：游戏服需要热更新的机制来确保更短的游戏中断；游戏服需要原地更新确保元数据信息（网络为主）不变；游戏服需要确保在自动伸缩过程中只有0玩家的游戏服可以下线；需要具备手动运维/诊断/隔离任意一个游戏服的能力等。这些都是Kubernetes内置负载不能够解决的问题。
 
@@ -53,7 +54,7 @@ OpenKruiseGame（OKG）只包含两个CRD对象：GameServerSet与GameServer。O
 
 ## OpenKruiseGame（OKG）的部署架构
 
-![arch](../../../../static/img/kruisegame/arch.png)
+![arch](/img/kruisegame/arch.png)
 
 OpenKruiseGame（OKG）的部署模型分为三个部分：
 
