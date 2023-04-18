@@ -25,7 +25,7 @@ spec:
       ### the 1-st batch ###
       # routing 5% traffics to the new version
       - weight: 5
-      # Need Manual confirmation before enter to next batch 
+      # Need Manual confirmation before enter to next batch
         pause: {}
       # optional, The first step of released replicas. If not set, the default is to use 'weight', as shown above is 5%.
         replicas: 1
@@ -127,7 +127,7 @@ spec:
         matches:
           - headers:
               - type: Exact # or "RegularExpression"
-                key: <matched-header-key>
+                name: <matched-header-name>
                 value: <matched-header-value, or reg-expression>
       # the second step
       - weight: 10
@@ -141,7 +141,7 @@ spec:
 | `steps[x].pause.duration` | *integer            | nil       | (optional) Duration time before auto confirmation. if nil, means need manual confirmation.                     |
 | `steps[x].matches`        | []object            | []        | (optional) The HTTP header match rules you want to traffic to new-version Pods.                                |
 | `headers[x].type`         | string              | "Exact"   | "Exact" or "RegularExpression" rule to match key and value                                                     |
-| `headers[x].key`          | string              | ""        | Matched HTTP header key. (And-Relationship between headers[i] and headers[j])                                  |
+| `headers[x].name`         | string              | ""        | Matched HTTP header name. (And-Relationship between headers[i] and headers[j])                                  |
 | `headers[x].value`        | string              | ""        | Matched HTTP header value.                                                                                     |
 Note:
 - `steps[x].weight` and `steps[x].replicas` can not be nil at the same time.
