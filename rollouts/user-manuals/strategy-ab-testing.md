@@ -31,7 +31,7 @@ spec:
       - replicas: 1
         matches:
         - headers:
-          - key: user-agent
+          - name: user-agent
             type: Exact
             value: pc
       - replicas: 50%
