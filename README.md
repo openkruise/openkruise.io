@@ -14,7 +14,12 @@ $ yarn
 $ yarn start
 ```
 
-This command starts a local development server and opens up a browser window. Most changes are reflected live without having to restart the server.
+This command starts a local development server and opens up a browser window for default English site. Most changes are reflected live without having to restart the server.
+
+```
+$ yarn start --locale zh
+```
+This command starts a local development server and opens up a browser window for Chinese site. Most changes are reflected live without having to restart the server.
 
 ### Build
 
