@@ -18,7 +18,7 @@ title: PodUnavailableBudget
 ## API定义
 
 ```yaml
-apiVersion: apps.kruise.io/v1alpha1
+apiVersion: policy.kruise.io/v1alpha1
 kind: PodUnavailableBudget
 metadata:
   name: web-server-pub

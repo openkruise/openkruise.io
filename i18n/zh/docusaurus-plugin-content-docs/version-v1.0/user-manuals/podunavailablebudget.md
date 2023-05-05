@@ -18,7 +18,7 @@ title: PodUnavailableBudget
 一个简单的例子如下：
 
 ```yaml
-apiVersion: apps.kruise.io/v1alpha1
+apiVersion: policy.kruise.io/v1alpha1
 kind: PodUnavailableBudget
 metadata:
   name: web-server-pub
