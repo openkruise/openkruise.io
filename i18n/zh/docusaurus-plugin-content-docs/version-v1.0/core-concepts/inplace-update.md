@@ -9,7 +9,7 @@ title: 原地升级
 - [CloneSet](/docs/user-manuals/cloneset)
 - [Advanced StatefulSet](/docs/user-manuals/advancedstatefulset)
 - [Advanced DaemonSet](/docs/user-manuals/advanceddaemonset)
-- [SidecarSet](/docs/user-manuals/advanceddaemonset)
+- [SidecarSet](/docs/user-manuals/sidecarset)
 
 目前 `CloneSet`、`Advanced StatefulSet`、`Advanced DaemonSet` 是复用的同一个代码包 [`./pkg/util/inplaceupdate`](https://github.com/openkruise/kruise/tree/master/pkg/util/inplaceupdate) 并且有类似的原地升级行为。在本文中，我们会介绍它的用法和工作流程。
 

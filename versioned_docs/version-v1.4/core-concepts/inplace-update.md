@@ -9,7 +9,7 @@ Workloads that support in-place update:
 - [CloneSet](/docs/user-manuals/cloneset)
 - [Advanced StatefulSet](/docs/user-manuals/advancedstatefulset)
 - [Advanced DaemonSet](/docs/user-manuals/advanceddaemonset)
-- [SidecarSet](/docs/user-manuals/advanceddaemonset)
+- [SidecarSet](/docs/user-manuals/sidecarset)
 
 Currently `CloneSet`, `Advanced StatefulSet` and `Advanced DaemonSet` re-use the same code package [`./pkg/util/inplaceupdate`](https://github.com/openkruise/kruise/tree/master/pkg/util/inplaceupdate) and have similar behaviours of in-place update. In this article, we would like to introduce the usage and workflow of them.
 
