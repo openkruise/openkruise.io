@@ -6,9 +6,52 @@
 在不同场景下，往往需要不同的网络产品，而有时网络产品由云厂商提供。OKG 的 Cloud Provider & Network Plugin 源于此而诞生。
 OKG 会集成不同云提供商的不同网络插件，用户可通过GameServerSet设置游戏服的网络参数，并在生成的GameServer中查看网络状态信息，极大降低了游戏服接入网络的复杂度。
 
-## 使用示例
+## 网络插件附录
 
+当前支持的网络插件：
+- Kubernetes-HostPort
+- Kubernetes-Ingress
+- AlibabaCloud-NATGW
+- AlibabaCloud-SLB
+- AlibabaCloud-SLB-SharedPort
+
+---
 ### Kubernetes-HostPort
+#### 插件名称
+
+`Kubernetes-HostPort`
+
+#### Cloud Provider
+
+Kubernetes
+
+#### 插件说明
+- Kubernetes-HostPort利用宿主机网络，通过主机上的端口转发实现游戏服对外暴露服务。宿主机需要配置公网IP，有被公网访问的能力。
+
+- 用户在配置文件中可自定义宿主机开放的端口段（默认为8000-9000），该网络插件可以帮助用户分配管理宿主机端口，尽量避免端口冲突。
+
+- 该插件不支持网络隔离。
+
+#### 网络参数
+
+ContainerPorts
+
+- 含义：填写提供服务的容器名以及对应暴露的端口和协议
+- 填写格式：containerName:port1/protocol1,port2/protocol2,...（协议需大写） 比如：`game-server:25565/TCP`
+- 是否支持变更：不支持，在创建时即永久生效，随pod生命周期结束而结束
+
+#### 插件配置
+
+```
+[kubernetes]
+enable = true
+[kubernetes.hostPort]
+#填写宿主机可使用的空闲端口段，用于为pod分配宿主机转发端口
+max_port = 9000
+min_port = 8000 
+```
+
+#### 示例说明
 
 OKG支持在原生Kubernetes集群使用HostPort游戏服网络，使用游戏服所在宿主机暴露外部IP及端口，转发至游戏服内部端口中。使用方式如下。
 
@@ -66,109 +109,172 @@ EOF
 
 访问 48.98.98.8:8211 即可
 
-### AlibabaCloud-NATGW
-
-OKG支持阿里云下NAT网关模型，使用NATGW的外部IP与端口暴露服务，流量最终将转发至Pod之中。使用方式如下：
-
-```shell
-cat <<EOF | kubectl apply -f -
-apiVersion: game.kruise.io/v1alpha1
-kind: GameServerSet
-metadata:
-  name: gs-natgw
-  namespace: default
-spec:
-  replicas: 1
-  updateStrategy:
-    rollingUpdate:
-      podUpdatePolicy: InPlaceIfPossible
-  network:
-    networkType: AlibabaCloud-NATGW
-    networkConf:
-    - name: Ports
-      #暴露的端口，格式如下 {port1},{port2}...
-      value: "80"
-    - name: Protocol
-      #使用的协议，默认为TCP
-      value: "TCP"
-#   - name: Fixed
-#     是否固定映射关系，默认不固定，pod删除后会生成新的外部IP及端口
-#     value: true
-  gameServerTemplate:
-    spec:
-      containers:
-        - image: registry.cn-hangzhou.aliyuncs.com/gs-demo/gameserver:network
-          name: gameserver
-EOF
-```
-
-生成的GameServer中通过networkStatus字段查看游戏服网络信息：
-
-```shell
-  networkStatus:
-    createTime: "2022-11-23T11:21:34Z"
-    currentNetworkState: Ready
-    desiredNetworkState: Ready
-    externalAddresses:
-    - ip: 47.97.227.137
-      ports:
-      - name: "80"
-        port: "512"
-        protocol: TCP
-    internalAddresses:
-    - ip: 172.16.0.189
-      ports:
-      - name: "80"
-        port: "80"
-        protocol: TCP
-    lastTransitionTime: "2022-11-23T11:21:34Z"
-    networkType: AlibabaCloud-NATGW
-```
-
-访问 47.97.227.137:512 即可
-
-## 网络插件附录
-
-当前支持的网络插件：
-- Kubernetes-HostPort
-- AlibabaCloud-NATGW
-- AlibabaCloud-SLB
-- AlibabaCloud-SLB-SharedPort
-
 ---
-### Kubernetes-HostPort
+
+### Kubernetes-Ingress
+
 #### 插件名称
 
-`Kubernetes-HostPort`
+`Kubernetes-Ingress`
 
 #### Cloud Provider
 
 Kubernetes
 
 #### 插件说明
-- Kubernetes-HostPort利用宿主机网络，通过主机上的端口转发实现游戏服对外暴露服务。宿主机需要配置公网IP，有被公网访问的能力。
 
-- 用户在配置文件中可自定义宿主机开放的端口段（默认为8000-9000），该网络插件可以帮助用户分配管理宿主机端口，尽量避免端口冲突。
-
-- 该插件不支持网络隔离。
+- 针对页游等需要七层网络模型的游戏场景，OKG提供了Ingress网络模型。该插件将会自动地为每个游戏服设置对应的访问路径，该路径与游戏服ID相关，每个游戏服各不相同。
+- 是否支持网络隔离：否
 
 #### 网络参数
 
-ContainerPorts
+Path
 
-- 含义：填写提供服务的容器名以及对应暴露的端口和协议
-- 填写格式：containerName:port1/protocol1,port2/protocol2,...（协议需大写） 比如：`game-server:25565/TCP`
-- 是否支持变更：不支持，在创建时即永久生效，随pod生命周期结束而结束
+- 含义：访问路径。每个游戏服依据ID拥有各自的访问路径。
+- 填写格式：将<id\>添加到原始路径(与HTTPIngressPath中Path一致)的任意位置，该插件将会生成游戏服ID对应的路径。例如，当设置路径为 /game<id\>，游戏服0对应路径为/game0，游戏服1对应路径为/game1，以此类推。
+- 是否支持变更：支持
+
+PathType
+
+- 含义：路径类型。与HTTPIngressPath的PathType字段一致。
+- 填写格式：与HTTPIngressPath的PathType字段一致。
+- 是否支持变更：支持
+
+Port
+
+- 含义：游戏服暴露的端口值。
+- 填写格式：端口数字
+- 是否支持变更：支持
+
+IngressClassName
+
+- 含义：指定IngressClass的名称。与IngressSpec的IngressClassName字段一致。
+- 填写格式：与IngressSpec的IngressClassName字段一致。
+- 是否支持变更：支持
+
+Host
+
+- 含义：域名。每个游戏服依据ID拥有各自的访问域名。
+- 填写格式：将<id\>添加域名的任意位置，该插件将会生成游戏服ID对应的域名。例如，当设置域名为 test.game<id\>.cn-hangzhou.ali.com，游戏服0对应域名为test.game0.cn-hangzhou.ali.com，游戏服1对应域名为test.game1.cn-hangzhou.ali.com，以此类推。
+- 是否支持变更：支持
+
+TlsHosts
+
+- 含义：包含TLS证书的host列表。含义与IngressTLS的Hosts字段类似。
+- 填写格式：host1,host2,... 例如，xxx.xx1.com,xxx.xx2.com
+- 是否支持变更：支持
+
+TlsSecretName
+
+- 含义：与IngressTLS的SecretName字段一致。
+- 填写格式：与IngressTLS的SecretName字段一致。
+- 是否支持变更：支持
+
+Annotation
+
+- 含义：作为ingress对象的annotation
+- 格式：key: value（注意:后有空格），例如：nginx.ingress.kubernetes.io/rewrite-target: /$2
+- 是否支持变更：支持
+
+_补充说明_
+
+- 支持填写多个annotation，在networkConf中填写多个Annotation以及对应值即可，不区分填写顺序。
+- 支持填写多个路径。路径、路径类型、端口按照填写顺序一一对应。当路径数目大于路径类型数目（或端口数目）时，无法找到对应关系的路径按照率先填写的路径类型（或端口）匹配。
 
 #### 插件配置
 
+无
+
+#### 示例说明
+
+GameServerSet中network字段声明如下：
+
+```yaml
+  network:
+    networkConf:
+    - name: IngressClassName
+      value: nginx
+    - name: Port
+      value: "80"
+    - name: Path
+      value: /game<id>(/|$)(.*)
+    - name: Path
+      value: /test-<id>
+    - name: Host
+      value: test.xxx.cn-hangzhou.ali.com
+    - name: PathType
+      value: ImplementationSpecific
+    - name: TlsHosts
+      value: xxx.xx1.com,xxx.xx2.com
+    - name: Annotation
+      value: 'nginx.ingress.kubernetes.io/rewrite-target: /$2'
+    - name: Annotation
+      value: 'nginx.ingress.kubernetes.io/random: xxx'
+    networkType: Kubernetes-Ingress
 ```
-[kubernetes]
-enable = true
-[kubernetes.hostPort]
-#填写宿主机可使用的空闲端口段，用于为pod分配宿主机转发端口
-max_port = 9000
-min_port = 8000 
+
+则会生成gss replicas对应数目的service与ingress对象。0号游戏服生成的ingress字段如下所示：
+
+```yaml
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: test.xxx.cn-hangzhou.ali.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: ing-nginx-0
+            port:
+              number: 80
+        path: /game0(/|$)(.*)
+        pathType: ImplementationSpecific
+      - backend:
+          service:
+            name: ing-nginx-0
+            port:
+              number: 80
+        path: /test-0
+        pathType: ImplementationSpecific
+  tls:
+  - hosts:
+    - xxx.xx1.com
+    - xxx.xx2.com
+status:
+  loadBalancer:
+    ingress:
+    - ip: 47.xx.xxx.xxx
+```
+
+其他序号的游戏服只有path字段与service name不同，生成的其他参数都相同。
+
+对应的0号GameServer的networkStatus如下：
+
+```yaml
+  networkStatus:
+    createTime: "2023-04-28T14:00:30Z"
+    currentNetworkState: Ready
+    desiredNetworkState: Ready
+    externalAddresses:
+    - ip: 47.xx.xxx.xxx
+      ports:
+      - name: /game0(/|$)(.*)
+        port: 80
+        protocol: TCP
+      - name: /test-0
+        port: 80
+        protocol: TCP
+    internalAddresses:
+    - ip: 10.xxx.x.xxx
+      ports:
+      - name: /game0(/|$)(.*)
+        port: 80
+        protocol: TCP
+      - name: /test-0
+        port: 80
+        protocol: TCP
+    lastTransitionTime: "2023-04-28T14:00:30Z"
+    networkType: Kubernetes-Ingress
 ```
 
 ---
@@ -210,6 +316,67 @@ Fixed
 #### 插件配置
 
 无
+
+#### 示例说明
+
+OKG支持阿里云下NAT网关模型，使用NATGW的外部IP与端口暴露服务，流量最终将转发至Pod之中。使用方式如下：
+
+```shell
+cat <<EOF | kubectl apply -f -
+apiVersion: game.kruise.io/v1alpha1
+kind: GameServerSet
+metadata:
+  name: gs-natgw
+  namespace: default
+spec:
+  replicas: 1
+  updateStrategy:
+    rollingUpdate:
+      podUpdatePolicy: InPlaceIfPossible
+  network:
+    networkType: AlibabaCloud-NATGW
+    networkConf:
+    - name: Ports
+      #暴露的端口，格式如下 {port1},{port2}...
+      value: "80"
+    - name: Protocol
+      #使用的协议，默认为TCP
+      value: "tcp"
+#   - name: Fixed
+#     是否固定映射关系，默认不固定，pod删除后会生成新的外部IP及端口
+#     value: true
+  gameServerTemplate:
+    spec:
+      containers:
+        - image: registry.cn-hangzhou.aliyuncs.com/gs-demo/gameserver:network
+          name: gameserver
+EOF
+```
+
+生成的GameServer中通过networkStatus字段查看游戏服网络信息：
+
+```shell
+  networkStatus:
+    createTime: "2022-11-23T11:21:34Z"
+    currentNetworkState: Ready
+    desiredNetworkState: Ready
+    externalAddresses:
+    - ip: 47.97.227.137
+      ports:
+      - name: "80"
+        port: "512"
+        protocol: TCP
+    internalAddresses:
+    - ip: 172.16.0.189
+      ports:
+      - name: "80"
+        port: "80"
+        protocol: TCP
+    lastTransitionTime: "2022-11-23T11:21:34Z"
+    networkType: AlibabaCloud-NATGW
+```
+
+访问 47.97.227.137:512 即可
 
 ---
 ### AlibabaCloud-SLB
@@ -263,6 +430,7 @@ min_port = 500
 
 #### 插件名称
 ### AlibabaCloud-SLB-SharedPort
+
 `AlibabaCloud-SLB-SharedPort`
 
 #### Cloud Provider

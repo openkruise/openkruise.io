@@ -15,15 +15,15 @@ OKG 提供了原地升级（[热更新](./hot-update.md)）、批量更新、按
 此时GameServerSet下有3个游戏服副本：
 ```shell
 kubectl get gs
-NAME          STATE      OPSSTATE   DP    UP
-minecraft-0   Ready      None       0     0
-minecraft-1   Ready      None       0     0
-minecraft-2   Ready      None       0     0
+NAME        STATE      OPSSTATE   DP    UP
+gs-demo-0   Ready      None       0     0
+gs-demo-1   Ready      None       0     0
+gs-demo-2   Ready      None       0     0
 ```
 
 设置更新优先级，将1号游戏服优先级调大：
 ```shell
-kubectl edit gs minecraft-1
+kubectl edit gs gs-demo-1
 
 ...
 spec:
@@ -35,10 +35,10 @@ spec:
 
 接下来设置 GameServerSet partition、以及即将更新的新镜像：
 ```shell
-kubectl edit gss minecraft
+kubectl edit gss gs-demo
 
 ...
-        image: registry.cn-hangzhou.aliyuncs.com/acs/minecraft-demo:1.12.2-new # 更新镜像
+        image: gameserver:latest # 更新镜像
         name: gameserver
 ...
   updateStrategy:
@@ -50,28 +50,28 @@ kubectl edit gss minecraft
 
 ```
 
-此时只有minecraft-1将会更新:
+此时只有gs-demo-1将会更新:
 ```shell
 kubectl get gs
-NAME          STATE      OPSSTATE   DP    UP
-minecraft-0   Ready      None       0     0
-minecraft-1   Updating   None       0     10
-minecraft-2   Ready      None       0     0
+NAME        STATE      OPSSTATE   DP    UP
+gs-demo-0   Ready      None       0     0
+gs-demo-1   Updating   None       0     10
+gs-demo-2   Ready      None       0     0
 
 
 # 一段时间过后
 ...
 
 kubectl get gs
-NAME          STATE      OPSSTATE   DP    UP
-minecraft-0   Ready      None       0     0
-minecraft-1   Ready      None       0     10
-minecraft-2   Ready      None       0     0
+NAME        STATE      OPSSTATE   DP    UP
+gs-demo-0   Ready      None       0     0
+gs-demo-1   Ready      None       0     10
+gs-demo-2   Ready      None       0     0
 ```
 
-待minecraft-1验证通过后，更新其余游戏服：
+待gs-demo-1验证通过后，更新其余游戏服：
 ```shell
-kubectl edit gss minecraft
+kubectl edit gss gs-demo
 ...
   updateStrategy:
     rollingUpdate:
