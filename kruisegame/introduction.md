@@ -3,7 +3,7 @@
 ### Overview
 OpenKruiseGame (OKG) is a multicloud-oriented, open source Kubernetes workload specialized for game servers. It is a sub-project of the open source workload project OpenKruise of the Cloud Native Computing Foundation (CNCF) in the gaming field. OpenKruiseGame makes the cloud-native transformation of game servers easier, faster, and stabler.
 
-![kruise-game-intro](../static/img/kruisegame/intro.png)
+<img src={require('/static/img/kruisegame/intro.png').default} width="90%" />
 
 ## What is OpenKruiseGame?
 OpenKruiseGame is a custom Kubernetes workload designed specially for game server scenarios. It simplifies the cloud-native transformation of game servers. Compared with the built-in workloads of Kubernetes, such as Deployment and StatefulSet, OpenKruiseGame provides common game server management features, such as hot update, in-place update, and management of specified game servers.
@@ -23,6 +23,7 @@ The architecture of game servers has become increasingly complex. The player ser
 The preceding challenges make it difficult to implement cloud-native transformation of game servers. OpenKruiseGame is aimed to abstract the common requirements of the gaming industry, and use the semantic method to make the cloud-native transformation of various game servers simple, efficient, and secure.
 
 ## List of core features
+
 OpenKruiseGame has the following core features:
 
 * Hot update based on images and hot reload of configurations
@@ -32,6 +33,18 @@ OpenKruiseGame has the following core features:
 * Automated O&M (service quality)
 * Independent of cloud service providers
 * Complex game server orchestration
+
+## Users of OpenKruiseGame(OKG)
+
+<table>
+    <tr style={{"border":0}}>
+        <td style={{"border":0}}><center><img src={require('/static/img/kruisegame/bilibili-logo.png').default} width="120" /></center></td>
+        <td style={{"border":0}}><center><img src={require('/static/img/kruisegame/hypergryph-logo.png').default} width="120" /></center></td>
+        <td style={{"border":0}}><center><img src={require('/static/img/kruisegame/shangyou-logo.jpeg').default} width="120" /></center></td>
+        <td style={{"border":0}}><center><img src={require('/static/img/kruisegame/guanying-logo.png').default} width="120" /></center></td>
+        <td style={{"border":0}}><center><img src={require('/static/img/kruisegame/booming-logo.png').default} width="120" /></center></td>
+    </tr>
+</table>
 
 ## What's Next
 Here are some recommended next steps:

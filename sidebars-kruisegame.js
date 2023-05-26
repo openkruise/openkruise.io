@@ -33,6 +33,9 @@ module.exports = {
                 'user-manuals/container-startup-sequence-control',
                 'user-manuals/service-qualities',
                 'user-manuals/network',
+                'user-manuals/autoscale',
+                'user-manuals/gameserver-monitor',
+                'user-manuals/crd-field-description',
             ],
         },
         {

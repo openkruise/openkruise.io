@@ -15,15 +15,15 @@ A group of game servers are updated in two batches to simulate a canary update.
 The GameServerSet consists of three game server replicas.
 ```shell
 kubectl get gs
-NAME        STATE      OPSSTATE   DP    UP
-gs-demo-0   Ready      None       0     0
-gs-demo-1   Ready      None       0     0
-gs-demo-2   Ready      None       0     0
+NAME          STATE      OPSSTATE   DP    UP
+minecraft-0   Ready      None       0     0
+minecraft-1   Ready      None       0     0
+minecraft-2   Ready      None       0     0
 ```
 
-Set the updatePriority parameter to a greater value for the game server gs-demo-1.
+Set the updatePriority parameter to a greater value for the game server minecraft-1.
 ```shell
-kubectl edit gs gs-demo-1
+kubectl edit gs minecraft-1
 
 ...
 spec:
@@ -38,7 +38,7 @@ Set the partition parameter and the latest image used to trigger an update opera
 kubectl edit gss gs-demo
 
 ...
-        image: gameserver:latest # Set the latest image.
+        image: registry.cn-hangzhou.aliyuncs.com/acs/minecraft-demo:1.12.2-new # Set the latest image.
         name: gameserver
 ...
   updateStrategy:
@@ -50,28 +50,28 @@ kubectl edit gss gs-demo
 
 ```
 
-In this case, only the game server gs-demo-1 is updated.
+In this case, only the game server minecraft-1 is updated.
 ```shell
 kubectl get gs
-NAME        STATE      OPSSTATE   DP    UP
-gs-demo-0   Ready      None       0     0
-gs-demo-1   Updating   None       0     10
-gs-demo-2   Ready      None       0     0
+NAME          STATE      OPSSTATE   DP    UP
+minecraft-0   Ready      None       0     0
+minecraft-1   Updating   None       0     10
+minecraft-2   Ready      None       0     0
 
 
 # Wait for a period of time.
 ...
 
 kubectl get gs
-NAME        STATE      OPSSTATE   DP    UP
-gs-demo-0   Ready      None       0     0
-gs-demo-1   Ready      None       0     10
-gs-demo-2   Ready      None       0     0
+NAME          STATE      OPSSTATE   DP    UP
+minecraft-0   Ready      None       0     0
+minecraft-1   Ready      None       0     10
+minecraft-2   Ready      None       0     0
 ```
 
-After you verify that the game server gs-demo-1 is updated, update the remaining game servers.
+After you verify that the game server minecraft-1 is updated, update the remaining game servers.
 ```shell
-kubectl edit gss gs-demo
+kubectl edit gss minecraft
 ...
   updateStrategy:
     rollingUpdate:

@@ -27,7 +27,7 @@
 ## Why is OpenKruiseGame a workload?
 
 
-![kruise-game-workload](../static/img/kruisegame/workload.png)
+<img src={require('/static/img/kruisegame/workload.png').default} width="90%" />
 
 
 The key to cloud-native transformation of game servers is to address two concerns: lifecycle management and O&M management of game servers. Kubernetes has built-in general workload models such as Deployment, StatefulSet, and Job. However, the management of game server states is more fine-grained and more precise. For example, for game servers, a rolling update mechanism is required to ensure a shorter game interruption, and in-place updates are required to ensure that the network-based metadata information remains unchanged. A mechanism to ensure logouts occur only in zero-player game servers during auto scaling and the capability to allow to manually perform O&M, diagnosis, and isolation on game servers are required. The preceding requirements cannot be met by using only the built-in workloads of Kubernetes.
@@ -56,7 +56,7 @@ The service quality capability can be used to convert players' tasks of a game t
 
 ## Deployment architecture of OpenKruiseGame
 
-![arch](../static/img/kruisegame/arch.png)
+<img src={require('/static/img/kruisegame/arch.png').default} width="90%" />
 
 The deployment model of OpenKruiseGame consists of three parts:
 

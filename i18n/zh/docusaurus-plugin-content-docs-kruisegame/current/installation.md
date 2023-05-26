@@ -16,39 +16,44 @@ $ helm repo update
 # Install the latest version.
 $ helm install kruise openkruise/kruise --version 1.4.0
 ```
-
-## 安装Kruise-Game
+·
+#### 安装Kruise-Game
 
 ```shell
-$ helm install kruise-game openkruise/kruise-game --version 0.2.1
+$ helm install kruise-game openkruise/kruise-game --version 0.3.0
 ```
 
-## 可选：使用自定义配置安装/升级
+#### 可选：使用自定义配置安装/升级
 
 下表列出了 kruise-game 的可配置参数及其默认值。
 
-| Parameter                        | Description                                                       | Default                             |
-|----------------------------------|-------------------------------------------------------------------|-------------------------------------|
-| `installation.namespace`         | kruise-game 安装到的 namespace，一般不建议修改                        | `kruise-game-system`                |
-| `installation.createNamespace`   | 是否需要创建上述 namespace，一般不建议修改，除非指定安装到已有的 ns 中     | `true`                              |
-| `kruiseGame.fullname`            | kruise-game 部署和其他配置的名称                                     | `kruise-game-controller-manager`    |
-| `kruiseGame.healthBindPort`      | 用于检查 kruise-game 容器健康检查的端口                               | `8082`                              |
-| `kruiseGame.webhook.port`        | kruise-game 容器服务的 webhook 端口                                 | `443`                               |
-| `kruiseGame.webhook.targetPort`  | 用于 MutatingWebhookConfigurations 中工作负载的 ObjectSelector       | `9876`                              |
-| `replicaCount`                   | kruise-game 的期望副本数                                            | `1`                                 |
-| `image.repository`               | kruise-game 的镜像仓库                                              | `openkruise/kruise-game-manager`    |
-| `image.tag`                      | kruise-game 的镜像版本                                              | `v0.2.1`                            |
-| `image.pullPolicy`               | kruise-game 的镜像拉取策略                                           | `Always`                            |
-| `serviceAccount.annotations`     | kruise-game的serviceAccount注解                                     | ` `                                 |
-| `resources.limits.cpu`           | kruise-game容器的CPU资源限制                                         | `500m`                              |
-| `resources.limits.memory`        | kruise-game容器的内存资源限制                                         | `1Gi`                               |
-| `resources.requests.cpu`         | kruise-game容器的CPU资源请求                                          | `10m`                              |
-| `resources.requests.memory`      | kruise-game容器的内存资源请求                                          | `64Mi`                             |
-
+| Parameter                              | Description                                                       | Default                             |
+|----------------------------------------|-------------------------------------------------------------------|-------------------------------------|
+| `installation.namespace`               | kruise-game 安装到的 namespace，一般不建议修改                        | `kruise-game-system`                |
+| `installation.createNamespace`         | 是否需要创建上述 namespace，一般不建议修改，除非指定安装到已有的 ns 中     | `true`                              |
+| `kruiseGame.fullname`                  | kruise-game 部署和其他配置的名称                                     | `kruise-game-controller-manager`    |
+| `kruiseGame.healthBindPort`            | 用于检查 kruise-game 容器健康检查的端口                               | `8082`                              |
+| `kruiseGame.webhook.port`              | kruise-game 容器服务的 webhook 端口                                 | `443`                               |
+| `kruiseGame.webhook.targetPort`        | 用于 MutatingWebhookConfigurations 中工作负载的 ObjectSelector       | `9876`                              |
+| `replicaCount`                         | kruise-game 的期望副本数                                            | `1`                                 |
+| `image.repository`                     | kruise-game 的镜像仓库                                              | `openkruise/kruise-game-manager`    |
+| `image.tag`                            | kruise-game 的镜像版本                                              | `v0.2.1`                            |
+| `image.pullPolicy`                     | kruise-game 的镜像拉取策略                                           | `Always`                            |
+| `serviceAccount.annotations`           | kruise-game的serviceAccount注解                                     | ` `                                 |
+| `resources.limits.cpu`                 | kruise-game容器的CPU资源限制                                         | `500m`                              |
+| `resources.limits.memory`              | kruise-game容器的内存资源限制                                         | `1Gi`                               |
+| `resources.requests.cpu`               | kruise-game容器的CPU资源请求                                          | `10m`                              |
+| `resources.requests.memory`            | kruise-game容器的内存资源请求                                          | `64Mi`                             |
+| `prometheus.enabled`                   | 是否创建指标监控服务                                                   | `true`                              |
+| `prometheus.monitorService.port`       | monitorService的监听端口                                              | `8080`                              |
+| `scale.service.port`                   | 伸缩服务监听端口                                                       | `6000`                              |
+| `scale.service.targetPort`             | 伸缩服务目标端口                                                       | `6000`                              |
+| `network.totalWaitTime`                | 等待网络Ready的最长时间，单位是秒                                        | `60`                                |
+| `network.probeIntervalTime`            | 探测网络状态的时间间隔，单位是秒                                          | `5`                                 |
 
 使用 `--set key=value[,key=value]` 参数指定每个参数到 `helm install`,例如,
 
-### 可选：中国地区的镜像
+#### 可选：中国地区的镜像
 
 如果你在中国并且无法从官方 DockerHub 拉取镜像，你可以使用托管在阿里云上的镜像:
 
