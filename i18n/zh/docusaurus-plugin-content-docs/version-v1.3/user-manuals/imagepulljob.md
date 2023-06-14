@@ -42,8 +42,8 @@ spec:
 #        - xxx
   completionPolicy:
     type: Always                  # [optional] 默认为 Always
-    activeDeadlineSeconds: 1200   # [optional] 无默认值, 只对 Alway 类型生效
-    ttlSecondsAfterFinished: 300  # [optional] 无默认值, 只对 Alway 类型生效
+    activeDeadlineSeconds: 1200   # [optional] 无默认值, 只对 Always 类型生效
+    ttlSecondsAfterFinished: 300  # [optional] 无默认值, 只对 Always 类型生效
   pullPolicy:                     # [optional] 默认 backoffLimit=3, timeoutSeconds=600
     backoffLimit: 3
     timeoutSeconds: 300

@@ -37,8 +37,8 @@ spec:
   #  pod-label: xxx
   completionPolicy:
     type: Always                  # [optional] defaults to Always
-    activeDeadlineSeconds: 1200   # [optional] no default, only work for Alway type
-    ttlSecondsAfterFinished: 300  # [optional] no default, only work for Alway type
+    activeDeadlineSeconds: 1200   # [optional] no default, only work for Always type
+    ttlSecondsAfterFinished: 300  # [optional] no default, only work for Always type
   pullPolicy:                     # [optional] defaults to backoffLimit=3, timeoutSeconds=600
     backoffLimit: 3
     timeoutSeconds: 300
