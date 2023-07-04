@@ -1,11 +1,21 @@
 # Installation
 
-## Requirements
+## Install OpenKruiseGame（OKG)
 
-Install Kubernetes Cluster, requires **Kubernetes version >= 1.16**.
-## Install Kruise
+Installing OpenKruiseGame requires Kruise and Kruise-Game to be installed, requires **Kubernetes version >= 1.16**.
 
-We recommend that you use Helm V3.5 or later to install Kruise.
+### Installation Instructions
+
+OpenKruiseGame requires to be installed and used in a cluster with version 1.16 or higher.
+
+OpenKruiseGame contains two components: `kruise` and `kruise-game`.
+By default, installing `kruise-game` will automatically install the latest version and configure the default `kruise`.
+If you want to manage the `kruise` component independently, you can set the parameter `installation.kruise` to `false` when installing `kruise-game`, and then `kruise` will not be installed when `kruise-game` is installed.
+It is worth noting that kruise-game 0.3.0 and previous versions do not install the kruise component by default, so you need to pay attention to set `installation.kruise` to `false` when upgrading.
+
+### Install with helm
+
+It is recommended to use helm v3.5+ to install OpenKruiseGame
 
 ```shell
 # Firstly add openkruise charts repository if you haven't do this.
@@ -15,42 +25,46 @@ $ helm repo add openkruise https://openkruise.github.io/charts/
 $ helm repo update
 
 # Install the latest version.
-$ helm install kruise openkruise/kruise --version 1.4.0
+$ helm install kruise-game openkruise/kruise-game --version 0.4.0 
 ```
 
-#### Install Kruise-Game
+## Upgrade OpenKruiseGame（OKG)
+
+### Upgrade with helm
 
 ```shell
-$ helm install kruise-game openkruise/kruise-game --version 0.3.0
+$ helm install kruise-game openkruise/kruise-game --version 0.4.0 [--force]
 ```
 
 #### Optional: install/upgrade with customized configurations
 
 The following table lists the configurable parameters of the kruise-game chart and their default values.
 
-| Parameter                              | Description                                                       | Default                             |
-|----------------------------------------|-------------------------------------------------------------------|-------------------------------------|
-| `installation.namespace`               | Namespace for kruise-game operation installation                  | `kruise-game-system`                |
-| `installation.createNamespace`         | Whether to create the installation.namespace                      | `true`                              |
-| `kruiseGame.fullname`                  | Nick name for kruise-game deployment and other configurations     | `kruise-game-controller-manager`    |
-| `kruiseGame.healthBindPort`            | Port for checking health of kruise-game container                 | `8082`                              |
-| `kruiseGame.webhook.port`              | Port of webhook served by kruise-game container                   | `443`                               |
-| `kruiseGame.webhook.targetPort`        | ObjectSelector for workloads in MutatingWebhookConfigurations     | `9876`                              |
-| `replicaCount`                         | Replicas of kruise-game deployment                                | `1`                                 |
-| `image.repository`                     | Repository for kruise-game image                                  | `openkruise/kruise-game-manager`    |
-| `image.tag`                            | Tag for kruise-game image                                         | `v0.2.1`                            |
-| `image.pullPolicy`                     | ImagePullPolicy for kruise-game container                         | `Always`                            |
-| `serviceAccount.annotations`           | The annotations for serviceAccount of kruise-game                 | ` `                                 |
-| `resources.limits.cpu`                 | CPU resource limit of kruise-game container                       | `500m`                              |
-| `resources.limits.memory`              | Memory resource limit of kruise-game container                    | `1Gi`                               |
-| `resources.requests.cpu`               | CPU resource request of kruise-game container                     | `10m`                               |
-| `resources.requests.memory`            | Memory resource request of kruise-game container                  | `64Mi`                              |
-| `prometheus.enabled`                   | Whether to bind metric endpoint                                   | `true`                              |
-| `prometheus.monitorService.port`       | Port of the monitorservice bind to                                | `8080`                              |
-| `scale.service.port`                   | Port of the external scaler server binds to                       | `6000`                              |
-| `scale.service.targetPort`             | TargetPort of the external scaler server binds to                 | `6000`                              |
-| `network.totalWaitTime`                | Maximum time to wait for network ready, the unit is seconds       | `60`                                |
-| `network.probeIntervalTime`            | Time interval for detecting network status, the unit is seconds   | `5`                                 |
+| Parameter                        | Description                                                                   | Default                          |
+|----------------------------------|-------------------------------------------------------------------------------|----------------------------------|
+| `installation.kruise`            | Whether to install the latest version and configure the default kruise  chart | `true`                           |
+| `installation.namespace`         | Namespace for kruise-game operation installation                              | `kruise-game-system`             |
+| `installation.createNamespace`   | Whether to create the installation.namespace                                  | `true`                           |
+| `kruiseGame.fullname`            | Nick name for kruise-game deployment and other configurations                 | `kruise-game-controller-manager` |
+| `kruiseGame.healthBindPort`      | Port for checking health of kruise-game container                             | `8082`                           |
+| `kruiseGame.webhook.port`        | Port of webhook served by kruise-game container                               | `443`                            |
+| `kruiseGame.webhook.targetPort`  | ObjectSelector for workloads in MutatingWebhookConfigurations                 | `9876`                           |
+| `replicaCount`                   | Replicas of kruise-game deployment                                            | `1`                              |
+| `image.repository`               | Repository for kruise-game image                                              | `openkruise/kruise-game-manager` |
+| `image.tag`                      | Tag for kruise-game image                                                     | `v0.4.0`                         |
+| `image.pullPolicy`               | ImagePullPolicy for kruise-game container                                     | `Always`                         |
+| `serviceAccount.annotations`     | The annotations for serviceAccount of kruise-game                             | ` `                              |
+| `resources.limits.cpu`           | CPU resource limit of kruise-game container                                   | `500m`                           |
+| `resources.limits.memory`        | Memory resource limit of kruise-game container                                | `1Gi`                            |
+| `resources.requests.cpu`         | CPU resource request of kruise-game container                                 | `10m`                            |
+| `resources.requests.memory`      | Memory resource request of kruise-game container                              | `64Mi`                           |
+| `prometheus.enabled`             | Whether to bind metric endpoint                                               | `true`                           |
+| `prometheus.monitorService.port` | Port of the monitorservice bind to                                            | `8080`                           |
+| `scale.service.port`             | Port of the external scaler server binds to                                   | `6000`                           |
+| `scale.service.targetPort`       | TargetPort of the external scaler server binds to                             | `6000`                           |
+| `network.totalWaitTime`          | Maximum time to wait for network ready, the unit is seconds                   | `60`                             |
+| `network.probeIntervalTime`      | Time interval for detecting network status, the unit is seconds               | `5`                              |
+| `cloudProvider.installCRD`       | Whether to install CloudProvider CRD                                          | `true`                           |
 
 Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`. For example,
 
@@ -59,11 +73,10 @@ Specify each parameter using the `--set key=value[,key=value]` argument to `helm
 If you are in China and have problem to pull image from official DockerHub, you can use the registry hosted on Alibaba Cloud:
 
 ```bash
-$ helm install kruise-game https://... --set image.repository=registry.cn-hangzhou.aliyuncs.com/acs/kruise-game-manager:v0.2.1
-...
+$ helm install kruise-game https://... --set image.repository=registry.cn-hangzhou.aliyuncs.com/acs/kruise-game-manager
 ```
 
-## Uninstall
+## Uninstall OpenKruiseGame（OKG）
 
 Note that this will lead to all resources created by kruise-game, including webhook configurations, services, namespace, CRDs and CR instances kruise-game controller, to be deleted!
 
@@ -75,6 +88,17 @@ To uninstall kruise-game if it is installed with helm charts:
 $ helm uninstall kruise-game
 release "kruise-game" uninstalled
 ```
+
+## FAQ
+
+Q: Error `no matches for kind "ServiceMonitor" in version "monitoring.coreos.com/v1"`
+A: This is because the cluster does not have the prometheus operator installed. enabling the playsuit monitoring feature requires the prometheus operator to be installed on the Kubernetes cluster. If you do not use this feature, you can set prometheus.enabled to false during installation (the default is true)
+
+Q: Error `CustomResourceDefinition "poddnats.alibabacloud.com" in namespace "" exists and cannot be imported into the cureent release`
+A: This is because the CRD is already installed in the cluster and you can set cloudprovider.installCRD to false during installation (default is true)
+
+Q: Error `Namespace "kruise-system" in namespace "" exists and cannot be imported into the current release`
+A: This is because the openkruise chart is already installed in the cluster and you can set installation.kruise to false during installation (default is true)
 
 ## What's Next
 Here are some recommended next steps:

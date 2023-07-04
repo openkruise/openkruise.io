@@ -10,6 +10,7 @@ OpenKruiseGame integrates different network plugins of different cloud service p
 
 OpenKruiseGame supports the following network plugins:
 - Kubernetes-HostPort
+- Kubernetes-Ingress
 - AlibabaCloud-NATGW
 - AlibabaCloud-SLB
 - AlibabaCloud-SLB-SharedPort
@@ -30,6 +31,8 @@ Kubernetes
 - In the configuration file, you can specify a custom range of available host ports. The default port range is 8000 to 9000. This network plugin can help you allocate and manage host ports to prevent port conflicts.
 
 - This network plugin does not support network isolation.
+
+- Kubernetes-HostPort relies on the hostPort pattern provided by Kubernetes. Note that some CNI plugins exist that do not support hostPort, such as Terway.
 
 #### Network parameters
 
@@ -132,6 +135,11 @@ Path
 - Value format: Add <id\> to any position in the original path(consistent with the Path field in HTTPIngressPath), and the plugin will generate the path corresponding to the game server ID. For example, when setting the path to /game<id\>, the path for game server 0 is /game0, the path for game server 1 is /game1, and so on.
 - Configuration change supported or not: yes.
 
+PathType
+
+- Meaning: Path type. Same as the PathType field in HTTPIngressPath.
+- Value format: Same as the PathType field in HTTPIngressPath.
+- Configuration change supported or not: yes.
 
 Port
 
@@ -167,6 +175,12 @@ Annotation
 
 - Meaning: as an annotation of the Ingress object
 - Value format: key: value (note the space after the colon), for example: nginx.ingress.kubernetes.io/rewrite-target: /$2
+- Configuration change supported or not: yes.
+
+Fixed
+
+- Meaning: whether the ingress object is still retained when the pod is deleted
+- Value format: true / false
 - Configuration change supported or not: yes.
 
 _additional explanation_
@@ -394,21 +408,21 @@ Related design: https://github.com/openkruise/kruise-game/issues/20
 
 SlbIds
 
-- Meaning: the CLB instance ID. You can specify only one CLB instance ID. Multiple CLB instance IDs will be supported in the future.
-- Value: an example value can be lb-9zeo7prq1m25ctpfrw1m7.
-- Configuration change supported or not: no. The configuration change can be supported in future.
+- Meaning: the CLB instance ID. You can fill in multiple ids.
+- Value: in the format of slbId-0,slbId-1,... An example value can be "lb-9zeo7prq1m25ctpfrw1m7,lb-bp1qz7h50yd3w58h2f8je"
+- Configuration change supported or not: yes. You can add new slbIds at the end. However, it is recommended not to change existing slbId that is in use.
 
 PortProtocols
 
 - Meaning: the ports in the pod to be exposed and the protocols. You can specify multiple ports and protocols.
 - Value: in the format of port1/protocol1,port2/protocol2,... The protocol names must be in uppercase letters.
-- Configuration change supported or not: no. The configuration change can be supported in future.
+- Configuration change supported or not: yes.
 
 Fixed
 
 - Meaning: whether the mapping relationship is fixed. If the mapping relationship is fixed, the mapping relationship remains unchanged even if the pod is deleted and recreated.
 - Value: false or true.
-- Configuration change supported or not: no.
+- Configuration change supported or not: yes.
 
 #### Plugin configuration
 ```
@@ -454,3 +468,90 @@ PortProtocols
 #### Plugin configuration
 
 None
+
+## Access to network information
+
+GameServer Network Status can be obtained in two ways
+
+### k8s API
+Call the K8s API and get the GameServer object. This method is applicable to the central component, usually in the matching service to get the game service network information for routing.
+
+### DownwardAPI
+Downward API to sink network information into the business container for use by the game service business container
+
+An example of this method is as follows.
+
+```yaml
+apiVersion: game.kruise.io/v1alpha1
+kind: GameServerSet
+metadata:
+  name: gs-slb
+  namespace: default
+spec:
+  replicas: 1
+  updateStrategy:
+    rollingUpdate:
+      podUpdatePolicy: InPlaceIfPossible
+  network:
+    networkType: AlibabaCloud-SLB
+    networkConf:
+    - name: SlbIds
+      value: "xxx"
+    - name: PortProtocols
+      value: "xxx"
+    - name: Fixed
+      value: true
+  gameServerTemplate:
+    spec:
+      containers:
+        - image: registry.cn-hangzhou.aliyuncs.com/gs-demo/gameserver:network
+          name: gameserver
+          volumeMounts:
+            - name: podinfo
+              mountPath: /etc/podinfo
+      volumes:
+        - name: podinfo
+          downwardAPI:
+            items:
+              - path: "network"
+                fieldRef:
+                  fieldPath: metadata.annotations['game.kruise.io/network-status']
+```
+
+field description:
+- Declare volumeMounts in the corresponding container field, defining the access path, in this case /etc/podinfo
+- Declare the downwardAPI in gameServerTemplate.spec, set the filename to "network" and specify to use "game.kruise.io/network-status "Note that the annotation key should be in single quotes '', double quotes pod will fail to be created.
+
+After the successful creation of business pods and containers, a network file exists under the corresponding /etc/podinfo path, which records the serialized network information, which can be decoded into the corresponding structure by json and used in the program to obtain the corresponding fields. The decoded sample is as follows (golang version)
+
+```go
+package demo
+import (
+	"encoding/json"
+	"github.com/openkruise/kruise-game/apis/v1alpha1"
+    "os"
+)
+
+func getNetwork()  {
+	network, err := os.ReadFile("/etc/podinfo/network")
+	if err != nil {
+		return
+	}
+	
+	networkStatus := &v1alpha1.NetworkStatus{}
+
+	err = json.Unmarshal(network, networkStatus)
+	if err != nil {
+		return
+	}
+	
+	// accessing the networkStatus fields
+}
+
+```
+
+## FAQ
+
+Q: How to change the network plugin configuration?
+
+A: The default parameters can be changed by editing the configmap under the kruise-game-system namespace. After the change, rebuild kruise-game-manager to make the configuration take effect. It is recommended that the cluster game service already uses the OKG network plug-in does not easily change the corresponding configuration, and should do a reasonable network planning in advance.

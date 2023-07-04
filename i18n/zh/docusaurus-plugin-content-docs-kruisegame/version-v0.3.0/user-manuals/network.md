@@ -32,10 +32,6 @@ Kubernetes
 
 - 该插件不支持网络隔离。
 
-- Kubernetes-HostPort 依赖Kubernetes提供的hostPort模式。需要注意存在一些CNI插件不支持hostPort，如Terway等。
-
-
-
 #### 网络参数
 
 ContainerPorts
@@ -178,12 +174,6 @@ Annotation
 
 - 含义：作为ingress对象的annotation
 - 格式：key: value（注意:后有空格），例如：nginx.ingress.kubernetes.io/rewrite-target: /$2
-- 是否支持变更：支持
-
-Fixed
-
-- 含义：是否需要保持ingress，让其不随pod的删除而删除
-- 取值：true / false
 - 是否支持变更：支持
 
 _补充说明_
@@ -410,21 +400,21 @@ AlibabaCloud
 
 SlbIds
 
-- 含义：填写slb的id。可填写多个。
-- 填写格式：各个slbId用,分割。例如：lb-9zeo7prq1m25ctpfrw1m7,lb-bp1qz7h50yd3w58h2f8je,...
-- 是否支持变更：支持。可追加填写SLB实例id。建议不要更换正在被使用的实例id。
+- 含义：填写slb的id。暂只支持填写一例，未来将支持填写多例
+- 填写格式：例如：lb-9zeo7prq1m25ctpfrw1m7
+- 是否支持变更：暂不支持。未来将支持
 
 PortProtocols
 
 - 含义：pod暴露的端口及协议，支持填写多个端口/协议
 - 格式：port1/protocol1,port2/protocol2,...（协议需大写）
-- 是否支持变更：支持
+- 是否支持变更：暂不支持。未来将支持
 
 Fixed
 
 - 含义：是否固定访问IP/端口。若是，即使pod删除重建，网络内外映射关系不会改变
 - 填写格式：false / true
-- 是否支持变更：支持
+- 是否支持变更：不支持
 
 #### 插件配置
 ```
@@ -437,6 +427,7 @@ min_port = 500
 ```
 
 ---
+
 #### 插件名称
 ### AlibabaCloud-SLB-SharedPort
 
@@ -470,90 +461,3 @@ PortProtocols
 #### 插件配置
 
 无
-
-## 获取网络信息
-
-GameServer Network Status可以通过两种方式获取
-
-### k8s API
-调用K8s API，获取GameServer对象。该方式适用于中心组件，通常在匹配服务获取游戏服网络信息，用于路由选择等。
-
-### DownwardAPI
-通过DownwardAPI，将网络信息下沉至业务容器中，供游戏服业务容器使用
-
-该方法的示例如下:
-
-```yaml
-apiVersion: game.kruise.io/v1alpha1
-kind: GameServerSet
-metadata:
-  name: gs-slb
-  namespace: default
-spec:
-  replicas: 1
-  updateStrategy:
-    rollingUpdate:
-      podUpdatePolicy: InPlaceIfPossible
-  network:
-    networkType: AlibabaCloud-SLB
-    networkConf:
-    - name: SlbIds
-      value: "xxx"
-    - name: PortProtocols
-      value: "xxx"
-    - name: Fixed
-      value: true
-  gameServerTemplate:
-    spec:
-      containers:
-        - image: registry.cn-hangzhou.aliyuncs.com/gs-demo/gameserver:network
-          name: gameserver
-          volumeMounts:
-            - name: podinfo
-              mountPath: /etc/podinfo
-      volumes:
-        - name: podinfo
-          downwardAPI:
-            items:
-              - path: "network"
-                fieldRef:
-                  fieldPath: metadata.annotations['game.kruise.io/network-status']
-```
-
-字段说明:
-- 在对应container字段中声明 volumeMounts，定义访问路径，此例中为 /etc/podinfo
-- 在 gameServerTemplate.spec 里声明downwardAPI，文件名设置为 “network“，并指定使用 “game.kruise.io/network-status” 该annotation。注意annotation的key要使用单引号''，双引号pod将创建失败。
-
-业务pod及容器创建成功后，在对应的/etc/podinfo路径下存在 network 文件，其中记录了序列化后的网络信息，该信息可通过json解码成对应structure，在程序获取相应字段使用。解码的sample如下（golang版本）
-
-```go
-package demo
-import (
-	"encoding/json"
-	"github.com/openkruise/kruise-game/apis/v1alpha1"
-    "os"
-)
-
-func getNetwork()  {
-	network, err := os.ReadFile("/etc/podinfo/network")
-	if err != nil {
-		return
-	}
-	
-	networkStatus := &v1alpha1.NetworkStatus{}
-
-	err = json.Unmarshal(network, networkStatus)
-	if err != nil {
-		return
-	}
-	
-	// 访问networkStatus各个字段
-}
-
-```
-
-## FAQ
-
-Q: 如何更改网络插件配置?
-
-A: 可以通过编辑kruise-game-system命名空间下的configmap对默认参数进行更改。更改后重建kruise-game-manager，使配置生效。建议集群游戏服已使用OKG网络插件的情况下不轻易更改相应配置，应提前做好合理的网络规划。
