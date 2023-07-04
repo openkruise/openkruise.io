@@ -95,10 +95,10 @@ spec:
 ```
 The Sidecar container in the pod has been updated to centos:7, and the pod and other containers have not been restarted.
 ```bash
-$ kubectl get pods |grep test-pod
+$ kubectl get pods | grep test-pod
 test-pod                            2/2     Running   1          7m34s
 
-$ kubectl get pods test-pod -o yaml |grep 'image: centos'
+$ kubectl get pods test-pod -o yaml | grep 'image: centos'
     image: centos:7
 
 $ kubectl describe pods test-pod

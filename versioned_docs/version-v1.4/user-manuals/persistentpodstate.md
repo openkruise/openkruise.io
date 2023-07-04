@@ -127,7 +127,7 @@ status:
     configserver-0:
       nodeName: worker2
       nodeTopologyLabels:
-      kubernetes.io/hostname: worker2
+        kubernetes.io/hostname: worker2
     configserver-1:
       nodeName: worker1
       nodeTopologyLabels:

@@ -90,10 +90,10 @@ spec:
 ```
 此时，发现pod中的sidecar容器已经被更新为了centos:7，并且pod以及其它的容器没有重启。
 ```bash
-$ kubectl get pods |grep test-pod
+$ kubectl get pods | grep test-pod
 test-pod                            2/2     Running   1          7m34s
 
-$ kubectl get pods test-pod -o yaml |grep 'image: centos'
+$ kubectl get pods test-pod -o yaml | grep 'image: centos'
     image: centos:7
 
 $ kubectl describe pods test-pod
