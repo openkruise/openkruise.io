@@ -2,39 +2,36 @@
 
 ## Install OpenKruiseGame（OKG)
 
-Installing OpenKruiseGame requires Kruise and Kruise-Game to be installed, requires **Kubernetes version >= 1.16**.
-
 ### Installation Instructions
 
-OpenKruiseGame requires to be installed and used in a cluster with version 1.16 or higher.
+Installing OpenKruiseGame requires Kruise and Kruise-Game to be installed and Kubernetes version >= 1.16.
 
-OpenKruiseGame contains two components: `kruise` and `kruise-game`.
-By default, installing `kruise-game` will automatically install the latest version and configure the default `kruise`.
-If you want to manage the `kruise` component independently, you can set the parameter `installation.kruise` to `false` when installing `kruise-game`, and then `kruise` will not be installed when `kruise-game` is installed.
-It is worth noting that kruise-game 0.3.0 and previous versions do not install the kruise component by default, so you need to pay attention to set `installation.kruise` to `false` when upgrading.
+### Install Kruise
 
-### Install with helm
-
-It is recommended to use helm v3.5+ to install OpenKruiseGame
+We recommend that you use Helm V3.5 or later to install Kruise.
 
 ```shell
 # Firstly add openkruise charts repository if you haven't do this.
 $ helm repo add openkruise https://openkruise.github.io/charts/
-
 # [Optional]
 $ helm repo update
-
 # Install the latest version.
-$ helm install kruise-game openkruise/kruise-game --version 0.4.0 
+$ helm install kruise openkruise/kruise --version 1.4.0
 ```
 
-## Upgrade OpenKruiseGame（OKG)
-
-### Upgrade with helm
+### Install Kruise-Game
 
 ```shell
-$ helm install kruise-game openkruise/kruise-game --version 0.4.0 [--force]
+$ helm install kruise-game openkruise/kruise-game --version 0.4.1
 ```
+
+### Upgrade Kruise-Game
+
+```shell
+$ helm install kruise-game openkruise/kruise-game --version 0.4.1 [--force]
+```
+
+### Options
 
 #### Optional: install/upgrade with customized configurations
 
@@ -42,7 +39,6 @@ The following table lists the configurable parameters of the kruise-game chart a
 
 | Parameter                        | Description                                                                   | Default                          |
 |----------------------------------|-------------------------------------------------------------------------------|----------------------------------|
-| `installation.kruise`            | Whether to install the latest version and configure the default kruise  chart | `true`                           |
 | `installation.namespace`         | Namespace for kruise-game operation installation                              | `kruise-game-system`             |
 | `installation.createNamespace`   | Whether to create the installation.namespace                                  | `true`                           |
 | `kruiseGame.fullname`            | Nick name for kruise-game deployment and other configurations                 | `kruise-game-controller-manager` |
@@ -51,7 +47,7 @@ The following table lists the configurable parameters of the kruise-game chart a
 | `kruiseGame.webhook.targetPort`  | ObjectSelector for workloads in MutatingWebhookConfigurations                 | `9876`                           |
 | `replicaCount`                   | Replicas of kruise-game deployment                                            | `1`                              |
 | `image.repository`               | Repository for kruise-game image                                              | `openkruise/kruise-game-manager` |
-| `image.tag`                      | Tag for kruise-game image                                                     | `v0.4.0`                         |
+| `image.tag`                      | Tag for kruise-game image                                                     | `v0.4.1`                         |
 | `image.pullPolicy`               | ImagePullPolicy for kruise-game container                                     | `Always`                         |
 | `serviceAccount.annotations`     | The annotations for serviceAccount of kruise-game                             | ` `                              |
 | `resources.limits.cpu`           | CPU resource limit of kruise-game container                                   | `500m`                           |
@@ -96,9 +92,6 @@ A: This is because the cluster does not have the prometheus operator installed. 
 
 Q: Error `CustomResourceDefinition "poddnats.alibabacloud.com" in namespace "" exists and cannot be imported into the cureent release`
 A: This is because the CRD is already installed in the cluster and you can set cloudprovider.installCRD to false during installation (default is true)
-
-Q: Error `Namespace "kruise-system" in namespace "" exists and cannot be imported into the current release`
-A: This is because the openkruise chart is already installed in the cluster and you can set installation.kruise to false during installation (default is true)
 
 ## What's Next
 Here are some recommended next steps:

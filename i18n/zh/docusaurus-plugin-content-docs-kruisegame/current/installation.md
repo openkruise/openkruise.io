@@ -3,35 +3,35 @@
 ## 安装OpenKruiseGame（OKG）
 
 ### 安装说明
-OpenKruiseGame 要求在 Kubernetes 1.16 以上版本的集群中安装和使用。
 
-OpenKruiseGame 包含两个组件：`kruise` 与 `kruise-game`。
-默认情况下，安装`kruise-game`时会自动安装最新版本且配置默认的`kruise`。
-若您希望自主管理`kruise`组件，则可以在安装`kruise-game`时设置参数`installation.kruise`为`false`，此时`kruise-game`安装时则不再安装`kruise`。
-值得注意的是，kruise-game 0.3.0及之前的版本中，默认是不安装kruise组件的，在升级时需要注意设置`installation.kruise`为`false`。
+安装OpenKruiseGame需安装Kruise与Kruise-Game，且要求 Kubernetes版本 >= 1.16。
 
-### 通过helm安装
+### 安装Kruise
 
-建议采用 helm v3.5+ 来安装 OpenKruiseGame
+建议采用 helm v3.5+ 来安装 Kruise。
 
 ```shell
 # Firstly add openkruise charts repository if you haven't do this.
 $ helm repo add openkruise https://openkruise.github.io/charts/
-
 # [Optional]
 $ helm repo update
-
 # Install the latest version.
-$ helm install kruise-game openkruise/kruise-game --version 0.4.0 
+$ helm install kruise openkruise/kruise --version 1.4.0
 ```
 
-## 升级 OpenKruiseGame（OKG)
-
-### 通过helm升级
+### 安装Kruise-Game
 
 ```shell
-$ helm upgrade kruise-game openkruise/kruise-game --version 0.4.0 [--force]
+$ helm install kruise-game openkruise/kruise-game --version 0.4.1
 ```
+
+### 升级 Kruise-Game
+
+```shell
+$ helm upgrade kruise-game openkruise/kruise-game --version 0.4.1 [--force]
+```
+
+### 可选项
 
 #### 可选：使用自定义配置安装/升级
 
@@ -39,7 +39,6 @@ $ helm upgrade kruise-game openkruise/kruise-game --version 0.4.0 [--force]
 
 | Parameter                          | Description                                            | Default                          |
 |------------------------------------|--------------------------------------------------------|----------------------------------|
-| `installation.kruise`              | 是否安装最新版本且配置默认的kruise组件                                 | `true`                           |
 | `installation.namespace`           | kruise-game 安装到的 namespace，一般不建议修改                     | `kruise-game-system`             |
 | `installation.createNamespace`     | 是否需要创建上述 namespace，一般不建议修改，除非指定安装到已有的 ns 中             | `true`                           |
 | `kruiseGame.fullname`              | kruise-game 部署和其他配置的名称                                 | `kruise-game-controller-manager` |
@@ -48,7 +47,7 @@ $ helm upgrade kruise-game openkruise/kruise-game --version 0.4.0 [--force]
 | `kruiseGame.webhook.targetPort`    | 用于 MutatingWebhookConfigurations 中工作负载的 ObjectSelector | `9876`                           |
 | `replicaCount`                     | kruise-game 的期望副本数                                     | `1`                              |
 | `image.repository`                 | kruise-game 的镜像仓库                                      | `openkruise/kruise-game-manager` |
-| `image.tag`                        | kruise-game 的镜像版本                                      | `v0.4.0`                         |
+| `image.tag`                        | kruise-game 的镜像版本                                      | `v0.4.1`                         |
 | `image.pullPolicy`                 | kruise-game 的镜像拉取策略                                    | `Always`                         |
 | `serviceAccount.annotations`       | kruise-game的serviceAccount注解                           | ` `                              |
 | `resources.limits.cpu`             | kruise-game容器的CPU资源限制                                  | `500m`                           |
@@ -91,9 +90,6 @@ A: 这是因为集群并没有安装prometheus operator。启用游戏服监控�
 
 Q: 出现错误 `CustomResourceDefinition "poddnats.alibabacloud.com" in namespace "" exists and cannot be imported into the cureent release`
 A: 这是因为在集群中已经安装了该CRD，您可以在安装时将cloudprovider.installCRD设置为false（默认为true）
-
-Q: 出现错误 `Namespace "kruise-system" in namespace "" exists and cannot be imported into the current release`
-A: 这是因为在集群中已经安装了openkruise组件，您可以在安装时将installation.kruise设置为false（默认为true）
 
 ## What's Next
 接下来，我们推荐你:

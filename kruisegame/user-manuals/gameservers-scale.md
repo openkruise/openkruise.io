@@ -279,7 +279,7 @@ The differences between game servers become more and more obvious over time, and
 
 The horizontal scaling mechanism in native Kubernetes is shown in the following figure:
 
-<img src={require('/static/img/kruisegame/user-manuals/autoscaling-k8s.png').default} style={{ height: '400px' , width: '700px'}} />
+<img src={require('/static/img/kruisegame/user-manuals/autoscaling-k8s-en.png').default} style={{ height: '400px' , width: '700px'}} />
 
 In the game scenario, its main problems are:
 
@@ -295,7 +295,7 @@ In this way, the automatic scaling mechanism based on native Kubernetes will cau
 
 The automatic scaling mechanism of OKG is shown in the following figure:
 
-<img src={require('/static/img/kruisegame/user-manuals/autoscaling-okg.png').default} style={{ height: '400px' , width: '700px'}} />
+<img src={require('/static/img/kruisegame/user-manuals/autoscaling-okg-en.png').default} style={{ height: '400px' , width: '700px'}} />
 
 - At the game server level, each game server can report its own status and expose whether it is in the WaitToBeDeleted state through custom service quality or external components.
 - At the workload level, the GameServerSet can determine the scale-down object based on the business status reported by the game server. As described in [Game Server Horizontal Scaling](gameservers-scale.md), the game server in the WaitToBeDeleted state is the highest priority game server to be deleted during scale-down.
