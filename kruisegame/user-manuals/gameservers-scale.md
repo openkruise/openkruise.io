@@ -417,3 +417,8 @@ kubectl get gss
 NAME        DESIRED   CURRENT   UPDATED   READY   MAINTAINING   WAITTOBEDELETED   AGE
 minecraft   20        20        20        20      0             0                 137s
 ```
+
+### Other Settings
+
+Kubernetes has a certain tolerance for automatic scaling behavior, which is determined by the kube-controller-manager parameter --horizontal-pod-autoscaler-tolerance, and the default is 0.1, which means that the difference between the desired replicas and the current replicas is 10% No expansion or contraction will be triggered when the value is within.
+If more accurate auto-scaling is achieved, this parameter can be lowered. For example, when it is set to 0.0, OKG will scale down all GameServers with WaitToBeDeleted opsState.
