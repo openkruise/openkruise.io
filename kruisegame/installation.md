@@ -28,7 +28,7 @@ $ helm install kruise-game openkruise/kruise-game --version 0.4.1
 ### Upgrade Kruise-Game
 
 ```shell
-$ helm install kruise-game openkruise/kruise-game --version 0.4.1 [--force]
+$ helm upgrade kruise-game openkruise/kruise-game --version 0.4.1 [--force]
 ```
 
 ### Options

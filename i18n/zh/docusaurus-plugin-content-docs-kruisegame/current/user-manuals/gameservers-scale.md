@@ -413,3 +413,8 @@ kubectl get gss
 NAME        DESIRED   CURRENT   UPDATED   READY   MAINTAINING   WAITTOBEDELETED   AGE
 minecraft   20        20        20        20      0             0                 137s
 ```
+
+### 其他设置
+
+Kubernetes对于自动伸缩行为具备一定容忍度，该值由kube-controller-manager 参数 --horizontal-pod-autoscaler-tolerance 决定，默认为0.1，这意味着理想副本数与当前副本数的差值在10%以内时不会触发扩容或缩容。
+如果做到更加精准地自动伸缩，可以调低该参数，例如设置0.0时，OKG将会缩容所有WaitToBeDeleted的游戏服。
