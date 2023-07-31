@@ -418,3 +418,6 @@ minecraft   20        20        20        20      0             0               
 
 Kubernetes对于自动伸缩行为具备一定容忍度，该值由kube-controller-manager 参数 --horizontal-pod-autoscaler-tolerance 决定，默认为0.1，这意味着理想副本数与当前副本数的差值在10%以内时不会触发扩容或缩容。
 如果做到更加精准地自动伸缩，可以调低该参数，例如设置0.0时，OKG将会缩容所有WaitToBeDeleted的游戏服。
+
+Kubernetes自动伸缩时默认不会将Workload的副本数缩容到0，所以会出现GameServerSet的replicas即使被设置为0后，随后依然会被HPA自动调整为1的情况。
+如果希望GameServerSet管理的游戏服数目自动缩容到0，则需要将kube-controller-manager的特性门控中设置`HPAScaleToZero`为true（默认为false），即 --feature-gates=HPAScaleToZero=true

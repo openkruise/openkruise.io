@@ -422,3 +422,6 @@ minecraft   20        20        20        20      0             0               
 
 Kubernetes has a certain tolerance for automatic scaling behavior, which is determined by the kube-controller-manager parameter --horizontal-pod-autoscaler-tolerance, and the default is 0.1, which means that the difference between the desired replicas and the current replicas is 10% No expansion or contraction will be triggered when the value is within.
 If more accurate auto-scaling is achieved, this parameter can be lowered. For example, when it is set to 0.0, OKG will scale down all GameServers with WaitToBeDeleted opsState.
+
+When Kubernetes automatically scales, it will not scale down the replicas of Workload to 0 by default, so even if the replicas of GameServerSet is set to 0, it will still be automatically adjusted to 1 by HPA.
+If you want the number of game servers managed by GameServerSet to automatically scale down to 0, you need to set `HPAScaleToZero` in the feature gate of kube-controller-manager to true (the default is false), that is --feature-gates=HPAScaleToZero=true
