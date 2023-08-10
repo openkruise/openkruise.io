@@ -10,12 +10,6 @@ type GameServerSetSpec struct {
 
     // 游戏服模版，新生成的游戏服将以模版定义的参数创建
     GameServerTemplate   GameServerTemplate `json:"gameServerTemplate,omitempty"`
-    
-    // serviceName 是管理此 GameServerSet 的服务的名称。
-    // 该服务必须在GameServerSet之前存在，并负责该集合的网络标识。 
-    // Pod 获取遵循以下模式的 DNS/主机名：pod-specific-string.serviceName.default.svc.cluster.local
-    // 其中“pod-specific-string”由 GameServerSet 控制器管理。
-	ServiceName          string             `json:"serviceName,omitempty"`
 
     // 保留的游戏服序号，可选项。若指定了该序号，已经存在的游戏服将被删除；而未存在的游戏服，新建时将跳过、不创建该序号
     ReserveGameServerIds []int              `json:"reserveGameServerIds,omitempty"`

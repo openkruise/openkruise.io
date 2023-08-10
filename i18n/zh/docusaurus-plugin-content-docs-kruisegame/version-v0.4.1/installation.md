@@ -22,13 +22,13 @@ $ helm install kruise openkruise/kruise --version 1.4.0
 ### 安装Kruise-Game
 
 ```shell
-$ helm install kruise-game openkruise/kruise-game --version 0.5.0
+$ helm install kruise-game openkruise/kruise-game --version 0.4.1
 ```
 
 ### 升级 Kruise-Game
 
 ```shell
-$ helm upgrade kruise-game openkruise/kruise-game --version 0.5.0 [--force]
+$ helm upgrade kruise-game openkruise/kruise-game --version 0.4.1 [--force]
 ```
 
 ### 可选项
@@ -47,7 +47,7 @@ $ helm upgrade kruise-game openkruise/kruise-game --version 0.5.0 [--force]
 | `kruiseGame.webhook.targetPort`    | 用于 MutatingWebhookConfigurations 中工作负载的 ObjectSelector | `9876`                           |
 | `replicaCount`                     | kruise-game 的期望副本数                                     | `1`                              |
 | `image.repository`                 | kruise-game 的镜像仓库                                      | `openkruise/kruise-game-manager` |
-| `image.tag`                        | kruise-game 的镜像版本                                      | `v0.5.0`                         |
+| `image.tag`                        | kruise-game 的镜像版本                                      | `v0.4.1`                         |
 | `image.pullPolicy`                 | kruise-game 的镜像拉取策略                                    | `Always`                         |
 | `serviceAccount.annotations`       | kruise-game的serviceAccount注解                           | ` `                              |
 | `resources.limits.cpu`             | kruise-game容器的CPU资源限制                                  | `500m`                           |

@@ -22,13 +22,13 @@ $ helm install kruise openkruise/kruise --version 1.4.0
 ### Install Kruise-Game
 
 ```shell
-$ helm install kruise-game openkruise/kruise-game --version 0.4.1
+$ helm install kruise-game openkruise/kruise-game --version 0.5.0
 ```
 
 ### Upgrade Kruise-Game
 
 ```shell
-$ helm upgrade kruise-game openkruise/kruise-game --version 0.4.1 [--force]
+$ helm upgrade kruise-game openkruise/kruise-game --version 0.5.0 [--force]
 ```
 
 ### Options
@@ -47,7 +47,7 @@ The following table lists the configurable parameters of the kruise-game chart a
 | `kruiseGame.webhook.targetPort`  | ObjectSelector for workloads in MutatingWebhookConfigurations                 | `9876`                           |
 | `replicaCount`                   | Replicas of kruise-game deployment                                            | `1`                              |
 | `image.repository`               | Repository for kruise-game image                                              | `openkruise/kruise-game-manager` |
-| `image.tag`                      | Tag for kruise-game image                                                     | `v0.4.1`                         |
+| `image.tag`                      | Tag for kruise-game image                                                     | `v0.5.0`                         |
 | `image.pullPolicy`               | ImagePullPolicy for kruise-game container                                     | `Always`                         |
 | `serviceAccount.annotations`     | The annotations for serviceAccount of kruise-game                             | ` `                              |
 | `resources.limits.cpu`           | CPU resource limit of kruise-game container                                   | `500m`                           |

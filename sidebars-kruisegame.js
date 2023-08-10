@@ -34,6 +34,7 @@ module.exports = {
                 'user-manuals/service-qualities',
                 'user-manuals/network',
                 'user-manuals/gameserver-monitor',
+                'user-manuals/game-matchmaking',
                 'user-manuals/crd-field-description',
             ],
         },
