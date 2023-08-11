@@ -10,6 +10,13 @@ type GameServerSetSpec struct {
 
     // Game server template. The new game server will be created with the parameters defined in GameServerTemplate.
     GameServerTemplate   GameServerTemplate `json:"gameServerTemplate,omitempty"`
+    
+    // serviceName is the name of the service that governs this GameServerSet.
+	// This service must exist before the GameServerSet, and is responsible for
+	// the network identity of the set. Pods get DNS/hostnames that follow the
+	// pattern: pod-specific-string.serviceName.default.svc.cluster.local
+	// where "pod-specific-string" is managed by the GameServerSet controller.
+	ServiceName string `json:"serviceName,omitempty"`
 
     // Reserved game server IDs, optional. If specified, existing game servers with those IDs will be deleted,
     // and new game servers will not be created with those IDs.

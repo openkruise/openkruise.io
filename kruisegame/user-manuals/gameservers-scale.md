@@ -5,7 +5,7 @@
 
 OpenKruiseGame allows you to set the states of game servers. You can manually set the value of opsState or DeletionPriority for a game server. You can also use the service quality feature to automatically set the value of opsState or DeletionPriority for a game server. During scale-in, a proper GameServerSet workload is selected for scale-down based on the states of game servers. The scale-down rules are as follows:
 
-1. Scale-down game servers based on the opsState values. Scale-down the game servers for which the opsState values are `WaitToBeDeleted`, `None`, and `Maintaining` in sequence.
+1. Scale in game servers based on the opsState values. Scale in the game servers for which the opsState values are `WaitToBeDeleted`, `None`, `Allocated`, and `Maintaining` in sequence.
 
 2. If two or more game servers have the same opsState value, game servers are scaled-down based on the values of DeletionPriority. The game server with the largest DeletionPriority value is deleted first.
 
@@ -200,6 +200,40 @@ minecraft-6   Deleting   None       0     0     9m55s
 ```
 
 **When downsizing, OKG will give priority to the game suits that are Reserved, and then follow the downsizing order mentioned above**
+
+### Kill GameServer
+
+OKG provides Kill mode to delete specified game server. Users only need to mark the OpsState of the game server they want to delete as "Kill".
+Different from `Game Server ID Reserved`, in this mode, users do not need to manually adjust the replicas, OKG will automatically reduce replicas according to the number of GameServers whose OpsState is Kill; in addition, the deleted game server ID will not appear in the `ReserveGameServerIds` field(With General scaleDownStrategyType), which means that the game server with the corresponding serial number may be regenerated during scaling-up.
+
+For example:
+```bash
+# There are 3 GameServers
+kubectl get gs
+NAME          STATE      OPSSTATE   DP    UP    AGE
+minecraft-0   Ready      None       0     0     70s
+minecraft-1   Ready      None       0     0     70s
+minecraft-2   Ready      None       0     0     70s
+
+# If you want to delete game server 1, just mark its OpsState as "Kill"
+kubectl edit gs minecraft-1
+...
+spec:
+  opsState: Kill
+...
+
+# minecraft-1 will be deleted, and the replicas of gss becomes 2
+kubectl get gs
+NAME          STATE      OPSSTATE   DP    UP    AGE
+minecraft-0   Ready      None       0     0     78s
+minecraft-1   Deleting   Kill       0     0     78s
+minecraft-2   Ready      None       0     0     78s
+
+kubectl get gs
+NAME          STATE      OPSSTATE   DP    UP    AGE
+minecraft-0   Ready      None       0     0     82s
+minecraft-2   Ready      None       0     0     82s
+```
 
 ### Strategy of scale-down
 

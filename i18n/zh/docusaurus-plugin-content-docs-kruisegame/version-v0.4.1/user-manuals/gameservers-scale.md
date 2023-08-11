@@ -5,7 +5,7 @@
 
 OKG提供游戏服状态设置的能力，您可以手动/自动(服务质量功能)地设置游戏服的运维状态或删除优先级。当缩容时，GameServerSet负载会根据游戏服的状态进行缩容选择，缩容规则如下：
 
-1）根据游戏服的opsState缩容。按顺序依次缩容opsState为`WaitToBeDeleted`、`None`、`Allocated`、`Maintaining`的游戏服
+1）根据游戏服的opsState缩容。按顺序依次缩容opsState为`WaitToBeDeleted`、`None`、`Maintaining`的游戏服
 
 2）当opsState相同时，按照DeletionPriority(删除优先级)缩容，优先删除DeletionPriority大的游戏服
 
@@ -200,40 +200,6 @@ minecraft-6   Deleting   None       0     0     9m55s
 ```
 
 **在缩容时，OKG将优先考虑被Reserve的游戏服，再按照上文提到的缩容顺序进行缩容**
-
-### 游戏服 Kill
-
-OKG 提供 Kill 模式指定游戏服删除。用户只需将希望删除的游戏服的OpsState标记为`Kill`即可。
-与`游戏服 ID Reserve`不同的是，该模式下不需要用户手动调整replicas，OKG将根据OpsState为Kill的GameServer的数量自动缩减对应的副本数；此外，被删除的游戏服ID也不会出现在`ReserveGameServerIds`字段中（默认scaleDownStrategyType为General的情况下），这意味着对应序号的游戏服在扩容时可能会被重新生成。
-
-示例如下：
-```bash
-# 初始存在3个游戏服
-kubectl get gs
-NAME          STATE      OPSSTATE   DP    UP    AGE
-minecraft-0   Ready      None       0     0     70s
-minecraft-1   Ready      None       0     0     70s
-minecraft-2   Ready      None       0     0     70s
-
-# 若希望删除1号游戏服，只需将其OpsState标记为`Kill`
-kubectl edit gs minecraft-1
-...
-spec:
-  opsState: Kill
-...
-
-# minecraft-1 被删除, 同时gss的副本数变为2
-kubectl get gs
-NAME          STATE      OPSSTATE   DP    UP    AGE
-minecraft-0   Ready      None       0     0     78s
-minecraft-1   Deleting   Kill       0     0     78s
-minecraft-2   Ready      None       0     0     78s
-
-kubectl get gs
-NAME          STATE      OPSSTATE   DP    UP    AGE
-minecraft-0   Ready      None       0     0     82s
-minecraft-2   Ready      None       0     0     82s
-```
 
 ### 缩容策略
 
