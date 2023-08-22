@@ -89,7 +89,7 @@ Q: 出现错误 `no matches for kind "ServiceMonitor" in version "monitoring.cor
 A: 这是因为集群并没有安装prometheus operator。启用游戏服监控功能需要安装prometheus operator于Kubernetes集群。若您不使用该功能，可以在安装时将 prometheus.enabled 设置为false（默认为true）
 
 Q: 出现错误 `CustomResourceDefinition "poddnats.alibabacloud.com" in namespace "" exists and cannot be imported into the cureent release`
-A: 这是因为在集群中已经安装了该CRD，您可以在安装时将cloudprovider.installCRD设置为false（默认为true）
+A: 这是因为在集群中已经安装了该CRD，您可以在安装时将cloudProvider.installCRD设置为false（默认为true）
 
 ## What's Next
 接下来，我们推荐你:

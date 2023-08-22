@@ -91,7 +91,7 @@ Q: Error `no matches for kind "ServiceMonitor" in version "monitoring.coreos.com
 A: This is because the cluster does not have the prometheus operator installed. enabling the playsuit monitoring feature requires the prometheus operator to be installed on the Kubernetes cluster. If you do not use this feature, you can set prometheus.enabled to false during installation (the default is true)
 
 Q: Error `CustomResourceDefinition "poddnats.alibabacloud.com" in namespace "" exists and cannot be imported into the cureent release`
-A: This is because the CRD is already installed in the cluster and you can set cloudprovider.installCRD to false during installation (default is true)
+A: This is because the CRD is already installed in the cluster and you can set cloudProvider.installCRD to false during installation (default is true)
 
 ## What's Next
 Here are some recommended next steps:
