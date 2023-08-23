@@ -16,9 +16,9 @@ metadata:
 spec:
   objectRef:
     workloadRef:
-    apiVersion: apps/v1
-    kind: Deployment
-    name: workload-demo
+      apiVersion: apps/v1
+      kind: Deployment
+      name: workload-demo
   strategy:
     canary:
       steps:
