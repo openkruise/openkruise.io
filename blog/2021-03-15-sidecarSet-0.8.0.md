@@ -67,12 +67,13 @@ spec:
     - name: web-log
       mountPath: /var/log/web
     # Share all volumes
-    shareVolumePolicy: disabled
+    shareVolumePolicy: 
+      type: disabled
     # Share environment variables
     transferEnv:
     - sourceContainerName: web-server
       envName: TZ
-    volumes:
+  volumes:
     - name: web-log
       emptyDir: {}
 ```
