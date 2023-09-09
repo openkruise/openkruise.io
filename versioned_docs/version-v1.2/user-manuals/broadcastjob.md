@@ -46,14 +46,6 @@ condition. The following parameters take effect with this policy:
   running for 60 seconds, all the running pods will be deleted and the job will be marked
   as Failed.
 
-- `BackoffLimit` specifies the number of retries before marking this job failed.
-  Currently, the number of retries are defined as the aggregated number of restart
-  counts across all Pods created by the job, i.e., the sum of the
-  [ContainerStatus.RestartCount](https://github.com/kruiseio/kruise/blob/d61c12451d6a662736c4cfc48682fa75c73adcbc/vendor/k8s.io/api/core/v1/types.go#L2314)
-  for all containers in every Pod.  If this value exceeds `BackoffLimit`, the job is marked
-  as Failed and all running Pods are deleted. No limit is enforced if `BackoffLimit` is
-  not set.
-
 - `TTLSecondsAfterFinished` limits the lifetime of a BroadcastJob that has finished execution
   (either Complete or Failed). For example, if TTLSecondsAfterFinished is set to 10 seconds,
   the job will be kept for 10 seconds after it finishes. Then the job along with all the Pods
@@ -62,8 +54,8 @@ condition. The following parameters take effect with this policy:
 #### Never
 
 `Never` policy means the BroadcastJob will never be marked as Failed or Succeeded even if
-all Pods run to completion. This also means above `ActiveDeadlineSeconds`, `BackoffLimit`
-and `TTLSecondsAfterFinished` parameters takes no effect if `Never` policy is used.
+all Pods run to completion. This also means above `ActiveDeadlineSeconds`, `TTLSecondsAfterFinished`
+and `FailurePolicy.RestartLimit` parameters takes no effect if `Never` policy is used.
 For example, if user wants to perform an initial configuration validation for every newly
 added node in the cluster, he can deploy a BroadcastJob with `Never` policy.
 

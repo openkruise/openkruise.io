@@ -33,14 +33,12 @@ title: BroadcastJob
 
 - `ActiveDeadlineSeconds`：指定一个超时时间，如果 BroadcastJob 开始运行超过了这个时间，所有还在跑着的 job 都会被停止、并标记为失败。
 
-- `BackoffLimit`：指定一个重试次数，超过这个次数后才标记 job 失败，默认没有限制。目前，Pod 实际的重试次数是看 Pod status 中上报所有容器的 [ContainerStatus.RestartCount](https://github.com/kruiseio/kruise/blob/d61c12451d6a662736c4cfc48682fa75c73adcbc/vendor/k8s.io/api/core/v1/types.go#L2314) 重启次数。如果这个重启次数超过了 `BackoffLimit`，这个 job 就会被标记为失败、并把运行的 Pod 删除掉。
-
 - `TTLSecondsAfterFinished` 限制了 BroadcastJob 在完成之后的存活时间，默认没有限制。比如设置了 `TTLSecondsAfterFinished` 为 10s，那么当 job 结束后超过了 10s，控制器就会把 job 和下面的所有 Pod 删掉。
 
 #### Never
 
 `Never` 策略意味着 BroadcastJob 永远都不会结束（标记为 Succeeded 或 Failed），即使当前 job 下面的 Pod 都已经执行成功了。
-这也意味着 `ActiveDeadlineSeconds`、 `BackoffLimit`、 `TTLSecondsAfterFinished` 这三个参数是不能使用的。
+这也意味着 `ActiveDeadlineSeconds`、 `TTLSecondsAfterFinished`、`FailurePolicy.RestartLimit` 这三个参数是不能使用的。
 
 比如说，用户希望对集群中每个 node 都下发一个配置，包括后续新增的 node 都需要做，那么就可以创建一个 `Never` 策略的 BroadcastJob。
 
