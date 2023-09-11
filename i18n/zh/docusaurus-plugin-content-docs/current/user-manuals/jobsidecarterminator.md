@@ -15,8 +15,8 @@ title: Job Sidecar Terminator
 
 ## 使用方式
 
-### 对于允许于普通节点的 Pod
-对于允许于普通节点的 Pod，使用该特性非常简单，用户只需要在要在目标 sidecar 容器中添加一个特殊的 env 对其进行标识，控制器会在恰当的时机利用 Kruise Daemon 提供的 [CRR](./containerrecreaterequest.md) 的能力，将这些 sidecar 容器终止：
+### 对于运行于普通节点的 Pod
+对于运行于普通节点的 Pod，使用该特性非常简单，用户只需要在要在目标 sidecar 容器中添加一个特殊的 env 对其进行标识，控制器会在恰当的时机利用 Kruise Daemon 提供的 [CRR](./containerrecreaterequest.md) 的能力，将这些 sidecar 容器终止：
 
 ```yaml
 kind: Job
@@ -62,4 +62,3 @@ spec:
 - 具有环境变量 `KRUISE_TERMINATE_SIDECAR_WHEN_JOB_EXIT` 的容器将被视为 sidecar 容器，其他容器将被视为主容器，当**所有**主容器完成后，sidecar 容器才会被终止：
   - 在 `Never` 重启策略下，主容器一旦退出，将被视为"已完成"。
   - 在 `OnFailure` 重启策略下，主容器退出代码必须为`0`，才会被视为"已完成"。
- 
