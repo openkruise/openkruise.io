@@ -65,7 +65,8 @@ Replace `"example/quick-exit:v1.0.0"` with your prepared image.
 
 - The sidecars will be terminated when ALL main containers completed.
 
-- In `Never` restart policy settings, main container will be treated as `completed` once it exit.
+  - In `Never` restart policy settings, main container will be treated as `completed` once it exit.
 
-- In `OnFailure` restart policy settings, main container will be treated as `completed` once it exit and exit code must be `0`. 
+  - In `OnFailure` restart policy settings, main container will be treated as `completed` once it exit and exit code must be `0`. 
  
+- In Pods on real nodes mode, `KRUISE_TERMINATE_SIDECAR_WHEN_JOB_EXIT` has a higher priority than `KRUISE_TERMINATE_SIDECAR_WHEN_JOB_EXIT_WITH_IMAGE`
