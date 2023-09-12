@@ -78,6 +78,86 @@ spec:
 ...
 ```
 
+## 支持 Customize 不同 subset 的 Pod Template
+**FEATURE STATE:** Kruise v1.5.0
+
+从 kruise v1.5.0版本开始，你可以 customize 任意 pod.spec 字段，比如：env、resources。
+
+**Note:** 建议不要在 subset 中 customize image 字段，它可能会导致发布的异常。
+
+```yaml
+apiVersion: apps.kruise.io/v1alpha1
+kind: UnitedDeployment
+metadata:
+  name: sample-ud
+spec:
+  replicas: 6
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: sample
+  template:
+    # statefulSetTemplate or advancedStatefulSetTemplate or cloneSetTemplate or deploymentTemplate
+    statefulSetTemplate:
+      ...
+  topology:
+    subsets:
+    - name: subset-a
+      ...
+      # patch container resources, env:
+      patch:
+        spec:
+          containers:
+          - name: main
+            resources:
+              limits:
+                cpu: "2"
+                memory: 800Mi
+            env:
+            - name: subset
+              value: subset-a
+    - name: subset-b
+      ...
+      # patch container resources, env:
+      patch:
+        spec:
+          containers:
+          - name: main
+            resources:
+              limits:
+                cpu: "2"
+                memory: 800Mi
+            env:
+            - name: subset
+              value: subset-b
+```
+
+## HPA UnitedDeployment
+**FEATURE STATE:** Kruise v1.5.0
+
+Horizontal Pod Autoscaler 能够支持包含 [scale subresource](https://kubernetes.io/docs/tasks/extend-kubernetes/custom-resources/custom-resource-definitions/#scale-subresource) 的自定义工作负载.
+从 kruise v1.5.0版本开始，你可以直接 HPA UnitedDeployment，如下：
+
+```yaml
+apiVersion: autoscaling/v2beta1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: example-hpa
+  namespace: default
+spec:
+  minReplicas: 1
+  maxReplicas: 3
+  metrics:
+  - resource:
+      name: cpu
+      targetAverageUtilization: 2
+    type: Resource
+  scaleTargetRef:
+    apiVersion: apps.kruise.io/v1alpha1
+    kind: UnitedDeployment
+    name: sample-ud
+```
+
 ## Pod 分发管理
 
 上述例子中可以看到，`spec.topology` 中可以定义 Pod 分发的规则：
