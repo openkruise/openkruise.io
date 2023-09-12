@@ -62,3 +62,4 @@ spec:
 - 具有环境变量 `KRUISE_TERMINATE_SIDECAR_WHEN_JOB_EXIT` 的容器将被视为 sidecar 容器，其他容器将被视为主容器，当**所有**主容器完成后，sidecar 容器才会被终止：
   - 在 `Never` 重启策略下，主容器一旦退出，将被视为"已完成"。
   - 在 `OnFailure` 重启策略下，主容器退出代码必须为`0`，才会被视为"已完成"。
+- 且运行在普通节点方式下，`KRUISE_TERMINATE_SIDECAR_WHEN_JOB_EXIT` 的优先级高于`KRUISE_TERMINATE_SIDECAR_WHEN_JOB_EXIT_WITH_IMAGE`
