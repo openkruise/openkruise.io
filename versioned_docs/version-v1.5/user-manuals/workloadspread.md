@@ -49,16 +49,16 @@ spec:
             operator: In
             values:
               - zone-a
-    preferredNodeSelectorTerms:
-      - weight: 1
-        preference:
-        matchExpressions:
-          - key: another-node-label-key
-            operator: In
-            values:
-              - another-node-label-value
+      preferredNodeSelectorTerms:
+        - weight: 1
+          preference:
+          matchExpressions:
+            - key: another-node-label-key
+              operator: In
+              values:
+                - another-node-label-value
       maxReplicas: 3
-      tolertions: []
+      tolerations: [ ]
       patch:
         metadata:
           labels:
