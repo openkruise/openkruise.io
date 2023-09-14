@@ -43,16 +43,16 @@ spec:
             operator: In
             values:
               - zone-a
-    preferredNodeSelectorTerms:
-      - weight: 1
-        preference:
-        matchExpressions:
-          - key: another-node-label-key
-            operator: In
-            values:
-              - another-node-label-value
+      preferredNodeSelectorTerms:
+        - weight: 1
+          preference:
+          matchExpressions:
+            - key: another-node-label-key
+              operator: In
+              values:
+                - another-node-label-value
       maxReplicas: 3
-      tolertions: []
+      tolerations: [ ]
       patch:
         metadata:
           labels:
@@ -99,7 +99,7 @@ tolerations:
   effect: "NoSchedule"
 ```
 
-- `patch`: customize the Pod configuration of `subset`, such as Annotations, Labels, Env. 
+- `patch`: customize the Pod configuration of `subset`, such as Annotations, Labels, Env.
 
 Example:
 
@@ -145,10 +145,10 @@ WorkloadSpread provides two kind strategies, the default strategy is `Fixed`.
       rescheduleCriticalSeconds: 30
 ```
 
-- Fixed: 
+- Fixed:
 
-  Workload is strictly spread according to the definition of the subset. 
-  
+  Workload is strictly spread according to the definition of the subset.
+
 - Adaptive:
 
   **Reschedule**: Kruise will check the unschedulable Pods of subset. If it exceeds the defined duration, the failed Pods will be rescheduled to the other `subset`.
@@ -179,8 +179,8 @@ The workload managed by WorkloadSpread will scale according to the defined order
 
 ### Scale out
 
-- The Pods are scheduled in the subset order defined in the `spec.subsets`. It will be scheduled in the next `subset` while the replica number reaches the maxReplicas of `subset` 
-  
+- The Pods are scheduled in the subset order defined in the `spec.subsets`. It will be scheduled in the next `subset` while the replica number reaches the maxReplicas of `subset`
+
 ### Scale in
 
 - When the replica number of the `subset` is greater than the `maxReplicas`, the extra Pods will be removed in a high priority.

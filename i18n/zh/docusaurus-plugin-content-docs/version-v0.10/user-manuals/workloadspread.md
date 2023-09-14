@@ -42,16 +42,16 @@ spec:
             operator: In
             values:
               - zone-a
-    preferredNodeSelectorTerms:
-      - weight: 1
-        preference:
-        matchExpressions:
-          - key: another-node-label-key
-            operator: In
-            values:
-              - another-node-label-value
+      preferredNodeSelectorTerms:
+        - weight: 1
+          preference:
+          matchExpressions:
+            - key: another-node-label-key
+              operator: In
+              values:
+                - another-node-label-value
       maxReplicas: 3
-      tolertions: []
+      tolerations: [ ]
       patch:
         metadata:
           labels:
@@ -78,12 +78,12 @@ spec:
 ### sub-fields
 
 - `name`: subset的名称，在同一个WorkloadSpread下name唯一，代表一个topology区域。
-  
+
 - `maxReplicas`：该subset所期望调度的最大副本数，需为 >= 0的整数。若设置为空，代表不限制subset的副本数。
 > 当前版本暂不支持百分比类型。
 
 - `requiredNodeSelectorTerm`: 强制匹配到某个zone。
-  
+
 - `preferredNodeSelectorTerms`: 尽量匹配到某个zone。
 
 **注意**：requiredNodeSelectorTerm对应k8s nodeAffinity的requiredDuringSchedulingIgnoredDuringExecution。
@@ -144,10 +144,10 @@ WorkloadSpread提供了两种调度策略，默认为`Fixed`:
       rescheduleCriticalSeconds: 30
 ```
 
-- Fixed: 
+- Fixed:
 
   workload严格按照`subsets`定义分布。
-  
+
 - Adaptive:
 
   **Reschedule**：Kruise检查`subset`中调度失败的Pod，若超过用户定义的时间就将其调度到其他有可用的`subset`上。
@@ -178,7 +178,7 @@ WorkloadSpread所管理的workload会按照`subsets`中定义的顺序扩缩容�
 
 ### 扩容
 - 按照`spec.subsets`中`subset`定义的顺序调度Pod，当前`subset`的active Pod数量达到`maxReplicas`时再调度到下一个`subset`。
-  
+
 ### 缩容
 - 当`subset`的副本数(active)大于定义的maxReplicas时，优先缩容多余的Pod。
 - 依据`spec.subsets`中`subset`定义的顺序，后面`subset`的Pod先于前面的被删除。
