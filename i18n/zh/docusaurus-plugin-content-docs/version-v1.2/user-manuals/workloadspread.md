@@ -45,11 +45,11 @@ spec:
       preferredNodeSelectorTerms:
         - weight: 1
           preference:
-          matchExpressions:
-            - key: another-node-label-key
-              operator: In
-              values:
-                - another-node-label-value
+            matchExpressions:
+              - key: another-node-label-key
+                operator: In
+                values:
+                  - another-node-label-value
       maxReplicas: 3
       tolerations: [ ]
       patch:
