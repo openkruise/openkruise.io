@@ -65,3 +65,16 @@ jobs:
           #find ./build -type f -name "*.js" -exec sed -i 's/r.setAttribute("rel","prefetch")/e="https:\/\/cdn.jsdelivr.net\/gh\/openkruise\/openkruise.io@gh-pages"+e;r.setAttribute("rel","prefetch")/g' {} +
           #find ./build -type f -name "*.js" -exec sed -i 's/.src=e/.src="https:\/\/cdn.jsdelivr.net\/gh\/openkruise\/openkruise.io@gh-pages"+e/g' {} +
           npm run deploy -- $(pwd) --out-dir build --skip-build true
+
+  typo-check:
+    if: github.event_name != 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/setup-node@v1
+        with:
+          python-version: '3.9.x'
+      - name: Check
+        run: |
+          pip3 install bs4 markdown html2markdown
+          python3 .github/workflows/diff.py
