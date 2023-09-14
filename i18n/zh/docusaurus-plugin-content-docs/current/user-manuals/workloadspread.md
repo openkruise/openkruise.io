@@ -26,7 +26,7 @@ WorkloadSpread与OpenKruise社区的UnitedDeployment功能相似，每一个Work
 
 特别地，WorkloadSpread 对 `StatefulSet` 只支持扩容管理，缩容仍旧保留 StatefulSet 固有的缩容顺序, 且扩容管理时按照Pod序号进行划分 Subset, 详情可以参照[注释](https://github.com/openkruise/kruise/blob/f46097db1fa5a4ed9c002eba050b888344884e11/pkg/util/workloadspread/workloadspread.go#L305)。
 
-从 Kruise `1.5.0` 版本开始，WorkloadSpread 支持 `包含 [scale sub-resource](https://kubernetes.io/docs/tasks/extend-kubernetes/custom-resources/custom-resource-definitions/#scale-subresource) 的自定义工作负载`。
+从 Kruise `1.5.0` 版本开始，WorkloadSpread 支持包含 [scale sub-resource](https://kubernetes.io/docs/tasks/extend-kubernetes/custom-resources/custom-resource-definitions/#scale-subresource) 的自定义工作负载。
 
 ## Demo
 
