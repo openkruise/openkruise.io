@@ -145,7 +145,7 @@ spec:
 
 **FEATURE STATE:** Kruise v1.4.0
 
-spec.namespace 字段只能指定一个Namespace，并且不能排除的一些特定的Namespace。如果面对一些复杂的 namespace selector 场景，推荐使用 namespaceSelector 字段：
+spec.namespace 字段只能指定一个Namespace，并且不能排除的一些特定的Namespace。如果面对一些复杂的 namespace selector 场景，推荐使用 **namespaceSelector** 字段：
 
 ```yaml
 apiVersion: apps.kruise.io/v1alpha1
@@ -194,8 +194,9 @@ spec:
         # fieldPath: "metadata.annotations['cName']"
       envName: TC
   volumes:
-  - Name: nginx.conf
-    hostPath: /data/nginx/conf
+  - name: nginx.conf
+    hostPath:
+      path: /data/nginx/conf
 ```
 - podInjectPolicy 定义container注入到pod.spec.containers中的位置
     - BeforeAppContainer(默认) 注入到pod原containers的前面
@@ -237,7 +238,7 @@ spec:
   imagePullSecrets:
   - name: my-secret
 ```
-需要特别注意的是，**对于需要拉取私有 sidecar 镜像的 Pod，用户必需确保这些 Pod 所在的命名空间中已存在对应的 Secret**，否则会导致拉取私有镜像失败。
+**特别注意**: 对于需要拉取私有 sidecar 镜像的 Pod，用户必需确保这些 Pod 所在的命名空间中已存在对应的 Secret，否则会导致拉取私有镜像失败。
 
 ### sidecar注入时版本控制
 **FEATURE STATE:** Kruise v1.3.0
@@ -284,7 +285,7 @@ spec:
 ### sidecar更新策略
 SidecarSet不仅支持sidecar容器的原地升级，而且提供了非常丰富的升级、灰度策略。
 #### 分批发布
-Partition 的语义是 **保留旧版本 Pod 的数量或百分比**，默认为 `0`。这里的 `partition` 不表示任何 `order` 序号。
+Partition 的语义是 **保留旧版本 Pod 的数量或百分比**，默认为 `0`。这里的 `partition` **不表示**任何 `order` 序号。
 
 如果在发布过程中设置了 `partition`:
 
@@ -348,7 +349,7 @@ spec:
     type: RollingUpdate
     selector:
       matchLabels:
-        canary.release: true
+        canary.release: "true"
 ```
 
 ### 发布顺序控制
@@ -357,6 +358,7 @@ spec:
 - 增强的 `priority`(优先级) 和 `scatter`(打散) 策略来允许用户自定义发布顺序。
 
 #### 优先级策略
+**FEATURE STATE:** Kruise v1.5.0
 
 这个策略定义了控制器计算 Pod 发布优先级的规则，所有需要更新的 Pod 都会通过这个优先级规则计算后排序。
 目前 `priority` 可以通过 weight(权重) 和 order(序号) 两种方式来指定。
@@ -462,7 +464,7 @@ Pod创建时，SidecarSet Webhook将会注入两个容器：
 
 热升级流程主要分为一下三个步骤：
 1. Upgrade: 将empty容器升级为当前最新的sidecar容器，例如：envoy-2.Image = envoy:1.17.0
-2. Migration: lifecycle.postStart完成热升级流程中的状态迁移，当迁移完成后退出
+2. Migration: lifecycle.postStart完成热升级流程中的状态迁移，当迁移完成后退出。(**注意:PostStartHook在迁移过程中必须阻塞，迁移完成后退出。**)
 3. Reset: 状态迁移完成后，热升级流程将设置envoy-1容器为empty镜像，例如：envoy-1.Image = empty:1.0
 
 上述三个步骤完成了热升级中的全部流程，当对Pod执行多次热升级时，将重复性的执行上述三个步骤。
@@ -574,10 +576,10 @@ Status:
 
 ## 如何排查 SidecarSet 独立升级 Sidecar 容器卡住？
 
-kubernetes社区只允许 patch pod.spec 中 image 字段，进而 SidecarSet 独立升级 Sidecar 容器也只能支持 image 字段。
+kubernetes社区只允许 patch pod.spec 中 **image 字段**，进而 SidecarSet 独立升级 Sidecar 容器也只能支持 image 字段。
 如果 SidecarSet 中修改了除 image 的其它字段，比如：Env、Resources，将会导致独立升级 Sidecar 容器卡住。
 
-社区当中经常会有同学有此疑问，为了方便大家排查类似的问题，从 kruise v1.5.0 版本开始，kruise将会上报相关的信息到 Pod Condition 和 SidecarSet Event，如下：
+社区当中经常会有同学有此疑问，为了方便大家排查类似的问题，**从 kruise v1.5.0 版本开始**，kruise将会上报相关的信息到 **Pod Condition** 和 **SidecarSet Event**，如下：
 
 ```
 # kubectl describe sidecarsets test-sidecarset

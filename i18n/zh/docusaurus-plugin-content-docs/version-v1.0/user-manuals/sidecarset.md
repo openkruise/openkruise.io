@@ -14,11 +14,9 @@ title: SidecarSet
 
 ### 创建 SidecarSet
 
-如下的 sidecarset.yaml 定义了一个 SidecarSet，其中包括了一个名为 sidecar1 的 sidecar 容器：
+如下的 `sidecarset.yaml` 定义了一个 SidecarSet，其中包括了一个名为 sidecar1 的 sidecar 容器：
 ```yaml
 # sidecarset.yaml
-apiVersion: apps.kruise.io/v1alpha1
-kind: SidecarSet
 metadata:
   name: test-sidecarset
 spec:
@@ -166,8 +164,9 @@ spec:
     - sourceContainerName: main
       envName: PROXY_IP    
   volumes:
-  - Name: nginx.conf
-    hostPath: /data/nginx/conf
+  - name: nginx.conf
+    hostPath: 
+      path: /data/nginx/conf
 ```
 - podInjectPolicy 定义container注入到pod.spec.containers中的位置
     - BeforeAppContainer(默认) 注入到pod原containers的前面
@@ -208,12 +207,12 @@ spec:
   imagePullSecrets:
   - name: my-secret
 ```
-需要特别注意的是，**对于需要拉取私有 sidecar 镜像的 Pod，用户必需确保这些 Pod 所在的命名空间中已存在对应的 Secret**，否则会导致拉取私有镜像失败。
+**特别注意**: 对于需要拉取私有 sidecar 镜像的 Pod，用户必需确保这些 Pod 所在的命名空间中已存在对应的 Secret，否则会导致拉取私有镜像失败。
 
 ### sidecar更新策略
 SidecarSet不仅支持sidecar容器的原地升级，而且提供了非常丰富的升级、灰度策略。
 #### 分批发布
-Partition 的语义是 **保留旧版本 Pod 的数量或百分比**，默认为 `0`。这里的 `partition` 不表示任何 `order` 序号。
+Partition 的语义是 **保留旧版本 Pod 的数量或百分比**，默认为 `0`。这里的 `partition` **不表示**任何 `order` 序号。
 
 如果在发布过程中设置了 `partition`:
 
@@ -277,7 +276,7 @@ spec:
     type: RollingUpdate
     selector:
       matchLabels:
-        canary.release: true
+        canary.release: "true"
 ```
 
 ### 发布顺序控制
@@ -353,7 +352,7 @@ Pod创建时，SidecarSet Webhook将会注入两个容器：
 
 热升级流程主要分为一下三个步骤：
 1. Upgrade: 将empty容器升级为当前最新的sidecar容器，例如：envoy-2.Image = envoy:1.17.0
-2. Migration: lifecycle.postStart完成热升级流程中的状态迁移，当迁移完成后退出
+2. Migration: lifecycle.postStart完成热升级流程中的状态迁移，当迁移完成后退出。(**注意:PostStartHook在迁移过程中必须阻塞，迁移完成后退出。**)
 3. Reset: 状态迁移完成后，热升级流程将设置envoy-1容器为empty镜像，例如：envoy-1.Image = empty:1.0
 
 上述三个步骤完成了热升级中的全部流程，当对Pod执行多次热升级时，将重复性的执行上述三个步骤。

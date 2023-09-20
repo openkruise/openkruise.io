@@ -6,7 +6,7 @@ Since 0.10.0 version，OpenKruise have proposed a multi-domain CRD with by-pass 
 
 In this page, we will take a simple web application as an example to help users build an automatic extreme elastic scheduling solution, combining with WorkloadSpread, KEDA, Prometheus and Alibaba Cloud Elastic Instances (ECI).
 
-## Introduction 
+## Introduction
 
 ### Architecture
 
@@ -15,8 +15,8 @@ The architecture of this solution is as follows:
 
 **Special Note:**
 - In the solution, the HPA configuration is managed by KEDA. KEDA is an enhanced autoscaling component based on HPA. Compared with the native HPA, KEDA has much richer user-defined metrics.
-  
-- We take a trick that the metrics of Nginx instead of Web Pod are collected, because we want to reuse the open-source Nginx-Prometheus-Exporter to simplify this solution. It's easier to use this exporter to explore the number of https links and other metrics. Most importantly, the traffic entering the Web Pod must go through the Niginx Ingress. Therefore, we are going to directly use the metrics of Nginx, and combine KEDA to implement the automatic scale feature.
+
+- We take a trick that the metrics of Nginx instead of Web Pod are collected, because we want to reuse the open-source Nginx-Prometheus-Exporter to simplify this solution. It's easier to use this exporter to explore the number of https links and other metrics. Most importantly, the traffic entering the Web Pod must go through the Nginx Ingress. Therefore, we are going to directly use the metrics of Nginx, and combine KEDA to implement the automatic scale feature.
 
 - At least version 1.21 is required by WorkloadSpread to manage Deployment, but ACK Kubernetes clusters currently supports up to version 1.20. Therefore, we have to take CloneSet as an example in this architecture.
 
@@ -30,7 +30,7 @@ Our goal is to fully automate the following actions:
 - When the traffic is lower than the threshold, it will scale down replicas automatically;
   - When scaling down, the Pods in the elastic resource pool will be deleted first.
 
-## Dependency Installation 
+## Dependency Installation
 We use a ACK Kubernetes Cluster with 3 ECS nodes and 1 Virtual-Kubelet (VK) node. ECS nodes correspond to the fixed resource pool, and VK node corresponds to the elastic resource pool.
 ```shell
 $ k get node
@@ -38,11 +38,11 @@ NAME                         STATUS   ROLES    AGE    VERSION
 us-west-1.192.168.0.47       Ready    <none>   153d   v1.20.11-aliyun.1
 us-west-1.192.168.0.48       Ready    <none>   153d   v1.20.11-aliyun.1
 us-west-1.192.168.0.49       Ready    <none>   153d   v1.20.11-aliyun.1
-virtual-kubelet-us-west-1a   Ready    agent    19d    v1.20.11-aliyun.1 
+virtual-kubelet-us-west-1a   Ready    agent    19d    v1.20.11-aliyun.1
 ```
 
 ### Installing OpenKruise
-More details can be found in [officail installation document](https://openkruise.io/docs/installation). We recommend installing the latest version OpenKruise.
+More details can be found in [official installation document](https://openkruise.io/docs/installation). We recommend installing the latest version OpenKruise.
 
 ### Installing KEDA
 KEDA is a Kubernetes-based event driven autoscaling component. It provides event driven scale for any container running in Kubernetes.
@@ -201,14 +201,14 @@ spec:
     matchLabels:
       app: ingress-nginx-exporter
   endpoints:
-  - interval: 5s 
+  - interval: 5s
     port: exporter
 ```
 
 ### Correctness Check
 After the above dependency installation and configuration is completed, we need to check the correctness of them first.
 
-#### Cheking whether Nginx Status API is usable
+#### Checking whether Nginx Status API is usable
 Firstly, we apply a simple pod with `/bin/sh` and `curl` tools.
 
 ```yaml
@@ -224,7 +224,7 @@ spec:
     command: ["/bin/sh", "-c", "sleep 100000000"]
 ```
 
-Then, execute `kubectl exec` command into this main container, and try to rquest the nginx status API by executing `curl`:
+Then, execute `kubectl exec` command into this main container, and try to request the nginx status API by executing `curl`:
 ```shell
 $ k exec busybox -n ingress-nginx -it -- /bin/sh
 
@@ -418,7 +418,7 @@ spec:
   - type: prometheus
     metadata:
       serverAddress: http://kube-prometheus-stack-1640-prometheus.prometheus:9090/
-      metricName: nginx_http_requests_total 
+      metricName: nginx_http_requests_total
       query: sum(rate(nginx_http_requests_total{job="ingress-nginx-exporter"}[12s]))
       threshold: '100'
 ```

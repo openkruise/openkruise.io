@@ -41,6 +41,21 @@ title: BroadcastJob
 这也意味着 `ActiveDeadlineSeconds`、 `TTLSecondsAfterFinished`、 `FailurePolicy.RestartLimit` 这三个参数是不能使用的。
 
 比如说，用户希望对集群中每个 node 都下发一个配置，包括后续新增的 node 都需要做，那么就可以创建一个 `Never` 策略的 BroadcastJob。
+### FailurePolicy
+
+#### 类型
+
+`Type` 表示的  `FailurePolicyType` 类型。
+
+- Continue"（继续）表示当发现失败的 pod 时，作业仍在运行。
+- FailFast"（快速失败）表示当发现失败的 pod 时，作业将失败。
+- Pause"（暂停）表示当发现失败的 pod 时，作业将被暂停。
+
+#### 重启限制
+
+- `RestartLimit`（重启限制）指定标记 pod 失败前的重试次数。
+  目前，重试次数定义为由 Pod 内所有容器的重启次数 [ContainerStatus.RestartCount](https://github.com/kruiseio/kruise/blob/d61c12451d6a662736c4cfc48682fa75c73adcbc/vendor/k8s.io/api/core/v1/types.go#L2314)之和。 
+  如果该值超过 `RestartLimit`（重启限制），该任务将被标记为为失败，所有正在运行的 Pod 将被删除。如果未设置 `RestartLimit`  未设置，则不执行限制。
 
 ## 例子
 
@@ -125,3 +140,29 @@ spec:
   completionPolicy:
     type: Never
 ```
+
+### failurePolicy
+
+#### restartLimit
+创建 BroadcastJob 配置 `failurePolicy` 为 `FailFast`。
+当找到失败的pod时，job将失败。
+```yaml
+apiVersion: apps.kruise.io/v1alpha1
+kind: BroadcastJob
+metadata:
+  name: broadcastjob-restart-limit
+spec:
+  template:
+    spec:
+      containers:
+        - name: sleep
+          image: busybox
+          command: ["cat", "/path/not/exist"]
+      restartPolicy: Never
+  completionPolicy:
+    type: Never
+  failurePolicy:
+    type: FailFast
+    restartLimit: 3
+```
+

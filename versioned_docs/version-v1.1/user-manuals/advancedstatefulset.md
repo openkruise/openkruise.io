@@ -50,7 +50,7 @@ spec:
       maxUnavailable: 20%
 ```
 
-For example, assuming an Advanced StatefulSet has five Pods named P0 to P4, and the appplication can
+For example, assuming an Advanced StatefulSet has five Pods named P0 to P4, and the application can
 tolerate losing three replicas temporally. If we want to update the StatefulSet Pod spec from v1 to
 v2, we can perform the following steps using the `MaxUnavailable` feature for fast update.
 

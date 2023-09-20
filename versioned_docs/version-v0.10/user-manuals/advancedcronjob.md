@@ -3,7 +3,7 @@ title: AdvancedCronJob
 ---
 
 AdvancedCronJob is an enhanced version of CronJob.
-The original CronJob creates Job periodically according to schedule rule, but AdvancedCronJob provides template supported multpile job resources.
+The original CronJob creates Job periodically according to schedule rule, but AdvancedCronJob provides template supported multiple job resources.
 
 ```yaml
 apiVersion: apps.kruise.io/v1alpha1

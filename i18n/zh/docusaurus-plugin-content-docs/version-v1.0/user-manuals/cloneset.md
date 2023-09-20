@@ -248,7 +248,7 @@ status:
 
 ### Partition 分批灰度
 
-Partition 的语义是 **保留旧版本 Pod 的数量或百分比**，默认为 `0`。这里的 `partition` 不表示任何 `order` 序号。
+Partition 的语义是 **保留旧版本 Pod 的数量或百分比**，默认为 `0`。这里的 `partition` **不表示**任何 `order` 序号。
 
 如果在发布过程中设置了 `partition`:
 
@@ -514,10 +514,10 @@ spec:
       - example.io/unready-blocker
 
   # 或者也可以通过 label 定义
-  lifecycle:
-    inPlaceUpdate:
-      labelsHandler:
-        example.io/block-unready: "true"
+  # lifecycle:
+  #   inPlaceUpdate:
+  #     labelsHandler:
+  #       example.io/block-unready: "true"
 ```
 
 ### 流转示意

@@ -12,6 +12,12 @@ title: Kubectl Plugin
 2. 执行 `kubectl krew install kruise` 来安装 kruise 插件。
 
 3. 你可以通过 `kubectl-kruise` 或 `kubectl kruise` 来使用。
+```bash
+$ kubectl-kruise --help
+
+# or
+$ kubectl kruise --help
+```
 ### Install manually
 1. 你可以从 [releases](https://github.com/openkruise/kruise-tools/releases) 页面下载二进制文件，目前提供 `linux`、`darwin`（OS X）、`windows` 系统以及 `x86_64`、`arm64` 架构。如果你在使用其他的操作系统或架构，需要下载 [kruise-tools](https://github.com/openkruise/kruise-tools) 源码并通过 `make build` 打包。
 

@@ -38,7 +38,9 @@ spec:
   - name: Idle
     containerName: game-server
     probe:
-      exec: /home/game/idle.sh
+      exec: 
+        command:
+        - /home/game/idle.sh      
       initialDelaySeconds: 10
       timeoutSeconds: 3
       periodSeconds: 10
@@ -117,12 +119,12 @@ metadata:
 ```
 OpenKruise [CloneSet](https://openkruise.io/docs/user-manuals/cloneset#update-sequence) and [Advanced StatefulSet](https://openkruise.io/docs/user-manuals/advancedstatefulset#update-sequence)
 support the ability to control upgrade priorities based on Pod Labels. At the same time, community-native Deployment and Kruise CloneSet also support scaling down priority and upgrade order based on [Deletion Cost](https://kubernetes.io/docs/concepts/workloads/controllers/replicaset/#pod-deletion-cost).
-Therefore, the Custem Probe MarkerPolicy can be combined with the above capabilities to achieve the effect of scaling down or upgrading the priority.
+Therefore, the Custom Probe MarkerPolicy can be combined with the above capabilities to achieve the effect of scaling down or upgrading the priority.
 
 ### Pod Event
 Through the pod event, you can view the historical probe execution results, as follows:
 ```
-$ kubectl decribe pods -n ns game-server-58cb9f5688-7sbd8
+$ kubectl describe pods -n ns game-server-58cb9f5688-7sbd8
 Events:
   Type    Reason                Age                From                         Message
   ----    ------                ----               ----                         -------

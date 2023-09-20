@@ -23,7 +23,7 @@ $ helm repo update
 # Note that if the Kubernetes version < 1.15, you may need to add --disable-openapi-validation
 $ helm install kruise openkruise/kruise --version 0.10.2
 ```
-
+**Note:** [Changelog](https://github.com/openkruise/kruise/blob/master/CHANGELOG.md).
 ## Upgrade with helm
 
 If you are using Kruise with an old version, it is recommended that you should upgrade to the latest version for safety and more features:

@@ -78,7 +78,7 @@ spec:
                 image: minchou/cleaner:v1
                 imagePullPolicy: IfNotPresent
                 env:
-                # crictl use this env to find conatiner runtime socket.
+                # crictl use this env to find container runtime socket.
                 # this value should consistent with the path of mounted 
                 # container runtime socket file.
                 - name: CONTAINER_RUNTIME_ENDPOINT
@@ -141,7 +141,7 @@ then
     # **      Here, we will clean all images from my docker.io/minchou repo!       **
     crictl images | grep -i "docker.io/minchou"| awk '{print $3}' > target-images.txt
 
-    # filter out the used images and delete thoese unused images
+    # filter out the used images and delete these unused images
     sort target-images.txt used-images.txt used-images.txt| uniq -u | xargs -r crictl rmi 
 else
     echo "crictl does not exist"

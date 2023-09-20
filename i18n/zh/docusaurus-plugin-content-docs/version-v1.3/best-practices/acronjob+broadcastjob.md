@@ -10,7 +10,7 @@ Kubernetes Job 的作业模式显然非常合适做这类一次性的临时工�
 OpenKruise BroadcastJob 则很好地克服了原生 Job 在节点运维场景中的不足之处。它允许用户以类似 DaemonSet 调度的方式来编排 Pod，当用户创建 BroadcastJob 后，它会默认在集群的每一个 worker 节点创建一个 Pod，执行完成之后会自动对 Pod 进行清理。同时，搭配 Advanced CronJob，可以将 BroadcastJob 进行定时发下，从而实现定时清理节点磁盘的能力。本文会以定期清理节点中存储的无用镜像这一场景来进行演示如何使用 Advanced CronJob 和 BroadcastJob。
 
 ## 环境说明
-受资源所限，我们在一台 ECS（宿主机）上面部署了一个 Kind 集群进行演示（节点均采用 containerd）。 该 Kind 集群共包含三个节点，其中一个 master 节点，两个 worker 节点:
+受资源所限，我们在一台 ECS（宿主机）上面部署了一个 [kind](https://kind.sigs.k8s.io/)  集群进行演示（节点均采用 containerd）。 该 Kind 集群共包含三个节点，其中一个 master 节点，两个 worker 节点:
 ```shell
 $ k get node
 NAME                   STATUS   ROLES                  AGE   VERSION
@@ -78,7 +78,7 @@ spec:
                 image: minchou/cleaner:v1
                 imagePullPolicy: IfNotPresent
                 env:
-                # crictl use this env to find conatiner runtime socket
+                # crictl use this env to find container runtime socket
                 # this value should consistent with the path of mounted 
                 # container runtime socket file 
                 - name: CONTAINER_RUNTIME_ENDPOINT
@@ -140,7 +140,7 @@ then
     # **      Here, we will clean all images from my docker.io/minchou repo!       **
     crictl images | grep -i "docker.io/minchou"| awk '{print $3}' > target-images.txt
 
-    # filter out the used images and delete thoese unused images
+    # filter out the used images and delete these unused images
     sort target-images.txt used-images.txt used-images.txt| uniq -u | xargs -r crictl rmi 
 else
     echo "crictl does not exist"

@@ -49,12 +49,12 @@ spec:
   # required node affinity. As follows, Pod rebuild will force deployment to the same zone
   requiredPersistentTopology:
     nodeTopologyKeys:
-      failure-domain.beta.kubernetes.io/zone[,other node labels]
+      - failure-domain.beta.kubernetes.io/zone[,other node labels]
   # preferred node affinity. As follows, Pod rebuild will preferred deployment to the same node
   preferredPersistentTopology:
     - preference:
         nodeTopologyKeys:
-          kubernetes.io/hostname[,other node labels]
+          - kubernetes.io/hostname[,other node labels]
       # int [1, 100]
       weight: 100
 ```
@@ -119,7 +119,7 @@ spec:
   preferredPersistentTopology:
   - preference:
       nodeTopologyKeys:
-        kubernetes.io/hostname
+        - kubernetes.io/hostname
     weight: 100
 status:
   podStates:

@@ -4,6 +4,7 @@ title: Installation
 
 Since v1.0.0 (alpha/beta), OpenKruise requires **Kubernetes version >= 1.16**.
 
+
 ## Install with helm
 
 Kruise can be simply installed by helm v3.1+, which is a simple command-line tool and you can get it from [here](https://github.com/helm/helm/releases).
@@ -18,7 +19,7 @@ $ helm repo update
 # Install the latest version.
 $ helm install kruise openkruise/kruise --version 1.0.1
 ```
-
+**Note:** [Changelog](https://github.com/openkruise/kruise/blob/master/CHANGELOG.md).
 ## Upgrade with helm
 
 ```bash

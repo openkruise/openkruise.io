@@ -67,7 +67,7 @@ spec:
     - name: web-log
       mountPath: /var/log/web
     # Share all volumes
-    shareVolumePolicy: 
+    shareVolumePolicy:
       type: disabled
     # Share environment variables
     transferEnv:
@@ -155,7 +155,7 @@ spec:
     type: RollingUpdate
     selector:
       matchLabels:
-      - canary.release: true
+        canary.release: "true"
     maxUnavailable: 10%
 ```
 

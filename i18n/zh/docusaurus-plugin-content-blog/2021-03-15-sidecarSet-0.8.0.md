@@ -69,13 +69,13 @@ spec:
     - name: web-log
       mountPath: /var/log/web
     # 共享所有卷
-    shareVolumePolicy: 
+    shareVolumePolicy:
       type: disabled
     # 环境变量共享
     transferEnv:
     - sourceContainerName: web-server
     # TZ代表时区，例如：web-server容器中存在环境变量 TZ=Asia/Shanghai
-    envName: TZ
+      envName: TZ
   volumes:
     - name: web-log
       emptyDir: {}
@@ -153,7 +153,7 @@ spec:
     type: RollingUpdate
     selector:
       matchLabels:
-      - canary.release: true
+        canary.release: "true"
     maxUnavailable: 10%
 ```
 

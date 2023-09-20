@@ -4,8 +4,6 @@ title: 安装
 
 从 v1.0.0 (alpha/beta) 开始，OpenKruise 要求在 **Kubernetes >= 1.16** 以上版本的集群中安装和使用。
 
-**注意:** [Changelog](https://github.com/openkruise/kruise/blob/master/CHANGELOG.md).
-
 ## 通过 helm 安装
 
 建议采用 helm v3.5+ 来安装 Kruise，helm 是一个简单的命令行工具可以从 [这里](https://github.com/helm/helm/releases) 获取。
@@ -20,7 +18,7 @@ $ helm repo update
 # Install the latest version.
 $ helm install kruise openkruise/kruise --version 1.5.0
 ```
-
+**注意:** [Changelog](https://github.com/openkruise/kruise/blob/master/CHANGELOG.md)。
 ## 通过 helm 升级
 
 ```bash

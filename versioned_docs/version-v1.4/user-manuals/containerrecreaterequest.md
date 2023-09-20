@@ -50,7 +50,7 @@ spec:
 
 ```bash
 # for commandline you can
-$ kubectl get containerrecreateqequest -n pod-namespace
+$ kubectl get containerrecreaterequest -n pod-namespace
 # or just short name
 $ kubectl get crr -n pod-namespace
 ```
@@ -65,8 +65,8 @@ apiVersion: apps.kruise.io/v1alpha1
 kind: ContainerRecreateRequest
 spec:
   ...
-strategy:
-  forceRecreate: true # ForceRecreate indicates whether to force kill the container even if the previous container is starting.
+   strategy:
+     forceRecreate: true # ForceRecreate indicates whether to force kill the container even if the previous container is starting.
 ```
 
 ### Check request status

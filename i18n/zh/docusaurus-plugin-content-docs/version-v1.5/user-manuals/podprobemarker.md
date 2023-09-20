@@ -36,7 +36,9 @@ spec:
   - name: Idle
     containerName: game-server
     probe:
-      exec: /home/game/idle.sh
+      exec: 
+        command:
+        - /home/game/idle.sh      
       initialDelaySeconds: 10
       timeoutSeconds: 3
       periodSeconds: 10
@@ -114,12 +116,12 @@ metadata:
 OpenKruise [CloneSet](https://openkruise.io/docs/user-manuals/cloneset#update-sequence) 与
 [Advanced StatefulSet](https://openkruise.io/docs/user-manuals/advancedstatefulset#update-sequence) 都支持根据Pod Label控制升级优先级的能力。
 与此同时，社区原生Deployment与Kruise CloneSet也支持基于 [Deletion Cost](https://kubernetes.io/docs/concepts/workloads/controllers/replicaset/#pod-deletion-cost) 的缩容优先级以及升级顺序。
-所以Custem Probe MarkerPolicy可以与上面能力相结合，达到缩容或升级优先级的效果。
+所以Custom Probe MarkerPolicy可以与上面能力相结合，达到缩容或升级优先级的效果。
 
 ### Pod Event
 通过pod event可以查看历史的probe执行结果，如下：
 ```
-$ kubectl decribe pods -n ns game-server-58cb9f5688-7sbd8
+$ kubectl describe pods -n ns game-server-58cb9f5688-7sbd8
 Events:
   Type    Reason                Age                From                         Message
   ----    ------                ----               ----                         -------

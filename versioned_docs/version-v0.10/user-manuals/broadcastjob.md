@@ -59,6 +59,25 @@ and `FailurePolicy.RestartLimit` parameters takes no effect if `Never` policy is
 For example, if user wants to perform an initial configuration validation for every newly
 added node in the cluster, he can deploy a BroadcastJob with `Never` policy.
 
+### FailurePolicy
+
+#### Type
+
+`Type` indicates the type of `FailurePolicyType`.
+
+- `Continue` means the job will be still running, when failed pod is found.
+- `FailFast`(default) means the job will be failed, when failed pod is found.
+- `Pause` means the job will be paused, when failed pod is found.
+
+#### RestartLimit
+
+- `RestartLimit` specifies the number of retries before marking the pod failed.
+  Currently, the number of retries are defined as the aggregated number of restart
+  counts across all Pods created by the job, i.e., the sum of the
+  [ContainerStatus.RestartCount](https://github.com/kruiseio/kruise/blob/d61c12451d6a662736c4cfc48682fa75c73adcbc/vendor/k8s.io/api/core/v1/types.go#L2314)
+  for all containers in every Pod.  If this value exceeds `RestartLimit`, the job is marked
+  as Failed and all running Pods are deleted. No limit is enforced if `RestartLimit` is
+  not set.
 ## Examples
 
 ### Monitor BroadcastJob status
@@ -143,3 +162,30 @@ spec:
   completionPolicy:
     type: Never
 ```
+
+### failurePolicy
+
+#### restartLimit
+
+Run a BroadcastJob with `FailFast` failurePolicy. The job will be failed, when failed pod is found.
+
+```yaml
+apiVersion: apps.kruise.io/v1alpha1
+kind: BroadcastJob
+metadata:
+  name: broadcastjob-restart-limit
+spec:
+  template:
+    spec:
+      containers:
+        - name: sleep
+          image: busybox
+          command: ["cat", "/path/not/exist"]
+      restartPolicy: Never
+  completionPolicy:
+    type: Never
+  failurePolicy:
+    type: FailFast
+    restartLimit: 3
+```
+

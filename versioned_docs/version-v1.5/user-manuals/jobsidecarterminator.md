@@ -61,12 +61,12 @@ Replace `"example/quick-exit:v1.0.0"` with your prepared image.
 
 - This feature can handle the Pods with `Never`/`OnFailure` restart policy, and doesn't care which type of job controllers they're controlled by.
 
-- The conatiner with env `KRUISE_TERMINATE_SIDECAR_WHEN_JOB_EXIT` will be treated as sidecars, the others as main containers.
+- The container with env `KRUISE_TERMINATE_SIDECAR_WHEN_JOB_EXIT` will be treated as sidecars, the others as main containers.
 
-- The sidecars will be terminated when ALL main containers completed.
+- The sidecars will be terminated when **ALL** main containers completed.
 
-- In `Never` restart policy settings, main container will be treated as `completed` once it exit.
+  - In `Never` restart policy settings, main container will be treated as `completed` once it exit.
 
-- In `OnFailure` restart policy settings, main container will be treated as `completed` once it exit and exit code must be `0`.
+  - In `OnFailure` restart policy settings, main container will be treated as `completed` once it exit and exit code must be `0`.
 
 - In Pods on real nodes mode, `KRUISE_TERMINATE_SIDECAR_WHEN_JOB_EXIT` has a higher priority than `KRUISE_TERMINATE_SIDECAR_WHEN_JOB_EXIT_WITH_IMAGE`

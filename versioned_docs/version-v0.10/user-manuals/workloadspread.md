@@ -17,7 +17,7 @@ Some common policies include:
   - control how many pods in a workload are deployed in different cpu arch
   - enable pods in different cpu arch to have different resource requirements
 
-The feature of WorkloadSpread is similar with UnitedDeployment in OpenKruise community. Each WorkloadSpread defines multi-domain
+The feature of WorkloadSpread is similar with **UnitedDeployment** in OpenKruise community. Each WorkloadSpread defines multi-domain
 called `subset`. Each domain may provide the limit to run the replicas number of pods called `maxReplicas`.
 WorkloadSpread injects the domain configuration into the Pod by Webhook, and it also controls the order of scale in and scale out.
 
@@ -215,7 +215,7 @@ $ helm install kruise https://... --set featureGates="WorkloadSpread=true"
 ```yaml
 apiVersion: apps.kruise.io/v1alpha1
 kind: WorkloadSpread
-metadta:
+metadata:
   name: ws-demo
   namespace: deploy
 spec:
@@ -264,7 +264,7 @@ Deploy 100 Pods to two `zone`(zone-a, zone-b) separately.
 ```yaml
 apiVersion: apps.kruise.io/v1alpha1
 kind: WorkloadSpread
-metadta:
+metadata:
   name: ws-demo
   namespace: deploy
 spec:
