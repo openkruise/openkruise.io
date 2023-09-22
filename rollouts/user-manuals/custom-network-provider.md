@@ -30,7 +30,7 @@ spec:
   ...
       trafficRoutings:
       - service: <stable-service>
-        networkRefs:
+        customNetworkRefs:
         - apiVersion: <your-resource-apiVersion>
           kind: <your-resource-kind>
           name: <your-resource-name>
@@ -38,12 +38,12 @@ spec:
 
 The api details are shown as below:
 
-| Fields                   | Type   | Defaults | Explanation                          |
-| ------------------------ | ------ | -------- | ------------------------------------ |
-| `networkRefs`            | object | nil      | Definitions of API Gateway resources |
-| `networkRefs.apiVersion` | string | ""       | ApiVersion of a API Gateway resource |
-| `networkRefs.kind`       | string | ""       | Kind of a API Gateway resource       |
-| `networkRefs.name`       | string | ""       | Name of a API Gateway resource       |
+| Fields                         | Type   | Defaults | Explanation                          |
+| ------------------------------ | ------ | -------- | ------------------------------------ |
+| `customNetworkRefs`            | object | nil      | Definitions of API Gateway resources |
+| `customNetworkRefs.apiVersion` | string | ""       | ApiVersion of a API Gateway resource |
+| `customNetworkRefs.kind`       | string | ""       | Kind of a API Gateway resource       |
+| `customNetworkRefs.name`       | string | ""       | Name of a API Gateway resource       |
 
 ## Define Your Custom Traffic Routing Lua Script
 
@@ -90,7 +90,6 @@ rollout:
   kind: Rollout
   metadata:
     name: rollouts-demo
-    namespace: demo
     annotations:
       rollouts.kruise.io/rolling-style: canary
   spec:
@@ -99,13 +98,11 @@ rollout:
       workloadRef:
         apiVersion: apps/v1
         kind: Deployment
-        name: nginx-deployment
+        name: deploy-demo
     strategy:
       canary:
         steps:
-        # first-step release strategy
-        - weight: 20
-          matches:
+        - matches:
           - headers:
             - type: Exact
               name: user-agent
@@ -113,21 +110,27 @@ rollout:
             - type: RegularExpression
               name: name
               value: ".*demo"
-        # second-step release strategy
+        - matches:
+          - headers:
+            - type: Exact
+              name: user-agent
+              value: pc
+          - headers:
+            - type: RegularExpression
+              name: name
+              value: ".*demo"
         - weight: 50
         trafficRoutings:
-        - service: nginx-service
-          createCanaryService: false
-          networkRefs:
+        - service: svc-demo
+          customNetworkRefs:
           - apiVersion: networking.istio.io/v1alpha3
             kind: VirtualService
-            name: nginx-vs
+            name: vs-demo
 original:
   apiVersion: networking.istio.io/v1alpha3
   kind: VirtualService
   metadata:
-    name: nginx-vs
-    namespace: demo
+    name: vs-demo
   spec:
     hosts:
     - "*"
@@ -136,14 +139,12 @@ original:
     http:
     - route:
       - destination:
-          host: nginx-service
+          host: svc-demo
 expected:
-	# Expected configuration of resource after the first-step release
   - apiVersion: networking.istio.io/v1alpha3
     kind: VirtualService
     metadata:
-      name: nginx-vs
-      namespace: demo
+      name: vs-demo
     spec:
       hosts:
       - "*"
@@ -158,20 +159,41 @@ expected:
               regex: .*demo
         route:
         - destination:
-            host: nginx-service
-          weight: 80
-        - destination:
-            host: nginx-service-canary
-          weight: 20
+            host: svc-demo-canary
       - route:
         - destination:
-            host: nginx-service
-  # Expected configuration of resource after the second-step release
+            host: svc-demo
   - apiVersion: networking.istio.io/v1alpha3
     kind: VirtualService
     metadata:
-      name: nginx-vs
-      namespace: demo
+      name: vs-demo
+    spec:
+      hosts:
+      - "*"
+      gateways:
+      - nginx-gateway
+      http:
+      - match:
+        - headers:
+            name:
+              regex: .*demo
+        route:
+        - destination:
+            host: svc-demo-canary
+      - match:
+        - headers:
+            user-agent:
+              exact: pc
+        route:
+        - destination:
+            host: svc-demo-canary
+      - route:
+        - destination:
+            host: svc-demo
+  - apiVersion: networking.istio.io/v1alpha3
+    kind: VirtualService
+    metadata:
+      name: vs-demo
     spec:
       hosts:
       - "*"
@@ -180,14 +202,14 @@ expected:
       http:
       - route:
         - destination:
-            host: nginx-service
+            host: svc-demo
           weight: 50
         - destination:
-            host: nginx-service-canary
+            host: svc-demo-canary
           weight: 50
 ```
 
-Run `go test -v ./pkg/util/luamanager/` to test if the Lua scripts are working as expected. Kruise Rollout will walk the `rollouts/lua_configuration` directory to retrieve all Lua scripts and test cases. Kruise Rollout will then perform tests based on the defined release strategies in the Rollout to check if the original configuration of the resource, after being processed by the Lua script, matches the expected configuration.
+Run `go test -v ./pkg/trafficrouting/network/customNetworkProvider/` to test if the Lua scripts are working as expected. Kruise Rollout will walk the `./lua_configuration` directory to retrieve all Lua scripts and test cases. Kruise Rollout will then perform tests based on the defined release strategies in the Rollout to check if the original configuration of the resource, after being processed by the Lua script, matches the expected configuration.
 
 ![img](../../static/img/rollouts/test-lua.gif)
 
@@ -195,9 +217,9 @@ The [PR#163 ](https://github.com/openkruise/rollouts/blob/9d40b60a16fcf896ec371d
 
 #### Recommanded Test Case Designation
 
-When designing test cases, at least the Rollout release strategies listed below are supposed to be considered:
+When designing test cases, at least the release strategies listed below are supposed to be considered:
 
-- Rollout with header matches, and the rules are defined in one `headers` filed.
+- Release strategy with header matches, and the rules are defined in one `headers` filed.
 
 ```yaml
 # spec.strategy.canary.steps:
@@ -211,7 +233,7 @@ When designing test cases, at least the Rollout release strategies listed below 
       value: ".*demo"
 ```
 
-- Rollout with header matches, and the rules are defined in different `headers` filed.
+- Release strategy with header matches, and the rules are defined in different `headers` filed.
 
 ```yaml
 # spec.strategy.canary.steps:
@@ -228,7 +250,7 @@ When designing test cases, at least the Rollout release strategies listed below 
 
 **Please visit** [API Specifications | OpenKruise](https://openkruise.io/zh/rollouts/user-manuals/api-specifications) **for more information about the difference of the above mentioned two release strategies.**
 
-- Rollout without header matches, and the traffic is routed to canary service with a certain weight.
+- Release strategy without header matches, and the traffic is routed to canary service with a certain weight.
 
 ```yaml
 # spec.strategy.canary.steps:
@@ -263,7 +285,7 @@ data:
     return obj.data
 ```
 
-**Then if the expected Lua script is not existed locally, Kruise Rollout would get the script from ConfigMap.**
+**Then if the expected Lua script is not existed locally, Kruise Rollout will get the script from ConfigMap.**
 
 ## Write Your Custom Traffic Routing Lua Script
 
@@ -379,11 +401,13 @@ return ret
 
 If you need to debug Lua scripts, you can achieve this by installing the [Lua Debug](https://marketplace.visualstudio.com/items?itemName=actboy168.lua-debug) extension in VSCode. Once installed, you can execute Lua scripts in a step-by-step debugging mode and view variable values by selecting **Lua Debug -> Debug Current File** from the Run and Debug menu.
 
-![img](../../static/img/rollouts/vscode-conf.png)
+<div align="center">
+  <img src="../../static/img/rollouts/vscode-conf.png" width=50%>
+</div>
 
 Afterwards, define the global variable `obj` in the Lua script to enable step-by-step debugging and test if the Lua script is working as expected.
 
-You can generate and use the `obj` for debugging by running `go run ./lua_configuration/lua.go`. This program will automatically retrieve the test cases from the `testdata` directory of all custom API Gateway resources in the `lua_configuration` folder, convert them into the form of the global variable `obj` that passes to Lua script, and save them in `test_case_obj.lua`. This makes it convenient for users to pass `obj` to their Lua scripts and execute step-by-step debugging.
+You can generate and use the `obj` for debugging by running `go run ./lua_configuration/convert_test_case_to_lua_object.go`. This program will automatically retrieve the test cases from the `testdata` directory of all custom API Gateway resources in the `lua_configuration` folder, convert them into the form of the global variable `obj` that passes to Lua script, and save them in `test_case_obj.lua`. This makes it convenient for users to pass `obj` to their Lua scripts and execute step-by-step debugging.
 
 An example of `test_case_obj.lua` is shown as below:
 
