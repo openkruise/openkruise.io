@@ -20,7 +20,7 @@ $ kubectl-kruise --help
 $ kubectl kruise --help
 ```
 ### Install manually
-1. You can simply download the binary from the [releases](https://github.com/openkruise/kruise-tools/releases) page. Currently `linux`, `darwin`(OS X), `windows` with `x86_64` and `arm64` are provided. If you are using some other systems or architectures, you have to download the source code and execute `make build` to build the binary.
+1. You can simply download the binary from the [releases](https://github.com/openkruise/kruise-tools/releases) page. Currently `linux`, `darwin`(OS X), `windows` with `x86_64` and `arm64` are provided. If you are using some other systems or architectures, you have to download the  [kruise-tools](https://github.com/openkruise/kruise-tools)  and execute `make build` to build the binary.
 
 2. Extract and move it to system PATH.
 
@@ -43,7 +43,7 @@ $ kubectl kruise --help
 Run `kubectl krew upgrade kruise` to upgrade kruise plugin via Krew.
 
 ### Upgrade manually
-Same to install plugin manaully.
+Same to install plugin manually.
 
 
 ## Usage

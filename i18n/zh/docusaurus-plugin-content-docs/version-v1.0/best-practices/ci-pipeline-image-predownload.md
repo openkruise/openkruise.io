@@ -223,7 +223,7 @@ spec:
       name: imagepulljob
 ```
 ### 一键执行Tekton Pipeline
-**1. 定义tekton pileline，总共由上面两个task任务组成，并且执行完 构建-测试-推送镜像Task之后，再执行镜像预热Task如下：**
+**1. 定义tekton pipeline，总共由上面两个task任务组成，并且执行完 构建-测试-推送镜像Task之后，再执行镜像预热Task如下：**
 ```yaml
 apiVersion: tekton.dev/v1beta1
 kind: Pipeline

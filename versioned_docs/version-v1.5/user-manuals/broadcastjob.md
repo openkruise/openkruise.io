@@ -57,7 +57,6 @@ condition. The following parameters take effect with this policy:
 all Pods run to completion. This also means above `ActiveDeadlineSeconds`, `TTLSecondsAfterFinished` and `FailurePolicy.RestartLimit` parameters takes no effect if `Never` policy is used.
 For example, if user wants to perform an initial configuration validation for every newly
 added node in the cluster, he can deploy a BroadcastJob with `Never` policy.
-
 ### FailurePolicy
 
 #### Type

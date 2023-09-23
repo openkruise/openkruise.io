@@ -36,7 +36,7 @@ EFK（ElasticSearch, FileBeat, Kibana）是社区非常流行的、使用非常�
 - **Sidecar容器升级将导致业务Pod重建，由于Sidecar容器一般是独立的中间件团队负责，如果升级会存在极大的业务方阻力**
 
 ### SidecarSet管理sidecar容器的利器
-SidecarSet是OpenKruise中针对sidecar容器管理抽象出来的概念，负责注入和升级k8s集群中的sidecar容器，是OpenKruise的核心workload之一，详细可参考：[SidecarSet文档](https://openkruise.io/zh/docs/user-manuals/sidecarset/)。
+**SidecarSet是OpenKruise中针对sidecar容器管理抽象出来的概念**，负责注入和升级k8s集群中的sidecar容器，是OpenKruise的核心workload之一，详细可参考：[SidecarSet文档](https://openkruise.io/zh/docs/user-manuals/sidecarset/)。
 - **自动注入Sidecar：将sidecar容器配置与业务Workload（Deployment、CloneSet等）配置解耦，简化用户使用成本**
 - **独立升级Sidecar容器：不重建Pod，单独升级Sidecar容器，对业务无感**
 

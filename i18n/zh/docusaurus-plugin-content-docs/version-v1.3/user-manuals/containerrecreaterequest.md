@@ -47,7 +47,7 @@ spec:
 
 ```bash
 # for commandline you can
-$ kubectl get containerrecreateqequest -n pod-namespace
+$ kubectl get containerrecreaterequest -n pod-namespace
 # or just short name
 $ kubectl get crr -n pod-namespace
 ```

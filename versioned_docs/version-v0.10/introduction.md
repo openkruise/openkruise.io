@@ -2,7 +2,7 @@
 title: Introduction
 slug: /
 ---
-
+# What's OpenKruise  
 Welcome to OpenKruise!
 
 OpenKruise is an extended component suite for Kubernetes, which mainly focuses on automated management of large-scale applications, such as *deployment, upgrade, ops and availability protection*.

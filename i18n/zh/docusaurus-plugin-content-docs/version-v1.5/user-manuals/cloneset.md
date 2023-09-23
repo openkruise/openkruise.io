@@ -84,7 +84,7 @@ spec:
 
 如果一个 Pod 被外部直接调用删除或驱逐时，这个 Pod 关联的 PVCs 还都存在；并且 CloneSet controller 发现数量不足重新扩容时，新扩出来的 Pod 会复用原 Pod 的 **instance-id** 并关联原来的 PVCs。
 
-然而，如果 Pod 所在的 Node 出现异常，复用可能会导致新 Pod 启动失败，详情参考 [issue 1099](https://github.com/openkruise/kruise/issues/1099)。为了解决这个问题，您可以设置字段 DisablePVCReuse=true。在这种情况下，与 Pod 相关的 PVCs 将被自动删除，不再被复用。
+然而，如果 Pod 所在的 Node 出现异常，复用可能会导致新 Pod 启动失败，详情参考 [issue 1099](https://github.com/openkruise/kruise/issues/1099)。为了解决这个问题，您可以设置字段 **DisablePVCReuse=true**。在这种情况下，与 Pod 相关的 PVCs 将被自动删除，不再被复用。
 
 ```yaml
 apiVersion: apps.kruise.io/v1alpha1
@@ -268,7 +268,7 @@ status:
 
 ### Partition 分批灰度
 
-Partition 的语义是 **保留旧版本 Pod 的数量或百分比**，默认为 `0`。这里的 `partition` 不表示任何 `order` 序号。
+Partition 的语义是 **保留旧版本 Pod 的数量或百分比**，默认为 `0`。这里的 `partition` **不表示**任何 `order` 序号。
 
 如果在发布过程中设置了 `partition`:
 
@@ -554,10 +554,10 @@ spec:
       - example.io/unready-blocker
 
   # 或者也可以通过 label 定义
-  lifecycle:
-    inPlaceUpdate:
-      labelsHandler:
-        example.io/block-unready: "true"
+  # lifecycle:
+  #   inPlaceUpdate:
+  #     labelsHandler:
+  #       example.io/block-unready: "true"
 ```
 
 ### 升级/删除 Pod 前将其置为 NotReady

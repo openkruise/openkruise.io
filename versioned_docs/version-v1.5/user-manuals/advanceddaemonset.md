@@ -111,7 +111,7 @@ spec:
 ### Partition for rolling update and scaling up
 
 This strategy defines rules for calculating the priority of updating pods.
-Partition is the number of DaemonSet pods that should be remained to be old version.
+**Partition is the number of DaemonSet pods that should be remained to be old version.**
 
 ```yaml
 apiVersion: apps.kruise.io/v1alpha1
@@ -263,7 +263,7 @@ If you set `markPodNotReady=true` for `preDelete`, Kruise will try to set `Kruis
 
 #### Example for user controller logic
 
-Same as yaml example above, we should fisrtly define `example.io/block-deleting` label in template and lifecycle of Advanced DaemonSet.
+Same as yaml example above, we should firstly define `example.io/block-deleting` label in template and lifecycle of Advanced DaemonSet.
 
 ```yaml
 apiVersion: apps.kruise.io/v1alpha1

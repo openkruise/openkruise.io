@@ -6,7 +6,7 @@ This controller provides advanced features to efficiently manage stateless appli
 do not have instance order requirement during scaling and rollout.
 Analogously, CloneSet can be recognized as an enhanced version of upstream `Deployment` workload, but it does many more.
 
-As name suggests, CloneSet is a [Set -suffix controller](/blog/workload-classification-guidance) which
+As name suggests, CloneSet is a [**Set** -suffix controller](/blog/workload-classification-guidance) which
 manages Pods directly. A sample CloneSet yaml looks like following:
 
 ```yaml
@@ -41,7 +41,7 @@ This cannot be done with `Deployment`. If not specified, CloneSet will only crea
 A few reminders:
 
 - Each PVC created by CloneSet has an owner reference. So when a CloneSet has been deleted, its PVCs will be cascading deleted.
-- Each Pod and PVC created by CloneSet has a "apps.kruise.io/cloneset-instance-id" label key. They use the same string as label value which is composed of a unique  **instance-id** as suffix of the CloneSet name.
+- Each Pod and PVC created by CloneSet has a "apps.kruise.io/cloneset-instance-id" label key. The associated Pod and PVC will have the same **instance-id**. They use the same string as label value which is composed of a unique  **instance-id** as suffix of the CloneSet name.
 - When a Pod has been deleted by CloneSet controller, all PVCs related to it will be deleted together.
 - When a Pod has been deleted manually, all PVCs related to the Pod are preserved, and CloneSet controller will create a new Pod with the same **instance-id** and reuse the PVCs.
 - When a Pod is updated using **recreate** policy, all PVCs related to it will be deleted together.
@@ -179,7 +179,7 @@ Since Kruise v1.1.0, CloneSet will add another `pod-template-hash` label into Po
 **FEATURE STATE:** Kruise v1.0.0
 
 Users can specify `ScaleStrategy.MaxUnavailable` to limit the step size of CloneSet **Scaling Up**, so as to minimize the impact on application services.
-This value can be an absolute number (e.g., 5) or a percentage of desired number of Pods (e.g., 10%). Default value is `nil` (i.e., empty pointer), which indicates non-limitation.
+This value can be an **absolute number** (e.g., 5) or a **percentage** of desired number of Pods (e.g., 10%). Default value is `nil` (i.e., empty pointer), which indicates non-limitation.
 
 `ScaleStrategy.MaxUnavailable` field can cooperate with 'Spec.MinReadySeconds' field to work, for example:
 
@@ -334,7 +334,7 @@ CloneSet will update the 2 Pods in `status.updateRevision` back to `status.curre
 ### MaxUnavailable
 
 MaxUnavailable is the maximum number of Pods that can be unavailable.
-Value can be an absolute number (e.g., 5) or a percentage of desired number of Pods (e.g., 10%).
+Value can be an **absolute number** (e.g., 5) or a **percentage** of desired number of Pods (e.g., 10%).
 Default value is 20%.
 
 ```yaml
@@ -354,7 +354,7 @@ CloneSet will delete it only if the number of unavailable Pods (comparing to the
 ### MaxSurge
 
 MaxSurge is the maximum number of pods that can be scheduled above the desired replicas.
-Value can be an absolute number (ex: 5) or a percentage of desired pods (ex: 10%).
+Value can be an **absolute number** (ex: 5) or a **percentage** of desired pods (ex: 10%).
 Defaults to 0.
 
 If maxSurge is set somewhere, cloneset-controller will create `maxSurge` number of Pods above the `replicas`,
@@ -555,10 +555,10 @@ spec:
       - example.io/unready-blocker
 
   # or define with label
-  lifecycle:
-    inPlaceUpdate:
-      labelsHandler:
-        example.io/block-unready: "true"
+  # lifecycle:
+  #   inPlaceUpdate:
+  #     labelsHandler:
+  #       example.io/block-unready: "true"
 ```
 
 ### MarkPodNotReady
@@ -603,7 +603,7 @@ Besides, although our design supports to change a Pod from `PreparingDelete` bac
 
 ### Example for user controller logic
 
-Same as yaml example above, we can fisrtly define：
+Same as yaml example above, we can firstly define：
 
 - `example.io/unready-blocker` finalizer as hook
 - `example.io/initialing` annotation as identity for initializing
@@ -645,7 +645,7 @@ In this situation:
 
 - if you scale down `replicas` from `N` to `N-1`, when the Pod to be deleted is still in `PreparingDelete`, you scale up `replicas` to `N`, the CloneSet will move the Pod back to `Normal`.
 - if you scale down `replicas` from `N` to `N-1` and put a Pod into `podsToDelete`, when the specific Pod is still in `PreparingDelete`, you scale up `replicas` to `N`, the CloneSet will not create a new Pod until the specific Pod goes into terminating.
-- if you specificly delete a Pod without `replicas` changed, when the specific Pod is still in `PreparingDelete`, the CloneSet will not create a new Pod until the specific Pod goes into terminating.
+- if you specifically delete a Pod without `replicas` changed, when the specific Pod is still in `PreparingDelete`, the CloneSet will not create a new Pod until the specific Pod goes into terminating.
 
 Since Kruise v1.3.0, you can put a `apps.kruise.io/cloneset-scaling-exclude-preparing-delete: "true"` label into CloneSet, which indicates Pods in `PreparingDelete` will not be calculated in the `replicas` number.
 
@@ -653,4 +653,4 @@ In this situation:
 
 - if you scale down `replicas` from `N` to `N-1`, when the Pod to be deleted is still in `PreparingDelete`, you scale up `replicas` to `N`, the CloneSet will move the Pod back to `Normal`.
 - if you scale down `replicas` from `N` to `N-1` and put a Pod into `podsToDelete`, even if the specific Pod is still in `PreparingDelete`, you scale up `replicas` to `N`, the CloneSet will create a new Pod immediately.
-- if you specificly delete a Pod without `replicas` changed, even if the specific Pod is still in `PreparingDelete`, the CloneSet will create a new Pod immediately.
+- if you specifically delete a Pod without `replicas` changed, even if the specific Pod is still in `PreparingDelete`, the CloneSet will create a new Pod immediately.

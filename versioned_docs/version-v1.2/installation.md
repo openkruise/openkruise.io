@@ -18,7 +18,7 @@ $ helm repo update
 # Install the latest version.
 $ helm install kruise openkruise/kruise --version 1.2.0
 ```
-
+**Note:** [Changelog](https://github.com/openkruise/kruise/blob/master/CHANGELOG.md).
 ## Upgrade with helm
 
 ```bash

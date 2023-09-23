@@ -4,12 +4,12 @@ title: Container Launch Priority
 
 **FEATURE STATE:** Kruise v1.0.0
 
-Container Launch Priority 提供了控制一个 Pod 中容器启动顺序的方法。
+Container Launch Priority 提供了**控制一个 Pod 中容器启动顺序**的方法。
 
 > 通常来说 Pod 容器的启动和退出顺序是由 Kubelet 管理的。Kubernetes 曾经有一个 [KEP](https://github.com/kubernetes/enhancements/tree/master/keps/sig-node/753-sidecar-containers) 计划在 container 中增加一个 type 字段来标识不同类型容器的启停优先级。
 > 但是由于[sig-node考虑到对现有代码架构的改动太大](https://github.com/kubernetes/enhancements/issues/753#issuecomment-713471597)，它已经被拒绝了。
 
-注意，这个功能作用在 Pod 对象上，不管它的 owner 是什么类型的，因此可以适用于 Deployment、CloneSet 以及其他的 workload 种类。
+注意，这个功能作用在 Pod 对象上，**不管它的 owner 是什么类型的**，因此可以适用于 Deployment、CloneSet 以及其他的 workload 种类。
 
 ## 用法
 

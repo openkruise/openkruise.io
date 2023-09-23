@@ -10,7 +10,7 @@ title: Kustomize ResourceDistribution Generator
 
 在使用kustomize管理应用时，利用kustomize自带的generator能够直接读取文件作为data内容来创建Configmap或Secret ，避免了手动复制时容易出现的种种格式错误。ResourceDistribution Generator为kustomize的第三方插件，使用该插件可以完成读取文件作为data内容来创建ResourceDistribution的工作。
 
-### 下载ResourceDistribution generaotor
+### 下载ResourceDistribution generator
 
 [该页面](https://github.com/openkruise/kruise-tools/releases)提供了常见版本的二进制文件下载路径。目前`linux`, `darwin`(OS X),`windows`提供`x86_64`和`arm64`。如果您使用其他一些系统或架构，则必须下载[源代码](https://github.com/openkruise/kruise-tools/blob/master/cmd/resourcedistributiongenerator)并执行`go build`来构建二进制文件。
 
@@ -65,7 +65,7 @@ targets:
 
 ResourceDistribution 资源可以从文件中生成 - 例如从一个 java.properties文件。
 
-示例：使用包含文件内容的数据项生成 ResourceDistribution。
+**示例**：使用包含文件内容的数据项生成 ResourceDistribution。
 
 ResourceDistribution 将从文件内容中填充数据值。每个文件的内容将显示为 ResourceDistribution 中由文件名作为key的单个数据项。
 
@@ -118,7 +118,7 @@ ResourceDistribution 资源可以从文字键值对生成 - 例如JAVA_HOME=/opt
 > - 键/值由 = 分隔（左侧是键）
 > - 每个文本的值将显示为 ResourceDistribution 中的一个数据项，该数据项的key即为文本的key
 
-示例：使用从文字生成的 2 个数据项创建一个 ResourceDistribution。
+**示例**：使用从文字生成的 2 个数据项创建一个 ResourceDistribution。
 
 **File Input**
 
@@ -164,7 +164,7 @@ ResourceDistribution 资源可以从键值对生成，这与使用文字非常�
 > - 环境文件中的键/值对用 = 分隔（左侧是键） 
 > - 每行的值将显示为 ResourceDistribution 中由其键作为key的数据项。
 
-示例：使用从env文件生成的 3 个数据项创建一个 ResourceDistribution。
+**示例**：使用从env文件生成的 3 个数据项创建一个 ResourceDistribution。
 
 **File Input**
 

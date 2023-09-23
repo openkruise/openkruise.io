@@ -120,21 +120,20 @@ spec:
   images:
   - nginx:1.9.1   # [required] image to pull
   - busybox:1.29.2
-  - ...
-    parallelism: 10      # [optional] the maximal number of Nodes that pull this image at the same time, defaults to 1
-    selector:            # [optional] the names or label selector to assign Nodes (only one of them can be set)
-      names:
-      - node-1
-      - node-2
-      matchLabels:
-        node-type: xxx
-    completionPolicy:
-      type: Always                  # [optional] defaults to Always
-      activeDeadlineSeconds: 1200   # [optional] no default, only work for Always type
-      ttlSecondsAfterFinished: 300  # [optional] no default, only work for Always type
-    pullPolicy:                     # [optional] defaults to backoffLimit=3, timeoutSeconds=600
-      backoffLimit: 3
-      timeoutSeconds: 300
+  parallelism: 10      # [optional] the maximal number of Nodes that pull this image at the same time, defaults to 1
+  selector:            # [optional] the names or label selector to assign Nodes (only one of them can be set)
+    names:
+    - node-1
+    - node-2
+    matchLabels:
+      node-type: xxx
+  completionPolicy:
+    type: Always                  # [optional] defaults to Always
+    activeDeadlineSeconds: 1200   # [optional] no default, only work for Always type
+    ttlSecondsAfterFinished: 300  # [optional] no default, only work for Always type
+  pullPolicy:                     # [optional] defaults to backoffLimit=3, timeoutSeconds=600
+    backoffLimit: 3
+    timeoutSeconds: 300
 ```
 
 ## NodeImage (low-level)

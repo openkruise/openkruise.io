@@ -47,12 +47,12 @@ spec:
   # required node affinity，如下：Pod重建后将强制部署到同Zone
   requiredPersistentTopology:
     nodeTopologyKeys:
-      failure-domain.beta.kubernetes.io/zone[,other node labels]
+      - failure-domain.beta.kubernetes.io/zone[,other node labels]
   # preferred node affinity，如下：Pod重建后将尽量部署到同Node
   preferredPersistentTopology:
     - preference:
         nodeTopologyKeys:
-          kubernetes.io/hostname[,other node labels]
+          - kubernetes.io/hostname[,other node labels]
       # int, [1 - 100]
       weight: 100
 ```
@@ -115,7 +115,7 @@ spec:
   preferredPersistentTopology:
   - preference:
       nodeTopologyKeys:
-        kubernetes.io/hostname
+        - kubernetes.io/hostname
     weight: 100
 status:
   podStates:

@@ -220,7 +220,7 @@ zone-a（ack）固定100个Pod，zone-b（eci）做弹性区域
 ```yaml
 apiVersion: apps.kruise.io/v1alpha1
 kind: WorkloadSpread
-metadta:
+metadata:
   name: ws-demo
   namespace: deploy
 spec:
@@ -268,7 +268,7 @@ spec:
 ```yaml
 apiVersion: apps.kruise.io/v1alpha1
 kind: WorkloadSpread
-metadta:
+metadata:
   name: ws-demo
   namespace: deploy
 spec:

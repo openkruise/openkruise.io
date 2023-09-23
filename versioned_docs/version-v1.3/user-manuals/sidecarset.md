@@ -171,8 +171,9 @@ spec:
     - sourceContainerName: main
       envName: PROXY_IP
   volumes:
-  - Name: nginx.conf
-    hostPath: /data/nginx/conf
+  - name: nginx.conf
+    hostPath:
+      path: /data/nginx/conf
 ```
 - podInjectPolicy Define where Containers are injected into pod.spec.containers
     - BeforeAppContainer(default) Inject into the front of the original pod containers
@@ -202,8 +203,7 @@ This feature only works on the newly-created Pods, and has no impact on the side
 #### imagePullSecrets
 **FEATURE STATE:** Kruise v0.10.0
 
-Users can use private images in SidecarSet by configuring [spec.imagePullSecrets](https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/).
-SidecarSet will inject it in to Pods at injection stage.
+The SidecarSet can be configured with spec.imagePullSecrets to pull private sidecar images with [Secret](https://kubernetes.io/zh/docs/concepts/configuration/secret/) . When sidecar is injected, SidecarSet injects its spec.imagePullSecrets into Pods [spec.imagePullSecrets](https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/).
 ```yaml
 apiVersion: apps.kruise.io/v1alpha1
 kind: SidecarSet
@@ -223,7 +223,7 @@ SidecarSet will record historical revision of some fields such as `containers`, 
 
 Based on this feature, users can address the risk of SidecarSet publishing due to scaling and rolling workload.
 
-**Note: SidecarSet records ControllerRevision in the same namespace as Kruse Manager. You can execute `kubectl get controllerrevisions -n kruise-system -l kruise.io/sidecarset-name=<your-sidecarset-name>` to list the ControllerRevisions of your SidecarSet. Moreover, the ControllerRevision name of current SidecarSet revision is shown in `status.latestRevision` field, so you can record it very easily.**
+**Note: SidecarSet records ControllerRevision in the same namespace as Kruise Manager. You can execute `kubectl get controllerrevisions -n kruise-system -l kruise.io/sidecarset-name=<your-sidecarset-name>` to list the ControllerRevisions of your SidecarSet. Moreover, the ControllerRevision name of current SidecarSet revision is shown in `status.latestRevision` field, so you can record it very easily.**
 
 #### select revision via ControllerRevision name
 ```yaml
@@ -331,7 +331,7 @@ spec:
     type: RollingUpdate
     selector:
       matchLabels:
-        canary.release: true
+        canary.release: "true"
 ```
 
 ### sidecarset update order
@@ -406,7 +406,7 @@ When the sidecar container upgradeStrategy=HotUpgrade, the SidecarSet Webhook wi
 
 #### Hot Upgrade
 
-The SidecarSet Controller breaks down the hot upgrade pgrocess of the sidecar container into three steps:
+The SidecarSet Controller breaks down the hot upgrade process of the sidecar container into three steps:
 1. Upgrade: upgrade the empty container to the new version of the sidecar container, such as envoy-2.Image = envoy:1.17.0
 2. Migration: the process completes the state migration of stateful container, which needs to be provided by the sidecar image developer. PostStartHook completes the migration of the above process.
 (**Note: PostStartHook must block during the migration, and exit when migration complete.**)

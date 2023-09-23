@@ -219,8 +219,8 @@ By default, UnitedDeployment's Pods are evenly distributed across all subsets.
 There are two scenarios the controller does not follow this policy:
 
 The first one is to customize the distribution policy by indicating `subset.replicas`.
-A valid `subset.replicas` could be integer to represent a real replicas of pods or
-string in format of percentage like '40%' to represent a fixed proportion of pods.
+A valid `subset.replicas` could be integer to represent a **real replicas of pods** or
+**string in format of percentage** like '40%' to represent a fixed proportion of pods.
 Once a `subset.replicas` is given, the controller is going to reconcile to make sure
 each subset has the expected replicas.
 The subsets with empty `subset.replicas` will divide the remaining replicas evenly.

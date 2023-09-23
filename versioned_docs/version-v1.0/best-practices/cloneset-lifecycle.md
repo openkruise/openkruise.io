@@ -25,9 +25,9 @@ And we make the following reasonable assumptions about the needs of users:
   - Register the Pod IP with service discovery center when the pod is available；
 - When the Pod is upgraded ：
   - Before the upgrade, Unregister the Pod IP from the service discovery center；
-  - After the updrade, Register the Pod IP with service discovery center when the pod is available；
+  - After the upgrade, Register the Pod IP with service discovery center when the pod is available；
 - When the Pod is deleted：
-  - Before the deleteion, Unregister the Pod IP from the service discovery center； 
+  - Before the deletion, Unregister the Pod IP from the service discovery center； 
 
 Based on the above assumptions, we will describe in detail how to use CloneSet Lifecycle to write a simple operator to implement the user-defined pod life cycle management.
 
@@ -79,6 +79,7 @@ spec:
         example.com/unready-blocker-inplace: "true"
         ## corresponding to the spec.lifecycle.preDelete.labelsHandler.example.com/unready-blocker-inplace
         example.com/unready-blocker-delete: "true"
+    spec:
       containers:
         - name: main
           image: nginx:latest
@@ -119,7 +120,7 @@ $ tree
 ```
 
 #### Controller Logic
-Lifecycle Hook is implenmented in ` Reconcile(req ctrl.Request) (ctrl.Result, error)` function in `lifecyclehook_controller.go` file. 
+Lifecycle Hook is implemented in ` Reconcile(req ctrl.Request) (ctrl.Result, error)` function in `lifecyclehook_controller.go` file. 
 In our hypothetical scenarios, we implemented the pod life cycle management logic through the following codes:
 
 ```go

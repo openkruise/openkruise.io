@@ -18,7 +18,7 @@ Tekton is a Google open source Kubernetes native framework for creating continuo
 
 #### Install OpenKruise（Enable: TemplateNoDefaults）
 Openkruise installed by default will inject the default value of pod / PVC template, which will conflict with the sync judgment logic of Argo CD.
-Therefore, when installing openkruse, you need to open gates **TemplateNoDefaults**, as follows:
+Therefore, when installing openkruise, you need to open gates **TemplateNoDefaults**, as follows:
 ```
 # Firstly add openkruise charts repository if you haven't do this.
 $ helm repo add openkruise https://openkruise.github.io/charts/

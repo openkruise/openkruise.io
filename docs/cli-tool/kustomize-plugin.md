@@ -10,7 +10,7 @@ title: Kustomize ResourceDistribution Generator
 
 When using Kustomize to manage applications, the generator provided with Kustomize can directly read files as data content to create Configmap or Secret, avoiding various format errors that are easy to occur during manual replication. The ResourceDistribution Generator is a third-party plug-in for Kustomize that can be used to create a ResourceDistribution by reading files as data content.
 
-### Download ResourceDistribution generaotor
+### Download ResourceDistribution generator
 
 [This page](https://github.com/openkruise/kruise-tools/releases) provides the path to download binary files for common versions. Currently `Linux`, `Darwin` (OS X), `Windows` provide `X86_64` and `ARM64 `. If you use some other system or architecture, you must download the [source code](https://github.com/openkruise/kruise-tools/blob/master/cmd/resourcedistributiongenerator) and perform `Go Build` to build the binary
 

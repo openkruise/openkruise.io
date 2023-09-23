@@ -5,7 +5,7 @@ title: 安装
 尽管目前 OpenKruise 能够兼容 Kubernetes >= 1.13 版本的集群，但我们强烈建议在 **Kubernetes >= 1.16** 以上版本的集群中使用。
 
 注意:
-1. 在 1.13 和 1.14 版本中必须先在 kube-apiserver 中打开 `CustomResourceWebhookConversion` feature-gate。
+1. **在 Kubernetes 1.13 和 1.14 版本中**必须先在 kube-apiserver 中打开 `CustomResourceWebhookConversion` feature-gate。
 2. 如果要安装到 **Kubernetes >= 1.22** 版本的集群中，你需要使用[最新版本](/docs/next/installation)。
 
 ## 通过 helm 安装
@@ -23,7 +23,7 @@ $ helm repo update
 # Note that if the Kubernetes version < 1.15, you may need to add --disable-openapi-validation
 $ helm install kruise openkruise/kruise --version 0.10.2
 ```
-
+**注意:** [Changelog](https://github.com/openkruise/kruise/blob/master/CHANGELOG.md)。
 ## 通过 helm 升级
 
 如果你在使用旧版本的 Kruise，建议为了安全性和更丰富的功能，升级到最新版本：
@@ -52,6 +52,7 @@ $ helm upgrade kruise openkruise/kruise --version 0.10.2
 ```bash
 $ helm install/upgrade kruise /PATH/TO/CHART
 ```
+Charts releases: https://github.com/openkruise/charts/releases
 
 ## 可选项
 

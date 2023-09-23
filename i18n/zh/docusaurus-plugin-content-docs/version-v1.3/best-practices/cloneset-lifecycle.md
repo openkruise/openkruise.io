@@ -2,7 +2,7 @@
 title: CloneSet Lifecycle：在 Pod 生命周期管理中插入定制化逻辑
 ---
 
-因为各种各样的历史原因和客观因素，有些用户可能无法将自己公司的整套体系架构 Kubernetes 化，比如有些用户暂时无法使用 Kubernetes 本身提供的服务发现机制(Service)，而是使用了独立于 Kubernetes 之外的另外一套服务注册和发现体系。在这种架构下，如果用户对服务进行 Kubernetes 化改造，可能会遇到诸多问题。
+因为各种各样的历史原因和客观因素，有些用户可能无法将自己公司的整套体系架构 Kubernetes 化，比如有些用户暂时无法使用 Kubernetes 本身提供的服务发现机制   [Kubernetes Service](https://kubernetes.io/docs/concepts/services-networking/service/)，而是使用了独立于 Kubernetes 之外的另外一套服务注册和发现体系。在这种架构下，如果用户对服务进行 Kubernetes 化改造，可能会遇到诸多问题。
 例如，每当 Kubernetes 成功创建出一个 Pod，都需要自行将该 Pod 注册到服务发现中心，以便能够对内对外提供服务；相应的，想要下线一个 Pod，也通常先要将其在服务发现中心删除，才能将 Pod 优雅下线，否则就可能导致流量损失。但是在原生的 Kubernetes 体系中， Pod 的生命周期由 Workload 管理（例如 Deployment），
 当这些 Workload 的 Replicas 字段发生变化后，相应的 Controller 会立即添加或删除掉 Pod，用户很难定制化地去管理 Pod 的生命周期。
 
@@ -84,6 +84,7 @@ spec:
         example.com/unready-blocker-inplace: "true"
         ## corresponding to the spec.lifecycle.preDelete.labelsHandler.example.com/unready-blocker-inplace
         example.com/unready-blocker-delete: "true"
+    spec:
       containers:
         - name: main
           image: nginx:latest

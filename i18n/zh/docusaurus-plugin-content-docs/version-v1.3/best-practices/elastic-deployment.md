@@ -22,7 +22,7 @@ title: 基于HPA的极致弹性调度最佳实践
 
 ### 方案目标
 该方案将基于一段时间窗口内 Nginx 所处理连接数作为指标：
--  当流量高峰到来，该指标超过了阈值（这里的**指标** 和 **阈值** 可以根据实际需要自行进行定义），则认为需要进行自动扩容；
+-  当流量高峰到来，该指标超过了指标（这里的**指标** 可以根据实际需要自行进行定义），则认为需要进行自动扩容；
    -  当**扩缩**时，优先将 Pod 扩容至长期持有的固定资源池，当固定资源池的资源不足或 Pod 数量达到设定阈值时，则自动弹性扩容到弹性资源池；
 -  当流量高峰过去，关注的指标低于了阈值，则认为需要进行自动缩容；
    -  当**缩容**时，优先缩容弹性资源池中的副本；
@@ -35,7 +35,7 @@ NAME                         STATUS   ROLES    AGE    VERSION
 us-west-1.192.168.0.47       Ready    <none>   153d   v1.20.11-aliyun.1
 us-west-1.192.168.0.48       Ready    <none>   153d   v1.20.11-aliyun.1
 us-west-1.192.168.0.49       Ready    <none>   153d   v1.20.11-aliyun.1
-virtual-kubelet-us-west-1a   Ready    agent    19d    v1.20.11-aliyun.1 
+virtual-kubelet-us-west-1a   Ready    agent    19d    v1.20.11-aliyun.1
 ```
 
 ### 安装 OpenKruise
@@ -197,7 +197,7 @@ spec:
     matchLabels:
       app: ingress-nginx-exporter
   endpoints:
-  - interval: 10s 
+  - interval: 10s
     port: exporter
 ```
 
@@ -417,7 +417,7 @@ spec:
   - type: prometheus
     metadata:
       serverAddress: http://kube-prometheus-stack-1640-prometheus.prometheus:9090/
-      metricName: nginx_http_requests_total 
+      metricName: nginx_http_requests_total
       query: sum(rate(nginx_http_requests_total{job="ingress-nginx-exporter"}[12s]))
       threshold: '100'
 ```

@@ -106,7 +106,7 @@ spec:
 ### Partition for rolling update
 
 This strategy defines rules for calculating the priority of updating pods.
-Partition is the number of DaemonSet pods that should be remained to be old version.
+**Partition is the number of DaemonSet pods that should be remained to be old version.**
 
 ```yaml
 apiVersion: apps.kruise.io/v1alpha1

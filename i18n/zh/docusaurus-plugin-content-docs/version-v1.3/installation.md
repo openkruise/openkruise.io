@@ -18,7 +18,7 @@ $ helm repo update
 # Install the latest version.
 $ helm install kruise openkruise/kruise --version 1.3.0
 ```
-
+**注意:** [Changelog](https://github.com/openkruise/kruise/blob/master/CHANGELOG.md)。
 ## 通过 helm 升级
 
 ```bash
@@ -36,7 +36,7 @@ $ helm upgrade kruise openkruise/kruise --version 1.3.0 [--force]
 
 1. 在升级之前，**必须** 先阅读 [Change Log](https://github.com/openkruise/kruise/blob/master/CHANGELOG.md) ，确保你已经了解新版本的不兼容变化。
 2. 如果你要重置之前旧版本上用的参数或者配置一些新参数，建议在 `helm upgrade` 命令里加上 `--reset-values`。
-3. 如果你在将 Kruise 从 0.x 升级到 1.x 版本，你需要为 upgrade 命令添加 `--force` 参数，其他情况下这个参数是可选的。
+3. 如果你在**将 Kruise 从 0.x 升级到 1.x 版本**，你需要为 upgrade 命令添加 `--force` 参数，其他情况下这个参数是可选的。
 
 ## 可选的：手工下载 charts 包
 

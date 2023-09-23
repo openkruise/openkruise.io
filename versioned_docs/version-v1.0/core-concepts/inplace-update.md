@@ -24,7 +24,7 @@ Once we are going to update image in a existing Pod, look at the comparation bet
 In **ReCreate** way we have to delete the old Pod and create a new Pod:
 
 - Pod name and uid all changed, because they are totally different Pod objects (such as Deployment update)
-- Or Pod name may not change but uid changed, because they are still different Pod objects, althrough re-use the same name (such as StatefulSet update)
+- Or Pod name may not change but uid changed, because they are still different Pod objects, although re-use the same name (such as StatefulSet update)
 - Node name of the Pod changed, because the new Pod is almost impossible to be scheduled to the previous node.
 - Pod IP changed, because the new Pod is almost impossible to be allocated the previous IP.
 
@@ -38,7 +38,7 @@ But for **InPlace** way we can re-use the Pod object but only modify the fields 
 
 The update type in Kruise workloads is named `InPlaceIfPossible`, which tells Kruise to update Pods in-place as possible, and it should go back to ReCreate Update if impossible.
 
-What changes does it consider to be possilble to in-place update?
+What changes does it consider to be possible to in-place update?
 
 1. Update `spec.template.metadata.*` in workloads, such as labels and annotations, Kruise will only update the metadata to existing Pods without recreate them.
 2. Update `spec.template.spec.containers[x].image` in workloads, Kruise will in-place update the container image in Pods without recreate them.
