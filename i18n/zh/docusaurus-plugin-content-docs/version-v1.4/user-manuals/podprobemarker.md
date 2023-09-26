@@ -36,9 +36,9 @@ spec:
   - name: Idle
     containerName: game-server
     probe:
-      exec: 
+      exec:
         command:
-        - /home/game/idle.sh      
+        - /home/game/idle.sh
       initialDelaySeconds: 10
       timeoutSeconds: 3
       periodSeconds: 10
@@ -58,7 +58,7 @@ spec:
     podConditionType: game.io/idle
 ```
 
-- **spec.selector**: 根据Label选择匹配的Pods，MatchLabels和MatchExpressions都支持。详情请参考：https://kubernetes.io/docs/concepts/overview/working-with-objects/labels。
+- **spec.selector**: 根据Label选择匹配的Pods，MatchLabels和MatchExpressions都支持。详情请参考：https://kubernetes.io/docs/concepts/overview/working-with-objects/labels 。
 定义后，该selector不允许修改。
 - spec.probes
   - **name**: probe名字，需要在Pod内是唯一的，哪怕不同的容器之间也需要唯一
