@@ -9,7 +9,7 @@ Kruise Rollout utilizes a Lua-script-based customization approach for **API Gate
 
 ## How it Works
 
-![img](../../static/img/rollouts/custom-workflow.png)
+<img src={require('../../static/img/rollouts/custom-workflow.png').default}>
 
 The entire process of can be described as follows:
 
@@ -211,9 +211,9 @@ expected:
 
 Run `go test -v ./pkg/trafficrouting/network/customNetworkProvider/` to test if the Lua scripts are working as expected. Kruise Rollout will walk the `./lua_configuration` directory to retrieve all Lua scripts and test cases. Kruise Rollout will then perform tests based on the defined release strategies in the Rollout to check if the original configuration of the resource, after being processed by the Lua script, matches the expected configuration.
 
-![img](../../static/img/rollouts/test-lua.gif)
+<img src={require('../../static/img/rollouts/test-lua.gif').default}>
 
-The [PR#163 ](https://github.com/openkruise/rollouts/blob/9d40b60a16fcf896ec371d6afb8ae38d05d824e1/lua_configuration/networking.istio.io/VirtualService/testdata/test_case.yaml)is an example for Istio VirtualService.
+The [PR#178](https://github.com/openkruise/rollouts/pull/178)is an example for Istio VirtualService.
 
 #### Recommanded Test Case Designation
 
@@ -280,7 +280,7 @@ data:
     canary.labels = {}
     canary.name = "canary"
     local podLabelKey = "istio.service.tag"
-		canary.labels[podLabelKey] = "gray
+    canary.labels[podLabelKey] = "gray
     table.insert(spec.subsets, canary)
     return obj.data
 ```
@@ -401,9 +401,7 @@ return ret
 
 If you need to debug Lua scripts, you can achieve this by installing the [Lua Debug](https://marketplace.visualstudio.com/items?itemName=actboy168.lua-debug) extension in VSCode. Once installed, you can execute Lua scripts in a step-by-step debugging mode and view variable values by selecting **Lua Debug -> Debug Current File** from the Run and Debug menu.
 
-<div align="center">
-  <img src="../../static/img/rollouts/vscode-conf.png" width=50%>
-</div>
+<img src={require('../../static/img/rollouts/vscode-conf.png').default} width="50%">
 
 Afterwards, define the global variable `obj` in the Lua script to enable step-by-step debugging and test if the Lua script is working as expected.
 
@@ -436,4 +434,29 @@ spec = obj.data.spec
 --- define your lua script below
 ```
 
-![img](../../static/img/rollouts/debug-lua.gif)
+<img src={require('../../static/img/rollouts/debug-lua.gif').default}>
+### Add RBAC Permissions for API Gateway Resources
+In order to enable Kruise Rollout to access and update the API gateway resources, you need to add the RBAC permissions of the API gateway resources for Kruise Rollout.
+
+You can achieve this by running `kubectl edit role kruise-rollout-leader-election-role -n kruise-rollout` and adding `get, list, patch, update, watch` permissions for API gateway resource in the RBAC role. An example for Istio VirtualService and DestinationRule is shown as below:
+
+```yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: kruise-rollout-leader-election-role
+  namespace: kruise-rollout
+rules:
+  - apiGroups:
+    - networking.istio.io
+    resources:
+    - destinationrules
+    - virtualservices
+    verbs:
+    - get
+    - list
+    - patch
+    - update
+    - watch
+  ...
+```
