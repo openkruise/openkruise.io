@@ -27,7 +27,7 @@ openapi:
 
 ```yaml
 openapi:
-  path: https://raw.githubusercontent.com/openkruise/kruise-api/raw/<tag>/schema/argo_all_k8s_kustomize_schema.json
+  path: https://raw.githubusercontent.com/openkruise/kruise-api/raw/<tag>/schema/openkruise_all_k8s_kustomize_schema.json
 ```
 
 或者你可以下载[kruise-api](https://github.com/openkruise/kruise-api)到本地，并在配置块中指定本地文件路径即可：
@@ -75,7 +75,7 @@ spec:
       emptyDir: {}
 ```
 
-当前存在两个容器，分别为 `sidecar1` 和 `sidecar2`，它们分别挂载了两个名为`log-volume1`和`log-volume2`的卷。 现在希望采用合并策略添加一个新的容器`sidecar3`，并挂载一个新增的名为 `log-volume3` 的卷，然后对一些其他字段做简单修改。那么可以编写kustomization.yaml文件如下：
+当前存在两个容器，分别为 `sidecar1` 和 `sidecar2`，它们分别挂载了两个名为`log-volume1`和`log-volume2`的卷。 现在希望添加一个新的容器`sidecar3`，并挂载一个新增的名为 `log-volume3` 的卷，同时将 `sidecar1` 以及对应 `volume` 删除，然后对一些其他字段做简单修改。那么可以编写如下的采用合并策略的kustomization.yaml文件：
 
 ```yaml
 apiVersion: kustomize.config.k8s.io/v1beta1
@@ -96,11 +96,11 @@ patchesStrategicMerge:
   spec:
     containers:
       - name: sidecar1
-        image: centos:6.8
-        command: ["sleep", "101d"]
+        $patch: delete
+      - name: sidecar2
         volumeMounts:
-          - name: log-volume2
-            mountPath: /var/log2
+          - name: log-volume3
+            mountPath: /var/log3
       - name: sidecar3
         image: centos:6.9
         command: ["sleep", "102d"]
@@ -109,8 +109,7 @@ patchesStrategicMerge:
             mountPath: /var/log
     volumes:
       - name: log-volume1
-        hostPath:
-          path: /var/log
+        $patch: delete
       - name: log-volume3
         emptyDir: {}
 ```
@@ -127,14 +126,14 @@ spec:
   containers:
   - command:
     - sleep
-    - 101d
+    - 999d
     image: centos:6.8
-    name: sidecar1
+    name: sidecar2
     volumeMounts:
-    - mountPath: /var/log2
-      name: log-volume2
+    - mountPath: /var/log3
+      name: log-volume3
     - mountPath: /var/log
-      name: log-volume1
+      name: log-volume2
   - command:
     - sleep
     - 102d
@@ -143,14 +142,6 @@ spec:
     volumeMounts:
     - mountPath: /var/log
       name: log-volume3
-  - command:
-    - sleep
-    - 999d
-    image: centos:6.8
-    name: sidecar2
-    volumeMounts:
-    - mountPath: /var/log
-      name: log-volume2
   selector:
     matchLabels:
       app: nginx
@@ -158,10 +149,6 @@ spec:
     maxUnavailable: 1
     type: RollingUpdate
   volumes:
-  - emptyDir: {}
-    hostPath:
-      path: /var/log
-    name: log-volume1
   - emptyDir: {}
     name: log-volume3
   - emptyDir: {}

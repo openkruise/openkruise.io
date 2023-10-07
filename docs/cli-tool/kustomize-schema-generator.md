@@ -7,7 +7,7 @@ title: Kustomize Schema Generator
 
 ## Schema Generator
 
-When using `kustomize` to manage applic ations, in order to use `strategic merge patches (SMPs)` to process environment variables or any array type fields in resource definitions when using openkruise resources, the `OpenAPI schema` of openkruise CRD needs to contain the specified `patch strategy`. `Schema Generator` supports the function of quickly generating `kustomize schema` files based on the resource definition of openkruise. The specific way of generating `kustomize schema` files can be viewed in [README.md](https://github.com/openkruise/kruise-api/blob/master/cmd/gen-schema/README.md).
+When using `kustomize` to manage applications, in order to use `strategic merge patches (SMPs)` to process environment variables or any array type fields in resource definitions when using openkruise resources, the `OpenAPI schema` of openkruise CRD needs to contain the specified `patch strategy`. `Schema Generator` supports the function of quickly generating `kustomize schema` files based on the resource definition of openkruise. The specific way of generating `kustomize schema` files can be viewed in [README.md](https://github.com/openkruise/kruise-api/blob/master/cmd/gen-schema/README.md).
 
 ## Schema Usage
 
@@ -26,7 +26,7 @@ Use the specified version
 
 ```yaml
 openapi:
-  path: https://raw.githubusercontent.com/openkruise/kruise-api/raw/<tag>/schema/argo_all_k8s_kustomize_schema.json
+  path: https://raw.githubusercontent.com/openkruise/kruise-api/raw/<tag>/schema/openkruise_all_k8s_kustomize_schema.json
 ```
 
 Or you can download [kruise-api](https://github.com/openkruise/kruise-api) to the local, and specify the local file path in the configuration block:
@@ -74,7 +74,7 @@ spec:
       emptyDir: {}
 ```
 
-This `sidecarset` currently has two containers, `sidecar1` and `sidecar2`, which mount two volumes named `log-volume1` and `log-volume2` respectively. Now If you want to add a new container `sidecar3` using the merge strategy, and mount a new volume named `log-volume3`, and then make some simple modifications to other fields. Then you can write the `kustomization.yaml` file as follows:
+This `sidecarset` currently has two containers, `sidecar1` and `sidecar2`, which mount two volumes named `log-volume1` and `log-volume2` respectively. Now If you want to add a new container `sidecar3`, mount a new volume named `log-volume3`, delete the `sidecar1` container with corresponding volume, and then make some simple modifications to other fields. Then you can write the `kustomization.yaml` file with the merge strategy as follows:
 
 ```yaml
 apiVersion: kustomize.config.k8s.io/v1beta1
@@ -95,11 +95,11 @@ patchesStrategicMerge:
   spec:
     containers:
       - name: sidecar1
-        image: centos:6.8
-        command: ["sleep", "101d"]
+        $patch: delete
+      - name: sidecar2
         volumeMounts:
-          - name: log-volume2
-            mountPath: /var/log2
+          - name: log-volume3
+            mountPath: /var/log3
       - name: sidecar3
         image: centos:6.9
         command: ["sleep", "102d"]
@@ -108,8 +108,7 @@ patchesStrategicMerge:
             mountPath: /var/log
     volumes:
       - name: log-volume1
-        hostPath:
-          path: /var/log
+        $patch: delete
       - name: log-volume3
         emptyDir: {}
 ```
@@ -125,14 +124,14 @@ spec:
   containers:
   - command:
     - sleep
-    - 101d
+    - 999d
     image: centos:6.8
-    name: sidecar1
+    name: sidecar2
     volumeMounts:
-    - mountPath: /var/log2
-      name: log-volume2
+    - mountPath: /var/log3
+      name: log-volume3
     - mountPath: /var/log
-      name: log-volume1
+      name: log-volume2
   - command:
     - sleep
     - 102d
@@ -141,14 +140,6 @@ spec:
     volumeMounts:
     - mountPath: /var/log
       name: log-volume3
-  - command:
-    - sleep
-    - 999d
-    image: centos:6.8
-    name: sidecar2
-    volumeMounts:
-    - mountPath: /var/log
-      name: log-volume2
   selector:
     matchLabels:
       app: nginx
@@ -156,10 +147,6 @@ spec:
     maxUnavailable: 1
     type: RollingUpdate
   volumes:
-  - emptyDir: {}
-    hostPath:
-      path: /var/log
-    name: log-volume1
   - emptyDir: {}
     name: log-volume3
   - emptyDir: {}
