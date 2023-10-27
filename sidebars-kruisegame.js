@@ -40,6 +40,14 @@ module.exports = {
         },
         {
             type: 'category',
+            label: 'Best Practices',
+            collapsed: false,
+            items: [
+                'best-practices/session-based-game',
+            ],
+        },
+        {
+            type: 'category',
             label: 'Developer Manuals',
             collapsed: false,
             items: [
