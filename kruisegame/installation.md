@@ -16,19 +16,19 @@ $ helm repo add openkruise https://openkruise.github.io/charts/
 # [Optional]
 $ helm repo update
 # Install the latest version.
-$ helm install kruise openkruise/kruise --version 1.4.0
+$ helm install kruise openkruise/kruise --version 1.5.0
 ```
 
 ### Install Kruise-Game
 
 ```shell
-$ helm install kruise-game openkruise/kruise-game --version 0.5.0
+$ helm install kruise-game openkruise/kruise-game --version 0.6.0
 ```
 
 ### Upgrade Kruise-Game
 
 ```shell
-$ helm upgrade kruise-game openkruise/kruise-game --version 0.5.0 [--force]
+$ helm upgrade kruise-game openkruise/kruise-game --version 0.6.0 [--force]
 ```
 
 ### Options
@@ -37,30 +37,32 @@ $ helm upgrade kruise-game openkruise/kruise-game --version 0.5.0 [--force]
 
 The following table lists the configurable parameters of the kruise-game chart and their default values.
 
-| Parameter                        | Description                                                                   | Default                          |
-|----------------------------------|-------------------------------------------------------------------------------|----------------------------------|
-| `installation.namespace`         | Namespace for kruise-game operation installation                              | `kruise-game-system`             |
-| `installation.createNamespace`   | Whether to create the installation.namespace                                  | `true`                           |
-| `kruiseGame.fullname`            | Nick name for kruise-game deployment and other configurations                 | `kruise-game-controller-manager` |
-| `kruiseGame.healthBindPort`      | Port for checking health of kruise-game container                             | `8082`                           |
-| `kruiseGame.webhook.port`        | Port of webhook served by kruise-game container                               | `443`                            |
-| `kruiseGame.webhook.targetPort`  | ObjectSelector for workloads in MutatingWebhookConfigurations                 | `9876`                           |
-| `replicaCount`                   | Replicas of kruise-game deployment                                            | `1`                              |
-| `image.repository`               | Repository for kruise-game image                                              | `openkruise/kruise-game-manager` |
-| `image.tag`                      | Tag for kruise-game image                                                     | `v0.5.0`                         |
-| `image.pullPolicy`               | ImagePullPolicy for kruise-game container                                     | `Always`                         |
-| `serviceAccount.annotations`     | The annotations for serviceAccount of kruise-game                             | ` `                              |
-| `resources.limits.cpu`           | CPU resource limit of kruise-game container                                   | `500m`                           |
-| `resources.limits.memory`        | Memory resource limit of kruise-game container                                | `1Gi`                            |
-| `resources.requests.cpu`         | CPU resource request of kruise-game container                                 | `10m`                            |
-| `resources.requests.memory`      | Memory resource request of kruise-game container                              | `64Mi`                           |
-| `prometheus.enabled`             | Whether to bind metric endpoint                                               | `true`                           |
-| `prometheus.monitorService.port` | Port of the monitorservice bind to                                            | `8080`                           |
-| `scale.service.port`             | Port of the external scaler server binds to                                   | `6000`                           |
-| `scale.service.targetPort`       | TargetPort of the external scaler server binds to                             | `6000`                           |
-| `network.totalWaitTime`          | Maximum time to wait for network ready, the unit is seconds                   | `60`                             |
-| `network.probeIntervalTime`      | Time interval for detecting network status, the unit is seconds               | `5`                              |
-| `cloudProvider.installCRD`       | Whether to install CloudProvider CRD                                          | `true`                           |
+| Parameter                        | Description                                                                                      | Default                          |
+|----------------------------------|--------------------------------------------------------------------------------------------------|----------------------------------|
+| `installation.namespace`         | Namespace for kruise-game operation installation                                                 | `kruise-game-system`             |
+| `installation.createNamespace`   | Whether to create the installation.namespace                                                     | `true`                           |
+| `kruiseGame.fullname`            | Nick name for kruise-game deployment and other configurations                                    | `kruise-game-controller-manager` |
+| `kruiseGame.healthBindPort`      | Port for checking health of kruise-game container                                                | `8082`                           |
+| `kruiseGame.webhook.port`        | Port of webhook served by kruise-game container                                                  | `443`                            |
+| `kruiseGame.webhook.targetPort`  | ObjectSelector for workloads in MutatingWebhookConfigurations                                    | `9876`                           |
+| `kruiseGame.apiServerQps`        | Maximum sustained queries per second to send to the API server of kruise-game-controller-manager | `5`                              |
+| `kruiseGame.apiServerQpsBurst`   | Maximum burst queries per second to send to the API server of kruise-game-controller-manager     | `10`                             |
+| `replicaCount`                   | Replicas of kruise-game deployment                                                               | `1`                              |
+| `image.repository`               | Repository for kruise-game image                                                                 | `openkruise/kruise-game-manager` |
+| `image.tag`                      | Tag for kruise-game image                                                                        | `v0.6.0`                         |
+| `image.pullPolicy`               | ImagePullPolicy for kruise-game container                                                        | `Always`                         |
+| `serviceAccount.annotations`     | The annotations for serviceAccount of kruise-game                                                | ` `                              |
+| `resources.limits.cpu`           | CPU resource limit of kruise-game container                                                      | `500m`                           |
+| `resources.limits.memory`        | Memory resource limit of kruise-game container                                                   | `1Gi`                            |
+| `resources.requests.cpu`         | CPU resource request of kruise-game container                                                    | `10m`                            |
+| `resources.requests.memory`      | Memory resource request of kruise-game container                                                 | `64Mi`                           |
+| `prometheus.enabled`             | Whether to bind metric endpoint                                                                  | `true`                           |
+| `prometheus.monitorService.port` | Port of the monitorservice bind to                                                               | `8080`                           |
+| `scale.service.port`             | Port of the external scaler server binds to                                                      | `6000`                           |
+| `scale.service.targetPort`       | TargetPort of the external scaler server binds to                                                | `6000`                           |
+| `network.totalWaitTime`          | Maximum time to wait for network ready, the unit is seconds                                      | `60`                             |
+| `network.probeIntervalTime`      | Time interval for detecting network status, the unit is seconds                                  | `5`                              |
+| `cloudProvider.installCRD`       | Whether to install CloudProvider CRD                                                             | `true`                           |
 
 Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`. For example,
 
