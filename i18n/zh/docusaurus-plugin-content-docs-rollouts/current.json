@@ -1,0 +1,15 @@
+{
+  "version.label": {
+    "message": "v0.4.1",
+    "description": "The label for version current"
+  },
+  "sidebar.rollouts.category.Getting Started": {
+    "message": "快速开始"
+  },
+  "sidebar.rollouts.category.User Manuals": {
+    "message": "用户手册"
+  },
+  "sidebar.rollouts.category.Release Strategies": {
+    "message": "发布策略"
+  }
+}
