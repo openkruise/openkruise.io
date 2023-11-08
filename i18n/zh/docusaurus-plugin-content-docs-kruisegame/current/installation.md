@@ -22,13 +22,13 @@ $ helm install kruise openkruise/kruise --version 1.5.0
 ### 安装Kruise-Game
 
 ```shell
-$ helm install kruise-game openkruise/kruise-game --version 0.6.0
+$ helm install kruise-game openkruise/kruise-game --version 0.6.1
 ```
 
 ### 升级 Kruise-Game
 
 ```shell
-$ helm upgrade kruise-game openkruise/kruise-game --version 0.6.0 [--force]
+$ helm upgrade kruise-game openkruise/kruise-game --version 0.6.1 [--force]
 ```
 
 ### 可选项
