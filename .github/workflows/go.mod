@@ -3,7 +3,7 @@ module github.com/openkruise/openkruise.io
 go 1.18
 
 require (
-	github.com/openkruise/kruise v1.5.0
+	github.com/openkruise/kruise v1.5.1
 	github.com/pkg/errors v0.9.1
 	k8s.io/apimachinery v0.28.2
 	k8s.io/client-go v0.28.2

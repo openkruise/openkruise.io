@@ -78,6 +78,47 @@ spec:
 ...
 ```
 
+## Subset容量精细规划 (MaxReplicas)
+
+**FEATURE STATE:** Kruise v1.5.1
+
+您可以为每个subset规划副本数量的上下限，从而帮助你更加精细化地管理您的资源使用。
+例如，一个应用在常规节点池上最多运行4个副本，如果副本数量超过4个，超出的Pod将自动调度到弹性节点。
+类似场景下，您可以参考以下配置方式：
+
+```yaml
+apiVersion: apps.kruise.io/v1alpha1
+kind: UnitedDeployment
+metadata:
+  name: sample-ud
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      app: sample
+  template:
+    # statefulSetTemplate or advancedStatefulSetTemplate or cloneSetTemplate or deploymentTemplate
+    cloneSetTemplate:
+      ......
+  topology:
+    subsets:
+    - name: normal-nodes
+      maxReplicas: 4
+      ......
+    - name: elastic-nodes
+      maxReplicas: null
+      ......
+```
+
+UnitedDeployment 控制器遵循以下规则来对各个 Subset 做扩缩容，当然前提是您已设置了 `MaxReplicas`：
+1. 在扩容时，UnitedDeployment 控制器会按照 Subset 列表的顺序进行扩容；
+2. 在缩容时，UnitedDeployment 控制器会按照 Subset 列表相反顺序进行缩容。
+
+**其他重要注意事项：**
+1. 当前 Subset 的 `MaxReplicas` 和 `Replicas` 的配置目前是互斥的，您只能配置其中的一种。
+2. `MaxReplicas`为空表示该 Subset 没有副本数量限制。
+3. 为了避免所有 Subset 的 `MaxReplicas` 要求都得到满足后，导致无法扩容任何 Subset，您需要保证**至少有一个 Subset** 的 `MaxReplicas` 值为空。
+
 ## 支持 Customize 不同 subset 的 Pod Template
 **FEATURE STATE:** Kruise v1.5.0
 

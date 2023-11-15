@@ -83,6 +83,46 @@ spec:
 ...
 ```
 
+## Capacity Planning For Subsets (MaxReplicas)
+
+**FEATURE STATE:** Kruise v1.5.1
+
+UnitedDeployment offer the option to define the `MaxReplicas` for each subset, allowing you to effectively manage your resource allocation.
+For example, assuming there is an application that typically runs with a maximum of 4 replicas on regular nodes. However, if the number of replicas exceeds 4, the exceeded Pods will automatically scale them to elastic nodes.
+
+```yaml
+apiVersion: apps.kruise.io/v1alpha1
+kind: UnitedDeployment
+metadata:
+  name: sample-ud
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      app: sample
+  template:
+    # statefulSetTemplate or advancedStatefulSetTemplate or cloneSetTemplate or deploymentTemplate
+    cloneSetTemplate:
+      ......
+  topology:
+    subsets:
+    - name: normal-nodes
+      maxReplicas: 4
+      ......
+    - name: elastic-nodes
+      maxReplicas: null
+      ......
+```
+
+The UnitedDeployment controller follows the following rules for scaling each subset if you set `MaxReplicas`:
+1. When scaling up, the UnitedDeployment controller considers the order specified in the subsets list;
+2. When scaling down, it obeys the reverse order of scaling up.
+
+Please **Note** the following:
+1. You can **NOT** set both `MaxReplicas` and `Replicas` for any subset simultaneously.
+2. If `MaxReplicas` is left empty (null), there are no limitations imposed on the number of replicas for that particular subset.
+3. To prevent situations where all `MaxReplicas` requirements are met and no subsets can be scaled up, it is crucial to have **at least one** subset with an empty(null) `MaxReplicas` value.
+
 ## Customize pod configuration of subset
 **FEATURE STATE:** Kruise v1.5.0
 
