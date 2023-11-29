@@ -55,5 +55,15 @@ module.exports = {
                 'developer-manuals/faq'
             ],
         },
+        {
+            type: 'category',
+            label: 'Blog & Video',
+            collapsed: false,
+            items: [
+                'blog-video/kubecon-shangyou-20230926',
+                'blog-video/meetup-guangzhou-20231125',
+                'blog-video/guanying-20231129'
+            ],
+        }
   ],
 };
