@@ -1,16 +1,54 @@
 # A/B Testing
 
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 ## A/B Testing Process
 A process of A/B Tesing combing with **canary release**:
 ![ab](../../static/img/rollouts/ab-testing.jpg)
 
 
 ## Configuration Example
-**Note: Currently, A/B Testing strategy can work on CloneSet, StatefulSet, Advanced StatefulSet, and Deployment.**
+
+**Note: v1beta1 available from Kruise Rollout v0.5.0.**
 
 In fact, A/B Testing need to combine with canary or multi-batch release strategy, as shown in picture above.
 
 Next we will give an example about **A/B Testing with multi-batch release strategy**:
+
+<Tabs>
+  <TabItem value="v1beta1" label="v1beta1" default>
+
+```YAML
+apiVersion: rollouts.kruise.io/v1beta1
+kind: Rollout
+metadata:
+  name: rollouts-demo
+spec:
+  workloadRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: workload-demo
+strategy:
+  canary:
+    steps:
+    - replicas: 1
+      matches:
+      - headers:
+        - name: user-agent
+          type: Exact
+          value: pc
+    - replicas: 50%
+    - replicas: 100%
+    trafficRoutings:
+    - service: service-demo
+      ingress:
+        classType: nginx
+        name: ingress-demo
+```
+
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
 
 ```YAML
 apiVersion: rollouts.kruise.io/v1alpha1
@@ -36,12 +74,17 @@ spec:
             value: pc
       - replicas: 50%
       - replicas: 100%
-    trafficRoutings:
-    - service: service-demo
-      ingress:
-        classType: nginx
-        name: ingress-demo
+      trafficRoutings:
+      - service: service-demo
+        ingress:
+          classType: nginx
+          name: ingress-demo
 ```
+
+  </TabItem>
+</Tabs>
+
+**Note: Currently, A/B Testing strategy can work on CloneSet, StatefulSet, Advanced StatefulSet, and Deployment.**
 
 ### Behavior Explanation
 

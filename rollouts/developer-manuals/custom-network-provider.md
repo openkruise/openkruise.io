@@ -1,5 +1,7 @@
 # Extensible Traffic Routing Based on Lua Script
 
+**FEATURE STATE:** Kruise Rollout v0.5.0
+
 Kruise Rollout utilizes a Lua-script-based customization approach for **API Gateway resources (Istio VirtualService, Apisix ApisixRoute, Kuma TrafficRoute and etc.)**. Kruise Rollout involves invoking Lua scripts to retrieve and update the desired configurations of resources based on **release strategies and the original configurations of API Gateway resources (including spec, labels, and annotations)**. It enables users to easily adapt and integrate various types of API Gateway resources without modifying existing code and configurations.
 
 **By using Kruise Rollout, users can:**
@@ -23,7 +25,7 @@ The entire process of can be described as follows:
 Custom traffic routing can be configured in Rollout as below:
 
 ```yaml
-apiVersion: rollouts.kruise.io/v1alpha1
+apiVersion: rollouts.kruise.io/v1beta1
 kind: Rollout
 ...
 spec:
@@ -51,7 +53,7 @@ There are two ways to define and use your custom traffic routing Lua script to h
 
 ### Way1: Contribute a Custom Traffic Routing
 
-You can contribute Lua scripts for custom resources and the scripts can be bundled into Kruise Rollout after passing the tests. These Lua scripts can then be directly invoked within the Rollout. 
+You can contribute Lua scripts for custom resources and the scripts can be bundled into Kruise Rollout after passing the tests. These Lua scripts can then be directly invoked within the Rollout.
 
 Kruise Rollout by default invoke Lua scripts in the `rollouts/lua_configuration` directory. The bundled Lua scripts should follow the following directory structure:
 
@@ -85,22 +87,19 @@ expected:
 **Custom traffic routing Lua script must pass the tests to prove it can work as expected**. The following example demonstrates a custom traffic routing test for `networking.istio.io/VirtualService`.
 
 ```yaml
-rollout: 
-  apiVersion: rollouts.kruise.io/v1alpha1
+rollout:
+  apiVersion: rollouts.kruise.io/v1beta1
   kind: Rollout
   metadata:
     name: rollouts-demo
-    annotations:
-      rollouts.kruise.io/rolling-style: canary
   spec:
-    disabled: false
-    objectRef:
-      workloadRef:
-        apiVersion: apps/v1
-        kind: Deployment
-        name: deploy-demo
+    workloadRef:
+      apiVersion: apps/v1
+      kind: Deployment
+      name: deploy-demo
     strategy:
       canary:
+        enableExtraWorkloadForCanary: true
         steps:
         - matches:
           - headers:
@@ -119,7 +118,8 @@ rollout:
             - type: RegularExpression
               name: name
               value: ".*demo"
-        - weight: 50
+        - traffic: 50%
+          replicas: 50%
         trafficRoutings:
         - service: svc-demo
           customNetworkRefs:
@@ -254,14 +254,14 @@ When designing test cases, at least the release strategies listed below are supp
 
 ```yaml
 # spec.strategy.canary.steps:
-- weight: 20
+- traffic: 20%
 ```
 
 - **Special Note:** By default, traffic routing strategies defined in Rollout will create a new canary for new pods, while TrafficRouting will not.
 
 ### Way2: Define in ConfigMap
 
-When the expected traffic routing Lua scripts are not bundled in Kruise Rollout, users could utilize ConfigMap to define and use Lua script to handle API Gateway resources. Custom traffic routing lua script can be defined in 
+When the expected traffic routing Lua scripts are not bundled in Kruise Rollout, users could utilize ConfigMap to define and use Lua script to handle API Gateway resources. Custom traffic routing lua script can be defined in
 
 ```yaml
 <lua.traffic.routing.Kind.CRDGroup>: |
@@ -270,7 +270,7 @@ When the expected traffic routing Lua scripts are not bundled in Kruise Rollout,
 
 field of ConfigMap `kruise-rollout/kruise-rollout-configuration`.
 
-The following example demonstrates a traffic routing for `networking.istio.io/DestinationRule`, you can also define your own Lua script for API Gateway resources of other groups for example Apisix and Kuma in the ConfigMap. 
+The following example demonstrates a traffic routing for `networking.istio.io/DestinationRule`, you can also define your own Lua script for API Gateway resources of other groups for example Apisix and Kuma in the ConfigMap.
 
 ```yaml
 data:
@@ -323,13 +323,13 @@ Access elements using dot notation: `myTable.key`
 
 - **Iterating over a table:**
 
-Iterate over all key-value pairs using the `pairs()` function: 
+Iterate over all key-value pairs using the `pairs()` function:
 
 ```lua
 for key, value in pairs(myTable) do ... end
 ```
 
-Iterate over the array part of the table using the `ipairs()` function: 
+Iterate over the array part of the table using the `ipairs()` function:
 
 ```lua
 for index, value in ipairs(myTable) do ... end
@@ -371,17 +371,17 @@ type Data struct {
 You should handle `obj` in Lua script and **must retrun an object contains expected spec, labels and annotations** of the API Gateway resource, a simple way is to return `obj.data`.
 
 ```lua
--- Lua variables are assigned by reference, 
+-- Lua variables are assigned by reference,
 -- so updates to 'spec' can be synchronized to 'obj.data.spec'.
 spec = obj.data.spec -- get resource 'spec'
 hosts = spec.hosts
 canaryService = obj.canaryService
 -- traverse header 'matches' defined in Rollout strategy
-for _, match in ipairs(obj.matches) do 
+for _, match in ipairs(obj.matches) do
 	... -- define how to handle matches
 end
 -- return 'obj.data' and Kruise Rollout will update the resource
-return obj.data 
+return obj.data
 ```
 
 Or you can define your own variable as return value as long as it **contains expected spec, labels and annotations**, an example is:
@@ -411,7 +411,7 @@ An example of `test_case_obj.lua` is shown as below:
 
 ```lua
 steps = {
-  	-- obj of release step_0 
+  	-- obj of release step_0
     step_0 = { canaryWeight = -1, stableWeight = 101,
         matches = { { headers = { { value = "demo", type = "Exact", name = "destination", }, }, }, },
         canaryService = "mocka", stableService = "mocka",
