@@ -1,6 +1,11 @@
 # Basic Usage Guide
 
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 This docs focuses on how to make Kruise Rollout effective and how to make a complete release, and answer some questions about usages.
+
+**Note: v1beta1 available from Kruise Rollout v0.5.0.**
 
 ## A Complete Release Process
 
@@ -38,6 +43,34 @@ Assume that you want to use multi-batch update strategy to upgrade your Deployme
 - In the 1-st batch: **Only 1** Pod should be upgraded;
 - In the 2-nd batch: **50%** Pods should be upgraded, i.e., **5 updated Pods**;
 - In the 3-rd batch: **100%** Pods should be upgradedm i.e., **10 updated Pods**.
+
+<Tabs>
+  <TabItem value="v1beta1" label="v1beta1" default>
+
+```bash
+$ kubectl apply -f - <<EOF
+apiVersion: rollouts.kruise.io/v1beta1
+kind: Rollout
+metadata:
+  name: rollouts-demo
+  namespace: default
+spec:
+  workloadRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: workload-demo
+  strategy:
+    canary:
+      steps:
+      - replicas: 1
+      - replicas: 50%
+      - replicas: 100%
+EOF
+```
+
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
+
 ```bash
 $ kubectl apply -f - <<EOF
 apiVersion: rollouts.kruise.io/v1alpha1
@@ -61,6 +94,10 @@ spec:
       - replicas: 100%
 EOF
 ```
+
+  </TabItem>
+</Tabs>
+
 
 ### Step 2: Upgrade Deployment to "version-2" and release the 1-st batch
 ```bash
@@ -100,8 +137,8 @@ spec:
     canary:
       steps:
       - replicas: 1
-        pause: 
-          duration: 0 
+        pause:
+          duration: 0
       - ... ...
 ```
 
@@ -129,7 +166,7 @@ func IsRolloutCurrentStepReady(rollout *rolloutsv1alpha1.Rollout, stepIndex int3
 }
 ```
 
-But in some automatic scenes(e.g. PaaS platform), before judging whether current step is ready, we should know whether the `canaryStatus` is corresponding to the current rollout processes (Maybe it corresponds to the last rollout process). 
+But in some automatic scenes(e.g. PaaS platform), before judging whether current step is ready, we should know whether the `canaryStatus` is corresponding to the current rollout processes (Maybe it corresponds to the last rollout process).
 We can use `rollout-id` mechanism to solve this problem.
 ```go
 func IsRolloutCurrentStepReady(workload appsv1.Deployment, rollout *rolloutsv1alpha1.Rollout, stepIndex int32) bool {
@@ -154,6 +191,11 @@ func IsRolloutCurrentStepReady(workload appsv1.Deployment, rollout *rolloutsv1al
 
 In fact, Kruise Rollout **DOES NOT** provide the ability to rollback directly. **Kruise Rollout prefers that users can rollback workload spec directly to rollback their application.** When users need to rollback from “version-2” to ”version-1“, Kruise Rollout will use the native rolling upgrade strategy to quickly rollback, instead of following the multi-batch checkpoint strategy.
 
+### 1. Apply your old version yaml to kubernetes
+You can refer the [step 6 of document](https://help.aliyun.com/zh/ack/ack-managed-and-ack-dedicated/user-guide/use-kruise-rollout-to-perform-canary-releases-and-a-b-testing?spm=a2c4g.11186623.0.0.60f56abdcxjXXM#section-maw-6wb-cql).
+
+### 2. Gitops sync old revision
+You can ref the [step 4 of document](https://help.aliyun.com/zh/ack/distributed-cloud-container-platform-for-kubernetes/use-cases/using-kruise-rollout-to-implement-canary-release-based-on-ack-one-gitops?spm=a2c4g.11186623.0.0.5ed9474b2PNGPz).
 
 ## Other Statements
 - **Continuous Release**: Assume that Rollout is progressing from "version-1" to "version-2"(uncompleted). Now, workload is modified to "version-3", Rollout will start to progress from beginning step (1-st step).

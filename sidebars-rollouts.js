@@ -36,5 +36,21 @@ module.exports = {
                 }
             ],
         },
+        {
+            type: 'category',
+            label: 'Developer manuals',
+            collapsed: false,
+            items: [
+                'developer-manuals/custom-network-provider'
+            ],
+        },
+        {
+            type: 'category',
+            label: 'Best Practices',
+            collapsed: false,
+            items: [
+                'best-practices/traffic-routing-istio-api'
+            ],
+        },
   ],
 };

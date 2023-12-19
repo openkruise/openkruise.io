@@ -1,5 +1,8 @@
 # Traffic Routing with Istio
-This page is a demo to show how to utilize Kruise Rollout to do traffic routing with Istio. 
+
+**FEATURE STATE:** Kruise Rollout v0.5.0
+
+This page is a demo to show how to utilize Kruise Rollout to do traffic routing with Istio.
 
 ## A Complete Release Process
 ### Deploy deployment `workload-demo` and service `service-demo`
@@ -58,18 +61,15 @@ spec:
 ```
 ### Deploy Rollout `rollouts-demo`
 ```yaml
-apiVersion: rollouts.kruise.io/v1alpha1
+apiVersion: rollouts.kruise.io/v1beta1
 kind: Rollout
 metadata:
   name: rollouts-demo
-  annotations:
-    rollouts.kruise.io/rolling-style: canary
 spec:
-  objectRef:
-    workloadRef:
-      apiVersion: apps/v1
-      kind: Deployment
-      name: workload-demo
+  workloadRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: workload-demo
   strategy:
     canary:
       steps:
@@ -79,10 +79,12 @@ spec:
           - type: Exact
             name: version
             value: canary
-      - weight: 50
-      - weight: 80
+      - traffic: 50%
+        replicas: 50%
+      - traffic: 80%
+        replicas: 80%
       trafficRoutings:
-      - service: mocka 
+      - service: mocka
         customNetworkRefs:
         - apiVersion: networking.istio.io/v1alpha3
           kind: VirtualService
@@ -122,7 +124,7 @@ spec:
   - '*'
   http:
   # route traffic with header version=canary to new-version pods
-  - match: 
+  - match:
     - headers:
         version:
           exact: canary

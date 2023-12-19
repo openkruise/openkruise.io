@@ -1,6 +1,14 @@
 # API Specifications
 
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 A basic example for Kruise Rollouts resource YAML:
+
+**Note: v1beta1 available from Kruise Rollout v0.5.0.**
+
+<Tabs>
+  <TabItem value="v1beta1" label="v1beta1" default>
 
 ```yaml
 apiVersion: rollouts.kruise.io/v1alpha1
@@ -8,7 +16,50 @@ kind: Rollout
 metadata:
   name: rollouts-demo
   # The rollout resource needs to be in the same namespace as the corresponding workload
-  namespace: defaults
+  namespace: default
+spec:
+  # rollout of published workloads, currently only supports Deployment, CloneSet, StatefulSet, Advanced StatefulSet
+  workloadRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: echoserver
+  strategy:
+    canary:
+      steps:
+      ### the 1-st batch ###
+      # routing 5% traffics to the new version
+      - traffic: 5%
+        # Need Manual confirmation before enter to next batch
+        pause: {}
+        # optional, The first step of released replicas. If not set, the default is to use 'weight', as shown above is 5%.
+        replicas: 1
+      ### the 2-nd batch ###
+      - traffic: 50%
+        replicas: 50%
+        # Automatically enter the next batch after waiting 2 hours
+        pause:
+          duration: 7200
+      ### the 3-rd batch ###
+      - traffic: 100%
+        replicas: 100%
+      trafficRoutings:
+      # service name that is related with the workload
+      - service: echoserver
+        # ingress name that is related with the service
+        ingress:
+          name: echoserver
+```
+
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
+
+```yaml
+apiVersion: rollouts.kruise.io/v1alpha1
+kind: Rollout
+metadata:
+  name: rollouts-demo
+  # The rollout resource needs to be in the same namespace as the corresponding workload
+  namespace: default
   # This annotation can help us upgrade the Deployment using partition, just like StatefulSet/CloneSet.
   annotations:
     rollouts.kruise.io/rolling-style: partition
@@ -25,13 +76,13 @@ spec:
       ### the 1-st batch ###
       # routing 5% traffics to the new version
       - weight: 5
-      # Need Manual confirmation before enter to next batch
+        # Need Manual confirmation before enter to next batch
         pause: {}
-      # optional, The first step of released replicas. If not set, the default is to use 'weight', as shown above is 5%.
+        # optional, The first step of released replicas. If not set, the default is to use 'weight', as shown above is 5%.
         replicas: 1
       ### the 2-nd batch ###
       - replicas: 50%
-      # Automatically enter the next batch after waiting 2 hours
+        # Automatically enter the next batch after waiting 2 hours
         pause:
           duration: 7200
       ### the 3-rd batch ###
@@ -39,10 +90,13 @@ spec:
       trafficRoutings:
       # service name that is related with the workload
       - service: echoserver
-      # ingress name that is related with the service
+        # ingress name that is related with the service
         ingress:
-          name: echoserver
+        name: echoserver
 ```
+
+  </TabItem>
+</Tabs>
 
 There are 3 major parts of api specifications you should pay attention to:
 - Binding your workload: Tell Rollout which workload it should work on;
@@ -52,6 +106,24 @@ There are 3 major parts of api specifications you should pay attention to:
 ## API Details
 ### Workload Binding API (Mandatory)
 Tell Kruise Rollout which workload should be bounded:
+
+<Tabs>
+  <TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: rollouts.kruise.io/v1beta1
+kind: Rollout
+metadata:
+  namespace: <your-workload-ns>
+spec:
+  workloadRef:
+    apiVersion: apps/v1
+    kind: StatefulSet
+    name: <your-workload-name>
+```
+
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
 
 ```yaml
 apiVersion: rollouts.kruise.io/v1alpha1
@@ -65,6 +137,10 @@ spec:
       kind: StatefulSet
       name: <your-workload-name>
 ```
+
+  </TabItem>
+</Tabs>
+
 | Fields       | Type   | Defaults | Explanation         |
 |--------------|--------|----------|---------------------|
 | `apiVersion` | string | ""       | Workload APIVersion |
@@ -73,13 +149,33 @@ spec:
 
 Currently, Kruise Rollout supports Deployment, CloneSet, StatefulSet, and Advanced StatefulSet.
 
-Note:
-- The workload should be at the same namespace as the Rollout.
+**Note: The workload should be at the same namespace as the Rollout.**
 
 ### Traffic Binding API (Optional)
 Different from "Workload Binding", Traffic Binding is not necessary. If you do not set the following specifications, the traffic configuration will keep their native behavior, for example, keeping load balance for all versioned Pods.
 
 If you need do something special for traffic routings, just tell Kruise Rollout which traffic configurations should be bound:
+
+<Tabs>
+  <TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: rollouts.kruise.io/v1beta1
+kind: Rollout
+metadata:
+  namespace: <your-workload-ns>
+spec:
+  trafficRoutings:
+  - service: <service-name-that-is-related-your-workload>
+    ingress:
+      classType: <traffic-type> # example: nginx | higress, defaults to "nginx"
+      name: <ingress-name-that-is-related-the-service>
+    gateway: # alternative： ingress or gateway-api
+      httpRouteName: <gateway-api-httpRoute-name>
+```
+
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
 
 ```yaml
 apiVersion: rollouts.kruise.io/v1alpha1
@@ -96,6 +192,9 @@ spec:
       httpRouteName: <gateway-api-httpRoute-name>
 ```
 
+  </TabItem>
+</Tabs>
+
 | Fields                  | Type   | Defaults | Explanation                                                                                                   |
 |-------------------------|--------|----------|---------------------------------------------------------------------------------------------------------------|
 | `service`               | string | ""       | Name of service that select the pods of bounded workload                                                      |
@@ -104,11 +203,52 @@ spec:
 | `ingress.classType`     | string | "nginx"  | Ingress type, such as "nginx", "higress", or others                                                           |
 | `ingress.name`          | string | ""       | Name of ingress resource that bounded the service                                                             |
 | `gateway.httpRouteName` | string | ""       | Name of [HTTPRoute](https://gateway-api.sigs.k8s.io/concepts/api-overview/#httproute) resource of Gateway API |
-Note:
-- `ingress` and `gateway` can not be nil at the same time if you decide to use `trafficRoutings`.
+
+**Note: `ingress` and `gateway` can not be nil at the same time if you decide to use `trafficRoutings`.**
 
 ### Strategy API (Mandatory)
 Describe your strategy of rollout:
+
+<Tabs>
+  <TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: rollouts.kruise.io/v1beta1
+kind: Rollout
+metadata:
+  namespace: <your-workload-ns>
+spec:
+  strategy:
+    canary:
+      steps:
+      # the first step
+      - traffic: 5%
+        replicas: 1 or 10%
+        pause:
+          duration: {}
+        matches:
+        - headers:
+          - type: Exact # or "RegularExpression"
+            name: <matched-header-name>
+            value: <matched-header-value, or reg-expression>
+      # the second step
+      - traffic: 10%
+        ... ....
+```
+
+| Fields                    | Type                | Defaults  | Explanation                                                                                                    |
+|---------------------------|---------------------|-----------|----------------------------------------------------------------------------------------------------------------|
+| `steps[x].traffic`         | *string            | nil       | (optional) Percent weight of canary traffic for new-version Pods.                                              |
+| `steps[x].replicas`       | *integer or *string | nil       | Absolute number or Percent of new-version Pods.                                                                 |
+| `steps[x].pause`          | object              | {}        | (optional) Manual confirmation or auto confirmation before enter the next step.                                |
+| `steps[x].pause.duration` | *integer            | nil       | (optional) Duration time before auto confirmation. if nil, means need manual confirmation.                     |
+| `steps[x].matches`        | []object            | []        | (optional) The HTTP header match rules you want to traffic to new-version Pods.                                |
+| `headers[x].type`         | string              | "Exact"   | "Exact" or "RegularExpression" rule to match key and value                                                     |
+| `headers[x].name`         | string              | ""        | Matched HTTP header name. (And-Relationship between headers[i] and headers[j])                                  |
+| `headers[x].value`        | string              | ""        | Matched HTTP header value.                                                                                     |
+
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
 
 ```yaml
 apiVersion: rollouts.kruise.io/v1alpha1
@@ -121,18 +261,19 @@ spec:
       steps:
       # the first step
       - weight: 5
-        replicas:
+        replicas: 1 or 10%
         pause:
-          duration: 1000
+          duration: {}
         matches:
-          - headers:
-              - type: Exact # or "RegularExpression"
-                name: <matched-header-name>
-                value: <matched-header-value, or reg-expression>
+        - headers:
+          - type: Exact # or "RegularExpression"
+            name: <matched-header-name>
+            value: <matched-header-value, or reg-expression>
       # the second step
       - weight: 10
         ... ....
 ```
+
 | Fields                    | Type                | Defaults  | Explanation                                                                                                    |
 |---------------------------|---------------------|-----------|----------------------------------------------------------------------------------------------------------------|
 | `steps[x].weight`         | *integer            | nil       | (optional) Percent weight of canary traffic for new-version Pods.                                              |
@@ -143,18 +284,50 @@ spec:
 | `headers[x].type`         | string              | "Exact"   | "Exact" or "RegularExpression" rule to match key and value                                                     |
 | `headers[x].name`         | string              | ""        | Matched HTTP header name. (And-Relationship between headers[i] and headers[j])                                  |
 | `headers[x].value`        | string              | ""        | Matched HTTP header value.                                                                                     |
+
+  </TabItem>
+</Tabs>
+
 Note:
-- `steps[x].weight` and `steps[x].replicas` can not be nil at the same time.
-- `steps[x].matches[i] and steps[x].matches[j]` have **Or**-relationship;
-- `steps[x].matches[y].headers[i] and steps[x].matches[y].header[j]` have **And**-relationship;
+- `steps[x].replicas` can not be nil.
+- `steps[x].matches[i] and steps[x].matches[j]` have **Or**-relationship.
+- `steps[x].matches[y].headers[i] and steps[x].matches[y].header[j]` have **And**-relationship.
 
 ### Special Annotations of Rollout (Optional)
-There are some special annotations in Rollout to enable specific abilities.
 
-| Annotations                       | Value                   | Defaults | Explanation                                                                                                                     |
-|-----------------------------------|-------------------------|----------|---------------------------------------------------------------------------------------------------------------------------------|
-| `rollouts.kruise.io/rolling-type` | "canary" or "partition" | "canary" | "canary" means using canary update strategy for Deployment; "partition" means using multi-batch update strategy for Deployment; |
+<Tabs>
+  <TabItem value="v1beta1" label="v1beta1" default>
 
+```
+apiVersion: rollouts.kruise.io/v1beta1
+kind: Rollout
+spec:
+  strategy:
+    canary:
+      // Default is false.
+      enableExtraWorkloadForCanary: true
+      steps:
+      ...
+```
+
+**Note:** "true" means using canary update strategy for Deployment; "false" means using multi-batch update strategy for Deployment;
+
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
+
+```
+apiVersion: rollouts.kruise.io/v1alpha1
+kind: Rollout
+metadata:
+  annotations:
+    # Default is "canary"
+    rollouts.kruise.io/rolling-type: "canary" or "partition"
+```
+
+**Note:** "canary" means using canary update strategy for Deployment; "partition" means using multi-batch update strategy for Deployment;
+
+  </TabItem>
+</Tabs>
 
 ### Special Annotations of Workload (Optional)
 There are some special annotations in Bounded Workload to enable specific abilities.
