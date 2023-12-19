@@ -55,6 +55,7 @@ OpenKruiseGame（OKG）具有如下核心能力：
         <td style={{"border":0}}><center><img src={require('/static/img/kruisegame/hypergryph-logo.png').default} width="130" /></center></td>
         <td style={{"border":0}}><center><img src={require('/static/img/kruisegame/shangyou-logo.jpeg').default} width="130" /></center></td>
         <td style={{"border":0}}><center><img src={require('/static/img/kruisegame/guanying-logo.png').default} width="135" /></center></td>
+        <td style={{"border":0}}><center><img src={require('/static/img/kruisegame/wanglong-logo.png').default} width="145" /></center></td>
     </tr>
     <tr style={{"border":0}}>
     </tr>
@@ -63,6 +64,7 @@ OpenKruiseGame（OKG）具有如下核心能力：
         <td style={{"border":0}}><center><img src={require('/static/img/kruisegame/xingzhe-logo.png').default} width="135" /></center></td>
         <td style={{"border":0}}><center><img src={require('/static/img/kruisegame/wuduan-logo.png').default} width="135" /></center></td>
         <td style={{"border":0}}><center><img src={require('/static/img/kruisegame/booming-logo.png').default} width="135" /></center></td>
+        <td style={{"border":0}}><center><img src={require('/static/img/kruisegame/xingchao-logo.png').default} width="125" /></center></td>
     </tr>
 </table>
 
