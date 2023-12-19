@@ -16,7 +16,7 @@ $ helm repo add openkruise https://openkruise.github.io/charts/
 $ helm repo update
 
 # Install the latest version.
-$ helm install kruise openkruise/kruise --version 1.5.0
+$ helm install kruise openkruise/kruise --version 1.5.1
 ```
 **Note:** [Changelog](https://github.com/openkruise/kruise/blob/master/CHANGELOG.md).
 
@@ -30,7 +30,7 @@ $ helm repo add openkruise https://openkruise.github.io/charts/
 $ helm repo update
 
 # Upgrade to the latest version.
-$ helm upgrade kruise openkruise/kruise --version 1.5.0 [--force]
+$ helm upgrade kruise openkruise/kruise --version 1.5.1 [--force]
 ```
 
 Note that:

@@ -118,8 +118,6 @@ def lexical_analysis(e_path, _):
                 log(item.matchedText)
 
 
-handler['highlight'] = highlight
-handler['link'] = link
 handler['title_count'] = title_count
 handler['lexical_analysis'] = lexical_analysis
 # handler['inline_count'] = inline_count  # Presence of false positives
