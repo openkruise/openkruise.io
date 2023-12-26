@@ -11,7 +11,7 @@ A basic example for Kruise Rollouts resource YAML:
   <TabItem value="v1beta1" label="v1beta1" default>
 
 ```yaml
-apiVersion: rollouts.kruise.io/v1alpha1
+apiVersion: rollouts.kruise.io/v1beta1
 kind: Rollout
 metadata:
   name: rollouts-demo
