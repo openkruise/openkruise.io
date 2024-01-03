@@ -43,11 +43,26 @@ type GameServerSetSpec struct {
 type GameServerTemplate struct {
     // All fields inherited from PodTemplateSpec.
     corev1.PodTemplateSpec `json:",inline"`
-
+    
     // Requests and claims for persistent volumes.
     VolumeClaimTemplates   []corev1.PersistentVolumeClaim `json:"volumeClaimTemplates,omitempty"`
+    
+    // ReclaimPolicy indicates the reclaim policy for GameServer.
+    // Default is Cascade.
+    ReclaimPolicy GameServerReclaimPolicy `json:"reclaimPolicy,omitempty"`
 }
 
+type GameServerReclaimPolicy string
+
+const (
+    // CascadeGameServerReclaimPolicy indicates that GameServer is deleted when the pod is deleted.
+    // The age of GameServer is exactly the same as that of the pod.
+    CascadeGameServerReclaimPolicy GameServerReclaimPolicy = "Cascade"
+    
+    // DeleteGameServerReclaimPolicy indicates that GameServers will be deleted when replicas of GameServerSet decreases.
+    // The GameServer will not be deleted when the corresponding pod is deleted due to manual deletion, update, eviction, etc.
+    DeleteGameServerReclaimPolicy GameServerReclaimPolicy = "Delete"
+)
 ```
 
 #### UpdateStrategy
@@ -165,6 +180,11 @@ type ServiceQuality struct {
 type ServiceQualityAction struct {
     // Defines to change the GameServerSpec field when the detection is true/false.
     State          bool `json:"state"`
+    
+    // Result indicate the probe message returned by the script.
+	// When Result is defined, it would exec action only when the according Result is actually returns.
+	Result         string `json:"result,omitempty"`
+	
     GameServerSpec `json:",inline"`
 }
 ```
@@ -249,6 +269,24 @@ type GameServerSpec struct {
    // Whether to perform network isolation and cut off the access layer network
    // Default is false
    NetworkDisabled  bool                `json:"networkDisabled,omitempty"`
+   
+   // Containers can be used to make the corresponding GameServer container fields
+   // different from the fields defined by GameServerTemplate in GameServerSetSpec.
+   Containers []GameServerContainer `json:"containers,omitempty"`
+}
+
+type GameServerContainer struct {
+    // Name indicates the name of the container to update.
+    Name string `json:"name"`
+    
+    // Image indicates the image of the container to update.
+    // When Image updated, pod.spec.containers[*].image will be updated immediately.
+    Image string `json:"image,omitempty"`
+    
+    // Resources indicates the resources of the container to update.
+    // When Resources updated, pod.spec.containers[*].Resources will be not updated immediately,
+    // which will be updated when pod recreate.
+    Resources corev1.ResourceRequirements `json:"resources,omitempty"`
 }
 ```
 
@@ -270,6 +308,10 @@ type GameServerStatus struct {
 
     // Service quality status of game server
     ServiceQualitiesCondition []ServiceQualityCondition `json:"serviceQualitiesConditions,omitempty"`
+    
+    // Conditions is an array of current observed conditions related with GameServer.
+    // Currently support pod Conditions / node Conditions / pv Conditions
+	Conditions []GameServerCondition `json:"conditions,omitempty" `
 
     // Current update priority
     UpdatePriority     *intstr.IntOrString `json:"updatePriority,omitempty"`

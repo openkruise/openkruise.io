@@ -34,6 +34,42 @@ type GameServerSetSpec struct {
 }
 ```
 
+#### GameServerSetStatus
+
+```
+type GameServerSetStatus struct {
+    // 控制器观察到GameServerSet的迭代版本
+    ObservedGeneration int64 `json:"observedGeneration,omitempty"`
+
+    // 游戏服数目
+    Replicas                int32  `json:"replicas"`
+
+    // 处于Ready的游戏服数目
+    ReadyReplicas           int32  `json:"readyReplicas"`
+
+    // 可用的游戏服数目
+    AvailableReplicas       int32  `json:"availableReplicas"`
+
+    // 当前的游戏服数目
+    CurrentReplicas         int32  `json:"currentReplicas"`
+
+    // 已更新的游戏服数目
+    UpdatedReplicas         int32  `json:"updatedReplicas"`
+
+    // 已更新并Ready的游戏服数目
+    UpdatedReadyReplicas    int32  `json:"updatedReadyReplicas,omitempty"`
+
+    // 处于Maintaining状态的游戏服数目
+    MaintainingReplicas     *int32 `json:"maintainingReplicas,omitempty"`
+
+    // 处于WaitToBeDeleted状态的游戏服数目
+    WaitToBeDeletedReplicas *int32 `json:"waitToBeDeletedReplicas,omitempty"`
+
+    // LabelSelector 是标签选择器，用于查询应与 HPA 使用的副本数相匹配的游戏服。
+    LabelSelector string `json:"labelSelector,omitempty"`
+}
+```
+
 #### GameServerTemplate
 
 ```
@@ -43,22 +79,7 @@ type GameServerTemplate struct {
 
     // 对持久卷的请求和声明
     VolumeClaimTemplates   []corev1.PersistentVolumeClaim `json:"volumeClaimTemplates,omitempty"`
-    
-    // ReclaimPolicy 表明GameServer的回收策略
-    // 当前支持两种，Cascade与Delete。默认为Cascade
-    ReclaimPolicy GameServerReclaimPolicy `json:"reclaimPolicy,omitempty"`
 }
-
-type GameServerReclaimPolicy string
-
-const (
-    // Cascade 表明pod删除时GameServer一并删除。GameServer的生命周期与pod相同
-    CascadeGameServerReclaimPolicy GameServerReclaimPolicy = "Cascade"
-    
-    // Delete 表明 GameServers 只会在GameServerSet副本数目减少时被删除。
-    // 当对应的pod被手动删除、更新重建、被驱逐时，GameServer都不会被删除。
-    DeleteGameServerReclaimPolicy GameServerReclaimPolicy = "Delete"
-)
 ```
 
 #### UpdateStrategy
@@ -122,19 +143,19 @@ type ScaleStrategy struct {
 
 ```
 type ServiceQuality struct {
-    // 继承至corev1.Probe所有字段，此处指定探测方式
-    corev1.Probe  `json:",inline"`
-    
-    // 自定义服务质量的名称，区别定义不同的服务质量
-    Name          string `json:"name"`
-    
-    // 探测的容器名称
-    ContainerName string `json:"containerName,omitempty"`
-    
-    // 是否让GameServerSpec在ServiceQualityAction执行后不发生变化。
-    // 当Permanent为true时，无论检测结果如何，ServiceQualityAction只会执行一次。
-    // 当Permanent为false时，即使ServiceQualityAction已经执行过，也可以再次执行ServiceQualityAction。
-    Permanent            bool                   `json:"permanent"`
+   // 继承至corev1.Probe所有字段，此处指定探测方式
+   corev1.Probe  `json:",inline"`
+
+   // 自定义服务质量的名称，区别定义不同的服务质量
+   Name          string `json:"name"`
+
+   // 探测的容器名称
+   ContainerName string `json:"containerName,omitempty"`
+
+   // 是否让GameServerSpec在ServiceQualityAction执行后不发生变化。
+   // 当Permanent为true时，无论检测结果如何，ServiceQualityAction只会执行一次。
+   // 当Permanent为false时，即使ServiceQualityAction已经执行过，也可以再次执行ServiceQualityAction。
+   Permanent            bool                   `json:"permanent"`
     
     // 服务质量对应执行动作
     ServiceQualityAction []ServiceQualityAction `json:"serviceQualityAction,omitempty"`
@@ -143,9 +164,6 @@ type ServiceQuality struct {
 type ServiceQualityAction struct {
     // 用户设定当探测结果为true/false时执行动作
     State          bool `json:"state"`
-    
-    // Result为对应探测脚本返回的信息。当Result被指定时，只有当探测的结果符合该声明的结果时action才会执行
-	Result         string `json:"result,omitempty"`
 
     // 动作为更改GameServerSpec中的字段
     GameServerSpec `json:",inline"`
@@ -174,42 +192,6 @@ type KVParams struct {
 }
 ```
 
-### GameServerSetStatus
-
-```
-type GameServerSetStatus struct {
-    // 控制器观察到GameServerSet的迭代版本
-    ObservedGeneration int64 `json:"observedGeneration,omitempty"`
-
-    // 游戏服数目
-    Replicas                int32  `json:"replicas"`
-
-    // 处于Ready的游戏服数目
-    ReadyReplicas           int32  `json:"readyReplicas"`
-
-    // 可用的游戏服数目
-    AvailableReplicas       int32  `json:"availableReplicas"`
-
-    // 当前的游戏服数目
-    CurrentReplicas         int32  `json:"currentReplicas"`
-
-    // 已更新的游戏服数目
-    UpdatedReplicas         int32  `json:"updatedReplicas"`
-
-    // 已更新并Ready的游戏服数目
-    UpdatedReadyReplicas    int32  `json:"updatedReadyReplicas,omitempty"`
-
-    // 处于Maintaining状态的游戏服数目
-    MaintainingReplicas     *int32 `json:"maintainingReplicas,omitempty"`
-
-    // 处于WaitToBeDeleted状态的游戏服数目
-    WaitToBeDeletedReplicas *int32 `json:"waitToBeDeletedReplicas,omitempty"`
-
-    // LabelSelector 是标签选择器，用于查询应与 HPA 使用的副本数相匹配的游戏服。
-    LabelSelector string `json:"labelSelector,omitempty"`
-}
-```
-
 ## GameServer
 
 ### GameServerSpec
@@ -227,23 +209,6 @@ type GameServerSpec struct {
 
    // 是否进行网络隔离、切断接入层网络，默认为false
    NetworkDisabled  bool                `json:"networkDisabled,omitempty"`
-   
-   // 使对应的GameServer Containers字段与GameServerSetSpec中GameServerTemplate定义的字段不同，意味着该GameServer可以拥有独立的参数配置。
-   // 当前支持更改 Image 与 Resources
-   Containers []GameServerContainer `json:"containers,omitempty"`
-}
-
-type GameServerContainer struct {
-    // Name 表示要更新的容器的名称。
-    Name string `json:"name"`
-    
-    // Image 表示要更新的容器的镜像。
-    // 当Image更新时，pod.spec.containers[*].image会立即更新。
-    Image string `json:"image,omitempty"`
-    
-    // Resources 表示要更新的容器的资源。
-    // 当Resources更新时，pod.spec.containers[*].Resources不会立即更新，它会在pod重建时更新。
-    Resources corev1.ResourceRequirements `json:"resources,omitempty"`
 }
 ```
 
@@ -265,10 +230,6 @@ type GameServerStatus struct {
 
     // 游戏服服务质量状况
     ServiceQualitiesCondition []ServiceQualityCondition `json:"serviceQualitiesConditions,omitempty"`
-        
-    // 与该GameServer相关的Condition集合
-    // 当前支持聚合 pod Conditions / node Conditions / pv Conditions
-	Conditions []GameServerCondition `json:"conditions,omitempty" `
 
     // 当前更新优先级
     UpdatePriority     *intstr.IntOrString `json:"updatePriority,omitempty"`

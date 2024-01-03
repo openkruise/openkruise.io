@@ -45,6 +45,7 @@ module.exports = {
             collapsed: false,
             items: [
                 'best-practices/session-based-game',
+                'best-practices/pve-game',
             ],
         },
         {
