@@ -218,3 +218,98 @@ For game scenarios, the best practices for automatic scaling are as follows:
 - Set OKG **minAvailable** size according to node specifications. The startup of the node takes time, so free and available room servers need to be prepared in advance for players to connect. The idle room server essentially advances the triggering time of node horizontal expansion, making up for the time difference in starting the machine. In this way, the node specification and minAvailable are closely related. For example: the node specification used in the cluster is 8 cores and 16G, and the room service pod running on it requires 1 core and 2G resources, so theoretically the node can Run 7 room servers (nodes will have reserved resources, so not 8). In this case, if minAvailable is set to 7 or more, there will always be an "idle" node in the cluster (idle here does not mean no pods, but no players); if it is set to 14 or more, there will always be an "idle" node in the cluster. With two "idle" nodes, this also converts the **room server spare quantity** into the **node spare quantity**. Users can set specific settings according to business scenarios and cost control perspectives.
 
 - Set the cluster autoscaler to automatically recycle nodes only when the nodes are completely idle to ensure normal game operation. Shrinking based on resource thresholds is not friendly to the game. Since the game is a stateful service, there is a great possibility that the resource load on the node is small but the player is still playing the game, and it cannot be easily deleted.
+
+
+## Game Room Hot-Update
+
+In order to smoothly upgrade the room server and simplify operation and maintenance operations, there is often a demand: it is hoped that the room server version can be updated with one click without affecting the player's gaming experience and without shutting down the server for maintenance. This process is also called hot update of the room server.
+The hot update of the room server is different from the in-place update required by traditional PvE games. Due to the short time of a single game, the service logic of the room is often not changed after the game is started. Instead, the newly opened service logic is opened after the one-click update is released. The rooms use the latest version, and the existing room servers do not make any changes; at the same time, the matching system is used to import new players into the new version of the room; and the automatic scaling mechanism is used to make the number of rooms in the old version continue to decrease as the number of people is lost. The number of rooms in the new version continues to increase as the number of people increases, and the version switch is finally completed.
+The entire process only requires changing the room server container image, which is automatically updated without stopping the server, greatly reducing the complexity of operation and maintenance.
+
+### Existing game rooms will not be updated
+
+When using the GameServerSet workload, you can select the "OnDelete" update type to achieve the effect of not updating the existing room server, but using the new version for the new room server.
+
+For example, if you initially deploy a GameServerSet with 3 replicas, the image tags are all 1.12.2
+
+```yaml
+apiVersion: game.kruise.io/v1alpha1
+kind: GameServerSet
+metadata:
+  name: minecraft
+  namespace: default
+spec:
+  replicas: 3
+  updateStrategy:
+    type: OnDelete
+  gameServerTemplate:
+    spec:
+      containers:
+        - image: registry.cn-hangzhou.aliyuncs.com/acs/minecraft-demo:1.12.2
+          name: minecraft
+```
+
+At this time, the image is updated and the image tag is changed to 1.12.2-new
+
+```bash
+kubectl edit gss minecraft
+
+...
+spec:
+  gameServerTemplate:
+    spec:
+      containers:
+      - image: registry.cn-hangzhou.aliyuncs.com/acs/minecraft-demo:1.12.2-new
+        name: minecraft
+...
+```
+
+It can be seen that the existing GameServers has not been updated, and the image tag is still 1.12.2
+
+```bash
+kubectl get po -oyaml | grep minecraft-demo
+    - image: registry.cn-hangzhou.aliyuncs.com/acs/minecraft-demo:1.12.2
+      image: registry.cn-hangzhou.aliyuncs.com/acs/minecraft-demo:1.12.2
+      imageID: registry.cn-hangzhou.aliyuncs.com/acs/minecraft-demo@sha256:8aa4177a19b15d7336162c6ca4d833a74c3cb23d85eab2ef2a63f7a2a682b8fb
+    - image: registry.cn-hangzhou.aliyuncs.com/acs/minecraft-demo:1.12.2
+      image: registry.cn-hangzhou.aliyuncs.com/acs/minecraft-demo:1.12.2
+      imageID: registry.cn-hangzhou.aliyuncs.com/acs/minecraft-demo@sha256:8aa4177a19b15d7336162c6ca4d833a74c3cb23d85eab2ef2a63f7a2a682b8fb
+    - image: registry.cn-hangzhou.aliyuncs.com/acs/minecraft-demo:1.12.2
+      image: registry.cn-hangzhou.aliyuncs.com/acs/minecraft-demo:1.12.2
+      imageID: registry.cn-hangzhou.aliyuncs.com/acs/minecraft-demo@sha256:8aa4177a19b15d7336162c6ca4d833a74c3cb23d85eab2ef2a63f7a2a682b8fb
+```
+
+At this time, scale GameServerSet and create a new game server minecraft-3, and find that its image tag is 1.12.2-new
+
+```bash
+kubectl scale gss minecraft --replicas=4
+gameserverset.game.kruise.io/minecraft scaled
+
+
+kubectl get po minecraft-3 -oyaml | grep minecraft-demo
+  - image: registry.cn-hangzhou.aliyuncs.com/acs/minecraft-demo:1.12.2-new
+    image: registry.cn-hangzhou.aliyuncs.com/acs/minecraft-demo:1.12.2-new
+    imageID: registry.cn-hangzhou.aliyuncs.com/acs/minecraft-demo@sha256:f68fd7d5e6133c511b374a38f7dbc35acedce1d177dd78fba1d62d6264d5cba0
+```
+
+### Linkage with matching system
+
+When a new version of the image exists in the GameServerSet, the matching system needs to decide which version of the room server the player will enter.
+
+There are two ways for the matching system to sense the version under the current workload:
+
+1. When the room server is started, its own version will be automatically registered and reported, and it will be de-registered and destructed when deleted.
+2. When matching, the matching system calls the Kubernetes API to query the version currently suitable for the player.
+
+These two methods are similar to the method of obtaining the room server address mentioned above, and they can be implemented in the same way.
+If you press method 1, when the room server is started, the access address information will be reported together with the version information; if you press method 2, additional logic will be added to filter the room server version when searching for a suitable room server.
+
+It should be noted that even if the matching system detects the latest version, it does not allow players to enter only the latest version at this time. Since the version update has just been completed, the number of rooms in the new version is not sufficient. There needs to be a transition period for a certain period of time so that players who cannot find the latest version of the room server can still enter the old version of the game.
+
+### Complete smooth upgrade through automatic scaling
+
+When the GameServerSet image version has been updated and the matching system can sense the latest version, we hope that there will be more and more room servers in the new version and fewer and fewer room servers in the old version, and this is achieved through automatic scaling.
+
+First of all, at the beginning of the version switch, only the old version of the room server existed under GameServerSet, and the room server of this version existed in the following states: Allocated, WaitToBeDeleted, and None.
+If the Allocated room server changes directly to WaitToBeDeleted after the game ends, the old version of None will first change to Allocated and then to WaitToBeDeleted if there is no increase in players, and then the overall number will gradually decrease over time, and The number of new room servers will continue to increase due to the setting of the minAvailable parameter;
+However, if the Allocated room server is reused and changed to None after the game is over, there will be a long period of time when the number of players does not increase. Therefore, it is recommended to manually update the GameServerSet image. Increase the number of copies and directly expand the latest version of the room server. The old version of the room server in the None state will enter the WaitToBeDeleted state due to a long wait for no players to enter, and will eventually be deleted.

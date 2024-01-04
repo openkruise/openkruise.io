@@ -225,3 +225,95 @@ Kubernetes的弹性伸缩涵盖两个层面，应用层弹性 与 资源层弹�
 - 根据节点规格设置OKG **minAvailable** 大小。节点的启动是需要时间的，所以需要提前准备好空闲可用的房间服供玩家连接。空闲的房间服本质上将节点水平扩容的触发时间前置了，弥补了启动机器的时间差。这样一来，节点规格和minAvailable就关联密切了，举个例子：集群中使用的节点规格为8核16G，而运行在其上的房间服pod需要1核2G的资源，这样理论上该节点可以运行7个房间服（节点会有保留资源，所以不是8个）。在这种情况下，minAvailable 设置为7以上，则集群中会一直存在着一个“空闲”节点（这里的空闲指的不是没有pod，而是没有玩家）；设置14以上，则集群中会一直存在着两个“空闲”节点，这样也就将**房间服备用数量**转化为了**节点备用数量**，用户可以按照业务场景、成本控制的角度具体设置。
 
 - 设置节点完全空闲时才使cluster autoscaler自动回收节点，保障游戏运行正常。根据资源阈值的方式缩容对游戏并不友好，由于游戏是有状态的服务，存在极大的可能性遇到节点上资源负载较小但玩家依然正在游戏的情况，不能轻易删除。
+
+## 房间服热更新
+
+为了平滑地进行房间服升级，同时简化运维操作，往往存在着需求：希望一键更新房间服版本，同时不影响玩家的游戏体验，不进行停服维护。这一过程也叫做房间服的热更新。
+房间服的热更新与传统PvE类型游戏需要的原地升级不同，由于单局时间短，往往在开启游戏对局之后不会更改该房间的服务逻辑，而是一键更新发布后，新开启的房间使用最新的版本，存量的房间服不做任何改动；同时配合匹配系统，将新进入的玩家导入新版本的房间；再利用自动伸缩机制使旧版本的房间数目随着人数流失而不断减少，新版本的房间数随着人数增加不断增加，最终完成版本切换。
+整个过程只需更改房间服容器镜像即可，自动化不停服更新，大幅度减少运维复杂度。
+
+### 不更新存量房间服
+
+使用GameServerSet工作负载时可以选择“OnDelete”更新类型，实现不更新存量房间服，而新的房间服使用新版本的效果。
+
+例如，起始部署一个3副本的游戏服集合，镜像tag全部为1.12.2
+```yaml
+apiVersion: game.kruise.io/v1alpha1
+kind: GameServerSet
+metadata:
+  name: minecraft
+  namespace: default
+spec:
+  replicas: 3
+  updateStrategy:
+    type: OnDelete
+  gameServerTemplate:
+    spec:
+      containers:
+        - image: registry.cn-hangzhou.aliyuncs.com/acs/minecraft-demo:1.12.2
+          name: minecraft
+```
+
+此时，进行镜像更新，镜像tag改为1.12.2-new
+
+```bash
+kubectl edit gss minecraft
+
+...
+spec:
+  gameServerTemplate:
+    spec:
+      containers:
+      - image: registry.cn-hangzhou.aliyuncs.com/acs/minecraft-demo:1.12.2-new
+        name: minecraft
+...
+```
+
+可以看到，存量的游戏服并没有进行更新，镜像版本依然为1.12.2
+
+```bash
+kubectl get po -oyaml | grep minecraft-demo
+    - image: registry.cn-hangzhou.aliyuncs.com/acs/minecraft-demo:1.12.2
+      image: registry.cn-hangzhou.aliyuncs.com/acs/minecraft-demo:1.12.2
+      imageID: registry.cn-hangzhou.aliyuncs.com/acs/minecraft-demo@sha256:8aa4177a19b15d7336162c6ca4d833a74c3cb23d85eab2ef2a63f7a2a682b8fb
+    - image: registry.cn-hangzhou.aliyuncs.com/acs/minecraft-demo:1.12.2
+      image: registry.cn-hangzhou.aliyuncs.com/acs/minecraft-demo:1.12.2
+      imageID: registry.cn-hangzhou.aliyuncs.com/acs/minecraft-demo@sha256:8aa4177a19b15d7336162c6ca4d833a74c3cb23d85eab2ef2a63f7a2a682b8fb
+    - image: registry.cn-hangzhou.aliyuncs.com/acs/minecraft-demo:1.12.2
+      image: registry.cn-hangzhou.aliyuncs.com/acs/minecraft-demo:1.12.2
+      imageID: registry.cn-hangzhou.aliyuncs.com/acs/minecraft-demo@sha256:8aa4177a19b15d7336162c6ca4d833a74c3cb23d85eab2ef2a63f7a2a682b8fb
+```
+
+此时，进行扩容，新创建一个游戏服minecraft-3，发现其镜像版本为1.12.2-new
+```bash
+kubectl scale gss minecraft --replicas=4
+gameserverset.game.kruise.io/minecraft scaled
+
+
+kubectl get po minecraft-3 -oyaml | grep minecraft-demo
+  - image: registry.cn-hangzhou.aliyuncs.com/acs/minecraft-demo:1.12.2-new
+    image: registry.cn-hangzhou.aliyuncs.com/acs/minecraft-demo:1.12.2-new
+    imageID: registry.cn-hangzhou.aliyuncs.com/acs/minecraft-demo@sha256:f68fd7d5e6133c511b374a38f7dbc35acedce1d177dd78fba1d62d6264d5cba0
+```
+
+### 与匹配系统的联动
+
+当存GameServerSet下存在新版本的镜像时，匹配系统需要决定玩家进入哪一个版本的房间服。
+
+匹配系统有两种方式感知到当前工作负载下的版本：
+
+1. 房间服启动时将自身版本主动注册上报，删除时反注册析构
+2. 匹配系统匹配时调用Kubernetes API查询当前合适该玩家的版本
+
+这两种方式与前文提到的如何获取房间服地址的方式是类似的，与其实现方式保持一致即可。
+如按方式1，房间服启动时将访问地址信息上报的同时一并将版本信息上报；如按方式2，则在查找合适房间服时额外增加筛选房间服版本的逻辑。
+
+需要注意的是，即使匹配系统感知到最新版本，但此时并不能使玩家只进入到最新版本中。由于刚刚完成版本更新，新版本的房间数量并不充足，需要存在一定时间的过渡阶段，让找不到最新版本房间服的玩家依然可以进入旧版本游戏。
+
+### 通过自动伸缩完成平滑升级
+
+当GameServerSet镜像版本已经更新，且匹配系统可感知到最新版本时，我们希望新版本的房间服越来越多，而旧版本的房间服越来越少，而这恰好通过自动伸缩来实现。
+
+首先，在版本切换之初，GameServerSet下只存在旧版本的房间服，且该版本的房间服存在以下几种状态，Allocated、WaitToBeDeleted、None。
+若Allocated的房间服在对局结束后直接变为WaitToBeDeleted，则旧版本的None在玩家不激增的情况下会先变为Allocated、再变为WaitToBeDeleted，进而整体会随着时间的推移逐渐减少，而新的房间服数量会因为设置了minAvailable参数而不断增加；
+但如果Allocated的房间服在对局结束后被再次利用重新变为None，在玩家不激增的情况下，会存在很长一段时间新版本的房间服无法扩容出来，所以建议在更新GameServerSet镜像后手动调大其副本数量，直接扩容出最新版本的房间服。旧版本的处于None状态的房间服会由于长时间等待不到玩家进入而进入WaitToBeDeleted状态，最终被删除。
