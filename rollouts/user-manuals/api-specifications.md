@@ -92,7 +92,7 @@ spec:
       - service: echoserver
         # ingress name that is related with the service
         ingress:
-        name: echoserver
+          name: echoserver
 ```
 
   </TabItem>
@@ -165,13 +165,21 @@ kind: Rollout
 metadata:
   namespace: <your-workload-ns>
 spec:
-  trafficRoutings:
-  - service: <service-name-that-is-related-your-workload>
-    ingress:
-      classType: <traffic-type> # example: nginx | higress, defaults to "nginx"
-      name: <ingress-name-that-is-related-the-service>
-    gateway: # alternative： ingress or gateway-api
-      httpRouteName: <gateway-api-httpRoute-name>
+  strategy:
+    canary:
+      trafficRoutings:
+      - service: <service-name-that-is-related-your-workload>
+        ingress: # alternative： ingress,gateway,customNetworkRefs
+          classType: <traffic-type> # example: nginx | higress, defaults to "nginx"
+          name: <ingress-name-that-is-related-the-service>
+      - service: <service-name-that-is-related-your-workload>
+        gateway:
+          httpRouteName: <gateway-api-httpRoute-name>
+      - service: <service-name-that-is-related-your-workload>
+        customNetworkRefs:
+        - apiVersion: <your-resource-apiVersion>
+          kind: <your-resource-kind>
+          name: <your-resource-name>
 ```
 
   </TabItem>
@@ -183,13 +191,21 @@ kind: Rollout
 metadata:
   namespace: <your-workload-ns>
 spec:
-  trafficRoutings:
-  - service: <service-name-that-is-related-your-workload>
-    ingress:
-      classType: <traffic-type> # example: nginx | higress, defaults to "nginx"
-      name: <ingress-name-that-is-related-the-service>
-    gateway: # alternative： ingress or gateway-api
-      httpRouteName: <gateway-api-httpRoute-name>
+  strategy:
+    canary:
+      trafficRoutings:
+      - service: <service-name-that-is-related-your-workload>
+        ingress: # alternative： ingress,gateway,customNetworkRefs
+          classType: <traffic-type> # example: nginx | higress, defaults to "nginx"
+          name: <ingress-name-that-is-related-the-service>
+      - service: <service-name-that-is-related-your-workload>
+        gateway: 
+          httpRouteName: <gateway-api-httpRoute-name>
+      - service: <service-name-that-is-related-your-workload>
+        customNetworkRefs:
+        - apiVersion: <your-resource-apiVersion>
+          kind: <your-resource-kind>
+          name: <your-resource-name>
 ```
 
   </TabItem>
@@ -203,8 +219,9 @@ spec:
 | `ingress.classType`     | string | "nginx"  | Ingress type, such as "nginx", "higress", or others                                                           |
 | `ingress.name`          | string | ""       | Name of ingress resource that bounded the service                                                             |
 | `gateway.httpRouteName` | string | ""       | Name of [HTTPRoute](https://gateway-api.sigs.k8s.io/concepts/api-overview/#httproute) resource of Gateway API |
+| `customNetworkRefs    ` | object | ""       | Definitions of [customize API Gateway resources](https://openkruise.io/rollouts/developer-manuals/custom-network-provider) | 
 
-**Note: `ingress` and `gateway` can not be nil at the same time if you decide to use `trafficRoutings`.**
+**Note: `ingress`,`gateway`,`customNetworkRefs` can not be nil at the same time if you decide to use `trafficRoutings`.**
 
 ### Strategy API (Mandatory)
 Describe your strategy of rollout:
