@@ -23,13 +23,13 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: workload-demo
-strategy:
-  canary:
-    enableExtraWorkloadForCanary: false
-    steps:
-    - replicas: 1
-    - replicas: 50%
-    - replicas: 100%
+  strategy:
+    canary:
+      enableExtraWorkloadForCanary: false
+      steps:
+      - replicas: 1
+      - replicas: 50%
+      - replicas: 100%
 ```
 
   </TabItem>
@@ -48,12 +48,12 @@ spec:
       apiVersion: apps/v1
       kind: Deployment
       name: workload-demo
-  strategy:
-    canary:
-      steps:
-      - replicas: 1
-      - replicas: 50%
-      - replicas: 100%
+    strategy:
+      canary:
+        steps:
+        - replicas: 1
+        - replicas: 50%
+        - replicas: 100%
 ```
 
   </TabItem>

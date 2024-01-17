@@ -29,22 +29,22 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: workload-demo
-strategy:
-  canary:
-    steps:
-    - replicas: 1
-      matches:
-      - headers:
-        - name: user-agent
-          type: Exact
-          value: pc
-    - replicas: 50%
-    - replicas: 100%
-    trafficRoutings:
-    - service: service-demo
-      ingress:
-        classType: nginx
-        name: ingress-demo
+  strategy:
+    canary:
+      steps:
+      - replicas: 1
+        matches:
+        - headers:
+          - name: user-agent
+            type: Exact
+            value: pc
+      - replicas: 50%
+      - replicas: 100%
+      trafficRoutings:
+      - service: service-demo
+        ingress:
+          classType: nginx
+          name: ingress-demo
 ```
 
   </TabItem>

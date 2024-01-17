@@ -29,11 +29,11 @@ spec:
       steps:
       - traffic: 20%
         replicas: 20%
-        trafficRoutings:
-        - service: service-demo
-          ingress:
-            classType: nginx
-            name: ingress-demo
+      trafficRoutings:
+      - service: service-demo
+        ingress:
+          classType: nginx
+          name: ingress-demo
 ```
 
   </TabItem>
@@ -56,11 +56,11 @@ spec:
     canary:
       steps:
       - weight: 20
-        trafficRoutings:
-        - service: service-demo
-          ingress:
-            classType: nginx
-            name: ingress-demo
+      trafficRoutings:
+      - service: service-demo
+        ingress:
+          classType: nginx
+          name: ingress-demo
 ```
 
   </TabItem>
