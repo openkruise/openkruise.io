@@ -69,10 +69,10 @@ spec:
         - name: pvc-oss #挂载oss对应pvc
           mountPath: "/app/sgame.config" #容器中的目录及文件
           subPathExpr: $(POD_NAME)/sgame.config #对应oss目录及文件
-	    volumes:
-	    - name: pvc-oss
-	      persistentVolumeClaim:
-	        claimName: pvc-oss
+      volumes:
+      - name: pvc-oss
+        persistentVolumeClaim:
+          claimName: pvc-oss
 ```
 
 这样一来，开服前只需准备好游戏服对应配置并上传到bucket对应路径中，再部署GameServerSet或调整Replicas即可。

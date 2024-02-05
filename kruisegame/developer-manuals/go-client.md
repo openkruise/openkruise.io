@@ -1,4 +1,4 @@
-# Goliang Client
+# Golang Client
 
 If you want to create/get/update/delete those OKG resources in a Golang project or list-watch them using informer,
 you may need a Golang client for OKG.

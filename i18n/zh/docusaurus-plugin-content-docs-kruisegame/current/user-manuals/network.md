@@ -356,7 +356,7 @@ spec:
       value: "tcp"
 #   - name: Fixed
 #     是否固定映射关系，默认不固定，pod删除后会生成新的外部IP及端口
-#     value: true
+#     value: "true"
   gameServerTemplate:
     spec:
       containers:
@@ -756,7 +756,7 @@ spec:
     - name: PortProtocols
       value: "xxx"
     - name: Fixed
-      value: true
+      value: "true"
   gameServerTemplate:
     spec:
       containers:

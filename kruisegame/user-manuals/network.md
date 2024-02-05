@@ -354,7 +354,7 @@ spec:
       value: "tcp"
 #   - name: Fixed
 # Specify whether the mapping relationship is fixed. By default, the mapping relationship is not fixed, that is, a new external IP address and port are generated after the pod is deleted.
-#     value: true
+#     value: "true"
   gameServerTemplate:
     spec:
       containers:
@@ -756,7 +756,7 @@ spec:
     - name: PortProtocols
       value: "xxx"
     - name: Fixed
-      value: true
+      value: "true"
   gameServerTemplate:
     spec:
       containers:
