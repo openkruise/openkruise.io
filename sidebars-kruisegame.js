@@ -54,7 +54,8 @@ module.exports = {
             collapsed: false,
             items: [
                 'developer-manuals/contribution',
-                'developer-manuals/faq'
+                'developer-manuals/faq',
+                'developer-manuals/go-client'
             ],
         },
         {
