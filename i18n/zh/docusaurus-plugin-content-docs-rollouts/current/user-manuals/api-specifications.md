@@ -1,6 +1,59 @@
 # API 规范
 
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 Kruise Rollouts 资源 YAML 的基本示例：
+
+**Note: v1beta1在Kruise Rollout v0.5.0 后可用**
+
+<Tabs>
+  <TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: rollouts.kruise.io/v1beta1
+kind: Rollout
+metadata:
+  name: rollouts-demo
+  # Rollout 资源需要与相应的工作负载在相同的命名空间中
+  namespace: default
+spec:
+  # 发布工作负载的 Rollout，当前仅支持 Deployment、CloneSet、StatefulSet、Advanced StatefulSet、Advanced DaemonSet
+  workloadRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: echoserver
+  strategy:
+    canary:
+      ### 为金丝雀发布创建一个额外的工作负载， 金丝雀发布后会被删除 ###
+      enableExtraWorkloadForCanary: true
+      steps:
+      ### 第一批h ###
+      # 将 5% 的流量路由到新版本
+      - traffic: 5%
+        # 需要手动确认才能进入下一批
+        pause: {}
+        # 第一批发布的实例数量
+        replicas: 1
+      ### 第二批 ###
+      - traffic: 50%
+        replicas: 50%
+        # 等待 2 小时后自动进入下一批
+        pause:
+          duration: 7200
+      ### 第三批 ###
+      - traffic: 100%
+        replicas: 100%
+      trafficRoutings:
+      # 工作负载相关的service名
+      - service: echoserver
+        # 与服务相关的 Ingress 名称
+        ingress:
+          name: echoserver
+```
+
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
 
 ```yaml
 apiVersion: rollouts.kruise.io/v1alpha1
@@ -14,7 +67,7 @@ metadata:
     rollouts.kruise.io/rolling-style: partition
 spec:
   objectRef:
-    # 发布工作负载的 Rollout，当前仅支持 Deployment、CloneSet、StatefulSet、Advanced StatefulSet
+    # 发布工作负载的 Rollout，当前仅支持 Deployment、CloneSet、StatefulSet、Advanced StatefulSet、Advanced DaemonSet
     workloadRef:
       apiVersion: apps/v1
       kind: Deployment
@@ -44,6 +97,9 @@ spec:
           name: echoserver
 ```
 
+  </TabItem>
+</Tabs>
+
 API 规范的主要部分包括 3 部分，您应该注意：
 
 - 绑定工作负载：告诉 Rollout 应该在哪个工作负载上工作。
@@ -56,18 +112,39 @@ API 规范的主要部分包括 3 部分，您应该注意：
 
 告诉 Kruise Rollout 应该绑定哪个工作负载：
 
+<Tabs>
+<TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: rollouts.kruise.io/v1beta1
+kind: Rollout
+metadata:
+  namespace: your-workload-ns
+spec:
+  workloadRef:
+    apiVersion: apps/v1
+    kind: StatefulSet
+    name: your-workload-name
+```
+
+</TabItem>
+<TabItem value="v1alpha1" label="v1alpha1">
+
 ```yaml
 apiVersion: rollouts.kruise.io/v1alpha1
 kind: Rollout
 metadata:
-  namespace: <your-workload-ns>
+  namespace: your-workload-ns
 spec:
   objectRef:
     workloadRef:
       apiVersion: apps/v1
       kind: StatefulSet
-      name: <your-workload-name>
+      name: your-workload-name
 ```
+
+</TabItem>
+</Tabs>
 
 | 字段           | 类型	 | 默认值	 | 说明           |
 |--------------|-----|------|--------------|
@@ -75,7 +152,7 @@ spec:
 | `kind`       | 字符串 | ""   | 工作负载种类       |
 | `name`       | 字符串 | ""   | 工作负载名称       |
 
-目前，Kruise Rollout 支持 Deployment、CloneSet、StatefulSet 和Advanced StatefulSet。
+目前，Kruise Rollout 支持 Deployment、CloneSet、StatefulSet、Advanced StatefulSet和Advanced DaemonSet。
 
 注意：
 
@@ -88,7 +165,7 @@ spec:
 如果您需要为流量路由执行特殊操作，请告诉 Kruise Rollout 应该绑定哪些流量配置：
 
 ```yaml
-apiVersion: rollouts.kruise.io/v1alpha1
+apiVersion: rollouts.kruise.io/v1beta1
 kind: Rollout
 metadata:
   namespace: <your-workload-ns>
@@ -96,12 +173,18 @@ spec:
   strategy:
     canary:
       trafficRoutings:
-        - service: <service-name-that-is-related-your-workload>
-          ingress:
-            classType: <traffic-type> # 例如：nginx | higress，默认为 "nginx"
-            name: <ingress-name-that-is-related-the-service>
-          gateway: # 或者选择使用 Ingress 或 GatewayAPI
-            httpRouteName: <gateway-api-httpRoute-name>
+      - service: <service-name-that-is-related-your-workload>
+        ingress:
+          classType: <traffic-type> # 例如：nginx | higress，默认为 "nginx"
+          name: <ingress-name-that-is-related-the-service>
+      - service: <service-name-that-is-related-your-workload>
+        gateway: # 或者选择使用 Ingress 或 GatewayAPI
+          httpRouteName: <gateway-api-httpRoute-name>
+      - service: <service-name-that-is-related-your-workload>
+        customNetworkRefs:
+        - apiVersion: <your-resource-apiVersion>
+          kind: <your-resource-kind>
+          name: <your-resource-name>
 ```
 
 | 字段                      | 类型  | 默认值     | 说明                                                                                            |
@@ -109,45 +192,78 @@ spec:
 | `service`               | 字符串 | ""      | 选择绑定工作负载的服务名称                                                                                 |
 | `ingress`               | 对象  | nil     | （可选）您想要绑定的Ingress对象的描述                                                                        |
 | `gateway`               | 对象  | nil     | （可选）您想要绑定的[Gateway API](https://gateway-api.sigs.k8s.io/)资源的描述                                |
+| `customNetworkRefs`     | 对象数组  | nil     | （可选）您想要绑定的[自定义网关资源]((https://openkruise.io/rollouts/developer-manuals/custom-network-provider)的描述                                |
 | `ingress.classType`     | 字符串 | "nginx" | Ingress类型，如"nginx"、"higress"或其他                                                               |
 | `ingress.name`          | 字符串 | ""      | 绑定服务的Ingress资源的名称                                                                             |
 | `gateway.httpRouteName` | 字符串 | ""      | Gateway API的[HTTPRoute](https://gateway-api.sigs.k8s.io/concepts/api-overview/#httproute)资源名称 |
-
 注意：
-
-- 如果决定使用`trafficRoutings`，则`ingress`和`gateway`不能同时为nil。
+- 如果决定使用`trafficRoutings`，则`ingress`、`gateway`和`customNetworkRefs`不能同时为nil，且`ingress`、`gateway`和`customNetworkRefs` 不能同时配置在一个trafficRouting中
 
 ### 策略API（必填）
 
 描述您的发布策略：
 
+<Tabs>
+  <TabItem value="v1beta1" label="v1beta1" default>
+
 ```yaml
-apiVersion: rollouts.kruise.io/v1alpha1
+apiVersion: rollouts.kruise.io/v1beta1
 kind: Rollout
 metadata:
-  namespace: <your-workload-ns>
+  namespace: your-workload-ns
 spec:
   strategy:
     canary:
       steps:
-        # the first step
-        - weight: 5
-          replicas:
-          pause:
-            duration: 1000
-          matches:
-            - headers:
-                - type: Exact # 或者 "RegularExpression"
-                  name: <matched-header-name>
-                  value: <matched-header-value, or reg-expression>
+      # the first step
+      - traffic: 5%
+        replicas: 1 or 10%
+        pause:
+          duration: {}
+        matches:
+        - headers:
+          - type: Exact # or "RegularExpression"
+            name: matched-header-name
+            value: matched-header-value # value or reg-expression
+      # the second step
+      - traffic: 10%
+        ... ....
+```
+
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
+
+```yaml
+apiVersion: rollouts.kruise.io/v1alpha1
+kind: Rollout
+metadata:
+  namespace: your-workload-ns
+spec:
+  strategy:
+    canary:
+      steps:
+      # the first step
+      - weight: 5
+        replicas:
+        pause:
+          duration: 1000
+        matches:
+          - headers:
+            - type: Exact # 或者 "RegularExpression"
+              name: matched-header-name
+              value: matched-header-value # value or reg-expression
         # the second step
-        - weight: 10
+      - weight: 10
           ... ....
 ```
+
+</TabItem>
+</Tabs>
 
 | 字段                        | 类型       | 默认值     | 说明                                             |
 |---------------------------|----------|---------|------------------------------------------------|
 | `steps[x].weight`         | *整数      | nil     | （可选）金丝雀流量新版本Pod的百分比权重。                         |
+| `steps[x].traffic`         | *字符串      | nil     | （可选）可选）金丝雀流量新版本Pod的百分比权重。                         |
 | `steps[x].replicas`       | *整数或*字符串 | nil     | （可选）新版本Pod的绝对数量或百分比。如果为nil，则默认使用'weight'作为副本数。 |
 | `steps[x].pause`          | 对象       | {}      | （可选）进入下一步之前需要手动确认或自动确认。                        |
 | `steps[x].pause.duration` | *整数      | nil     | （可选）自动确认之前的持续时间。如果为nil，则表示需要手动确认。              |
@@ -155,20 +271,15 @@ spec:
 | `headers[x].type`         | 字符串      | "Exact" | 匹配键和值的规则，可以是"Exact"或"RegularExpression"。       |
 | `headers[x].name`         | 字符串      | ""      | 匹配的HTTP标头名称。（headers[i]和headers[j]之间的And关系）    |
 | `headers[x].value`        | 字符串      | ""      | 匹配的HTTP标头值。                                    |
+| `enableExtraWorkloadForCanary`        | 布尔值      | false      |  为金丝雀发布创建一个额外的工作负载， 金丝雀发布后会被删除  |
 
 注意：
 
-- `steps[x].weight`和`steps[x].replicas`不能同时为nil。
+- `steps[x].replicas`不能为nil。
 - `steps[x].matches[i]和steps[x].matches[j]`之间具有**或**关系；
 - `steps[x].matches[y].headers[i]和steps[x].matches[y].header[j]`之间具有**且**关系。
+- `enableExtraWorkloadForCanary 在v1beta1的Rollout对象中可用， 在v1alpha1版本的Rollout对象中， 可以用Rollout的特殊annotation `rollouts.kruise.io/rolling-type` 来开启类似功能，rolling-type 如果设置为"canary"（默认值)， 则相当于设置enableExtraWorkloadForCanary=true; 如果设置为partition, 这相当于设置enableExtraWorkloadForCanar=false
 
-### Rollout的特殊注释（可选）
-
-Rollout中有一些特殊的注释，用于启用特定功能。
-
-| 注释                                | 值                    | 默认值      | 说明                                                                  |
-|-----------------------------------|----------------------|----------|---------------------------------------------------------------------|
-| `rollouts.kruise.io/rolling-type` | "canary"或"partition" | "canary" | "canary"表示使用金丝雀升级策略进行Deployment；"partition"表示使用多批次升级策略进行Deployment； |
 
 ### 工作负载的特殊注释（可选）
 

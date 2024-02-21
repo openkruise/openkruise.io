@@ -1,6 +1,6 @@
 {
   "version.label": {
-    "message": "v0.4.1",
+    "message": "v0.5.0",
     "description": "The label for version current"
   },
   "sidebar.rollouts.category.Getting Started": {
@@ -8,6 +8,12 @@
   },
   "sidebar.rollouts.category.User Manuals": {
     "message": "用户手册"
+  },
+  "sidebar.rollouts.category.Developer manuals": {
+    "message": "开发手册"
+  },
+  "sidebar.rollouts.category.Best Practices": {
+    "message": "最佳实践"
   },
   "sidebar.rollouts.category.Release Strategies": {
     "message": "发布策略"

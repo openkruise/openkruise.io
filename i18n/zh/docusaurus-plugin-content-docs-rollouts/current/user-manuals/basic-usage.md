@@ -45,21 +45,19 @@ spec:
 
 ```bash
 $ kubectl apply -f - <<EOF
-apiVersion: rollouts.kruise.io/v1alpha1
+apiVersion: rollouts.kruise.io/v1beta1
 kind: Rollout
 metadata:
   name: rollouts-demo
   namespace: default
-  annotations:
-    rollouts.kruise.io/rolling-style: partition
 spec:
-  objectRef:
-    workloadRef:
-      apiVersion: apps/v1
-      kind: Deployment
-      name: workload-demo
+  workloadRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: workload-demo
   strategy:
     canary:
+      enableExtraWorkloadForCanary: false
       steps:
       - replicas: 1
       - replicas: 50%
@@ -115,10 +113,10 @@ spec:
   strategy:
     canary:
       steps:
-        - replicas: 1
-          pause:
-            duration: 0
-        - ... ...
+      - replicas: 1
+        pause:
+          duration: 0
+      - ... ...
 ```
 
 - **对于方法二**，在下一次发布之前，您无需更改任何内容。然而，在确认之前，您需要检查 Rollout 的状态，并使用 Kubernetes
@@ -136,7 +134,7 @@ $ kubectl-kruise rollout approve rollout/<your-rollout-name> -n <your-rollout-na
 - 如果 `status.canaryStatus.CurrentStepState` 不等于 "StepReady" 或 "Complete"，则当前步骤 **尚未准备就绪**。
 
 ```go
-func IsRolloutCurrentStepReady(rollout *rolloutsv1alpha1.Rollout, stepIndex int32) bool {
+func IsRolloutCurrentStepReady(rollout *rolloutsv1beta1.Rollout, stepIndex int32) bool {
 	if rollout.Status.CanaryStatus != nil {
 		if rollout.Status.CanaryStatus.CurrentStepIndex != stepIndex {
 			return false
@@ -154,7 +152,7 @@ func IsRolloutCurrentStepReady(rollout *rolloutsv1alpha1.Rollout, stepIndex int3
 进程对应（也许它对应上一个 Rollout 进程）。我们可以使用 `rollout-id` 机制来解决这个问题。
 
 ```go
-func IsRolloutCurrentStepReady(workload appsv1.Deployment, rollout *rolloutsv1alpha1.Rollout, stepIndex int32) bool {
+func IsRolloutCurrentStepReady(workload appsv1.Deployment, rollout *rolloutsv1beta1.Rollout, stepIndex int32) bool {
 	if rollout.Status.CanaryStatus != nil {
 		rolloutId := workload.Labels["rollouts.kruise.io/rollout-id"]
 		if rolloutId != rollout.Status.CanaryStatus.ObservedRolloutID {

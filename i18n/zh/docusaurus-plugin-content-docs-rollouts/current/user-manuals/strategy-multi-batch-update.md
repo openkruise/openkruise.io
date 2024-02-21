@@ -9,20 +9,18 @@
 **注意：目前，多批次策略可用于CloneSet、StatefulSet、Advanced StatefulSet和Deployment。**
 
 ```YAML
-apiVersion: rollouts.kruise.io/v1alpha1
+apiVersion: rollouts.kruise.io/v1beta1
 kind: Rollout
 metadata:
   name: rollouts-demo
-  annotations:
-    rollouts.kruise.io/rolling-style: partition
 spec:
-  objectRef:
-    workloadRef:
-      apiVersion: apps/v1
-      kind: Deployment
-      name: workload-demo
+  workloadRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: workload-demo
   strategy:
     canary:
+      enableExtraWorkloadForCanary: false
       steps:
       - replicas: 1
       - replicas: 50%

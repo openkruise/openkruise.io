@@ -152,7 +152,7 @@ All status information about current step is recorded in `status.canaryStatus` f
 - if `status.canaryStatus.CurrentStepIndex` does not equal to your expected step index, the current step is **NOT** ready.
 - if `status.canaryStatus.CurrentStepState` does not equal to "StepReady" or "Complete", the current step is **NOT** ready.
 ```go
-func IsRolloutCurrentStepReady(rollout *rolloutsv1alpha1.Rollout, stepIndex int32) bool {
+func IsRolloutCurrentStepReady(rollout *rolloutsv1beta1.Rollout, stepIndex int32) bool {
 	if rollout.Status.CanaryStatus != nil {
 		if rollout.Status.CanaryStatus.CurrentStepIndex != stepIndex {
 			return false
@@ -169,7 +169,7 @@ func IsRolloutCurrentStepReady(rollout *rolloutsv1alpha1.Rollout, stepIndex int3
 But in some automatic scenes(e.g. PaaS platform), before judging whether current step is ready, we should know whether the `canaryStatus` is corresponding to the current rollout processes (Maybe it corresponds to the last rollout process).
 We can use `rollout-id` mechanism to solve this problem.
 ```go
-func IsRolloutCurrentStepReady(workload appsv1.Deployment, rollout *rolloutsv1alpha1.Rollout, stepIndex int32) bool {
+func IsRolloutCurrentStepReady(workload appsv1.Deployment, rollout *rolloutsv1beta1.Rollout, stepIndex int32) bool {
 	if rollout.Status.CanaryStatus != nil {
 		rolloutId := workload.Labels["rollouts.kruise.io/rollout-id"]
 		if rolloutId != rollout.Status.CanaryStatus.ObservedRolloutID {
