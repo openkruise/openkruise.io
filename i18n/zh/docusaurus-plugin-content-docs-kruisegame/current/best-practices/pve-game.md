@@ -312,6 +312,7 @@ spec:
       containers:
         - image: registry.cn-hangzhou.aliyuncs.com/acs/minecraft-demo:1.12.2
           name: minecraft
+  updateStrategy:
     rollingUpdate:
       podUpdatePolicy: InPlaceIfPossible
       maxUnavailable: 100%

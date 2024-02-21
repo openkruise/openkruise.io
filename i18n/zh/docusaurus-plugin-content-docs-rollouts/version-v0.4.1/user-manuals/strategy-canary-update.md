@@ -25,11 +25,11 @@ spec:
     canary:
       steps:
       - weight: 20
-  trafficRoutings:
-  - service: service-demo
-    ingress:
-      classType: nginx
-      name: ingress-demo
+      trafficRoutings:
+      - service: service-demo
+        ingress:
+          classType: nginx
+          name: ingress-demo
 ```
 
 ### 行为解释

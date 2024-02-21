@@ -21,3 +21,6 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+.github/workflows/game/go.*
+.github/workflows/kruise/go.*
+.github/workflows/rollouts/go.*

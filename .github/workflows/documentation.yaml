@@ -73,7 +73,7 @@ jobs:
       - uses: actions/checkout@v1
       - uses: actions/setup-python@v4
         with:
-          python-version: '3.10' 
+          python-version: '3.10'
       - name: TypoCheck
         run: |
           pip3 install bs4 markdown html2markdown language_tool_python
@@ -84,6 +84,9 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - uses: actions/setup-go@v4
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
       - name: StructCheck
         run: |
-          cd .github/workflows && go run .
+          cd .github/workflows && python3 version_struct_check.py

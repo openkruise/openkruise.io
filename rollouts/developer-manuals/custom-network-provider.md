@@ -29,7 +29,8 @@ apiVersion: rollouts.kruise.io/v1beta1
 kind: Rollout
 ...
 spec:
-  ...
+  strategy:
+    canary:
       trafficRoutings:
       - service: <stable-service>
         customNetworkRefs:

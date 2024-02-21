@@ -645,7 +645,7 @@ spec:
     - name: PortProtocols
       value: "xxx"
     - name: Fixed
-      value: true
+      value: "true"
   gameServerTemplate:
     spec:
       containers:

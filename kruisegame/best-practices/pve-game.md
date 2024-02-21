@@ -68,10 +68,10 @@ spec:
         - name: pvc-oss 
           mountPath: "/app/sgame.config" 
           subPathExpr: $(POD_NAME)/sgame.config 
-	    volumes:
-	    - name: pvc-oss
-	      persistentVolumeClaim:
-	        claimName: pvc-oss
+      volumes:
+      - name: pvc-oss
+        persistentVolumeClaim:
+          claimName: pvc-oss
 ```
 As such, before launching the server, it is only necessary to prepare the corresponding configurations for the game server and upload them to the respective paths in the bucket. Then, deploy the GameServerSet or adjust the Replicas as needed.
 
@@ -307,6 +307,7 @@ spec:
       containers:
         - image: registry.cn-hangzhou.aliyuncs.com/acs/minecraft-demo:1.12.2
           name: minecraft
+  updateStrategy:
     rollingUpdate:
       podUpdatePolicy: InPlaceIfPossible
       maxUnavailable: 100%
