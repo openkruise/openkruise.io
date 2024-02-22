@@ -46,6 +46,7 @@ module.exports = {
             items: [
                 'best-practices/session-based-game',
                 'best-practices/pve-game',
+                'best-practices/shared-mem',
             ],
         },
         {
