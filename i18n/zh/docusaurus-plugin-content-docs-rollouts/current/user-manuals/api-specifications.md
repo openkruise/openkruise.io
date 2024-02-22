@@ -93,13 +93,15 @@ kind: Rollout
 metadata:
   namespace: <your-workload-ns>
 spec:
-  trafficRoutings:
-    - service: <service-name-that-is-related-your-workload>
-      ingress:
-        classType: <traffic-type> # 例如：nginx | higress，默认为 "nginx"
-        name: <ingress-name-that-is-related-the-service>
-      gateway: # 或者选择使用 Ingress 或 GatewayAPI
-        httpRouteName: <gateway-api-httpRoute-name>
+  strategy:
+    canary:
+      trafficRoutings:
+        - service: <service-name-that-is-related-your-workload>
+          ingress:
+            classType: <traffic-type> # 例如：nginx | higress，默认为 "nginx"
+            name: <ingress-name-that-is-related-the-service>
+          gateway: # 或者选择使用 Ingress 或 GatewayAPI
+            httpRouteName: <gateway-api-httpRoute-name>
 ```
 
 | 字段                      | 类型  | 默认值     | 说明                                                                                            |

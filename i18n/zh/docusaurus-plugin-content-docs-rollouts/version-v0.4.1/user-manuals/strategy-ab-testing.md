@@ -38,11 +38,11 @@ spec:
             value: pc
       - replicas: 50%
       - replicas: 100%
-    trafficRoutings:
-    - service: service-demo
-      ingress:
-        classType: nginx
-        name: ingress-demo
+      trafficRoutings:
+      - service: service-demo
+        ingress:
+          classType: nginx
+          name: ingress-demo
 ```
 
 ### 行为解释

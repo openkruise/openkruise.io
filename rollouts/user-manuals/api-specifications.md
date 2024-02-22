@@ -242,7 +242,7 @@ spec:
       - traffic: 5%
         replicas: 1 or 10%
         pause:
-          duration: {}
+          duration: 0
         matches:
         - headers:
           - type: Exact # or "RegularExpression"
@@ -280,7 +280,7 @@ spec:
       - weight: 5
         replicas: 1 or 10%
         pause:
-          duration: {}
+          duration: 0
         matches:
         - headers:
           - type: Exact # or "RegularExpression"

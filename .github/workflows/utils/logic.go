@@ -1,25 +1,18 @@
-package main
+package utils
 
 import (
+	"check/utils/yaml"
 	"encoding/base64"
+	rawJson "encoding/json"
 	"fmt"
-	"log"
-
-	//kruise "github.com/openkruise/kruise-api"
-	"io/fs"
-	"io/ioutil"
-
-	kruise "github.com/openkruise/kruise/apis"
 	"github.com/pkg/errors"
+	"io/ioutil"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/apimachinery/pkg/runtime/serializer/json"
-	"k8s.io/apimachinery/pkg/util/yaml"
 	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
-
+	"k8s.io/klog"
 	"os"
-	"path/filepath"
-	"regexp"
 	"strings"
 )
 
@@ -45,48 +38,64 @@ func VerifyUnmarshalStrict(schemes []*runtime.Scheme, gvk schema.GroupVersionKin
 	return nil
 }
 
-var compile, _ = regexp.Compile("```(?is)(.*?)```")
+func RemoveInvalidCharacter(txt string) string {
+	_data := txt
+	for i := 10; i >= 3; i-- {
+		_data = strings.ReplaceAll(_data, strings.Repeat(".", i), "")
+	}
+	_data = strings.Trim(_data, " \n")
 
-func main() {
-	kruise.AddToScheme(clientgoscheme.Scheme)
-	hasError := false
-	filepath.WalkDir("../..", func(path string, d fs.DirEntry, err error) error {
-		if !strings.HasSuffix(path, ".md") {
-			return nil
-		}
-		fmt.Println(path)
-		file, _ := ioutil.ReadFile(path)
-		for _, item := range compile.FindAllStringSubmatch(string(file), -1) {
-			if len(item) <= 1 {
-				continue
-			}
-			_data := strings.ReplaceAll(strings.TrimPrefix(item[1], "yaml"), "...", "")
-			for _, data := range strings.Split(_data, yamlSeparator) {
-				t := map[string]interface{}{}
-				yaml.Unmarshal([]byte(data), &(t))
-				gvk, _ := getGroupVersionKind(t)
-				if !strings.Contains(gvk.Group, "kruise") {
-					continue
-				}
-				err := VerifyUnmarshalStrict([]*runtime.Scheme{clientgoscheme.Scheme}, gvk, []byte(data))
-				switch _err := err.(type) {
-				case base64.CorruptInputError:
-				case nil:
-				default:
-					log.Fatalln(_err)
-					fmt.Println("file://" + path)
-					fmt.Println(data)
-					hasError = true
-				}
-			}
-		}
-		return nil
-	})
-
-	if hasError {
-		os.Exit(1)
+	if strings.HasPrefix(strings.ToLower(_data), "yaml") {
+		_data = _data[4:]
+	} else if strings.HasPrefix(strings.ToLower(_data), "yml") {
+		_data = _data[3:]
+	}
+	if strings.HasPrefix(strings.ToLower(_data), "shell\n") {
+		_data = strings.TrimPrefix(_data, "shell\n")
+	}
+	if strings.HasPrefix(strings.ToLower(_data), "cat ") {
+		_data = strings.Join(strings.Split(_data, "\n")[1:], "\n")
 	}
 
+	_data = strings.TrimSuffix(_data, "\nEOF")
+	return _data
+}
+
+type Item struct {
+	Yaml string `json:"yaml"`
+	Path string `json:"path"`
+}
+
+func Handle() {
+	jsonFilePath := os.Args[1]
+	file, _ := ioutil.ReadFile(jsonFilePath)
+	var fs []Item
+	rawJson.Unmarshal(file, &fs)
+	pan := false
+	for _, it := range fs {
+		tmpYaml := RemoveInvalidCharacter(it.Yaml)
+		t := map[string]interface{}{}
+		yaml.Unmarshal([]byte(tmpYaml), &(t))
+		gvk, _ := getGroupVersionKind(t)
+		if !strings.Contains(strings.ToLower(tmpYaml), "apiversion") {
+			continue
+		}
+		if !strings.Contains(gvk.Group, "kruise") {
+			continue
+		}
+		err := VerifyUnmarshalStrict([]*runtime.Scheme{clientgoscheme.Scheme}, gvk, []byte(tmpYaml))
+		switch _err := err.(type) {
+		case base64.CorruptInputError:
+		case nil:
+		default:
+			pan = true
+		    klog.Errorln(it.Path)
+			klog.Errorln(it.Yaml, _err)
+		}
+	}
+	if pan {
+		klog.Fatalln("")
+	}
 }
 
 // getGroupVersionKind returns the GroupVersionKind of the object
