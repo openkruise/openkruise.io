@@ -15,34 +15,32 @@ A/B测试流程结合了**金丝雀发布**：
 接下来，我们将提供一个关于**A/B测试与多批次发布策略**的示例：
 
 ```YAML
-apiVersion: rollouts.kruise.io/v1alpha1
+apiVersion: rollouts.kruise.io/v1beta1
 kind: Rollout
 metadata:
   name: rollouts-demo
-  annotations:
-    rollouts.kruise.io/rolling-style: partition
 spec:
-  objectRef:
-    workloadRef:
-      apiVersion: apps/v1
-      kind: Deployment
-      name: workload-demo
+  workloadRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: workload-demo
   strategy:
     canary:
+      enableExtraWorkloadForCanary: false
       steps:
-        - replicas: 1
-          matches:
-            - headers:
-                - name: user-agent
-                  type: Exact
-                  value: pc
-        - replicas: 50%
-        - replicas: 100%
+      - replicas: 1
+        matches:
+        - headers:
+          - name: user-agent
+            type: Exact
+            value: pc
+      - replicas: 50%
+      - replicas: 100%
       trafficRoutings:
-        - service: service-demo
-          ingress:
-            classType: nginx
-            name: ingress-demo
+      - service: service-demo
+        ingress:
+          classType: nginx
+          name: ingress-demo
 ```
 
 ### 行为解释

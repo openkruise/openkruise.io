@@ -9,27 +9,25 @@
 **注意：金丝雀策略仅适用于Deployment。**
 
 ```YAML
-apiVersion: rollouts.kruise.io/v1alpha1
+apiVersion: rollouts.kruise.io/v1beta1
 kind: Rollout
 metadata:
   name: rollouts-demo
-  annotations:
-    rollouts.kruise.io/rolling-style: canary
 spec:
-  objectRef:
-    workloadRef:
-      apiVersion: apps/v1
-      kind: Deployment
-      name: workload-demo
+  workloadRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: workload-demo
   strategy:
     canary:
+      enableExtraWorkloadForCanary: true
       steps:
-        - weight: 20
+      - traffic: 20%
       trafficRoutings:
-        - service: service-demo
-          ingress:
-            classType: nginx
-            name: ingress-demo
+      - service: service-demo
+        ingress:
+          classType: nginx
+          name: ingress-demo
 ```
 
 ### 行为解释

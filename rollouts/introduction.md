@@ -7,15 +7,16 @@ Its support for canary, multi-batch, and A/B testing delivery modes can be helpf
 ![kruise-rollout-intro](../static/img/rollouts/intro.png)
 
 ## Key Features
-- **More release strategies**
-  - Multi-batch update strategy for Deployment, CloneSet, StatefulSet, Advanced StatefulSet.
+- **Rich release strategies**
+  - Multi-batch update strategy for Deployment, CloneSet, StatefulSet, Advanced StatefulSet, Advanced DaemonSet.
   - Canary update strategy for Deployment.
 
-- **More traffic routing management strategies**
+- **Rich traffic routing management strategies**
   - Traffic fine-grained, weighted traffic shifting when updating workloads.
   - Traffic A/B Testing, traffic shifting based on HTTP Header&Cookie.
+  - End-to-End canary deployment
   
-- **More Traffic Protocol Supports**
+- **Rich Traffic Protocol Supports**
   - Ingress controller integration: NGINX, ALB, Higress.
   - Service Mesh integration via GatewayAPI.
   - Pluggable Lua scripts for easily extending to other Kubernetes traffic protocols (even CRD).
@@ -29,16 +30,16 @@ There is a demo of multi-batch update strategy for Deployment.
 
 Kruise Rollouts vs. [Argo Rollout](https://argoproj.github.io/rollouts/) and [Flux Flagger](https://fluxcd.io/flagger/).
 
-| Component                   | **Kruise Rollouts**                                                | Argo Rollouts                                      | Flux Flagger                                       |
-|-----------------------------|--------------------------------------------------------------------|----------------------------------------------------|----------------------------------------------------|
-| Core Concept                | Enhance your existing workloads                                    | Replace your workloads                             | manage your workloads                              |
-| Architecture                | Bypass                                                             | A new workload type                                | Bypass                                             |
-| Plug and Play, Hot-Swapping | Yes                                                                | No                                                 | No                                                 |
-| Release Type                | Multi-Batch, Canary, A/B Testing                                   | Multi-Batch, Canary, Blue-Green, A/B Testing       | Canary, Blue-Green, A/B Testing                    |
-| Workload Type               | Deployment,StatefulSet,CloneSet,Advaned StatefulSet,DaemonSet(WIP) | Agro-Rollout                                       | Deployment. DaemonSet                              | 
-| Traffic Type                | Ingress, GatewayAPI, CRD (Need Lua Script)                         | Ingress, GatewayAPI, APISIX, Traefik, SMI and more | Ingress, GatewayAPI, APISIX, Traefik, SMI and more |
-| Migration Costs             | No need migrate your workloads and pods                            | Must migrate your workloads and pods               | Must migrate your pods                             | 
-| HPA compatible              | Yes                                                                | Yes                                                | No                                                 |
+| Component                   | **Kruise Rollouts**                                                     | Argo Rollouts                                      | Flux Flagger                                       |
+|-----------------------------|-------------------------------------------------------------------------|----------------------------------------------------|----------------------------------------------------|
+| Core Concept                | Enhance your existing workloads                                         | Replace your workloads                             | manage your workloads                              |
+| Architecture                | Bypass                                                                  | A new workload type                                | Bypass                                             |
+| Plug and Play, Hot-Swapping | Yes                                                                     | No                                                 | No                                                 |
+| Release Type                | Multi-Batch, Canary, A/B Testing                                        | Multi-Batch, Canary, Blue-Green, A/B Testing       | Canary, Blue-Green, A/B Testing                    |
+| Workload Type               | Deployment,StatefulSet,CloneSet,Advanced StatefulSet,Advanced DaemonSet | Agro-Rollout                                       | Deployment. DaemonSet                              | 
+| Traffic Type                | Ingress, GatewayAPI, CRD (Need Lua Script)                              | Ingress, GatewayAPI, APISIX, Traefik, SMI and more | Ingress, GatewayAPI, APISIX, Traefik, SMI and more |
+| Migration Costs             | No need migrate your workloads and pods                                 | Must migrate your workloads and pods               | Must migrate your pods                             | 
+| HPA compatible              | Yes                                                                     | Yes                                                | No                                                 |
 
 ## What's Next
 Here are some recommended next steps:
