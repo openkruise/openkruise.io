@@ -100,3 +100,75 @@ GS_NAME=minecraft-2
 ```
 
 In this way, the game program can perform configuration management and other operations by parsing the GS_NAME environment variable when it is started.
+
+## Service discovery of game server stateful instances
+
+Due to the stateful nature of game servers, access often requires specific pod instances, and the load balancing features of traditional k8s services cannot be used. OKG supports the DNS mechanism of stateful services to achieve interactive access between game servers within the cluster.
+
+The following example will involve two services, the minecraft game server and the accessor. Minecraft is called by the accessor.
+
+### Service registration
+
+Normally, when a game server needs to be accessed internally, it needs to register its own information with the corresponding service so that the accessor can know which pods are accessible; correspondingly, when the game server exits, it also needs corresponding structural actions, such as deregistration. The accessor knows that the pod no longer provides services.
+
+As mentioned earlier, the only identifier of the game server is its ID (or name). Use the DownwardAPI mentioned above to sink GS_NAME into the container, and then register it with the corresponding service when the container starts.
+
+After the Yaml deployment is completed according to the previous article, there are 3 minecraft pods in the cluster:
+
+```bash
+kubectl get po -owide
+...
+minecraft-0     1/1     Running   0     10s     172.16.0.64     xxx       <none>           2/2
+minecraft-1     1/1     Running   0     10s     172.16.0.6      xxx       <none>           2/2
+minecraft-2     1/1     Running   0     10s     172.16.0.12     xxx       <none>           2/2
+```
+
+### DNS
+
+In order to enable the pod of the game server to be accessed individually, in addition to deploying GameServerSet, it is also necessary to deploy a headless service with the same name as GameServerSet. In this example, its Yaml is as follows:
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: minecraft
+spec:
+  clusterIP: None
+  selector:
+    game.kruise.io/owner-gss: minecraft # Fill in the name of GameServerSet
+```
+
+Deploy a simple accessor Yaml to access the corresponding minecraft pod within the container
+
+```yaml
+apiVersion: game.kruise.io/v1alpha1
+kind: GameServerSet
+metadata:
+  name: accessor
+  namespace: default
+spec:
+  replicas: 1
+  gameServerTemplate:
+    spec:
+      containers:
+        - image: busybox
+          name: accessor
+          args:
+            - sleep
+            - "3600"
+          command: ["/bin/sh", "-c", "sleep 3600"]
+```
+
+Enter the accessor container and ping the corresponding minecraft pod (this step simulates the access logic in the real environment. Of course, choosing which pod to access requires certain filtering rules):
+
+```bash
+kubectl exec -it accessor-0 /bin/sh
+/ # 
+/ # ping minecraft-2.minecraft.default.svc.cluster.local
+PING minecraft-2.minecraft.default.svc.cluster.local (172.16.0.12): 56 data bytes
+64 bytes from 172.16.0.12: seq=0 ttl=63 time=0.082 ms
+64 bytes from 172.16.0.12: seq=1 ttl=63 time=0.061 ms
+64 bytes from 172.16.0.12: seq=2 ttl=63 time=0.072 ms
+```
+
+It can be found that the accessor successfully accessed minecraft-2, and the DNS successfully resolved to the corresponding intranet IP address. The DNS rules here are as follows: {pod-name}.{gss-name}.{namespace-name}.svc.cluster.local
