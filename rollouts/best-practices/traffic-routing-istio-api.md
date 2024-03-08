@@ -5,7 +5,7 @@
 This page is a demo to show how to utilize Kruise Rollout to do traffic routing with Istio.
 
 ## A Complete Release Process
-### Deploy deployment `workload-demo` and service `service-demo`
+### Deploy Deployment `workload-demo` and Service `service-demo`
 ```yaml
 apiVersion: v1
 kind: Service
@@ -59,6 +59,26 @@ spec:
       - destination:
           host: service-demo
 ```
+
+You may also need a Gateway  if external access is desired.
+
+```yaml
+apiVersion: networking.istio.io/v1beta1
+kind: Gateway
+metadata:
+  name: simple-gateway
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+  - port:
+      number: 8080
+      name: http
+      protocol: HTTP
+    hosts:
+    - "*"
+```
+
 ### Deploy Rollout `rollouts-demo`
 ```yaml
 apiVersion: rollouts.kruise.io/v1beta1
@@ -72,6 +92,7 @@ spec:
     name: workload-demo
   strategy:
     canary:
+    	enableExtraWorkloadForCanary: true # must be true
       steps:
       - replicas: 1
         matches:
@@ -84,19 +105,19 @@ spec:
       - traffic: 80%
         replicas: 80%
       trafficRoutings:
-      - service: mocka
+      - service: service-demo
         customNetworkRefs:
-        - apiVersion: networking.istio.io/v1alpha3
+        - apiVersion: networking.istio.io/v1beta1
           kind: VirtualService
           name: vs-demo
 ```
 When you apply a new revision for workload-demo, Kruise Rollout will modify configuration of VirtualService to comply with release strategies:
 
 - A new canary Deployment will be created, and its replicas is 1. Traffic with header `version=canary` will be routed to the new-version pods while other traffic will be routed to stable-version pods.
-- Update the replicas of canary Deployment to "50%" of workload-demo and route 20% of traffic to new-version pods.
+- Update the replicas of canary Deployment to "50%" of workload-demo and route 50% of traffic to new-version pods.
 - Update the replicas of canary Deployment to "80%" of workload-demo and route 80% of traffic to new-version pods.
 
-### Upgrade deployment `workload-demo`
+### Upgrade Deployment `workload-demo`
 Run the following command to update env `version: base` to `version: canary` to start release.
 ```shell
 $ kubectl patch deployment workload-demo -p \
@@ -189,3 +210,257 @@ Run `kubectl-kruise rollout approve rollout/rollouts-demo -n default` to complet
 - Restore the VirtualService `vs-demo`.
 
 After that, the release is done and your are ready to use the new-version service.
+
+## Work with DestinationRule
+
+Note: The disableGenerateCanaryService feature is currently experimental and not supported in the current version of Kruise Rollout (v0.5.0). If you require this functionality, please pull the code from the master branch of the GitHub repository and compile it.
+
+You can use VirtualService and DestinationRule together in Kruise-Rollout now, as is common practice. However, compared to the practice of using two Service objects as described above, some adjustments are necessary.
+
+### Deploy DestinationRule
+
+```yaml
+apiVersion: networking.istio.io/v1beta1
+kind: DestinationRule
+metadata:
+  name: dr-demo
+spec:
+  host: service-demo
+  subsets:
+  - name: base # define the base subset
+    labels:
+      version: base
+```
+
+### Add a subset for the VirtualService
+
+```yaml
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: vs-demo
+spec:
+  gateways:
+  - simple-gateway
+  hosts:
+    - "*"
+  http:
+  - route:
+      - destination:
+          host: service-demo
+          subset: base # point to the subset defined in the DestinationRule before
+```
+
+### Append `version: label` to template.labels
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: workload-demo
+  labels:
+    app: nginx
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx
+      version: base # add version: base
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+        env:
+        - name: version
+          value: base
+        ports:
+        - containerPort: 80
+```
+
+The `base` subset is defined in the DestinationRule and consists of pods with the label `version: base`.
+
+### Turn on `disableGenerateCanaryService`
+
+```yaml
+apiVersion: rollouts.kruise.io/v1beta1
+kind: Rollout
+metadata:
+  name: rollouts-demo
+spec:
+  workloadRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: workload-demo
+  strategy:
+    canary:
+      enableExtraWorkloadForCanary: true
+      disableGenerateCanaryService: true # set to true, defaults to false
+      steps:
+      - replicas: 1
+        matches:
+        - headers:
+          - type: Exact
+            name: version
+            value: canary
+      - traffic: 50%
+        replicas: 50%
+      - traffic: 80%
+        replicas: 80%
+      trafficRoutings:
+      - service: service-demo
+        customNetworkRefs:
+        - apiVersion: networking.istio.io/v1beta1
+          kind: VirtualService
+          name: vs-demo
+        - apiVersion: networking.istio.io/v1beta1 # add DestinationRule into customNetworkRefs
+          kind: DestinationRule
+          name: dr-demo
+      patchPodTemplateMetadata: # patch labels to canary Deployment
+        labels:
+          istio.service.tag: gray # lua script will select this label for canary subset
+          version: canary	# used to overwrite version: base
+```
+
+1. You should set the `enableExtraWorkloadForCanary`  to `true`  to prevent rollout from generating canary Service, it informs rollout to use the subset instead. 
+2. Additionally, you need to append the DestinationRule to `customNetworkRefs` so that the Lua script can update it at the appropriate time. For more information, please refer to: https://openkruise.io/rollouts/developer-manuals/custom-network-provider/
+3. Lastly, you need to add the `patchPodTemplateMetadata` stanza to the Rollout, which ensures the Rollout can distinguish between subsets by their labels. For more information, please visit: https://developer.aliyun.com/article/1351701
+
+
+
+### Upgrade Deployment `workload-demo`
+
+Run the same command to update env `version: base` to `version: canary` to start release.
+
+```shell
+$ kubectl patch deployment workload-demo -p \
+'{"spec":{"template":{"spec":{"containers":[{"name":"nginx", "env":[{"name":"version", "value":"canary"}]}]}}}}'
+```
+
+Wait a while, Kruise Rollout will do the following work for you:
+
+- Pause the base Deployment.
+- Create a new Deployment with env `version: canary`.
+- Update DestinationRule with creating a new subset `canary` to route traffic to new-version pods.
+- Update VirtualService `vs-demo` to do traffic routing.
+
+After the first release step is done, check VirtualService `vs-demo` and you will see:
+
+```yaml
+# VirtualService vs-demo
+  spec:
+    gateways:
+    - simple-gateway
+    hosts:
+    - '*'
+    http:
+    - match:
+      - headers:
+          version:
+            exact: canary
+      route:
+      - destination:
+          host: service-demo
+          subset: canary
+    - route:
+      - destination:
+          host: service-demo
+          subset: base
+```
+
+Also, check DestinationRule and you will see:
+
+```yaml
+# DestinationRule dr-demo
+  spec:
+    host: service-demo
+    subsets:
+    - labels:
+        version: base
+      name: base
+    - labels:
+        istio.service.tag: gray
+      name: canary
+```
+
+As you can see, no canary Service (e.g. service-demo-canary) is created or used.
+
+Run `kubectl-kruise rollout approve rollout/rollouts-demo -n default` to start second release step. After the second release step is done, check VirtualService  `vs-demo` and DestinationRule `dr-demo` you will see:
+
+```yaml
+# VirtualService vs-demo
+  spec:
+    gateways:
+    - simple-gateway
+    hosts:
+    - '*'
+    http:
+    - route:
+      - destination:
+          host: service-demo
+          subset: base
+        weight: 50
+      - destination:
+          host: service-demo
+          subset: canary
+        weight: 50
+```
+
+```yaml
+# DestinationRule dr-demo
+  spec:
+    host: service-demo
+    subsets:
+    - labels:
+        version: base
+      name: base
+    - labels:
+        istio.service.tag: gray
+      name: canary
+```
+
+Run `kubectl-kruise rollout approve rollout/rollouts-demo -n default` to start third release step. After the third release step is done, check VirtualService  `vs-demo` and DestinationRule `dr-demo` you will see:
+
+```yaml
+# VirtualService vs-demo
+  spec:
+    gateways:
+    - simple-gateway
+    hosts:
+    - '*'
+    http:
+    - route:
+      - destination:
+          host: service-demo
+          subset: base
+        weight: 20
+      - destination:
+          host: service-demo
+          subset: canary
+        weight: 80
+```
+
+```yaml
+# DestinationRule dr-demo
+  spec:
+    host: service-demo
+    subsets:
+    - labels:
+        version: base
+      name: base
+    - labels:
+        istio.service.tag: gray
+      name: canary
+```
+
+Run `kubectl-kruise rollout approve rollout/rollouts-demo -n default` to complete the release, Kruise Rollout will do some finalising work:
+
+- Delete the canary Deployment.
+- Resume the base Deployment.
+- Restore the VirtualService `vs-demo` and DestinationRule `dr-demo` .
+
+After that, the release is done and your are ready to use the new-version service.
+
