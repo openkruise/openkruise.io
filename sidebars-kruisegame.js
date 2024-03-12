@@ -46,7 +46,7 @@ module.exports = {
             items: [
                 'best-practices/session-based-game',
                 'best-practices/pve-game',
-                'best-practices/shared-mem',
+                'best-practices/shared-mem'
             ],
         },
         {
@@ -66,7 +66,8 @@ module.exports = {
             items: [
                 'blog-video/kubecon-shangyou-20230926',
                 'blog-video/meetup-guangzhou-20231125',
-                'blog-video/guanying-20231129'
+                'blog-video/guanying-20231129',
+                'blog-video/higress'
             ],
         }
   ],
