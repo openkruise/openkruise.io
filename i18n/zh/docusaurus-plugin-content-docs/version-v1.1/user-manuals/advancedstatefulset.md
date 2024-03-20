@@ -250,6 +250,6 @@ spec:
 **FEATURE STATE:** Kruise v1.1.0
 
 如果你在[安装或升级 Kruise](../installation##optional-feature-gate) 的时候启用了 `StatefulSetAutoDeletePVC` feature-gate，
-你可以使用 `.spec.persistentVolumeClaimRetentionPolicy` 字段来控制在StatefulSet生命周期中是否以及合适删除它所创建的PVC。
+你可以使用 `.spec.persistentVolumeClaimRetentionPolicy` 字段来控制在StatefulSet生命周期中是否以及何时删除它所创建的PVC。
 
 这个功能与上游 StatefulSet (K8s >= 1.23 [alpha]) 提供的相同，可以参考[上游文档](https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#persistentvolumeclaim-retention)。
