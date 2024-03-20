@@ -106,7 +106,7 @@ spec:
     valueFrom:
       fieldRef:
         apiVersion: v1
-          fieldPath: metadata.namespace
+      fieldPath: metadata.namespace
     image: docker.elastic.co/beats/filebeat:7.16.2
     livenessProbe:
       exec:
@@ -138,12 +138,13 @@ spec:
     # Share log directory with app container via volumeMount
     - mountPath: /var/log
       name: log
-    volumes:
-    - configMap:
-        name: filebeat-config
+#hzj change
+  volumes:
+  - configMap:
       name: filebeat-config
-    - name: log
-      emptyDir: {}
+    name: filebeat-config
+  - name: log
+    emptyDir: {}
 ```
 **For the scenario where machine resources are not sufficient, in order to reduce Pod resource requests, you can set sidecar container request.cpu=0. In this case, the Qos of Pod will be [Burstable](https://kubernetes.io/docs/tasks/configure-pod-container/quality-service-pod/#create-a-pod-that-gets-assigned-a-qos-class-of-burstable).**
 
