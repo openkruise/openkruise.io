@@ -99,10 +99,10 @@ spec:
     - http.enabled=true
     env:
     - name: POD_NAMESPACE
-    valueFrom:
-      fieldRef:
-        apiVersion: v1
-          fieldPath: metadata.namespace
+      valueFrom:
+        fieldRef:
+          apiVersion: v1
+            fieldPath: metadata.namespace
     image: docker.elastic.co/beats/filebeat:7.16.2
     livenessProbe:
       exec:
