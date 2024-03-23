@@ -2,12 +2,10 @@
 
 **FEATURE STATE:** Kruise Rollout v0.5.0
 
-Kruise Rollout utilizes a Lua-script-based customization approach for **API Gateway resources (Istio VirtualService, Apisix ApisixRoute, Kuma TrafficRoute and etc.)**. Kruise Rollout involves invoking Lua scripts to retrieve and update the desired configurations of resources based on **release strategies and the original configurations of API Gateway resources (including spec, labels, and annotations)**. It enables users to easily adapt and integrate various types of API Gateway resources without modifying existing code and configurations.
+Kruise Rollout utilizes a Lua-script-based customization approach for **Gateway resources (Istio VirtualService, Apisix ApisixRoute, Kuma TrafficRoute and etc.)**. Kruise Rollout involves invoking Lua scripts to retrieve and update the desired configurations of gateway resources based on **release strategies and the original configurations of gateway resources (including spec, labels, and annotations)**. It enables users to easily adapt and integrate various types of Gateway resources without modifying existing code and configurations.
 
-**By using Kruise Rollout, users can:**
-
-- **Customize Lua scripts for handling API Gateway resources, allowing for flexible implementation of resource processing and providing support for a wider range of resources.**
-- **Utilize a common Rollout configuration template to configure different resources, reducing configuration complexity and facilitating user configuration.**
+Since Kruise Rollout also support using Gateway API to configure traffic routing, one can also use corresponding Gateway API implementation for specific gateway resource. However, it is hard to implement a full blown Gateway API implementation, and many gateway providers who provides k8s CRD API still lack the offical support for Gateway API. Using Lua script, one can manipulate arbitary gateway resources for traffic routing
+only and avoid the complexity of introducing Gateway API. 
 
 ## How it Works
 
@@ -15,11 +13,11 @@ Kruise Rollout utilizes a Lua-script-based customization approach for **API Gate
 
 The entire process of can be described as follows:
 
-1. Users define Rollout traffic canary rules and the resources that need modification, initiating the canary deployment.
-2. Obtain specified API Gateway resources based on Rollout configurations.
-3. Get the Lua scripts corresponding to the API Gateway resources.
-4. When release started, first convert the current configurations of the resources into a string and store it in the resource annotation`rollouts.kruise.io/original-spec-configuration`.
-5. Feed the API Gateway configuration along with the Rollout configurations to the Lua script. Then utilize the Lua script to process the current resource configurations and Rollout configurations to get the new configurations and update the resources accordingly.
+1. Users define Rollout traffic canary rules and the gateway resources that need modification, initiating the canary deployment.
+2. Obtain specified gateway resources based on Rollout configurations.
+3. Get the Lua scripts corresponding to the gateway resources.
+4. When release started, first convert the current configurations of the gateway resources into a string and store it in the resource annotation`rollouts.kruise.io/original-spec-configuration`.
+5. Feed the gateway resource configuration along with the Rollout configurations to the Lua script. Then utilize the Lua script to process the current resource configurations and Rollout configurations to get the new configurations and update the resources accordingly.
 6. After the release is completed, retrieve the original configurations of the resources from the `rollouts.kruise.io/original-spec-configuration` annotation and restore them.
 
 Custom traffic routing can be configured in Rollout as below:
@@ -29,7 +27,8 @@ apiVersion: rollouts.kruise.io/v1beta1
 kind: Rollout
 ...
 spec:
-  ...
+  strategy:
+    canary:
       trafficRoutings:
       - service: <stable-service>
         customNetworkRefs:
@@ -42,14 +41,14 @@ The api details are shown as below:
 
 | Fields                         | Type   | Defaults | Explanation                          |
 | ------------------------------ | ------ | -------- | ------------------------------------ |
-| `customNetworkRefs`            | object | nil      | Definitions of API Gateway resources |
-| `customNetworkRefs.apiVersion` | string | ""       | ApiVersion of a API Gateway resource |
-| `customNetworkRefs.kind`       | string | ""       | Kind of a API Gateway resource       |
-| `customNetworkRefs.name`       | string | ""       | Name of a API Gateway resource       |
+| `customNetworkRefs`            | object | nil      | Definitions of  gateway resources |
+| `customNetworkRefs.apiVersion` | string | ""       | ApiVersion of a gateway resource |
+| `customNetworkRefs.kind`       | string | ""       | Kind of a gateway resource       |
+| `customNetworkRefs.name`       | string | ""       | Name of a gateway resource       |
 
 ## Define Your Custom Traffic Routing Lua Script
 
-There are two ways to define and use your custom traffic routing Lua script to handle the API Gateway resources, the next two sections describe those ways.
+There are two ways to define and use your custom traffic routing Lua script to handle the gateway resources, the next two sections describe those ways.
 
 ### Way1: Contribute a Custom Traffic Routing
 
@@ -70,7 +69,7 @@ rollouts
 
 Where:
 
-- `trafficRouting.lua` defines how to process API Gateway resources.
+- `trafficRouting.lua` defines how to process gateway resources.
 - The `testdata` directory contains test cases, and the structure of test cases is as follows:
 
 ```yaml
@@ -261,7 +260,7 @@ When designing test cases, at least the release strategies listed below are supp
 
 ### Way2: Define in ConfigMap
 
-When the expected traffic routing Lua scripts are not bundled in Kruise Rollout, users could utilize ConfigMap to define and use Lua script to handle API Gateway resources. Custom traffic routing lua script can be defined in
+When the expected traffic routing Lua scripts are not bundled in Kruise Rollout, users could utilize ConfigMap to define and use Lua script to handle gateway resources. Custom traffic routing lua script can be defined in
 
 ```yaml
 <lua.traffic.routing.Kind.CRDGroup>: |
@@ -270,7 +269,7 @@ When the expected traffic routing Lua scripts are not bundled in Kruise Rollout,
 
 field of ConfigMap `kruise-rollout/kruise-rollout-configuration`.
 
-The following example demonstrates a traffic routing for `networking.istio.io/DestinationRule`, you can also define your own Lua script for API Gateway resources of other groups for example Apisix and Kuma in the ConfigMap.
+The following example demonstrates a traffic routing for `networking.istio.io/DestinationRule`, you can also define your own Lua script for gateway resources of other groups for example Apisix and Kuma in the ConfigMap.
 
 ```yaml
 data:
@@ -368,7 +367,7 @@ type Data struct {
 }
 ```
 
-You should handle `obj` in Lua script and **must retrun an object contains expected spec, labels and annotations** of the API Gateway resource, a simple way is to return `obj.data`.
+You should handle `obj` in Lua script and **must retrun an object contains expected spec, labels and annotations** of the gateway resource, a simple way is to return `obj.data`.
 
 ```lua
 -- Lua variables are assigned by reference,
@@ -405,7 +404,7 @@ If you need to debug Lua scripts, you can achieve this by installing the [Lua De
 
 Afterwards, define the global variable `obj` in the Lua script to enable step-by-step debugging and test if the Lua script is working as expected.
 
-You can generate and use the `obj` for debugging by running `go run ./lua_configuration/convert_test_case_to_lua_object.go`. This program will automatically retrieve the test cases from the `testdata` directory of all custom API Gateway resources in the `lua_configuration` folder, convert them into the form of the global variable `obj` that passes to Lua script, and save them in `test_case_obj.lua`. This makes it convenient for users to pass `obj` to their Lua scripts and execute step-by-step debugging.
+You can generate and use the `obj` for debugging by running `go run ./lua_configuration/convert_test_case_to_lua_object.go`. This program will automatically retrieve the test cases from the `testdata` directory of all custom Gateway resources in the `lua_configuration` folder, convert them into the form of the global variable `obj` that passes to Lua script, and save them in `test_case_obj.lua`. This makes it convenient for users to pass `obj` to their Lua scripts and execute step-by-step debugging.
 
 An example of `test_case_obj.lua` is shown as below:
 
@@ -435,16 +434,16 @@ spec = obj.data.spec
 ```
 
 <img src={require('../../static/img/rollouts/debug-lua.gif').default} />
-### Add RBAC Permissions for API Gateway Resources
-In order to enable Kruise Rollout to access and update the API gateway resources, you need to add the RBAC permissions of the API gateway resources for Kruise Rollout.
+### Add RBAC Permissions for Gateway Resources
+In order to enable Kruise Rollout to access and update the gateway resources, you need to add the RBAC permissions of the gateway resources for Kruise Rollout.
 
-You can achieve this by running `kubectl edit role kruise-rollout-leader-election-role -n kruise-rollout` and adding `get, list, patch, update, watch` permissions for API gateway resource in the RBAC role. An example for Istio VirtualService and DestinationRule is shown as below:
+It is suggested to create a new role for Kruise Rollout under kruise-rollout namesapce, and to add `get, list, patch, update, watch` permissions for gateway resource in the RBAC role. An example for Istio VirtualService and DestinationRule is shown as below:
 
 ```yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
-  name: kruise-rollout-leader-election-role
+  name: kruise-rollout-istio-role
   namespace: kruise-rollout
 rules:
   - apiGroups:
@@ -459,4 +458,17 @@ rules:
     - update
     - watch
   ...
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: kruise-rollout-istio-rolebinding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: kruise-rollout-istio-role
+subjects:
+- kind: ServiceAccount
+  name: controller-manager
+  namespace: kruise-rollout
 ```

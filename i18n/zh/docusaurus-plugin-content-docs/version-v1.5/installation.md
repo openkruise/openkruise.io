@@ -16,7 +16,7 @@ $ helm repo add openkruise https://openkruise.github.io/charts/
 $ helm repo update
 
 # Install the latest version.
-$ helm install kruise openkruise/kruise --version 1.5.2
+$ helm install kruise openkruise/kruise --version 1.5.3
 ```
 **注意:** [Changelog](https://github.com/openkruise/kruise/blob/master/CHANGELOG.md)。
 ## 通过 helm 升级
@@ -29,7 +29,7 @@ $ helm repo add openkruise https://openkruise.github.io/charts/
 $ helm repo update
 
 # Upgrade to the latest version.
-$ helm upgrade kruise openkruise/kruise --version 1.5.2 [--force]
+$ helm upgrade kruise openkruise/kruise --version 1.5.3 [--force]
 ```
 
 注意：
@@ -62,7 +62,7 @@ $ helm install/upgrade kruise /PATH/TO/CHART
 | `manager.log.level`                       | kruise-manager 日志输出级别                                    | `4`                           |
 | `manager.replicas`                        | kruise-manager 的期望副本数                                    | `2`                           |
 | `manager.image.repository`                | kruise-manager/kruise-daemon 镜像仓库                         | `openkruise/kruise-manager`   |
-| `manager.image.tag`                       | kruise-manager/kruise-daemon 镜像版本                         | `1.2.0`                       |
+| `manager.image.tag`                       | kruise-manager/kruise-daemon 镜像版本                         | `1.5.3`                       |
 | `manager.resources.limits.cpu`            | kruise-manager 的 limit CPU 资源                              | `200m`                        |
 | `manager.resources.limits.memory`         | kruise-manager 的 limit memory 资源                           | `512Mi`                       |
 | `manager.resources.requests.cpu`          | kruise-manager 的 request CPU 资源                            | `100m`                        |
@@ -111,7 +111,7 @@ Feature-gate 控制了 Kruise 中一些有影响性的功能：
 | `WorkloadSpread`                 | 启用 WorkloadSpread 管理应用多分区弹性与拓扑部署 | `true` | 不支持 WorkloadSpread |
 | `InPlaceUpdateEnvFromMetadata`   | 启用 Kruise 原地升级容器当它存在 env from 的 labels/annotations 发生了变化 | `true` | 容器中只有 image 能够原地升级 |
 | `StatefulSetAutoDeletePVC`       | 启用 StatefulSet 自动删除它所创建的 PVC | `true` | StatefulSet 不会清理 PVC |
-| `PreDownloadImageForDaemonSetUpdate`       | 启用 DaemonSet 自动为原地升级过程中创建 ImagePullJob 来镜像预热  | `true` | 原地升级无镜像提前预热 |
+| `PreDownloadImageForDaemonSetUpdate`       | 启用 DaemonSet 自动为原地升级过程中创建 ImagePullJob 来镜像预热  | `false` | 原地升级无镜像提前预热 |
 | `PodProbeMarkerGate`   | 启用 PodProbeMarker 能力  | `true` | PodProbeMarker 关闭 |
 | `SidecarSetPatchPodMetadataDefaultsAllowed`   | 允许 SidecarSet Patch 任意 Annotations 到 Pob Object，不再进行白名单校验 | `false` | Annotations不允许随意Patch，需要通过 SidecarSet_PatchPodMetadata_WhiteList 配置 |
 | `SidecarTerminator`   | 启用 SidecarTerminator 能力，在 Job 场景中当主容器退出后，能够停止 Sidecar 容器 | `false` | SidecarTerminator 不可用 |

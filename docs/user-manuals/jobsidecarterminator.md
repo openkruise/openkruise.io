@@ -58,6 +58,15 @@ spec:
 
 Replace `"example/quick-exit:v1.0.0"` with your prepared image.
 
+### Ignore sidecar container with non-zero exit code
+
+**FEATURE STATE:** Kruise v1.6.0
+
+In previous versions, the sidecar container was required to be able to accept the `SIGTERM` signal and to ensure that the exit code was `0`.
+If the sidecar container had non-zero exit code, it would result in Pod Phase=Failed.
+
+As of Kruise 1.6.0, Kruise will ignore sidecar container with non-zero exit code, and Pod Phase only depend on the success or failure of the main containers.
+
 ### Notes
 
 - Your sidecar container must respond the `SIGTERM` signal, and the entrypoint should `exit 0` when received this signal.
@@ -70,6 +79,6 @@ Replace `"example/quick-exit:v1.0.0"` with your prepared image.
 
   - In `Never` restart policy settings, main container will be treated as `completed` once it exit.
 
-  - In `OnFailure` restart policy settings, main container will be treated as `completed` once it exit and exit code must be `0`. 
- 
+  - In `OnFailure` restart policy settings, main container will be treated as `completed` once it exit and exit code must be `0`.
+
 - In Pods on real nodes mode, `KRUISE_TERMINATE_SIDECAR_WHEN_JOB_EXIT` has a higher priority than `KRUISE_TERMINATE_SIDECAR_WHEN_JOB_EXIT_WITH_IMAGE`

@@ -795,5 +795,12 @@
   "zhangsean",
   "zhaomingshan",
   "zxvf",
-  "\uff1athe"
+  "\uff1athe",
+  "$patch",
+  "OpenAPI",
+  "TcpSocket",
+  "openapi",
+  "patchesStrategicMerge",
+  "tcpSocket",
+  "x-kubernetes-patch"
 ]

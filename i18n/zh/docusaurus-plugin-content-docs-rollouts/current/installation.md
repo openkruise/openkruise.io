@@ -19,7 +19,7 @@ $ helm repo add openkruise https://openkruise.github.io/charts/
 $ helm repo update
 
 # 安装最新版本。
-$ helm install kruise-rollout openkruise/kruise-rollout --version 0.3.0
+$ helm install kruise-rollout openkruise/kruise-rollout --version 0.5.0
 ```
 
 **注意：** [更新日志](https://github.com/openkruise/kruise/blob/master/CHANGELOG.md)。
@@ -34,7 +34,7 @@ $ helm repo add openkruise https://openkruise.github.io/charts/
 $ helm repo update
 
 # 升级到最新版本。
-$ helm upgrade kruise-rollout openkruise/kruise-rollout --version 0.3.0 [--force]
+$ helm upgrade kruise-rollout openkruise/kruise-rollout --version 0.5.0 [--force]
 ```
 
 请注意：
@@ -75,7 +75,7 @@ Charts的可配置参数以及它们的默认值，更多详细信息可以在[�
 使用 `--set key=value[,key=value]` 参数来指定每个参数，例如，
 
 ```bash
-$ helm install kruise-rollout openkruise/kruise-rollout --version 0.3.0 --set resources.limits.memory=2Gi
+$ helm install kruise-rollout openkruise/kruise-rollout --version 0.5.0 --set resources.limits.memory=2Gi
 ```
 
 #### 可选：中国本地镜像

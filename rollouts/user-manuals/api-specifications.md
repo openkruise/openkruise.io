@@ -18,7 +18,7 @@ metadata:
   # The rollout resource needs to be in the same namespace as the corresponding workload
   namespace: default
 spec:
-  # rollout of published workloads, currently only supports Deployment, CloneSet, StatefulSet, Advanced StatefulSet
+  # rollout of published workloads, currently only supports Deployment, CloneSet, StatefulSet, Advanced StatefulSet and Advanced DaemonSet
   workloadRef:
     apiVersion: apps/v1
     kind: Deployment
@@ -65,7 +65,7 @@ metadata:
     rollouts.kruise.io/rolling-style: partition
 spec:
   objectRef:
-    # rollout of published workloads, currently only supports Deployment, CloneSet, StatefulSet, Advanced StatefulSet
+    # rollout of published workloads, currently only supports Deployment, CloneSet, StatefulSet, Advanced StatefulSet and Advanced DaemonSet
     workloadRef:
       apiVersion: apps/v1
       kind: Deployment
@@ -147,7 +147,7 @@ spec:
 | `kind`       | string | ""       | Workload Kind       |
 | `name`       | string | ""       | Workload Name       |
 
-Currently, Kruise Rollout supports Deployment, CloneSet, StatefulSet, and Advanced StatefulSet.
+Currently, Kruise Rollout supports Deployment, CloneSet, StatefulSet, Advanced StatefulSet and Advanced DaemonSet.
 
 **Note: The workload should be at the same namespace as the Rollout.**
 
@@ -216,12 +216,12 @@ spec:
 | `service`               | string | ""       | Name of service that select the pods of bounded workload                                                      |
 | `ingress`               | object | nil      | (optional) Description of the Ingress object you want to bind                                                 |
 | `gateway`               | object | nil      | (optional) Description of the [Gateway API](https://gateway-api.sigs.k8s.io/) resources you want to bind      |
+| `customNetworkRefs    ` | Array  | ""       | Definitions of [customize API Gateway resources](https://openkruisyye.io/rollouts/developer-manuals/custom-network-provider) | 
 | `ingress.classType`     | string | "nginx"  | Ingress type, such as "nginx", "higress", or others                                                           |
 | `ingress.name`          | string | ""       | Name of ingress resource that bounded the service                                                             |
 | `gateway.httpRouteName` | string | ""       | Name of [HTTPRoute](https://gateway-api.sigs.k8s.io/concepts/api-overview/#httproute) resource of Gateway API |
-| `customNetworkRefs    ` | object | ""       | Definitions of [customize API Gateway resources](https://openkruise.io/rollouts/developer-manuals/custom-network-provider) | 
 
-**Note: `ingress`,`gateway`,`customNetworkRefs` can not be nil at the same time if you decide to use `trafficRoutings`.**
+**Note: if you decide to use `trafficRoutings`, one and only one of `ingress`,`gateway`,`customNetworkRefs` can be present in one trafficRouting element*
 
 ### Strategy API (Mandatory)
 Describe your strategy of rollout:
@@ -242,7 +242,7 @@ spec:
       - traffic: 5%
         replicas: 1 or 10%
         pause:
-          duration: {}
+          duration: 0
         matches:
         - headers:
           - type: Exact # or "RegularExpression"
@@ -280,7 +280,7 @@ spec:
       - weight: 5
         replicas: 1 or 10%
         pause:
-          duration: {}
+          duration: 0
         matches:
         - headers:
           - type: Exact # or "RegularExpression"
@@ -301,50 +301,15 @@ spec:
 | `headers[x].type`         | string              | "Exact"   | "Exact" or "RegularExpression" rule to match key and value                                                     |
 | `headers[x].name`         | string              | ""        | Matched HTTP header name. (And-Relationship between headers[i] and headers[j])                                  |
 | `headers[x].value`        | string              | ""        | Matched HTTP header value.                                                                                     |
-
+| `enableExtraWorkloadForCanary` | boolean          | false     | Whether to create extra Deployment for canary update, if it is set to true, the extra Deployment will be deleted after rollout completions; if it is set to false, multi-batch update strategy will be used for Deployment | 
   </TabItem>
 </Tabs>
 
 Note:
 - `steps[x].replicas` can not be nil.
 - `steps[x].matches[i] and steps[x].matches[j]` have **Or**-relationship.
-- `steps[x].matches[y].headers[i] and steps[x].matches[y].header[j]` have **And**-relationship.
-
-### Special Annotations of Rollout (Optional)
-
-<Tabs>
-  <TabItem value="v1beta1" label="v1beta1" default>
-
-```
-apiVersion: rollouts.kruise.io/v1beta1
-kind: Rollout
-spec:
-  strategy:
-    canary:
-      // Default is false.
-      enableExtraWorkloadForCanary: true
-      steps:
-      ...
-```
-
-**Note:** "true" means using canary update strategy for Deployment; "false" means using multi-batch update strategy for Deployment;
-
-  </TabItem>
-  <TabItem value="v1alpha1" label="v1alpha1">
-
-```
-apiVersion: rollouts.kruise.io/v1alpha1
-kind: Rollout
-metadata:
-  annotations:
-    # Default is "canary"
-    rollouts.kruise.io/rolling-type: "canary" or "partition"
-```
-
-**Note:** "canary" means using canary update strategy for Deployment; "partition" means using multi-batch update strategy for Deployment;
-
-  </TabItem>
-</Tabs>
+- `steps[x].matches[y].headers[i] and steps[x].matches[y].header[j]` have **And**-relationship. 
+- `enableExtraWorkloadForCanary` is available in v1beta Rollout resource; In v1alpha1 Rollout resource, one can use the annotation of Rollout `rollouts.kruise.io/rolling-type`="canary" to enable `enableExtraWorkloadForCanary`
 
 ### Special Annotations of Workload (Optional)
 There are some special annotations in Bounded Workload to enable specific abilities.

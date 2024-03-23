@@ -11,18 +11,19 @@ Ingress 实现，使其更容易集成到您的现有基础设施中。总的来
 
 ## 主要特点
 
-- **更多的发布策略**
-    - 用于 Deployment、CloneSet、StatefulSet、Advanced StatefulSet 的多批次更新策略。
+- **丰富的发布策略**
+    - 用于 Deployment、CloneSet、StatefulSet、Advanced StatefulSet、Advanced DaemonSet 的多批次更新策略。
     - 用于 Deployment 的金丝雀(Canary)更新策略。
 
-- **更多的流量路由管理策略**
+- **丰富的流量路由管理策略**
     - 在更新工作负载时进行流量细粒度、加权流量转移。
     - 流量A/B测试，基于HTTP头和Cookie进行流量转移。
+    - 端到端流量灰度
 
-- **更多的流量协议支持**
+- **丰富的流量协议支持**
     - Ingress 控制器集成：NGINX、ALB、Higress。
     - 通过 GatewayAPI 进行服务网格集成。
-    - 可插拔的 Lua 脚本，以便轻松扩展到其他 Kubernetes 流量协议（甚至CRD）。
+    - 可插拔的Lua脚本，以便轻松扩展到其他 Kubernetes 流量协议（甚至CRD）。
 
 ## 演示展示
 
@@ -35,16 +36,16 @@ Ingress 实现，使其更容易集成到您的现有基础设施中。总的来
 Kruise Rollouts 与 [Argo Rollout](https://argoproj.github.io/rollouts/) 和 [Flux Flagger](https://fluxcd.io/flagger/)
 的对比。
 
-| 组件      | **Kruise Rollouts**                                                 | Argo Rollouts                            | Flux Flagger                             |
-|---------|---------------------------------------------------------------------|------------------------------------------|------------------------------------------|
-| 核心概念    | 增强现有的工作负载                                                           | 替换您的工作负载                                 | 管理您的工作负载                                 |
-| 架构      | Bypass                                                              | 新的工作负载类型                                 | Bypass                                   |
-| 插拔和热切换  | 是                                                                   | 否                                        | 否                                        |
-| 发布类型    | 多批次、金丝雀、A/B测试                                                       | 多批次、金丝雀、蓝绿、A/B测试                         | 金丝雀、蓝绿、A/B测试                             |
-| 工作负载类型  | Deployment、StatefulSet、CloneSet、Advanced StatefulSet、DaemonSet（进行中） | Agro-Rollout                             | Deployment、DaemonSet                     | 
-| 流量类型    | Ingress、GatewayAPI、CRD（需要 Lua 脚本）                                   | Ingress、GatewayAPI、APISIX、Traefik、SMI 等等 | Ingress、GatewayAPI、APISIX、Traefik、SMI 等等 |
-| 迁移成本    | 无需迁移工作负载和Pods                                                       | 必须迁移工作负载和Pods                            | 必须迁移Pods                                 | 
-| HPA 兼容性 | 是                                                                   | 是                                        | 否                                        |
+| 组件      | **Kruise Rollouts**                                                     | Argo Rollouts                            | Flux Flagger                             |
+|---------|-------------------------------------------------------------------------|------------------------------------------|------------------------------------------|
+| 核心概念    | 增强现有的工作负载                                                               | 替换您的工作负载                                 | 管理您的工作负载                                 |
+| 架构      | Bypass                                                                  | 新的工作负载类型                                 | Bypass                                   |
+| 插拔和热切换  | 是                                                                       | 否                                        | 否                                        |
+| 发布类型    | 多批次、金丝雀、A/B测试                                                           | 多批次、金丝雀、蓝绿、A/B测试                         | 金丝雀、蓝绿、A/B测试                             |
+| 工作负载类型  | Deployment、StatefulSet、CloneSet、Advanced StatefulSet、Advanced DaemonSet | Agro-Rollout                             | Deployment、DaemonSet                     | 
+| 流量类型    | Ingress、GatewayAPI、CRD（需要 Lua 脚本）                                       | Ingress、GatewayAPI、APISIX、Traefik、SMI 等等 | Ingress、GatewayAPI、APISIX、Traefik、SMI 等等 |
+| 迁移成本    | 无需迁移工作负载和Pods                                                           | 必须迁移工作负载和Pods                            | 必须迁移Pods                                 | 
+| HPA 兼容性 | 是                                                                       | 是                                        | 否                                        |
 
 ## 接下来的步骤
 
