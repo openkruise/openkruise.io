@@ -192,10 +192,46 @@ func IsRolloutCurrentStepReady(workload appsv1.Deployment, rollout *rolloutsv1be
 In fact, Kruise Rollout **DOES NOT** provide the ability to rollback directly. **Kruise Rollout prefers that users can rollback workload spec directly to rollback their application.** When users need to rollback from “version-2” to ”version-1“, Kruise Rollout will use the native rolling upgrade strategy to quickly rollback, instead of following the multi-batch checkpoint strategy.
 
 ### 1. Apply your old version yaml to kubernetes
-You can refer the [step 6 of document](https://help.aliyun.com/zh/ack/ack-managed-and-ack-dedicated/user-guide/use-kruise-rollout-to-perform-canary-releases-and-a-b-testing?spm=a2c4g.11186623.0.0.60f56abdcxjXXM#section-maw-6wb-cql).
+If an anomaly is detected in the new version during the Rollout process, you can roll back to the previous version using the Deployment configuration. For example, deploy the deployment manifest of previous version using the command `kubectl apply -f depolyment.yaml` without making any changes to the Rollout resource.
 
 ### 2. Gitops sync old revision
-You can ref the [step 4 of document](https://help.aliyun.com/zh/ack/distributed-cloud-container-platform-for-kubernetes/use-cases/using-kruise-rollout-to-implement-canary-release-based-on-ack-one-gitops?spm=a2c4g.11186623.0.0.5ed9474b2PNGPz).
+You can roll back by syncing the application's revision to the old version's commit.
+Execute the following command to synchronize the application to the old version, where revision is the tag of the old version.
+```
+argocd app sync rollouts-demo --revision gitops-demo-version-stable
+```
+expected output:
+```
+Project: default
+Server: https://192.168.XX.XX:6443
+Namespace: default
+URL: https://127.0.0.1:49922/applications/rollouts-demo
+Repo: https://github.com/Kuromesi/samples.git
+Target: 616b4b6
+Path: gitops-demo
+SyncWindow: Sync Allowed
+Sync Policy: <none>
+Sync Status: Synced to 616b4b6
+Health Status: Progressing
+
+Operation: Sync
+Sync Revision: 616b4b6e010ba4d71a92c0e7d050162956b169b7
+Phase: Succeeded
+Start: 2023-08-07 16:52:53 +0800 CST
+Finished: 2023-08-07 16:52:54 +0800 CST
+Duration: 1s
+Message: successfully synced (all tasks run)
+
+GROUP KIND NAMESPACE NAME STATUS HEALTH HOOK MESSAGE
+ Service default echo-server Synced Healthy service/echo-server unchanged
+apps Deployment default echo-server Synced Suspended deployment.apps/echo-server configured
+networking.k8s.io Ingress default ingress-demo Synced Progressing ingress.networking.k8s.io/ingress-demo unchanged
+rollouts.kruise.io Rollout default rollouts-demo Synced rollout.rollouts.kruise.io/rollouts-demo unchanged
+```
+
+### 3. Use kruise-tools
+kruise-tools is kubectl plugin for OpenKruise, which provides commandline tools for kruise features, such as kubectl-kruise, which is a standard plugin of kubectl.
+You can use the command `kubectl kruise rollout undo rollout/rollout-demo` to roll back a workload, either during the rollout process or after the rollout has finished.
 
 ## Other Statements
 - **Continuous Release**: Assume that Rollout is progressing from "version-1" to "version-2"(uncompleted). Now, workload is modified to "version-3", Rollout will start to progress from beginning step (1-st step).
