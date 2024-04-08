@@ -17,10 +17,10 @@ so as to achieve the behavior of selecting the main only once during the upgrade
 OpenKruise provides the ability to customize the Probe and return the result to the Pod Status, and the user can decide the follow-up behavior based on the probe result.
 
 ## Feature-gate
-PodProbeMarker feature is turned off by default, if you want to turn it on set feature-gate *PodProbeMarkerGate*.
+PodProbeMarker feature is turned on by default, if you want to turn it off set feature-gate *PodProbeMarkerGate*.
 
 ```bash
-$ helm install kruise https://... --set featureGates="PodProbeMarkerGate=true"
+$ helm install kruise https://... --set featureGates="PodProbeMarkerGate=false"
 ```
 
 ## Usage
