@@ -176,6 +176,16 @@ func IsRolloutCurrentStepReady(workload appsv1.Deployment, rollout *rolloutsv1be
 更倾向于让用户能够直接回滚工作负载规范以回滚其应用程序。** 当用户需要从“version-2”回滚到“version-1”时，Kruise Rollout
 将使用本机的滚动升级策略来快速执行回滚，而不是采用多批次检查点策略。
 
+### 1. 提交老版本的 yaml 到 kubernetes
+请参考 [step 6 of document](https://help.aliyun.com/zh/ack/ack-managed-and-ack-dedicated/user-guide/use-kruise-rollout-to-perform-canary-releases-and-a-b-testing?spm=a2c4g.11186623.0.0.60f56abdcxjXXM#section-maw-6wb-cql).
+
+### 2. Gitops sync old revision
+请参考 [step 4 of document](https://help.aliyun.com/zh/ack/distributed-cloud-container-platform-for-kubernetes/use-cases/using-kruise-rollout-to-implement-canary-release-based-on-ack-one-gitops?spm=a2c4g.11186623.0.0.5ed9474b2PNGPz).
+
+### 3. 使用 kruise-tools
+
+kruise-tools 是 OpenKruise 的 kubectl 插件，它为 kruise 功能提供了命令行工具，例如 kubectl-kruise，这是 kubectl 的标准插件。您可以使用命令 `kubectl kruise rollout undo rollout/rollout-demo` 来回滚工作负载，无论是在部署过程中还是部署完成后。
+
 ## 其他声明
 
 - **连续发布**：假设 Rollout 正在从“version-1”进展到“version-2”（尚未完成）。现在，工作负载被修改为“version-3”，Rollout
