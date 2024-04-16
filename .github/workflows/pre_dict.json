@@ -802,5 +802,9 @@
   "openapi",
   "patchesStrategicMerge",
   "tcpSocket",
-  "x-kubernetes-patch"
+  "x-kubernetes-patch",
+  "CronJob",
+  "GitOps\uff1f",
+  "Devops\uff1f",
+  "timeZone"
 ]

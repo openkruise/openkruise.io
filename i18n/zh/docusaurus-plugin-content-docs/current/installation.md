@@ -6,6 +6,8 @@ title: 安装
 
 - 从 v1.6.0 (alpha/beta) 开始，OpenKruise 要求在 **Kubernetes >= 1.18** 以上版本的集群中安装和使用。如果你关闭了 Kruise-Daemon 组件（featureGates="KruiseDaemon=false"），你依然可以在 K8S 1.16 和 1.17 的集群上安装和使用。
 
+- 从 v1.6.0 (alpha/beta) 开始，Kruise-Daemon 将**不再支持 v1alpha2 CRI 的运行时**。如果你关闭了 Kruise-Daemon 组件（featureGates="KruiseDaemon=false"），你依然可以在只支持 v1alpha2 CRI 的运行时节点所在集群上安装和使用 OpenKruise。
+
 ## 通过 helm 安装
 
 建议采用 helm v3.5+ 来安装 Kruise，helm 是一个简单的命令行工具可以从 [这里](https://github.com/helm/helm/releases) 获取。
