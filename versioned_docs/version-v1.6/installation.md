@@ -6,6 +6,8 @@ title: Installation
 
 - Since v1.6.0 (alpha/beta), OpenKruise requires **Kubernetes version >= 1.18**. However it's still possible to use OpenKruise with Kubernetes versions 1.16 and 1.17 as long as KruiseDaemon is not enabled(install/upgrade kruise charts with featureGates="KruiseDaemon=false")
 
+- Since v1.6.0 (alpha/beta), KruiseDaemon will **no longer support v1alpha2 CRI runtimes**. However, it is still possible to use OpenKruise on Kubernetes clusters with nodes that only support v1alpha2 CRI, as long as KruiseDaemon is not enabled (install/upgrade Kruise charts with featureGates="KruiseDaemon=false").
+
 ## Install with helm
 
 Kruise can be simply installed by helm v3.5+, which is a simple command-line tool and you can get it from [here](https://github.com/helm/helm/releases).
