@@ -10,12 +10,15 @@ OpenKruiseGame integrates different network plugins of different cloud service p
 
 OpenKruiseGame supports the following network plugins:
 - Kubernetes-HostPort
+- Kubernetes-NodePort
 - Kubernetes-Ingress
 - AlibabaCloud-NATGW
 - AlibabaCloud-SLB
+- AlibabaCloud-NLB
 - AlibabaCloud-EIP
 - AlibabaCloud-SLB-SharedPort
 - AlibabaCloud-NLB-SharedPort
+- Volcengine-CLB
 
 ---
 ### Kubernetes-HostPort
@@ -114,6 +117,104 @@ Use the networkStatus field in the generated GameServer to view the network stat
 Clients can access the game server by using 48.98.98.8:8211.
 
 ---
+
+### Kubernetes-NodePort
+#### Plugin name
+
+`Kubernetes-NodePort`
+
+#### Cloud Provider
+
+Kubernetes
+
+#### Plugin description
+- Kubernetes NodePort leverages the Kubernetes NodePort type of Service to expose game server services externally. The host machine needs to be configured with a public IP and have the capability to be accessed from the internet.
+
+- This plugin relies on the limitation of the number of NodePorts available. By default, the open ports range from 30000 to 32767. If you wish to open more ports, please modify the APIServer service-node-port-range parameter.
+
+- This plugin does not support network isolation.
+
+
+#### Network parameters
+
+PortProtocols
+
+- Meaning: the ports in the pod to be exposed and the protocols. You can specify multiple ports and protocols.
+- Value: in the format of port1/protocol1,port2/protocol2,... The protocol names must be in uppercase letters.
+- Configuration change supported or not: yes.
+
+Fixed
+
+- Meaning: whether the ingress object is still retained when the pod is deleted
+- Value format: true / false
+- Configuration change supported or not: yes.
+
+AllowNotReadyContainers
+
+- Meaning: the container names that are allowed not ready when inplace updating, when traffic will not be cut.
+- Value: {containerName_0},{containerName_1},... Example：sidecar
+- Configuration change supported or not: It cannot be changed during the in-place updating process.
+
+#### Plugin configuration
+
+无
+
+#### Example
+
+```
+cat <<EOF | kubectl apply -f -
+apiVersion: game.kruise.io/v1alpha1
+kind: GameServerSet
+metadata:
+  name: gs-nodeport
+  namespace: default
+spec:
+  replicas: 1
+  updateStrategy:
+    rollingUpdate:
+      podUpdatePolicy: InPlaceIfPossible
+  network:
+    networkType: Kubernetes-NodePort
+    networkConf:
+    - name: PortProtocols
+      value: "80"
+    - name: Fixed
+      value: "false"
+  gameServerTemplate:
+    spec:
+      containers:
+        - image: registry.cn-hangzhou.aliyuncs.com/gs-demo/gameserver:network
+          name: gameserver
+EOF
+```
+
+Use the networkStatus field in the generated GameServer to view the network status information of the game server:
+
+```shell
+  networkStatus:
+    createTime: "2024-04-28T12:28:27Z"
+    currentNetworkState: Ready
+    desiredNetworkState: Ready
+    externalAddresses:
+    - ip: 120.78.78.8
+      ports:
+      - name: "80"
+        port: 31480
+        protocol: TCP
+    internalAddresses:
+    - ip: 172.16.0.82
+      ports:
+      - name: "80"
+        port: 80
+        protocol: TCP
+    lastTransitionTime: "2024-04-28T12:28:27Z"
+    networkType: Kubernetes-NodePort
+```
+
+Clients can access the game server by using 120.78.78.8:31480
+
+---
+
 ### Kubernetes-Ingress
 #### Plugin name
 
@@ -443,6 +544,116 @@ min_port = 500
 ```
 
 ---
+### AlibabaCloud-NLB
+#### Plugin name
+
+`AlibabaCloud-NLB`
+
+#### Cloud Provider
+
+AlibabaCloud
+
+#### Plugin description
+
+- AlibabaCloud-NLB enables game servers to be accessed from the Internet by using Layer 4 Network Load Balancer (NLB) of Alibaba Cloud. AlibabaCloud-NLB uses different ports of the same NLB instance to forward Internet traffic to different game servers. The NLB instance only forwards traffic, but does not implement load balancing.
+
+- This network plugin supports network isolation.
+
+#### Network parameters
+
+NlbIds
+
+- Meaning: the NLB instance ID. You can fill in multiple ids.
+- Value: in the format of nlbId-0,nlbId-1,... An example value can be "nlb-ji8l844c0qzii1x6mc,nlb-26jbknebrjlejt5abu"
+- Configuration change supported or not: yes. You can add new nlbIds at the end. However, it is recommended not to change existing nlbId that is in use.
+
+PortProtocols
+
+- Meaning: the ports in the pod to be exposed and the protocols. You can specify multiple ports and protocols.
+- Value: in the format of port1/protocol1,port2/protocol2,... The protocol names must be in uppercase letters.
+- Configuration change supported or not: yes.
+
+Fixed
+
+- Meaning: whether the mapping relationship is fixed. If the mapping relationship is fixed, the mapping relationship remains unchanged even if the pod is deleted and recreated.
+- Value: false or true.
+- Configuration change supported or not: yes.
+
+AllowNotReadyContainers
+
+- Meaning: the container names that are allowed not ready when inplace updating, when traffic will not be cut.
+- Value: {containerName_0},{containerName_1},... Example：sidecar
+- Configuration change supported or not: It cannot be changed during the in-place updating process.
+
+#### Plugin configuration
+```
+[alibabacloud]
+enable = true
+[alibabacloud.nlb]
+# Specify the range of available ports of the NLB instance. Ports in this range can be used to forward Internet traffic to pods. In this example, the range includes 500 ports.
+max_port = 1500
+min_port = 1000
+```
+
+#### Example
+
+```
+cat <<EOF | kubectl apply -f -
+apiVersion: game.kruise.io/v1alpha1
+kind: GameServerSet
+metadata:
+  name: gs-nlb
+  namespace: default
+spec:
+  replicas: 1
+  updateStrategy:
+    rollingUpdate:
+      podUpdatePolicy: InPlaceIfPossible
+  network:
+    networkConf:
+    - name: NlbIds
+      value: nlb-muyo7fv6z646ygcxxx
+    - name: PortProtocols
+      value: "80"
+    - name: Fixed
+      value: "true"
+    networkType: AlibabaCloud-NLB
+  gameServerTemplate:
+    spec:
+      containers:
+        - image: registry.cn-hangzhou.aliyuncs.com/gs-demo/gameserver:network
+          name: gameserver
+EOF
+```
+
+The network status of GameServer would be as follows:
+
+```
+  networkStatus:
+    createTime: "2024-04-28T12:41:56Z"
+    currentNetworkState: Ready
+    desiredNetworkState: Ready
+    externalAddresses:
+    - endPoint: nlb-muyo7fv6z646ygcxxx.cn-xxx.nlb.aliyuncs.com
+      ip: ""
+      ports:
+      - name: "80"
+        port: 1047
+        protocol: TCP
+    internalAddresses:
+    - ip: 172.16.0.1
+      ports:
+      - name: "80"
+        port: 80
+        protocol: TCP
+    lastTransitionTime: "2024-04-28T12:41:56Z"
+    networkType: AlibabaCloud-NLB
+```
+
+Clients can access the game server by using nlb-muyo7fv6z646ygcxxx.cn-xxx.nlb.aliyuncs.com:1047
+
+---
+
 ### AlibabaCloud-EIP
 #### Plugin name
 
@@ -724,6 +935,151 @@ After waiting for the entire update process to end, you can find that there are 
 #### Plugin configuration
 
 None
+
+---
+
+### Volcengine-CLB
+
+#### Plugin name
+
+`Volcengine-CLB`
+
+#### Cloud Provider
+
+Volcengine
+
+#### Plugin description
+
+- The Volcaengine Kubernetes Engine supports the CLB reuse mechanism in k8s. Different SVCs can use different ports of the same CLB. Therefore, the Volcengine-CLB network plugin will record the port allocation corresponding to each CLB. For the specified network type as Volcengine-CLB, the Volcengine-CLB network plugin will automatically allocate a port and create a service object. Wait for the svc ingress field. After the public network IP is successfully created, the GameServer network is in the Ready state and the process is completed.
+
+- This network plugin supports network isolation.
+
+#### Network parameters
+
+ClbIds
+
+- Meaning：fill in the id of the clb. You can fill in more than one. You need to create the clb in [Volcano Engine].
+- Value：each clbId is divided by `,` . For example: `clb-9zeo7prq1m25ctpfrw1m7`,`clb-bp1qz7h50yd3w58h2f8je`,...
+- Configurable：Y
+
+PortProtocols
+
+- Meaning：the ports and protocols exposed by the pod, support filling in multiple ports/protocols
+- Value：`port1/protocol1`,`port2/protocol2`,... The protocol names must be in uppercase letters.
+- Configurable：Y
+
+AllocateLoadBalancerNodePorts
+
+- Meaning：Whether the generated service is assigned nodeport, this can be set to false only in clb passthrough mode
+- Value：false / true
+- Configurable：Y
+
+Fixed
+
+- Meaning：whether the mapping relationship is fixed. If the mapping relationship is fixed, the mapping relationship remains unchanged even if the pod is deleted and recreated.
+- Value：false / true
+- Configurable：Y
+
+AllowNotReadyContainers
+
+- Meaning：the container names that are allowed not ready when inplace updating, when traffic will not be cut.
+- Value：{containerName_0},{containerName_1},... eg：sidecar
+- Configurable：It cannot be changed during the in-place updating process.
+
+Annotations
+
+- Meaning：the anno added to the service
+- Value：key1:value1,key2:value2...
+- Configurable：Y
+
+#### Plugin configuration
+```toml
+[volcengine]
+enable = true
+[volcengine.clb]
+#Fill in the free port segment that clb can use to allocate external access ports to pods, The maximum port range is 200.
+max_port = 700
+min_port = 500
+```
+
+#### Example
+```yaml
+cat <<EOF | kubectl apply -f -
+apiVersion: game.kruise.io/v1alpha1
+kind: GameServerSet
+metadata:
+  name: gss-2048-clb
+  namespace: default
+spec:
+  replicas: 3
+  updateStrategy:
+    rollingUpdate:
+      podUpdatePolicy: InPlaceIfPossible
+  network:
+    networkType: Volcengine-CLB
+    networkConf:
+      - name: ClbIds
+        #Fill in Volcengine Cloud LoadBalancer Id here
+        value: clb-xxxxx
+      - name: PortProtocols
+        #Fill in the exposed ports and their corresponding protocols here. 
+        #If there are multiple ports, the format is as follows: {port1}/{protocol1},{port2}/{protocol2}...
+        #If the protocol is not filled in, the default is TCP
+        value: 80/TCP
+      - name: AllocateLoadBalancerNodePorts
+        # Whether the generated service is assigned nodeport.
+        value: "true"
+      - name: Fixed
+        #Fill in here whether a fixed IP is required [optional] ; Default is false
+        value: "false"
+      - name: Annotations
+        #Fill in the anno related to clb on the service
+        #The format is as follows: {key1}:{value1},{key2}:{value2}...
+        value: "key1:value1,key2:value2"
+  gameServerTemplate:
+    spec:
+      containers:
+        - image: cr-helm2-cn-beijing.cr.volces.com/kruise/2048:v1.0
+          name: app-2048
+          volumeMounts:
+            - name: shared-dir
+              mountPath: /var/www/html/js
+        - image: cr-helm2-cn-beijing.cr.volces.com/kruise/2048-sidecar:v1.0
+          name: sidecar
+          args:
+            - bash
+            - -c
+            - rsync -aP /app/js/* /app/scripts/ && while true; do echo 11;sleep 2; done
+          volumeMounts:
+            - name: shared-dir
+              mountPath: /app/scripts
+      volumes:
+        - name: shared-dir
+          emptyDir: {}
+EOF
+```
+
+Check the network status in GameServer:
+```
+networkStatus:
+    createTime: "2024-01-19T08:19:49Z"
+    currentNetworkState: Ready
+    desiredNetworkState: Ready
+    externalAddresses:
+    - ip: xxx.xxx.xx.xxx
+      ports:
+      - name: "80"
+        port: 6611
+        protocol: TCP
+    internalAddresses:
+    - ip: 172.16.200.60
+      ports:
+      - name: "80"
+        port: 80
+        protocol: TCP
+    lastTransitionTime: "2024-01-19T08:19:49Z"
+    networkType: Volcengine-CLB
+```
 
 ## Access to network information
 

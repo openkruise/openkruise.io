@@ -171,21 +171,3 @@ PING minecraft-2.minecraft.default.svc.cluster.local (172.16.0.12): 56 data byte
 ```
 
 可以发现，accessor访问minecraft-2成功，DNS成功解析到对应的内网IP地址。在这里的DNS访问规则如下：{pod-name}.{gss-name}.{namespace-name}.svc.cluster.local
-
-## GameServer 与 Pod 注释同步
-
-如上所述，通过 DownwardAPI 可以将 pod annotation的信息下沉至容器中。我们有时希望将 GameServer 的 annotation 可以同步到 Pod 上，以完成GameServer元数据信息的下沉动作。
-
-OKG 支持以 "gs-sync/" 开头的 annotation 从 GameServer 同步到 Pod 之上，如下所示：
-
-```bash
-kubectl patch gs minecraft-0 --type='merge'  -p  '{"metadata":{"annotations":{"gs-sync/test-key":"some-value"}}}'
-gameserver.game.kruise.io/minecraft-0 patched
-```
-
-此时查看 pod 注释，发现可以找到对应key-value：
-
-```bash
-kubectl get po minecraft-0 -oyaml | grep gs-sync
-    gs-sync/test-key: some-value
-```
