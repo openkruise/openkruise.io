@@ -172,3 +172,19 @@ PING minecraft-2.minecraft.default.svc.cluster.local (172.16.0.12): 56 data byte
 ```
 
 It can be found that the accessor successfully accessed minecraft-2, and the DNS successfully resolved to the corresponding intranet IP address. The DNS rules here are as follows: {pod-name}.{gss-name}.{namespace-name}.svc.cluster.local
+
+## Synchronization of Annotations from GameServer to Pod
+
+As mentioned above, through the DownwardAPI, information from pod annotations can be propagated downwards into containers. Sometimes, we wish to synchronize the annotations of a GameServer to its Pod, in order to complete the action of sinking GameServer metadata information.
+
+```bash
+kubectl patch gs minecraft-0 --type='merge' -p '{"metadata":{"annotations":{"gs-sync/test-key":"some-value"}}}'
+gameserver.game.kruise.io/minecraft-0 patched
+```
+
+OKG supports the synchronization of annotations from GameServer to Pod starting with "gs-sync/," as demonstrated below:
+
+```bash
+kubectl get po minecraft-0 -oyaml | grep gs-sync
+    gs-sync/test-key: some-value
+```
