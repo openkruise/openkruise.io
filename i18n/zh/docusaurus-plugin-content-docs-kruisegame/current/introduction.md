@@ -51,20 +51,28 @@ OpenKruiseGame（OKG）具有如下核心能力：
 
 <table>
     <tr style={{"border":0}}>
-        <td style={{"border":0}}><center><img src={require('/static/img/kruisegame/bilibili-logo.png').default} width="130" /></center></td>
         <td style={{"border":0}}><center><img src={require('/static/img/kruisegame/hypergryph-logo.png').default} width="130" /></center></td>
+        <td style={{"border":0}}><center><img src={require('/static/img/kruisegame/lilith-logo.png').default} width="125" /></center></td>
+        <td style={{"border":0}}><center><img src={require('/static/img/kruisegame/bilibili-logo.png').default} width="130" /></center></td>
         <td style={{"border":0}}><center><img src={require('/static/img/kruisegame/shangyou-logo.jpeg').default} width="130" /></center></td>
-        <td style={{"border":0}}><center><img src={require('/static/img/kruisegame/guanying-logo.png').default} width="135" /></center></td>
+        <td style={{"border":0}}><center><img src={require('/static/img/kruisegame/xingzhe-logo.png').default} width="125" /></center></td>
+    </tr>
+    <tr style={{"border":0}}>
+    </tr>
+    <tr style={{"border":0}}>
+        <td style={{"border":0}}><center><img src={require('/static/img/kruisegame/juren-logo.png').default} width="100" /></center></td>
+        <td style={{"border":0}}><center><img src={require('/static/img/kruisegame/baibian-logo.png').default} width="130" /></center></td>
+        <td style={{"border":0}}><center><img src={require('/static/img/kruisegame/chillyroom-logo.png').default} width="140" /></center></td>
+        <td style={{"border":0}}><center><img src={require('/static/img/kruisegame/wuduan-logo.png').default} width="140" /></center></td>
+        <td style={{"border":0}}><center><img src={require('/static/img/kruisegame/xingchao-logo.png').default} width="120" /></center></td>
+    </tr>
+    <tr style={{"border":0}}>
+    </tr>
+    <tr style={{"border":0}}>
         <td style={{"border":0}}><center><img src={require('/static/img/kruisegame/wanglong-logo.png').default} width="145" /></center></td>
-    </tr>
-    <tr style={{"border":0}}>
-    </tr>
-    <tr style={{"border":0}}>
-        <td style={{"border":0}}><center><img src={require('/static/img/kruisegame/juren-logo.png').default} width="105" /></center></td>
-        <td style={{"border":0}}><center><img src={require('/static/img/kruisegame/xingzhe-logo.png').default} width="135" /></center></td>
-        <td style={{"border":0}}><center><img src={require('/static/img/kruisegame/wuduan-logo.png').default} width="135" /></center></td>
-        <td style={{"border":0}}><center><img src={require('/static/img/kruisegame/booming-logo.png').default} width="135" /></center></td>
-        <td style={{"border":0}}><center><img src={require('/static/img/kruisegame/xingchao-logo.png').default} width="125" /></center></td>
+        <td style={{"border":0}}><center><img src={require('/static/img/kruisegame/guanying-logo.png').default} width="140" /></center></td>
+        <td style={{"border":0}}><center><img src={require('/static/img/kruisegame/booming-logo.png').default} width="140" /></center></td>
+        <td style={{"border":0}}><center><img src={require('/static/img/kruisegame/gsshosting-logo.png').default} width="150" /></center></td>
     </tr>
 </table>
 
