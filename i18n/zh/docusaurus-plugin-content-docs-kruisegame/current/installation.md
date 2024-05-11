@@ -71,7 +71,7 @@ $ helm upgrade kruise-game openkruise/kruise-game --version 0.8.0 [--force]
 如果你在中国并且无法从官方 DockerHub 拉取镜像，你可以使用托管在阿里云上的镜像:
 
 ```bash
-$ helm install kruise-game https://... --set image.repository=registry.cn-hangzhou.aliyuncs.com/acs/kruise-game-manager
+$ helm install kruise-game https://... --set image.repository=registry-cn-hangzhou.ack.aliyuncs.com/acs/kruise-game-manager
 ```
 
 ## 卸载OpenKruiseGame（OKG）
