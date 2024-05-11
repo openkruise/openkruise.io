@@ -71,7 +71,7 @@ Specify each parameter using the `--set key=value[,key=value]` argument to `helm
 If you are in China and have problem to pull image from official DockerHub, you can use the registry hosted on Alibaba Cloud:
 
 ```bash
-$ helm install kruise-game https://... --set image.repository=registry.cn-hangzhou.aliyuncs.com/acs/kruise-game-manager
+$ helm install kruise-game https://... --set image.repository=registry-cn-hangzhou.ack.aliyuncs.com/acs/kruise-game-manager
 ```
 
 ## Uninstall OpenKruiseGame（OKG）
