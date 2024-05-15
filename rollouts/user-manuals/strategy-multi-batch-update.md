@@ -16,7 +16,7 @@ import TabItem from '@theme/TabItem';
 ```YAML
 apiVersion: rollouts.kruise.io/v1beta1
 kind: Rollout
-  metadata:
+metadata:
   name: rollouts-demo
 spec:
   workloadRef:
