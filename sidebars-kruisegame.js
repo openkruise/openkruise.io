@@ -68,7 +68,11 @@ module.exports = {
                 'blog-video/kubecon-shangyou-20230926',
                 'blog-video/meetup-guangzhou-20231125',
                 'blog-video/guanying-20231129',
-                'blog-video/higress'
+                'blog-video/higress',
+                'blog-video/cloud-forward-okg',
+                'blog-video/ack-one-okg',
+                'blog-video/okg-911',
+                'blog-video/okg-gsshosting'
             ],
         }
   ],
