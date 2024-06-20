@@ -15,21 +15,25 @@ EFK (ElasticSearch, FileBeat, Kibana) is a very popular and widely used log coll
 ### K8S Sidecar Model Disadvantage
 As shown above, the FileBeat container is deployed in Sidecar mode in the same Pod as the business app container, and the logs are collected and uploaded to ElasticSearch by means of a shared volume, configuration as follows:
 ```yaml
-  spec:
-    containers:
-    - name: nginx
-      image: nginx:latest
-      volumeMounts:
-      # Share log directory with filebeat sidecar container via volumeMount
-      - mountPath: /var/log/nginx
-        name: log
-    - name: filebeat
-      image: docker.elastic.co/beats/filebeat:7.16.2
-      volumeMounts:
-      - mountPath: /var/log/nginx
-        name: log
-    volumes:
-    - name: log
+apiVersion: v1
+kind: Pod
+metadata:
+  name: test-pod
+spec:
+  containers:
+  - name: nginx
+    image: nginx:latest
+    volumeMounts:
+    # Share log directory with filebeat sidecar container via volumeMount
+    - mountPath: /var/log/nginx
+      name: log
+  - name: filebeat
+    image: docker.elastic.co/beats/filebeat:7.16.2
+    volumeMounts:
+    - mountPath: /var/log/nginx
+      name: log
+  volumes:
+  - name: log
     emptyDir: {}
 ```
 
@@ -91,22 +95,19 @@ metadata:
   name: filebeat-sidecarset
 spec:
   selector:
-    # Pod labels that need to be injected into the sidecar container
     matchLabels:
       kruise.io/inject-filebeat: "true"
-  # sidecarSet is effective for the whole cluster by default, you can specify the scope of the effect through the namespace field
- #namespace: ns-xxx
   containers:
   - args:
+    - -c
+    - /etc/filebeat.yml
     - -e
-    - -E
-    - http.enabled=true
     env:
     - name: POD_NAMESPACE
       valueFrom:
         fieldRef:
           apiVersion: v1
-            fieldPath: metadata.namespace
+          fieldPath: metadata.namespace
     image: docker.elastic.co/beats/filebeat:7.16.2
     livenessProbe:
       exec:
@@ -133,17 +134,19 @@ spec:
         cpu: 100m
         memory: 100Mi
     volumeMounts:
-    - mountPath: /usr/share/filebeat
+    - name: config
+      mountPath: /etc/filebeat.yml
+      readOnly: true
+      subPath: filebeat.yml
+    - name: varlog
+      mountPath: /var/log
+      readOnly: true
+  volumes:
+  - name: config
+    configMap:
       name: filebeat-config
-    # Share log directory with app container via volumeMount
-    - mountPath: /var/log
-      name: log
-    volumes:
-    - configMap:
-        name: filebeat-config
-      name: filebeat-config
-    - name: log
-      emptyDir: {}
+  - name: varlog
+    emptyDir: {}
 ```
 **For the scenario where machine resources are not sufficient, in order to reduce Pod resource requests, you can set sidecar container request.cpu=0. In this case, the Qos of Pod will be [Burstable](https://kubernetes.io/docs/tasks/configure-pod-container/quality-service-pod/#create-a-pod-that-gets-assigned-a-qos-class-of-burstable).**
 

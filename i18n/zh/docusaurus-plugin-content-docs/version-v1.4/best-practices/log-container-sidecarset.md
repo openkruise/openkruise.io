@@ -13,21 +13,25 @@ EFK（ElasticSearch, FileBeat, Kibana）是社区非常流行的、使用非常�
 ### K8S Sidecar模式弊端
 如上图所示，FileBeat容器以Sidecar模式与业务app容器部署在同一个Pod内，通过共享volume的方式采集日志上传到ElasticSearch，配置如下：
 ```yaml
-  spec:
-    containers:
-    - name: nginx
-      image: nginx:latest
-      volumeMounts:
-      # 通过 volumeMounts 与filebeat sidecar容器共享 log 目录
-      - mountPath: /var/log/nginx
-        name: log
-    - name: filebeat
-      image: docker.elastic.co/beats/filebeat:7.16.2
-      volumeMounts:
-      - mountPath: /var/log/nginx
-        name: log
-    volumes:
-    - name: log
+apiVersion: v1
+kind: Pod
+metadata:
+  name: test-pod
+spec:
+  containers:
+  - name: nginx
+    image: nginx:latest
+    volumeMounts:
+    # 通过 volumeMounts 与filebeat sidecar容器共享 log 目录
+    - mountPath: /var/log/nginx
+      name: log
+  - name: filebeat
+    image: docker.elastic.co/beats/filebeat:7.16.2
+    volumeMounts:
+    - mountPath: /var/log/nginx
+      name: log
+  volumes:
+  - name: log
     emptyDir: {}
 ```
 
@@ -94,14 +98,14 @@ spec:
  #namespace: ns-xxx
   containers:
   - args:
+    - -c
+    - /etc/filebeat.yml
     - -e
-    - -E
-    - http.enabled=true
     env:
     - name: POD_NAMESPACE
-    valueFrom:
-      fieldRef:
-        apiVersion: v1
+      valueFrom:
+        fieldRef:
+          apiVersion: v1
           fieldPath: metadata.namespace
     image: docker.elastic.co/beats/filebeat:7.16.2
     livenessProbe:
@@ -129,17 +133,19 @@ spec:
         cpu: 100m
         memory: 100Mi
     volumeMounts:
-    - mountPath: /usr/share/filebeat
+    - name: config
+      mountPath: /etc/filebeat.yml
+      readOnly: true
+      subPath: filebeat.yml
+    - name: varlog
+      mountPath: /var/log
+      readOnly: true
+  volumes:
+  - configMap:
       name: filebeat-config
-    # 通过 volumeMounts 与业务容器共享 log 目录
-    - mountPath: /var/log
-      name: log
-    volumes:
-    - configMap:
-        name: filebeat-config
-      name: filebeat-config
-    - name: log
-      emptyDir: {}
+    name: config
+  - name: varlog
+    emptyDir: {}
 ```
 **针对机器资源不太充足的场景，为减少Pod资源的申请，可以将sidecar container request.cpu=0，此种情况下Pod的Qos将会是 [Burstable](https://kubernetes.io/docs/tasks/configure-pod-container/quality-service-pod/#create-a-pod-that-gets-assigned-a-qos-class-of-burstable)。**
 
