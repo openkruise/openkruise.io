@@ -10,8 +10,8 @@ title: Job Sidecar Terminator
 
 ## 使用前提
 
-- 在安装或升级 Kruise 时启用 JobSidecarTerminator Feature-Gate（默认关闭）
-- 在安装或升级 Kruise 时启用 KruiseDaemon Feature-Gate（默认开启）。
+- 在安装或升级 Kruise 时启用 `SidecarTerminator` Feature-Gate（默认关闭）
+- 在安装或升级 Kruise 时启用 `KruiseDaemon` Feature-Gate（默认开启）。
 
 ## 使用方式
 
