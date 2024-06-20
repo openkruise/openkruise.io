@@ -10,7 +10,7 @@ To solve such problem, job sidecar terminator controller watches and terminates 
 
 ## Requirements
 
- - Enabled `JobSidecarTerminator` feature gate when installing/upgrading Kruise (defaults to `disabled`).
+ - Enabled `SidecarTerminator` feature gate when installing/upgrading Kruise (defaults to `disabled`).
  - Enabled `KruiseDaemon` feature gate when installing/upgrading Kruise (defaults to `enabled`).
 
 ## Usage

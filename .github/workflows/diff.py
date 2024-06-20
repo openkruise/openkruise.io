@@ -1,12 +1,13 @@
 import json
-import markdown
 import os.path
 import re
 import sys
-from bs4 import BeautifulSoup
 from collections import Counter
-from html2markdown import convert
+
 import language_tool_python
+import markdown
+from bs4 import BeautifulSoup
+from html2markdown import convert
 
 handler = {}
 result = False
@@ -24,6 +25,11 @@ en_tool = language_tool_python.LanguageTool(
 try:
     with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'pre_dict.json'), 'r', encoding='utf8') as f:
         pre_dict = set(json.loads(f.read()))
+except Exception:
+    pass
+try:
+    with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'pre_dict.json'), 'w', encoding='utf8') as f:
+        f.write(json.dumps(sorted(pre_dict), ensure_ascii=False, indent=4))
 except Exception:
     pass
 
