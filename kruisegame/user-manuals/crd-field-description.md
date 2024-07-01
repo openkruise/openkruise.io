@@ -39,9 +39,9 @@ type GameServerSetSpec struct {
 
 #### GameServerTemplate
 
-```yaml
+```
 type GameServerTemplate struct {
-    // All fields inherited from PodTemplateSpec.
+    // All fields inherited from PodTemplateSpec. More details: https://pkg.go.dev/k8s.io/api/core/v1#PodTemplateSpec
     corev1.PodTemplateSpec `json:",inline"`
     
     // Requests and claims for persistent volumes.
@@ -159,7 +159,7 @@ type ScaleStrategy struct {
 
 ```
 type ServiceQuality struct {
-    // Inherits all fields from corev1.Probe
+    // Inherits all fields from corev1.Probe. More details: https://pkg.go.dev/k8s.io/api/core/v1#Probe
     corev1.Probe  `json:",inline"`
     
     // Custom name for the service quality, distinguishes different service qualities that are defined.
@@ -213,7 +213,7 @@ type KVParams struct {
 
 ### GameServerSetStatus
 
-```yaml
+```
 type GameServerSetStatus struct {
     // The iteration version of the GameServerSet observed by the controller.
     ObservedGeneration int64 `json:"observedGeneration,omitempty"`
@@ -255,9 +255,13 @@ type GameServerSetStatus struct {
 
 ```
 type GameServerSpec struct {
-   // The O&M state of the game server, not pod runtime state, more biased towards the state of the game itself.
-   // Currently, the states that can be specified are: None / WaitToBeDeleted / Maintaining. 
-   // Default is None
+   // The O&M state of the game server, not pod runtime state, more biased towards the state of the game itself. The states can be any user-defined value. 
+   // At the same time, OKG retains some opsState values, which have different meanings and functions, including:
+   // None - the default value, indicating that there are no exceptions or special states
+   // WaitToBeDeleted - gs has the highest scaling priority and will be automatically recycled after configuring the automatic scaling policy
+   // Maintaining —— gs scaling has the lowest priority
+   // Allocated —— gs reduction priority is greater than Maintaining and less than None
+   // Kill - gs set to Kill will be deleted
    OpsState         OpsState            `json:"opsState,omitempty"`
 
    // Update priority. If the priority is higher, it will be updated first.
