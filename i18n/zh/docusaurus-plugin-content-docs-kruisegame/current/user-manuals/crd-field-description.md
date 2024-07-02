@@ -38,7 +38,7 @@ type GameServerSetSpec struct {
 
 ```
 type GameServerTemplate struct {
-    // 继承至PodTemplateSpec的所有字段
+    // 继承至PodTemplateSpec的所有字段，字段详情参考 https://pkg.go.dev/k8s.io/api/core/v1#PodTemplateSpec
     corev1.PodTemplateSpec `json:",inline"`
 
     // 对持久卷的请求和声明
@@ -122,7 +122,7 @@ type ScaleStrategy struct {
 
 ```
 type ServiceQuality struct {
-    // 继承至corev1.Probe所有字段，此处指定探测方式
+    // 继承至corev1.Probe所有字段，此处指定探测方式，字段详情参考 https://pkg.go.dev/k8s.io/api/core/v1#Probe
     corev1.Probe  `json:",inline"`
     
     // 自定义服务质量的名称，区别定义不同的服务质量
@@ -216,7 +216,13 @@ type GameServerSetStatus struct {
 
 ```
 type GameServerSpec struct {
-   // 游戏服运维状态，表示业务相关的游戏服状态，目前可指定的状态有：None / WaitToBeDeleted / Maintaining。默认为None
+   // 游戏服运维状态，表示业务相关的游戏服状态，可以由用户定义为任何值。
+   // OKG提供了一些保留值，有着特殊含义，包括：
+   // None —— 默认值，代表不存在任何异常和特殊状态
+   // WaitToBeDeleted —— gs缩容优先级最高，且配置自动伸缩策略后会被自动回收
+   // Maintaining —— gs缩容优先级最低
+   // Allocated —— gs缩容优先级大于Maintaining，小于None。通常代表gs已经被分配，在游戏匹配场景下可以使用。
+   // Kill —— 设置Kill的gs将被OKG控制器直接删除
    OpsState         OpsState            `json:"opsState,omitempty"`
 
    // 更新优先级，优先级高则优先被更新
