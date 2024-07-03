@@ -47,7 +47,8 @@ module.exports = {
                 'best-practices/session-based-game',
                 'best-practices/pve-game',
                 'best-practices/shared-mem',
-                'best-practices/gameserver-delivery-management'
+                'best-practices/gameserver-delivery-management',
+                'best-practices/workflow'
             ],
         },
         {
