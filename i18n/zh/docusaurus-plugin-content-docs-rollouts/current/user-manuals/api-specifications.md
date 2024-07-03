@@ -197,7 +197,90 @@ spec:
 | `ingress.name`          | 字符串 | ""      | 绑定服务的Ingress资源的名称                                                                             |
 | `gateway.httpRouteName` | 字符串 | ""      | Gateway API的[HTTPRoute](https://gateway-api.sigs.k8s.io/concepts/api-overview/#httproute)资源名称 |
 注意：
-- 如果决定使用`trafficRoutings`，则`ingress`、`gateway`和`customNetworkRefs`不能同时为nil，且`ingress`、`gateway`和`customNetworkRefs` 不能同时配置在一个trafficRouting中
+- 如果决定使用`trafficRoutings`，则`ingress`、`gateway`和`customNetworkRefs`不能同时为nil，且`ingress`、`gateway`和`customNetworkRefs` 不能同时配置在一个trafficRouting中。 
+
+除了使用`trafficRoutings`，也可以通过单独声明流量路由策略，并在Rollout配置中引用声明的流量路由配置。通常，在全链路灰度中会使用这种流量路由配置方式。 
+
+如下是一个独立声明流量路由策略的例子：
+
+```yaml
+apiVersion: rollouts.kruise.io/v1alpha1
+kind: TrafficRouting
+metadata:
+  name: mse-traffic
+spec:
+  objectRef:
+  # 这里的配置和Rollout对象中canary.trafficRoutings的配置一样
+  - service: spring-cloud-a
+    ingress:
+      classType: mse
+      name: spring-cloud-a
+  strategy:
+    matches:
+    - headers:
+      - type: Exact
+        name: User-Agent
+        value: Andriod
+    requestHeaderModifier:
+      set:
+      - name: x-mse-tag
+        value: gray
+```
+这里是在Rollout对象中引用流量路由策略的例子：
+
+<Tabs>
+  <TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: rollouts.kruise.io/v1beta1
+kind: Rollout
+metadata:
+  name: rollout-b
+spec:
+  workloadRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: spring-cloud-b
+  strategy:
+    canary:
+      steps:
+        - pause: {}
+          replicas: 1
+      patchPodTemplateMetadata:
+        labels:
+          opensergo.io/canary-gray: gray
+    # 引用名为mse-traffic的流量路由配置
+    trafficRoutingRef: mse-traffic
+```
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
+
+```yaml
+apiVersion: rollouts.kruise.io/v1alpha1
+kind: Rollout
+metadata:
+  name: rollout-b
+  annotations:
+    # 引用名为mse-traffic的流量路由配置
+    rollouts.kruise.io/trafficrouting: mse-traffic
+spec:
+  objectRef:
+    workloadRef:
+      apiVersion: apps/v1
+      kind: Deployment
+      name: spring-cloud-b
+  strategy:
+    canary:
+      steps:
+        - pause: {}
+          replicas: 1
+      patchPodTemplateMetadata:
+        labels:
+          opensergo.io/canary-gray: gray
+```
+  </TabItem>
+</Tabs>
+
 
 ### 策略API（必填）
 
@@ -214,6 +297,7 @@ metadata:
 spec:
   strategy:
     canary:
+      enableExtraWorkloadForCanary: true
       steps:
       # the first step
       - traffic: 5%
@@ -228,7 +312,23 @@ spec:
       # the second step
       - traffic: 10%
         ... ....
+      patchPodTemplateMetadata:
+        labels:
+          opensergo.io/canary-gray: gray
+
 ```
+
+| 字段                        | 类型       | 默认值     | 说明                                             |
+|---------------------------|----------|---------|------------------------------------------------|
+| `steps[x].traffic`         | *字符串      | nil     | （可选）可选）金丝雀流量新版本Pod的百分比权重。                         |
+| `steps[x].replicas`       | *整数或*字符串 | nil     | （可选）新版本Pod的绝对数量或百分比。如果为nil，则默认使用'weight'作为副本数。 |
+| `steps[x].pause`          | 对象       | {}      | （可选）进入下一步之前需要手动确认或自动确认。                        |
+| `steps[x].pause.duration` | *整数      | nil     | （可选）自动确认之前的持续时间。如果为nil，则表示需要手动确认。              |
+| `steps[x].matches`        | []对象     | []      | （可选）您想要将流量引导到新版本Pod的HTTP标头匹配规则。                |
+| `headers[x].type`         | 字符串      | "Exact" | 匹配键和值的规则，可以是"Exact"或"RegularExpression"。       |
+| `headers[x].name`         | 字符串      | ""      | 匹配的HTTP标头名称。（headers[i]和headers[j]之间的And关系）    |
+| `headers[x].value`        | 字符串      | ""      | 匹配的HTTP标头值。                                    |
+| `enableExtraWorkloadForCanary`        | 布尔值      | false      |  为金丝雀发布创建一个额外的工作负载， 金丝雀发布后会被删除  |
 
   </TabItem>
   <TabItem value="v1alpha1" label="v1alpha1">
@@ -254,16 +354,16 @@ spec:
               value: matched-header-value # value or reg-expression
         # the second step
       - weight: 10
+      patchPodTemplateMetadata:
+        labels:
+          opensergo.io/canary-gray: gray
           ... ....
 ```
 
-</TabItem>
-</Tabs>
 
 | 字段                        | 类型       | 默认值     | 说明                                             |
 |---------------------------|----------|---------|------------------------------------------------|
 | `steps[x].weight`         | *整数      | nil     | （可选）金丝雀流量新版本Pod的百分比权重。                         |
-| `steps[x].traffic`         | *字符串      | nil     | （可选）可选）金丝雀流量新版本Pod的百分比权重。                         |
 | `steps[x].replicas`       | *整数或*字符串 | nil     | （可选）新版本Pod的绝对数量或百分比。如果为nil，则默认使用'weight'作为副本数。 |
 | `steps[x].pause`          | 对象       | {}      | （可选）进入下一步之前需要手动确认或自动确认。                        |
 | `steps[x].pause.duration` | *整数      | nil     | （可选）自动确认之前的持续时间。如果为nil，则表示需要手动确认。              |
@@ -271,8 +371,8 @@ spec:
 | `headers[x].type`         | 字符串      | "Exact" | 匹配键和值的规则，可以是"Exact"或"RegularExpression"。       |
 | `headers[x].name`         | 字符串      | ""      | 匹配的HTTP标头名称。（headers[i]和headers[j]之间的And关系）    |
 | `headers[x].value`        | 字符串      | ""      | 匹配的HTTP标头值。                                    |
-| `enableExtraWorkloadForCanary`        | 布尔值      | false      |  为金丝雀发布创建一个额外的工作负载， 金丝雀发布后会被删除  |
-
+</TabItem>
+</Tabs>
 注意：
 
 - `steps[x].replicas`不能为nil。

@@ -4,6 +4,8 @@ import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
 ## Multi-Batch Strategy Process
+Multi-batch strategy is a special kind of canary release that requires no extra workload for canary analysis. It is generally used by applications that have more than one replicas and often used without traffic routing changes. 
+
 ![ab](../../static/img/rollouts/multi-batch.jpg)
 
 ## Recommended Configuration
