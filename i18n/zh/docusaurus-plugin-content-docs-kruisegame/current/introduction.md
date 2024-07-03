@@ -73,6 +73,7 @@ OpenKruiseGame（OKG）具有如下核心能力：
         <td style={{"border":0}}><center><img src={require('/static/img/kruisegame/guanying-logo.png').default} width="140" /></center></td>
         <td style={{"border":0}}><center><img src={require('/static/img/kruisegame/booming-logo.png').default} width="140" /></center></td>
         <td style={{"border":0}}><center><img src={require('/static/img/kruisegame/gsshosting-logo.png').default} width="150" /></center></td>
+        <td style={{"border":0}}><center><img src={require('/static/img/kruisegame/yongshi-logo.png').default} width="135" /></center></td>
     </tr>
 </table>
 
