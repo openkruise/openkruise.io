@@ -4,7 +4,7 @@ import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
 ## A/B Testing Process
-A process of A/B Tesing combing with **canary release**:
+A process of A/B Tesing combining with **canary release**:
 ![ab](../../static/img/rollouts/ab-testing.jpg)
 
 

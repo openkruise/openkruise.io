@@ -223,6 +223,88 @@ spec:
 
 **Note: if you decide to use `trafficRoutings`, one and only one of `ingress`,`gateway`,`customNetworkRefs` can be present in one trafficRouting element*
 
+Alternatively, one can also define traffic routing strategy independently. and reference declared traffic routing config in the Rollout resource. Such usage is often used in the end-to-end canary cases.
+
+Here is an example of independent traffic routing definition:
+```yaml
+apiVersion: rollouts.kruise.io/v1alpha1
+kind: TrafficRouting
+metadata:
+  name: mse-traffic
+spec:
+  objectRef:
+  # config is the same as the traffic routing element in canary.trafficRoutings
+  - service: spring-cloud-a
+    ingress:
+      classType: mse
+      name: spring-cloud-a
+  strategy:
+    matches:
+    - headers:
+      - type: Exact
+        name: User-Agent
+        value: Andriod
+    requestHeaderModifier:
+      set:
+      - name: x-mse-tag
+        value: gray
+```
+
+Here is an example to reference the traffic routing in Rollout resource:
+
+<Tabs>
+  <TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: rollouts.kruise.io/v1beta1
+kind: Rollout
+metadata:
+  name: rollout-b
+spec:
+  workloadRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: spring-cloud-b
+  strategy:
+    canary:
+      steps:
+        - pause: {}
+          replicas: 1
+      patchPodTemplateMetadata:
+        labels:
+          opensergo.io/canary-gray: gray
+    # refer to the traffic routing config called mse-traffic
+    trafficRoutingRef: mse-traffic
+```
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
+
+```yaml
+apiVersion: rollouts.kruise.io/v1alpha1
+kind: Rollout
+metadata:
+  name: rollout-b
+  annotations:
+    # refer to the mse-traffic traffic routing config
+    rollouts.kruise.io/trafficrouting: mse-traffic
+spec:
+  objectRef:
+    workloadRef:
+      apiVersion: apps/v1
+      kind: Deployment
+      name: spring-cloud-b
+  strategy:
+    canary:
+      steps:
+        - pause: {}
+          replicas: 1
+      patchPodTemplateMetadata:
+        labels:
+          opensergo.io/canary-gray: gray
+```
+  </TabItem>
+</Tabs>
+
 ### Strategy API (Mandatory)
 Describe your strategy of rollout:
 
@@ -237,6 +319,7 @@ metadata:
 spec:
   strategy:
     canary:
+      enableExtraWorkloadForCanary: true
       steps:
       # the first step
       - traffic: 5%
@@ -251,18 +334,24 @@ spec:
       # the second step
       - traffic: 10%
         ... ....
+      patchPodTemplateMetadata:
+        labels:
+          opensergo.io/canary-gray: gray
 ```
 
 | Fields                    | Type                | Defaults  | Explanation                                                                                                    |
 |---------------------------|---------------------|-----------|----------------------------------------------------------------------------------------------------------------|
+| `enableExtraWorkloadForCanary` | boolean          | false     | Whether to create extra workload for canary update,  the extra workload be deleted after rollout completions; if it is set to false, multi-batch update strategy will be used for workload | 
 | `steps[x].traffic`         | *string            | nil       | (optional) Percent weight of canary traffic for new-version Pods.                                              |
 | `steps[x].replicas`       | *integer or *string | nil       | Absolute number or Percent of new-version Pods.                                                                 |
 | `steps[x].pause`          | object              | {}        | (optional) Manual confirmation or auto confirmation before enter the next step.                                |
 | `steps[x].pause.duration` | *integer            | nil       | (optional) Duration time before auto confirmation. if nil, means need manual confirmation.                     |
 | `steps[x].matches`        | []object            | []        | (optional) The HTTP header match rules you want to traffic to new-version Pods.                                |
+| `steps[x].requestHeaderModifier`        | object            | []        | (optional)  overwrites the request with the given header (name, value)                             |
 | `headers[x].type`         | string              | "Exact"   | "Exact" or "RegularExpression" rule to match key and value                                                     |
 | `headers[x].name`         | string              | ""        | Matched HTTP header name. (And-Relationship between headers[i] and headers[j])                                  |
 | `headers[x].value`        | string              | ""        | Matched HTTP header value.                                                                                     |
+| `patchPodTemplateMetadata` | object    | nil       | (optional) Add extra pod meta data by patch podTemplate of the canary workload                                 |
 
   </TabItem>
   <TabItem value="v1alpha1" label="v1alpha1">
@@ -289,6 +378,9 @@ spec:
       # the second step
       - weight: 10
         ... ....
+      patchPodTemplateMetadata:
+        labels:
+          opensergo.io/canary-gray: gray
 ```
 
 | Fields                    | Type                | Defaults  | Explanation                                                                                                    |
@@ -301,7 +393,7 @@ spec:
 | `headers[x].type`         | string              | "Exact"   | "Exact" or "RegularExpression" rule to match key and value                                                     |
 | `headers[x].name`         | string              | ""        | Matched HTTP header name. (And-Relationship between headers[i] and headers[j])                                  |
 | `headers[x].value`        | string              | ""        | Matched HTTP header value.                                                                                     |
-| `enableExtraWorkloadForCanary` | boolean          | false     | Whether to create extra Deployment for canary update, if it is set to true, the extra Deployment will be deleted after rollout completions; if it is set to false, multi-batch update strategy will be used for Deployment | 
+| `patchPodTemplateMetadata` | object    | nil       | (optional) Add extra pod meta data by patch podTemplate of the canary workload                                 |
   </TabItem>
 </Tabs>
 
@@ -309,6 +401,7 @@ Note:
 - `steps[x].replicas` can not be nil.
 - `steps[x].matches[i] and steps[x].matches[j]` have **Or**-relationship.
 - `steps[x].matches[y].headers[i] and steps[x].matches[y].header[j]` have **And**-relationship. 
+- `steps[x].patchPodTemplateMetadata` can be set only if enableExtraWorkloadForCanary=true
 - `enableExtraWorkloadForCanary` is available in v1beta Rollout resource; In v1alpha1 Rollout resource, one can use the annotation of Rollout `rollouts.kruise.io/rolling-type`="canary" to enable `enableExtraWorkloadForCanary`
 
 ### Special Annotations of Workload (Optional)

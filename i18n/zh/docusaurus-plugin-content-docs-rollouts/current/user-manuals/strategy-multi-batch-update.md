@@ -1,7 +1,7 @@
 # 多批次发布
 
 ## 多批次策略流程
-
+分批发布是一种特殊的金丝雀发布，这种金丝雀发布不需要创建额外的工作负载。分批发布一般用于远大于1个实例的应用发布中，并且通常不用流量调度配合灰度。 
 <center><img src={require('/static/img/rollouts/multi-batch.jpg').default} width="90%" /></center>
 
 ## 推荐配置
