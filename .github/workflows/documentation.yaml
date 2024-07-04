@@ -30,6 +30,8 @@ jobs:
   gh-release:
     if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
     steps:
       - uses: actions/checkout@v1
       - uses: actions/setup-node@v1
