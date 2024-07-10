@@ -50,6 +50,7 @@ spec:
         # 与服务相关的 Ingress 名称
         ingress:
           name: echoserver
+        gracePeriodSeconds: 10
 ```
 
   </TabItem>
@@ -95,6 +96,7 @@ spec:
       # 与服务相关的 Ingress 名称
         ingress:
           name: echoserver
+        gracePeriodSeconds: 10
 ```
 
   </TabItem>
@@ -177,14 +179,17 @@ spec:
         ingress:
           classType: <traffic-type> # 例如：nginx | higress，默认为 "nginx"
           name: <ingress-name-that-is-related-the-service>
+        gracePeriodSeconds: 10
       - service: <service-name-that-is-related-your-workload>
         gateway: # 或者选择使用 Ingress 或 GatewayAPI
           httpRouteName: <gateway-api-httpRoute-name>
+        gracePeriodSeconds: 10
       - service: <service-name-that-is-related-your-workload>
         customNetworkRefs:
         - apiVersion: <your-resource-apiVersion>
           kind: <your-resource-kind>
           name: <your-resource-name>
+        gracePeriodSeconds: 10
 ```
 
 | 字段                      | 类型  | 默认值     | 说明                                                                                            |
@@ -196,6 +201,7 @@ spec:
 | `ingress.classType`     | 字符串 | "nginx" | Ingress类型，如"nginx"、"higress"或其他                                                               |
 | `ingress.name`          | 字符串 | ""      | 绑定服务的Ingress资源的名称                                                                             |
 | `gateway.httpRouteName` | 字符串 | ""      | Gateway API的[HTTPRoute](https://gateway-api.sigs.k8s.io/concepts/api-overview/#httproute)资源名称 |
+| `gracePeriodSeconds`    | 整数| 3        | 在每个步骤中等待流量路由配置生效的时间（秒）| 
 注意：
 - 如果决定使用`trafficRoutings`，则`ingress`、`gateway`和`customNetworkRefs`不能同时为nil，且`ingress`、`gateway`和`customNetworkRefs` 不能同时配置在一个trafficRouting中。 
 
@@ -215,6 +221,7 @@ spec:
     ingress:
       classType: mse
       name: spring-cloud-a
+    gracePeriodSeconds: 10
   strategy:
     matches:
     - headers:
