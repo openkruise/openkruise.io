@@ -172,14 +172,17 @@ spec:
         ingress: # alternative： ingress,gateway,customNetworkRefs
           classType: <traffic-type> # example: nginx | higress, defaults to "nginx"
           name: <ingress-name-that-is-related-the-service>
+        gracePeriodSeconds: 10
       - service: <service-name-that-is-related-your-workload>
         gateway:
           httpRouteName: <gateway-api-httpRoute-name>
+        gracePeriodSeconds: 10
       - service: <service-name-that-is-related-your-workload>
         customNetworkRefs:
         - apiVersion: <your-resource-apiVersion>
           kind: <your-resource-kind>
           name: <your-resource-name>
+        gracePeriodSeconds: 10
 ```
 
   </TabItem>
@@ -198,6 +201,7 @@ spec:
         ingress: # alternative： ingress,gateway,customNetworkRefs
           classType: <traffic-type> # example: nginx | higress, defaults to "nginx"
           name: <ingress-name-that-is-related-the-service>
+        gracePeriodSeconds: 10
       - service: <service-name-that-is-related-your-workload>
         gateway: 
           httpRouteName: <gateway-api-httpRoute-name>
@@ -216,10 +220,11 @@ spec:
 | `service`               | string | ""       | Name of service that select the pods of bounded workload                                                      |
 | `ingress`               | object | nil      | (optional) Description of the Ingress object you want to bind                                                 |
 | `gateway`               | object | nil      | (optional) Description of the [Gateway API](https://gateway-api.sigs.k8s.io/) resources you want to bind      |
-| `customNetworkRefs    ` | Array  | ""       | Definitions of [customize API Gateway resources](https://openkruisyye.io/rollouts/developer-manuals/custom-network-provider) | 
+| `customNetworkRefs    ` | Array  | ""       | (optional) Definitions of [customize API Gateway resources](https://openkruisyye.io/rollouts/developer-manuals/custom-network-provider) | 
 | `ingress.classType`     | string | "nginx"  | Ingress type, such as "nginx", "higress", or others                                                           |
 | `ingress.name`          | string | ""       | Name of ingress resource that bounded the service                                                             |
 | `gateway.httpRouteName` | string | ""       | Name of [HTTPRoute](https://gateway-api.sigs.k8s.io/concepts/api-overview/#httproute) resource of Gateway API |
+| `gracePeriodSeconds`    | integer| 3        | Duration in seconds that kruise rollout wait for the traffic routing configuration changes to take effects in each step |
 
 **Note: if you decide to use `trafficRoutings`, one and only one of `ingress`,`gateway`,`customNetworkRefs` can be present in one trafficRouting element*
 
@@ -238,6 +243,7 @@ spec:
     ingress:
       classType: mse
       name: spring-cloud-a
+    gracePeriodSeconds: 10
   strategy:
     matches:
     - headers:
