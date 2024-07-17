@@ -93,7 +93,7 @@ spec:
 When you apply a new revision for workload-demo, Kruise Rollout will modify configuration of VirtualService to comply with release strategies:
 
 - A new canary Deployment will be created, and its replicas is 1. Traffic with header `version=canary` will be routed to the new-version pods while other traffic will be routed to stable-version pods.
-- Update the replicas of canary Deployment to "50%" of workload-demo and route 20% of traffic to new-version pods.
+- Update the replicas of canary Deployment to "50%" of workload-demo and route 50% of traffic to new-version pods.
 - Update the replicas of canary Deployment to "80%" of workload-demo and route 80% of traffic to new-version pods.
 
 ### Upgrade deployment `workload-demo`

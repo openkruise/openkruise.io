@@ -90,11 +90,11 @@ spec:
           kind: VirtualService
           name: vs-demo
 ```
-当您下发了一个deploymet(workload-demo)的新版本时，Kruise Rollout会根据发布策略， 来修改VirtualService的配置, 具体的发布步骤如下：
+当您下发了一个deploymet(workload-demo)的新版本时， Kruise Rollout会根据发布策略， 来修改VirtualService的配置， 具体的发布步骤如下：
 
-- 一个新的金丝雀deployment会被创建， 且其实例为1. 带有http头 `version=canary`的流量会被Istio路由到金丝雀pod上， 而其他的流量会被路由到稳定版本的pod上去。 
-- 更新金丝雀deployment的实例数为稳定版deployment实例数的50%， 并且路由20%的流量到金丝雀的pod上。
-- 更新金丝雀deployment的实例数为稳定版deployment实例数的80%， 并且路由80%的露露到金丝雀的pod上。 
+- 一个新的金丝雀deployment会被创建， 且其副本数为1。带有http头 `version=canary`的流量会被Istio路由到金丝雀pod上， 而其他的流量会被路由到稳定版本的pod上去。 
+- 更新金丝雀deployment的实例数为稳定版deployment实例数的50%， 并且路由50%的流量到金丝雀的pod上。
+- 更新金丝雀deployment的实例数为稳定版deployment实例数的80%， 并且路由80%的流量到金丝雀的pod上。 
 
 ### 更新deployment `workload-demo`
 通过运行如下命令来， 修改负载的环境变量， 从而触发发布流程
@@ -109,7 +109,7 @@ $ kubectl patch deployment workload-demo -p \
 - 创建一个新的Service `service-demo-canary`用来路由流量到新版本的pod
 - 更新VirtualService `vs-demo`来修改Istio的流量路由行为
 
-当发布的第一个步骤完成后， 检查VirtualService `vs-demo`, 可以看到如下的变化： 
+当发布的第一个步骤完成后， 检查VirtualService `vs-demo`， 可以看到如下的变化： 
 ```yaml
 apiVersion: networking.istio.io/v1beta1
 kind: VirtualService
@@ -136,7 +136,7 @@ spec:
         host: service-demo
 
 ```
-运行`kubectl-kruise rollout approve rollout/rollouts-demo -n default`来开始发布的第二个步骤. 当第二个发布步骤完成后， 检查VirtualService `vs-demo`， 可以看到如下的变化
+运行`kubectl-kruise rollout approve rollout/rollouts-demo -n default`来开始发布的第二个步骤。 当第二个发布步骤完成后， 检查VirtualService `vs-demo`， 可以看到如下的变化
 ```yaml
 apiVersion: networking.istio.io/v1beta1
 kind: VirtualService
@@ -183,8 +183,8 @@ spec:
 ```
 运行`kubectl-kruise rollout approve rollout/rollouts-demo -n default`来完成发布流程， Kruise Rollout会进行如下的收尾工作:
 
-- 删除金丝雀Deployment.
-- 删除金丝雀Service `service-demo-canary`.
+- 删除金丝雀Deployment。
+- 删除金丝雀Service `service-demo-canary`。
 - 恢复Deployment `workload-demo` 的原生发布动作
-- 恢复VirtualService `vs-demo`，去除金丝雀流量路由相关的规则
+- 恢复VirtualService `vs-demo`， 去除金丝雀流量路由相关的规则
 
