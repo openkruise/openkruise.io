@@ -4,6 +4,9 @@ title: Installation
 
 - Since v1.0.0 (alpha/beta), OpenKruise requires **Kubernetes version >= 1.16**.
 
+- Since v1.5.0(alpha/beta), OpenKruise no longer supports dockershim. If you still use Docker Engine to run containers in Kubernetes,
+you can [Migrate Docker Engine nodes from dockershim to cri-dockerd.](https://kubernetes.io/docs/tasks/administer-cluster/migrating-from-dockershim/migrate-dockershim-dockerd/)
+
 - Since v1.6.0 (alpha/beta), OpenKruise requires **Kubernetes version >= 1.18**. However it's still possible to use OpenKruise with Kubernetes versions 1.16 and 1.17 as long as KruiseDaemon is not enabled(install/upgrade kruise charts with featureGates="KruiseDaemon=false")
 
 - Since v1.6.0 (alpha/beta), KruiseDaemon will **no longer support v1alpha2 CRI runtimes**. However, it is still possible to use OpenKruise on Kubernetes clusters with nodes that only support v1alpha2 CRI, as long as KruiseDaemon is not enabled (install/upgrade Kruise charts with featureGates="KruiseDaemon=false").
@@ -20,7 +23,7 @@ $ helm repo add openkruise https://openkruise.github.io/charts/
 $ helm repo update
 
 # Install the latest version.
-$ helm install kruise openkruise/kruise --version 1.6.3
+$ helm install kruise openkruise/kruise --version 1.7.0
 ```
 **Note:** [Changelog](https://github.com/openkruise/kruise/blob/master/CHANGELOG.md).
 
@@ -34,7 +37,7 @@ $ helm repo add openkruise https://openkruise.github.io/charts/
 $ helm repo update
 
 # Upgrade to the latest version.
-$ helm upgrade kruise openkruise/kruise --version 1.6.3 [--force]
+$ helm upgrade kruise openkruise/kruise --version 1.7.0 [--force]
 ```
 
 Note that:
@@ -64,26 +67,44 @@ You may have to set your specific configurations if it is deployed into a produc
 
 The following table lists the configurable parameters of the chart and their default values.
 
+#### setup parameters
 | Parameter                                 | Description                                                  | Default                       |
 | ----------------------------------------- | ------------------------------------------------------------ | ----------------------------- |
-| `featureGates`                            | Feature gates for Kruise, empty string means all by default  | ` `                           |
-| `installation.namespace`                  | namespace for kruise installation                            | `kruise-system`               |
+| `featureGates`                            | Feature gates for Kruise, empty string means all enabled     | `""`                           |
+| `installation.namespace`                  | Namespace for kruise installation                            | `kruise-system`               |
 | `installation.createNamespace`            | Whether to create the installation.namespace                 | `true`                        |
+| `installation.roleListGroups` | ApiGroups which kruise is permit to list, default set to be all | `*` |
+| `crds.managed`                            | Kruise will not install CRDs with chart if this is false     | `true`                        |
+| `imagePullSecrets`                        | The list of image pull secrets for kruise image              | `[]`                       |
+
+#### manager parameters
+| Parameter                                 | Description                                                  | Default                       |
+| ----------------------------------------- | ------------------------------------------------------------ | ----------------------------- |
 | `manager.log.level`                       | Log level that kruise-manager printed                        | `4`                           |
 | `manager.replicas`                        | Replicas of kruise-controller-manager deployment             | `2`                           |
 | `manager.image.repository`                | Repository for kruise-manager image                          | `openkruise/kruise-manager`   |
-| `manager.image.tag`                       | Tag for kruise-manager image                                 | `v1.6.3`                      |
+| `manager.image.tag`                       | Tag for kruise-manager image                                 | `v1.7.0`                      |
 | `manager.resources.limits.cpu`            | CPU resource limit of kruise-manager container               | `200m`                        |
 | `manager.resources.limits.memory`         | Memory resource limit of kruise-manager container            | `512Mi`                       |
 | `manager.resources.requests.cpu`          | CPU resource request of kruise-manager container             | `100m`                        |
 | `manager.resources.requests.memory`       | Memory resource request of kruise-manager container          | `256Mi`                       |
 | `manager.metrics.port`                    | Port of metrics served                                       | `8080`                        |
 | `manager.webhook.port`                    | Port of webhook served                                       | `9443`                        |
+| `manager.pprofAddr`                       | Address of pprof served                                      | `localhost:8090`              |
 | `manager.nodeAffinity`                    | Node affinity policy for kruise-manager pod                  | `{}`                          |
 | `manager.nodeSelector`                    | Node labels for kruise-manager pod                           | `{}`                          |
 | `manager.tolerations`                     | Tolerations for kruise-manager pod                           | `[]`                          |
+| `manager.resyncPeriod`                    | Resync period of informer kruise-manager, defaults no resync | `0`                           |
+| `manager.hostNetwork`                     | Whether kruise-manager pod should run with hostnetwork       | `false`                       |
+| `manager.loggingFormat`                   | Logging format, valid formats includes ` `(plain text), `json` | ` `                       |
+
+#### daemon parameters
+| Parameter                                 | Description                                                  | Default                       |
+| ----------------------------------------- | ------------------------------------------------------------ | ----------------------------- |
+| `daemon.extraEnvs`                        | Extra environment variables that will be pass onto pods      | `[]`                          |
 | `daemon.log.level`                        | Log level that kruise-daemon printed                         | `4`                           |
 | `daemon.port`                             | Port of metrics and healthz that kruise-daemon served        | `10221`                       |
+| `daemon.pprofAddr`                        | Address of pprof served                                      | `localhost:10222`             |
 | `daemon.resources.limits.cpu`             | CPU resource limit of kruise-daemon container                | `50m`                         |
 | `daemon.resources.limits.memory`          | Memory resource limit of kruise-daemon container             | `128Mi`                       |
 | `daemon.resources.requests.cpu`           | CPU resource request of kruise-daemon container              | `0`                           |
@@ -91,13 +112,18 @@ The following table lists the configurable parameters of the chart and their def
 | `daemon.affinity`                         | Affinity policy for kruise-daemon pod                        | `{}`                          |
 | `daemon.socketLocation`                   | Location of the container manager control socket             | `/var/run`                    |
 | `daemon.socketFile`                       | Specify the socket file name in `socketLocation` (if you are not using containerd/docker/pouch/cri-o) | ` ` |
-| `webhookConfiguration.failurePolicy.pods` | The failurePolicy for pods in mutating webhook configuration | `Ignore`                      |
-| `webhookConfiguration.timeoutSeconds`     | The timeoutSeconds for all webhook configuration             | `30`                          |
-| `crds.managed`                            | Kruise will not install CRDs with chart if this is false     | `true`                        |
-| `manager.resyncPeriod`                    | Resync period of informer kruise-manager, defaults no resync | `0`                           |
-| `manager.hostNetwork`                     | Whether kruise-manager pod should run with hostnetwork       | `false`                       |
-| `imagePullSecrets`                        | The list of image pull secrets for kruise image              | `false`                       |
+| `daemon.credentialProvider.enable`        | Whether to enable credential provider for image pull job     | `false`                       |
+| `daemon.credentialProvider.hostPath`      | node dir of the credential provider plugin, kruise-daemon will mount the dir as a hostpath volume | `credential-provider-plugin` |
+| `daemon.credentialProvider.configmap`     | configmap name of the credential provider in kruise-system ns  | `credential-provider-config`  |
+| `daemon.credentialProvider.awsCredentialsDir`     | aws credentials dir if using AWS, for example: `/root/.aws`  | ` `  |
+
+#### other parameters
+| Parameter                                 | Description                                                  | Default                       |
+| ----------------------------------------- | ------------------------------------------------------------ | ----------------------------- |
 | `enableKubeCacheMutationDetector`         | Whether to enable KUBE_CACHE_MUTATION_DETECTOR               | `false`                       |
+| `webhookConfiguration.timeoutSeconds`     | The timeoutSeconds for all webhook configuration             | `30`                          |
+| `serviceAccount.annotations`      | Annotations to patch for serviceAccounts | `{}` |
+| `externalCerts.annotations`       | Annotations to patch for webhook configuration and crd when featuregate `EnableExternalCerts` is enabled. For example, `cert-manager.io/inject-ca-from: kruise-system/kruise-webhook-certs`. | `{}` |
 
 Specify each parameter using the `--set key=value[,key=value]` argument to `helm install` or `helm upgrade`.
 
@@ -157,6 +183,87 @@ Usually K3s has the different runtime path from the default `/var/run`. So you h
 When using a custom CNI (such as Weave or Calico) on EKS, the webhook cannot be reached by default. This happens because the control plane cannot be configured to run on a custom CNI on EKS, so the CNIs differ between control plane and worker nodes.
 
 To address this, the webhook can be run in the host network so it can be reached, by setting `--set manager.hostNetwork=true` when use helm install or upgrade.
+
+### Support webhook CA injection using external certification management tool
+**FEATURE STATE:** Kruise v1.7.0
+
+Kruise needs certificates to enable mutating, validating and conversion webhooks. By default, kruise will generate self-signed certificates for webhook server.
+If you want to use external certification management tool, e.g. cert-manager, you can follow these steps when install or upgrade:
+
+1. Install external certification management tool, e.g. [cert-manager](https://cert-manager.io/docs/installation/helm/).
+2. Create issuer and certificate resources if you have not done this before.
+```yaml
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: kruise-webhook-certs
+  # consistent with installation.namespace
+  namespace: kruise-system
+spec:
+  # where to store the certificates
+  # cert-manager would generate a secret kruise-system/kruise-webhook-certs with the certificates
+  # DO NOT CHANGE THE SECRET NAME SINCE KRUISE READ CERTS FROM THIS SECRET
+  secretName: kruise-webhook-certs
+  dnsNames:
+  - kruise-webhook-service.kruise-system.svc
+  - localhost
+  issuerRef:
+    name: selfsigned-kruise
+    kind: Issuer
+---
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: selfsigned-kruise
+  namespace: kruise-system
+spec:
+  selfSigned: {}
+```
+3. During installation and upgrade, enable external certs support by setting featureGates=EnableExternalCerts=true and specify extra annotations that should be added to webhookconfiguration and CRD.
+```
+helm install kruise https://... --set featureGates="EnableExternalCerts=true" --set-json externalCerts.annotations='{"cert-manager.io/inject-ca-from":"kruise-system/kruise-webhook-certs"}'
+```
+
+Visit [CA Injector - cert manager](https://cert-manager.io/docs/concepts/ca-injector/) for more details.
+
+### Structured Logs
+**FEATURE STATE:** Kruise v1.7.0
+
+Logs are an essential aspect of observability and a critical tool for debugging. But OpenKruise logs have traditionally been unstructured strings, making any automated parsing difficult and any downstream processing, analysis, or querying challenging to do reliably.
+
+From OpenKruise 1.7, we are adding support for structured logs, which natively support (key, value) pairs and object references.
+And logs can also be outputted in JSON format using `helm install ... --set manager.loggingFormat=json`.
+
+For example, this invocation of InfoS:
+
+```
+klog.V(3).InfoS("SidecarSet updated status success", "sidecarSet", klog.KObj(sidecarSet), "matchedPods", status.MatchedPods,
+"updatedPods", status.UpdatedPods, "readyPods", status.ReadyPods, "updateReadyPods", status.UpdatedReadyPods)
+```
+
+will result in this log:
+
+```
+I0821 14:22:35.587919       1 sidecarset_processor.go:280] "SidecarSet updated status success" sidecarSet="test-sidecarset" matchedPods=1 updatedPods=1 readyPods=1 updateReadyPods=1
+```
+
+Or, if `helm install ... --set manager.loggingFormat=json`, it will result in this output:
+
+```json
+{
+  "ts": 1724239224606.642,
+  "caller": "sidecarset/sidecarset_processor.go:280",
+  "msg": "SidecarSet updated status success",
+  "v": 3,
+  "sidecarSet": {
+    "name": "test-sidecarset"
+  },
+  "matchedPods": 1,
+  "updatedPods": 1,
+  "readyPods": 0,
+  "updateReadyPods": 0
+}
+```
 
 ## Uninstall
 
