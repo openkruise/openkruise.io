@@ -120,7 +120,7 @@ spec:
 ```
 
 - **对于方法二**，在下一次发布之前，您无需更改任何内容。然而，在确认之前，您需要检查 Rollout 的状态，并使用 Kubernetes
-  客户端的更新接口而不是修补接口，或者使用我们的 [kubectl-kruise](https://github.com/openkruise/kruise-tools) 工具。
+  客户端的 Update 接口而不是 Patch 接口，或者使用我们的 [kubectl-kruise](https://github.com/openkruise/kruise-tools) 工具。
 
 ```bash
 $ kubectl-kruise rollout approve rollout/<your-rollout-name> -n <your-rollout-namespace>
