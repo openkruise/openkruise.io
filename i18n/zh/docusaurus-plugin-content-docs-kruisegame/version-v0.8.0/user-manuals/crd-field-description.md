@@ -31,9 +31,6 @@ type GameServerSetSpec struct {
 
     // 游戏服接入层网络设置
     Network              *Network           `json:"network,omitempty"`
-    
-    // 用户自定义设置生命周期钩子
-    Lifecycle            *appspub.Lifecycle `json:"lifecycle,omitempty"`
 }
 ```
 
@@ -152,10 +149,6 @@ type ServiceQualityAction struct {
 
     // 动作为更改GameServerSpec中的字段
     GameServerSpec `json:",inline"`
-    
-    // 动作为更改GameServer的Annotations和Labels
-    Annotations    map[string]string `json:"annotations,omitempty"`
-	Labels         map[string]string `json:"labels,omitempty"`
 }
 ```
 
@@ -178,24 +171,6 @@ type KVParams struct {
 
     // 参数值，格式由网络插件决定
     Value string `json:"value,omitempty"`
-}
-```
-
-#### Lifecycle
-
-```
-// Lifecycle contains the hooks for Pod lifecycle.
-type Lifecycle struct {
-	// 设置在pod删除前卡点
-	PreDelete *LifecycleHook `json:"preDelete,omitempty"`
-	// 设置在pod原地升级前卡点
-	InPlaceUpdate *LifecycleHook `json:"inPlaceUpdate,omitempty"`
-}
-
-type LifecycleHook struct {
-	LabelsHandler     map[string]string `json:"labelsHandler,omitempty"`
-	FinalizersHandler []string          `json:"finalizersHandler,omitempty"`
-	MarkPodNotReady bool `json:"markPodNotReady,omitempty"`
 }
 ```
 

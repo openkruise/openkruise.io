@@ -33,6 +33,7 @@ module.exports = {
                 'user-manuals/container-startup-sequence-control',
                 'user-manuals/service-qualities',
                 'user-manuals/network',
+                'user-manuals/lifecycle',
                 'user-manuals/gameserver-monitor',
                 'user-manuals/game-matchmaking',
                 'user-manuals/game-dashboard',

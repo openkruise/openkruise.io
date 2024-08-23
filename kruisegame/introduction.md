@@ -38,8 +38,8 @@ OpenKruiseGame(OKG) has the following core features:
 
 <table>
     <tr style={{"border":0}}>
-        <td style={{"border":0}}><center><img src={require('/static/img/kruisegame/hypergryph-logo.png').default} width="130" /></center></td>
         <td style={{"border":0}}><center><img src={require('/static/img/kruisegame/lilith-logo.png').default} width="120" /></center></td>
+        <td style={{"border":0}}><center><img src={require('/static/img/kruisegame/hypergryph-logo.png').default} width="130" /></center></td>
         <td style={{"border":0}}><center><img src={require('/static/img/kruisegame/bilibili-logo.png').default} width="130" /></center></td>
         <td style={{"border":0}}><center><img src={require('/static/img/kruisegame/shangyou-logo.jpeg').default} width="130" /></center></td>
         <td style={{"border":0}}><center><img src={require('/static/img/kruisegame/xingzhe-logo.png').default} width="125" /></center></td>

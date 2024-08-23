@@ -33,6 +33,9 @@ type GameServerSetSpec struct {
 
     // Network settings for game server access layer.
     Network              *Network           `json:"network,omitempty"`
+    
+    // Lifecycle hook defined by users
+    Lifecycle            *appspub.Lifecycle `json:"lifecycle,omitempty"`
 }
 
 ```
@@ -186,6 +189,9 @@ type ServiceQualityAction struct {
 	Result         string `json:"result,omitempty"`
 	
     GameServerSpec `json:",inline"`
+    
+    Annotations    map[string]string `json:"annotations,omitempty"`
+	Labels         map[string]string `json:"labels,omitempty"`
 }
 ```
 
@@ -208,6 +214,28 @@ type KVParams struct {
 
     // Parameter value, the format is determined by the network plugin
     Value string `json:"value,omitempty"`
+}
+```
+
+#### Lifecycle
+
+```
+// Lifecycle contains the hooks for Pod lifecycle.
+type Lifecycle struct {
+	// PreDelete is the hook before Pod to be deleted.
+	PreDelete *LifecycleHook `json:"preDelete,omitempty"`
+	// InPlaceUpdate is the hook before Pod to update and after Pod has been updated.
+	InPlaceUpdate *LifecycleHook `json:"inPlaceUpdate,omitempty"`
+}
+
+type LifecycleHook struct {
+	LabelsHandler     map[string]string `json:"labelsHandler,omitempty"`
+	FinalizersHandler []string          `json:"finalizersHandler,omitempty"`
+	// MarkPodNotReady = true means:
+	// - Pod will be set to 'NotReady' at preparingDelete/preparingUpdate state.
+	// - Pod will be restored to 'Ready' at Updated state if it was set to 'NotReady' at preparingUpdate state.
+	// Default to false.
+	MarkPodNotReady bool `json:"markPodNotReady,omitempty"`
 }
 ```
 
