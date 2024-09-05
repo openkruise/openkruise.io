@@ -22,13 +22,13 @@ $ helm install kruise openkruise/kruise --version 1.6.3
 ### 安装Kruise-Game
 
 ```shell
-$ helm install kruise-game openkruise/kruise-game --version 0.8.0
+$ helm install kruise-game openkruise/kruise-game --version 0.9.0
 ```
 
 ### 升级 Kruise-Game
 
 ```shell
-$ helm upgrade kruise-game openkruise/kruise-game --version 0.8.0 [--force]
+$ helm upgrade kruise-game openkruise/kruise-game --version 0.9.0 [--force]
 ```
 
 ### 可选项
@@ -49,7 +49,7 @@ $ helm upgrade kruise-game openkruise/kruise-game --version 0.8.0 [--force]
 | `kruiseGame.apiServerQpsBurst`   | kruise-game-controller-manager 每秒发送到 API server的最大突发查询数 | `10`                             |
 | `replicaCount`                   | kruise-game 的期望副本数                                      | `1`                              |
 | `image.repository`               | kruise-game 的镜像仓库                                       | `openkruise/kruise-game-manager` |
-| `image.tag`                      | kruise-game 的镜像版本                                       | `v0.8.0`                         |
+| `image.tag`                      | kruise-game 的镜像版本                                       | `v0.9.0`                         |
 | `image.pullPolicy`               | kruise-game 的镜像拉取策略                                     | `Always`                         |
 | `serviceAccount.annotations`     | kruise-game的serviceAccount注解                            | ` `                              |
 | `resources.limits.cpu`           | kruise-game容器的CPU资源限制                                   | `500m`                           |

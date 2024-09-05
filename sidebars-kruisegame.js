@@ -71,6 +71,7 @@ module.exports = {
                 'blog-video/meetup-guangzhou-20231125',
                 'blog-video/guanying-20231129',
                 'blog-video/higress',
+                'blog-video/lilith-okg',
                 'blog-video/cloud-forward-okg',
                 'blog-video/ack-one-okg',
                 'blog-video/okg-911',
