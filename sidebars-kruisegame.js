@@ -68,7 +68,9 @@ module.exports = {
             collapsed: false,
             items: [
                 'blog-video/kubecon-shangyou-20230926',
+                'blog-video/kubecon-chillyroom-20240823',
                 'blog-video/meetup-guangzhou-20231125',
+                'blog-video/lilith-okg',
                 'blog-video/guanying-20231129',
                 'blog-video/higress',
                 'blog-video/cloud-forward-okg',
