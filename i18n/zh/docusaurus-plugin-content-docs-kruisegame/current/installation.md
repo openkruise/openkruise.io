@@ -16,7 +16,7 @@ $ helm repo add openkruise https://openkruise.github.io/charts/
 # [Optional]
 $ helm repo update
 # Install the latest version.
-$ helm install kruise openkruise/kruise --version 1.6.3
+$ helm install kruise openkruise/kruise --version 1.7.0
 ```
 
 ### 安装Kruise-Game
