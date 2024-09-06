@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkopenkruise_io=self.webpackChunkopenkruise_io||[]).push([[2432],{32544:function(e){e.exports=JSON.parse('{"label":"workload","permalink":"/blog/tags/workload","allTagsPath":"/blog/tags","count":6}')}}]);

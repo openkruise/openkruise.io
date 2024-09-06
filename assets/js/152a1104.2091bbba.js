@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkopenkruise_io=self.webpackChunkopenkruise_io||[]).push([[8204],{24413:function(e){e.exports=JSON.parse('{"label":"HotUpgrade","permalink":"/blog/tags/hot-upgrade","allTagsPath":"/blog/tags","count":1}')}}]);
