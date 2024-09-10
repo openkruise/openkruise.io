@@ -27,7 +27,7 @@ Since Kruise `1.3.0`, WorkloadSpread supports `StatefulSet`.
 
 In particular, for `StatefulSet`, WorkloadSpread supports manage its subsets only when `scale up`. The order of `scale down` is still controlled by StatefulSet controller. The subset management of StatefulSet is based on ordinals of Pods, and more details can be found [here](https://github.com/openkruise/kruise/blob/f46097db1fa5a4ed9c002eba050b888344884e11/pkg/util/workloadspread/workloadspread.go#L305).
 
-Since Kruise `1.5.0`, WorkloadSpread supports `customized workloads that have [scale sub-resource](https://kubernetes.io/docs/tasks/extend-kubernetes/custom-resources/custom-resource-definitions/#scale-subresource)`.
+Since Kruise `1.5.0`, WorkloadSpread supports `customized workloads` that have [scale sub-resource](https://kubernetes.io/docs/tasks/extend-kubernetes/custom-resources/custom-resource-definitions/#scale-subresource).
 
 ## Demo
 
@@ -202,6 +202,94 @@ The workload managed by WorkloadSpread will scale according to the defined order
 # maxReplicas    10          10        nil
 # pods number    20          20        20
 # deletion order: b -> a -> c
+```
+
+## Use WorkloadSpread with customized workload
+
+If you want to use WorkloadSpread with custom workloads, which is disabled by default, some
+additional configuration is required. This section uses
+the [Rollout Workload from the Argo community](https://argoproj.github.io/argo-rollouts/) as an example to
+demonstrate how to integrate it with WorkloadSpread.
+
+### Configure the custom workload watch whitelist
+
+First, you need to add the custom workload to the `WorkloadSpread_Watch_Custom_Workload_WhiteList` to ensure it can be
+read and understood by WorkloadSpread.
+
+```yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kruise-configuration
+  namespace: kruise-system
+data:
+  "WorkloadSpread_Watch_Custom_Workload_WhiteList": |
+    {
+      "workloads": [
+        {
+          "Group": "argoproj.io",
+          "Kind": "Rollout",
+          "replicasPath": "spec.replicas",
+        }
+      ]
+    }
+```
+
+The specific configuration items are explained as follows:
+
+- **Group:** ApiGroup of the customized workload.
+- **Kind:** Kind of the customized workload.
+- **subResources:** SubResources of the customized workload, including Group and Kind. For example: Deployment's
+  ReplicaSet. This field is optional, and can be left as empty slice if no sub-workload is used for the customized workload.
+- **replicasPath:** Resource path to the replicas in the resource. For example: spec.replicas.
+
+### Authorize kruise-manager
+
+To use WorkloadSpread with custom workloads, you need to grant the kruise-manager service account read permissions for
+the respective resources.
+
+**Caution**: The WorkloadSpread Webhook does not set a deletion cost for Pods created by custom workloads, so it cannot ensure the scaling-down order of custom workloads.
+
+```yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: kruise-rollouts-access
+rules:
+  - apiGroups: [ "argoproj.io" ]
+    resources: [ "rollouts" ]
+    verbs: [ "get" ]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: kruise-rollouts-access-binding
+subjects:
+  - kind: ServiceAccount
+    name: kruise-manager
+    namespace: kruise-system
+roleRef:
+  kind: ClusterRole
+  name: kruise-rollouts-access
+  apiGroup: rbac.authorization.k8s.io
+```
+
+### Reference the custom workload in WorkloadSpread
+
+Once the configuration is complete, the custom workload can be referenced in the `targetRef` field of WorkloadSpread.
+
+```yaml
+apiVersion: apps.kruise.io/v1alpha1
+kind: WorkloadSpread
+metadata:
+  name: workloadspread-demo
+spec:
+  targetRef:
+    apiVersion: argoproj.io/v1alpha1
+    kind: Rollout
+    name: rollouts-demo
+  subsets:
+    ...
 ```
 
 ## feature-gates

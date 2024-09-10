@@ -864,5 +864,18 @@
     "th",
     "updateReadyPods",
     "hostpath",
-    "featuregate"
+    "featuregate",
+    "replicasPath",
+    "subResources",
+    "ApiGroup",
+    "SubResources",
+    "rbac",
+    "ClusterRole",
+    "kruise-rollouts-access",
+    "apiGroups",
+    "ClusterRoleBinding",
+    "kruise-rollouts-access-binding",
+    "ServiceAccount",
+    "roleRef",
+    "apiGroup"
 ]
