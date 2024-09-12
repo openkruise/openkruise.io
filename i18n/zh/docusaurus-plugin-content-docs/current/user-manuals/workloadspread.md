@@ -203,6 +203,89 @@ WorkloadSpread所管理的workload会按照`subsets`中定义的顺序扩缩容�
 # deletion order: b -> a -> c
 ```
 
+## 在自定义工作负载上使用 WorkloadSpread
+
+WorkloadSpread 默认不会监听自定义工作负载。如果想要在自定义工作负载上使用 WorkloadSpread，需要进行额外的配置。本节以 [Argo
+社区的 Rollout Workload](https://argoproj.github.io/argo-rollouts/) 为例，介绍如何将其与 WorkloadSpread 配合使用。
+
+**注意**：WorkloadSpread Webhook 不会为自定义工作负载所创建的 Pod 设置 deletion cost，因而无法保证自定义工作负载的缩容顺序。
+
+### 配置自定义工作负载监听白名单
+
+首先，需要将自定义工作负载加入`WorkloadSpread_Watch_Custom_Workload_WhiteList` 白名单，以使其能够被 WorkloadSpread 读取并理解。
+
+```yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kruise-configuration
+  namespace: kruise-system
+data:
+  "WorkloadSpread_Watch_Custom_Workload_WhiteList": |
+    {
+      "workloads": [
+        {
+          "Group": "argoproj.io",
+          "Kind": "Rollout",
+          "replicasPath": "spec.replicas",
+        }
+      ]
+    }
+```
+
+具体的配置项说明如下：
+
+- **Group:** 自定义工作负载的 ApiGroup。
+- **Kind:** 自定义工作负载的 Kind。
+- **subResources:** 自定义工作负载的子资源，字段包括 Group 与 Kind。例如：Deployment 的 ReplicaSet。该字段为可选字段，如果自定义资源不包含子资源，那么可以留空。
+- **replicasPath:** 自定义工作负载中用于指定副本数的资源字段路径，例如：spec.replicas。
+
+### 向 kruise-manager 授予权限
+
+要在自定义工作负载上使用 WorkloadSpread，需要给 kruise-manager 服务账号授予相应资源的读取权限。
+
+```yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: kruise-rollouts-access
+rules:
+  - apiGroups: [ "argoproj.io" ]
+    resources: [ "rollouts" ]
+    verbs: [ "get" ]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: kruise-rollouts-access-binding
+subjects:
+  - kind: ServiceAccount
+    name: kruise-manager
+    namespace: kruise-system
+roleRef:
+  kind: ClusterRole
+  name: kruise-rollouts-access
+  apiGroup: rbac.authorization.k8s.io
+```
+
+### 指定自定义工作负载
+
+当配置完成后，即可在 WorkloadSpread 的 `targetRef` 字段中指定自定义工作负载。
+
+```yaml
+apiVersion: apps.kruise.io/v1alpha1
+kind: WorkloadSpread
+metadata:
+  name: workloadspread-demo
+spec:
+  targetRef:
+    apiVersion: argoproj.io/v1alpha1
+    kind: Rollout
+    name: rollouts-demo
+  subsets:
+    ...
+```
+
 ## feature-gates
 WorkloadSpread 默认是关闭的，如果要开启请通过设置 feature-gates *WorkloadSpread*.
 
