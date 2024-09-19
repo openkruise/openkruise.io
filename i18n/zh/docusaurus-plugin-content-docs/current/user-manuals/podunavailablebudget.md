@@ -65,7 +65,7 @@ spec:
         image: nginx:alpine
 ```
 
-### 支持自定义Workload
+### 支持自定义 Workload
 
 **FEATURE STATE:** Kruise v1.2.0
 
@@ -82,6 +82,24 @@ spec:
     kind: Rollout
     name: rollouts-demo
   minAvailable: 80%
+```
+
+### 支持未实现 Scale 子资源的自定义 Workload
+
+**FEATURE STATE:** Kruise v1.8.0
+
+在部分特殊场景下，存在一些未实现 Scale 子资源的 Workload 但也有防护的需求。此时用户可以在 pub 资源上使用 annotation 来指定目标防护的总副本数。如：
+
+```yaml
+apiVersion: policy.kruise.io/v1alpha1
+kind: PodUnavailableBudget
+metadata:
+  name: crd-demo
+  annotations:
+    # 通过 annotation 直接声明目标防护副本数
+    pub.kruise.io/protect-total-replicas: "5"
+spec:
+  ...
 ```
 
 ## Implementation

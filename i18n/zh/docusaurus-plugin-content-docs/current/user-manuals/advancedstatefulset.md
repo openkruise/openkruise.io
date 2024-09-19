@@ -14,8 +14,8 @@ title: Advanced StatefulSet
 因此，用户从原生 `StatefulSet` 迁移到 `Advanced StatefulSet`，只需要把 `apiVersion` 修改后提交即可：
 
 ```yaml
--  apiVersion: apps/v1
-+  apiVersion: apps.kruise.io/v1beta1
+- apiVersion: apps/v1
++ apiVersion: apps.kruise.io/v1beta1
   kind: StatefulSet
   metadata:
     name: sample
@@ -26,13 +26,16 @@ title: Advanced StatefulSet
 注意从 Kruise 0.7.0 开始，Advanced StatefulSet 版本升级到了 `v1beta1`，并与 `v1alpha1` 兼容。对于低于 v0.7.0 版本的 Kruise，只能使用 `v1alpha1`。
 
 ## Pod 标识
+
 StatefulSet Pod 具有唯一的标识，该标识包括顺序标识、稳定的网络标识和稳定的存储。 该标识和 Pod 是绑定的，与该 Pod 调度到哪个节点上无关。
 
 ### 序号索引
+
 **FEATURE STATE:** Kruise v1.7.0
 
 对于具有 N 个副本的 StatefulSet，该 StatefulSet 中的每个 Pod 将被分配一个整数序号，该序号在此 StatefulSet 中是唯一的。
 默认情况下，这些 Pod 将被赋予从 0 到 N-1 的序号。StatefulSet 控制器也会添加一个包含此索引的 Pod 标签：**apps.kubernetes.io/pod-index**，如下：
+
 ```
 apiVersion: v1
 kind: Pod
@@ -44,6 +47,7 @@ metadata:
 ```
 
 ### 起始序号
+
 **FEATURE STATE:** Kruise v1.7.0
 
 Pod 起始序号默认都是从 0 开始的，此外，你也可以通过设置 **.spec.ordinals.start** 字段来设置 Pod 起始序号。使用该能力，你需要开启 FeatureGate **StatefulSetStartOrdinal=true**。
@@ -108,7 +112,7 @@ ordinals.start: 0				    ordinals.start: 3
 
 ##### Story 3
 
-**Non-Zero Based Indexing:** 用户可能希望从序号 “1 ”而不是序号 “0 ” 开始对其 StatefulSet 进行编号。使用 ”1 “ 的编号可能更容易推理和概念化（例如：序号 ”k “ 是第 ”k “ 个副本，而不是第 ”k+1 “ 个副本）。
+**Non-Zero Based Indexing:** 用户可能希望从序号 “1” 而不是序号 “0” 开始对其 StatefulSet 进行编号。使用 “1” 的编号可能更容易推理和概念化（例如：序号 “k” 是第 “k” 个副本，而不是第 “k+1” 个副本）。
 
 ## 扩缩容功能
 
@@ -162,8 +166,34 @@ spec:
 
 对于一个 `replicas=4, reserveOrdinals=[1]` 的 Advanced StatefulSet，实际运行的 Pod 序号为 `[0,2,3,4]`。
 
-- 如果要把 Pod-3 做迁移并保留序号，则把 `3` 追加到 `reserveOrdinals` 列表中。控制器会把 Pod-3 删除并创建 Pod-5（此时运行中 Pod 为 `[0,2,4,5]`）。
-- 如果只想删除 Pod-3，则把 `3` 追加到 `reserveOrdinals` 列表并同时把 `replicas` 减一修改为 `3`。控制器会把 Pod-3 删除（此时运行中 Pod 为 `[0,2,4]`）。
+- 如果要把 Pod-3 做迁移并保留序号，则把 `3` 追加到 `reserveOrdinals` 列表中。控制器会把 Pod-3 删除并创建 Pod-5（此时运行中
+  Pod 为 `[0,2,4,5]`）。
+- 如果只想删除 Pod-3，则把 `3` 追加到 `reserveOrdinals` 列表并同时把 `replicas` 减一修改为 `3`。控制器会把 Pod-3 删除（此时运行中
+  Pod 为 `[0,2,4]`）。
+
+#### 保留序号范围
+**FEATURE STATE:** Kruise v1.8.0
+
+在实践中我们发现会有一些大规模序号保留的场景会导致保留的序号会越来越多，因此 Kruise v1.8.0 增加了保留序号范围功能，允许用户指定序号范围进行保留。
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: StatefulSet
+spec:
+  # ...
+  replicas: 4
+  reserveOrdinals:
+  - "2-5" # <- 代表保留从2到5的序号
+  - 7
+```
+
+#### 核心规则
+1. **语法格式**：使用 `start-end` 格式表示闭区间范围，例如 `2-5` 表示保留序号 2、3、4、5
+2. **范围闭合性**：起始值和结束值均包含在保留范围内
+3. **组合使用**：可同时指定单个序号和范围
+4. **无效范围处理**：
+    - 若 `start > end`（如 `5-2`），该范围将被忽略
+    - 非数字字符（如 `a-b`）会导致配置校验失败
 
 ### 指定 Pod 删除
 
@@ -236,7 +266,7 @@ spec:
         app: sample
     spec:
       readinessGates:
-         # A new condition that ensures the pod remains at NotReady state while the in-place update is happening
+      # A new condition that ensures the pod remains at NotReady state while the in-place update is happening
       - conditionType: InPlaceUpdateReady
       containers:
       - name: main
@@ -251,11 +281,52 @@ spec:
       maxUnavailable: 2
 ```
 
+### 原地升级支持修改资源
+
+**FEATURE STATE:** Kruise v1.8.0
+
+如果你在[安装或升级 Kruise](../installation##optional-feature-gate) 的时候启用了 `InPlaceWorkloadVerticalScaling`，
+Advanced StatefulSet 支持在原地升级过程中修改容器资源（CPU/Memory）。该功能允许用户直接更新以下字段而不触发 Pod 重建：
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: StatefulSet
+spec:
+  #...
+  template:
+    spec:
+      containers:
+      - name: <container-name>
+        resources:
+          requests:
+            cpu: "2"       # 可修改
+            memory: "2Gi"  # 可修改
+          limits:
+            cpu: "4"       # 可修改
+            memory: "4Gi"  # 可修改
+```
+
+#### 注意事项
+
+1. 该功能需在开启 `InPlacePodVerticalScaling` feature-gate 的 Kubernetes 集群中才可以使用，请确保你的集群支持该功能。详情可查看[Kubernetes 文档](https://kubernetes.io/zh-cn/blog/2023/05/12/in-place-pod-resize-alpha/)。
+
+2. **Cgroupv1 限制**：
+    - 在 Cgroupv1 环境中，**禁止同时修改镜像和资源字段**（如同时更新镜像和 CPU 配额）。需分步操作：
+        1. 先完成资源修改的原地升级
+        2. 再触发镜像更新的原地升级
+    - 详细说明参考社区 [Issue #127356](https://github.com/kubernetes/kubernetes/issues/127356)
+
+3. **资源类型限制**：
+    - 仅支持修改 `requests` 和 `limits` 中的 `cpu`/`memory` 字段
+    - 其他资源类型（如 GPU）会触发 Pod 重建
+    - 修改资源时不能改变 Pod Qos，若 Pod Qos 改变会触发 Pod 重建
+
 ### 原地升级自动预热
 
 **FEATURE STATE:** Kruise v0.10.0
 
-如果你在[安装或升级 Kruise](../installation##optional-feature-gate) 的时候启用了 `PreDownloadImageForInPlaceUpdate` feature-gate，
+如果你在[安装或升级 Kruise](../installation##optional-feature-gate) 的时候启用了 `PreDownloadImageForInPlaceUpdate`
+feature-gate，
 Advanced StatefulSet 控制器会自动在所有旧版本 pod 所在 node 节点上预热你正在灰度发布的新版本镜像。 这对于应用发布加速很有帮助。
 
 默认情况下 Advanced StatefulSet 每个新镜像预热时的并发度都是 `1`，也就是一个个节点拉镜像。
@@ -273,6 +344,17 @@ metadata:
 ```
 
 注意，为了避免大部分不必要的镜像拉取，目前只针对 replicas > 3 的 Advanced StatefulSet 做自动预热。
+
+### Partition 分批灰度
+此设置用法与原生 StatefulSet 的 Partition 一致，详情可查看：[kubernetes partition](https://kubernetes.io/zh-cn/docs/concepts/workloads/controllers/statefulset/#partitions).
+
+#### 核心语义变更
+Kruise 在 1.8.0 版本前，Partition 的定义遵循原生 StatefulSet 的逻辑：
+> **旧版语义**：仅更新序号 `order >= partition` 的 Pod
+
+随着序号保留（reserveOrdinals）和起始序号（startOrdinal）功能的引入，我们重构了 Partition 的语义为：
+> **新版语义**：保留旧版本 Pod 的数量等于 Partition 值  
+> 即：控制器将更新优先级策略排序后的前 **replicas - partition** 个 Pod 到新版本
 
 ### 升级顺序
 
@@ -346,8 +428,10 @@ spec:
 当我们把 StatefulSet 里的 Pod 升级版本的时候，可以通过以下步骤来做：
 
 1. 设置 `maxUnavailable=3`
-2. (可选) 如果需要灰度升级，设置 `partition=4`。Partition 默认的意思是 order 大于等于这个数值的 Pod 才会更新，在这里就只会更新 P4，即使我们设置了 `maxUnavailable=3`。
-3. 在 P4 升级完成后，把 `partition` 调整为 0。此时，控制器会同时升级 P1、P2、P3 三个 Pod。注意，如果是原生 `StatefulSet`，只能串行升级 P3、P2、P1。
+2. (可选) 如果需要灰度升级，设置 `partition=4`。Partition 默认的意思是 order 大于等于这个数值的 Pod 才会更新，在这里就只会更新
+   P4，即使我们设置了 `maxUnavailable=3`。
+3. 在 P4 升级完成后，把 `partition` 调整为 0。此时，控制器会同时升级 P1、P2、P3 三个 Pod。注意，如果是原生 `StatefulSet`，只能串行升级
+   P3、P2、P1。
 4. 一旦这三个 Pod 中有一个升级完成了，控制器会立即开始升级 P0。
 
 ### 发布暂停
@@ -363,6 +447,43 @@ spec:
     rollingUpdate:
       paused: true
 ```
+
+### PersistentVolumeClaim 更新策略
+
+**FEATURE STATE:** Kruise v1.8.0
+
+如果你在安装或升级 Kruise 的时候启用了 `StatefulSetAutoResizePVCGate` feature-gate， 你可以使用
+`.spec.volumeClaimUpdateStrategy` 字段来控制 PVC 的更新策略。
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: StatefulSet
+spec:
+  # ...
+  volumeClaimUpdateStrategy:
+    # 可选值有 OnPodRollingUpdate 和 OnDelete
+    #   OnPodRollingUpdate ：controller 会在 pod 升级过程中自动扩容 pvc
+    #   OnDelete ：controller 只会在 pvc 删除后使用新的 volume claim template 重建 pvc
+    #             即 kruise 1.7 版本之前默认的 pvc 更新策略。
+    type: OnPodRollingUpdate 
+```
+
+#### 校验规则（OnPodRollingUpdate 模式）
+
+当启用 `OnPodRollingUpdate` 时，Kruise Webhook 会对`.spec.volumeClaimTemplates` 变更进行强制校验：
+
+1. **禁止 PVC 数量增减**：不可修改 `.spec.volumeClaimTemplates` 的 PVC 数量
+2. **扩容限制**： 只允许对支持扩展的 StorageClass 进行 PVC 容量扩容
+3. **缩容（扩容后回滚）限制**：
+   - 需遵循扩容限制
+   - 允许缩小对应卷模版的 `.spec.resources.requests.storage` 字段值
+   - **不会对现有 PVC 执行实际缩容操作**（仅更新模板配置）
+
+#### 注意事项
+
+- StorageClass 需支持动态扩展才能生效 PVC 扩容操作
+- 修改 PVC 模板前请确保集群已启用对应 FeatureGate
+- OnDelete 策略下需手动删除 PVC 才能触发新模板 PVC 的应用
 
 
 ## 生命周期钩子
