@@ -23,7 +23,7 @@ $ helm repo add openkruise https://openkruise.github.io/charts/
 $ helm repo update
 
 # Install the latest version.
-$ helm install kruise openkruise/kruise --version 1.7.1
+$ helm install kruise openkruise/kruise --version 1.7.2
 ```
 **注意:** [Changelog](https://github.com/openkruise/kruise/blob/master/CHANGELOG.md)。
 ## 通过 helm 升级

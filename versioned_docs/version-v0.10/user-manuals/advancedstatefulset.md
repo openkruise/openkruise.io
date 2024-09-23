@@ -176,7 +176,7 @@ spec:
       unorderedUpdate:
         priorityStrategy:
           orderPriority:
-            - orderedKey: some-label-key
+          - orderedKey: some-label-key
 ```
 
 ## Paused update
