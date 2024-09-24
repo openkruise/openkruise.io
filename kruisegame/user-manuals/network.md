@@ -1477,6 +1477,33 @@ func getNetwork()  {
 
 ```
 
+When getting network information, you may face the situation that the network status is not ready, you can add a loop in the programme to continuously detect the network status until the network status is Ready and then get the network information data. The following is the corresponding shell script.
+
+```shell
+# Initialise JSON string to empty
+json=''
+
+# Loop until you get the data
+while [ -z "$json" ]; do
+    # Reading a JSON string from a file
+    json=$(cat /etc/podinfo/network)
+
+    # Check if currentNetworkState is Ready
+    currentNetworkState=$(echo $json | jq -r '.currentNetworkState')
+    if [ "$currentNetworkState" != "Ready" ]; then
+        echo "currentNetworkState is not Ready, sleeping 1 second..."
+        sleep 1
+        json=''
+    fi
+done
+
+# Parsing the ip and port of externalAddresses
+echo "externalAddresses:"
+ip=$(echo $json | jq -r '.externalAddresses[0].ip')
+port=$(echo $json | jq -r '.externalAddresses[0].ports[0].port')
+echo " IP: $ip, Port: $port"
+```
+
 ## FAQ
 
 Q: How to change the network plugin configuration?
