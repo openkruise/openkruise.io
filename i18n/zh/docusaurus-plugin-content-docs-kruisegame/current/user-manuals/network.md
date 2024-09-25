@@ -1507,6 +1507,33 @@ func getNetwork()  {
 
 ```
 
+在获取网络信息时，可能面临着网络状态未准备好的情况，可以在程序中加入一个循环，持续检测网络状态，直至网络状态为Ready后获取网络信息数据。以下是相应的shell脚本。
+
+```shell
+# 初始化JSON字符串为空
+json=''
+
+# 循环直到拿到数据
+while [ -z "$json" ]; do
+    # 从文件中读取JSON字符串
+    json=$(cat /etc/podinfo/network)
+
+    # 检查currentNetworkState是否为Ready
+    currentNetworkState=$(echo $json | jq -r '.currentNetworkState')
+    if [ "$currentNetworkState" != "Ready" ]; then
+        echo "currentNetworkState is not Ready, sleeping 1 second..."
+        sleep 1
+        json=''
+    fi
+done
+
+# 解析externalAddresses的ip和port
+echo "externalAddresses:"
+ip=$(echo $json | jq -r '.externalAddresses[0].ip')
+port=$(echo $json | jq -r '.externalAddresses[0].ports[0].port')
+echo " IP: $ip, Port: $port"
+```
+
 ## FAQ
 
 Q: 如何更改网络插件配置?
