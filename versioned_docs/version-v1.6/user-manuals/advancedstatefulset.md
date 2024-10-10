@@ -177,7 +177,7 @@ spec:
       unorderedUpdate:
         priorityStrategy:
           orderPriority:
-            - orderedKey: some-label-key
+          - orderedKey: some-label-key
 ```
 
 ## Paused update
@@ -243,6 +243,29 @@ For an Advanced StatefulSet with `replicas=4, reserveOrdinals=[1]`, the ordinals
   Then controller will delete Pod-3 and create Pod-5 (existing Pods will be `[0,2,4,5]`).
 - If you just want to delete Pod-3, you should append `3` into `reserveOrdinals` list and set `replicas` to `3`.
   Then controller will delete Pod-3 (existing Pods will be `[0,2,4]`).
+
+## Specified Pod Deletion
+
+**FEATURE STATE:** Kruise v1.5.5, Kruise v1.6.4, Kruise v1.7.2+
+
+Compared to manually deleting a Pod directly, pod deletion by labeling pod with `apps.kruise.io/specified-delete: true` will be protected by the `maxUnavailable` of the Advanced StatefulSet during deletion,
+and it will trigger the `PreparingDelete` lifecycle hook (see below).
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    # ...
+    apps.kruise.io/specified-delete: true
+spec:
+  containers:
+  - name: main
+  # ...
+```
+
+When the controller receives the above Pod update, it will trigger the deletion process of the pod with specified deletion label and ensure that the `maxUnavailable` limit is not exceeded.
+The pod will be re-built by the workload if the ordinal is not reserved.
 
 ## Scaling with rate limiting
 

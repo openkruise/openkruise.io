@@ -158,7 +158,7 @@ spec:
       unorderedUpdate:
         priorityStrategy:
           orderPriority:
-            - orderedKey: some-label-key
+          - orderedKey: some-label-key
 ```
 
 ## 发布暂停

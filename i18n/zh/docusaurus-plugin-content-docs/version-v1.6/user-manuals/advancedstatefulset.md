@@ -161,7 +161,7 @@ spec:
       unorderedUpdate:
         priorityStrategy:
           orderPriority:
-            - orderedKey: some-label-key
+          - orderedKey: some-label-key
 ```
 
 ## 发布暂停
@@ -222,6 +222,27 @@ spec:
 
 - 如果要把 Pod-3 做迁移并保留序号，则把 `3` 追加到 `reserveOrdinals` 列表中。控制器会把 Pod-3 删除并创建 Pod-5（此时运行中 Pod 为 `[0,2,4,5]`）。
 - 如果只想删除 Pod-3，则把 `3` 追加到 `reserveOrdinals` 列表并同时把 `replicas` 减一修改为 `3`。控制器会把 Pod-3 删除（此时运行中 Pod 为 `[0,2,4]`）。
+
+## 指定 Pod 删除
+
+**FEATURE STATE:** Kruise v1.5.5, Kruise v1.6.4, Kruise v1.7.2+
+
+相比于手动直接删除 Pod，使用 `apps.kruise.io/specified-delete: true` 指定 Pod 删除方式会有 Advanced StatefulSet 的 `maxUnavailable` 来保护删除， 并且会触发 `PreparingDelete` 生命周期 hook （见下文）。
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    # ...
+    apps.kruise.io/specified-delete: true
+spec:
+  containers:
+  - name: main
+  # ...
+```
+
+当控制器收到上面这个 Pod 更新之后，会优先处理存在指定删除标签的 pod 的删除流程，并保证不突破 `maxUnavailable` 的限制。
 
 ## 流式扩容
 
