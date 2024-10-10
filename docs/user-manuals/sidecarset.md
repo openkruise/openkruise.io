@@ -216,7 +216,7 @@ spec:
     - Share pod containers volumes: If ShareVolumePolicy.type is enabled, the sidecar container will share the other container's VolumeMounts in the pod(don't contains the injected sidecar container)
 - Environment variable sharing
     - Environment variables can be fetched from another container through spec.containers[x].transferenv, and the environment variable named envName from the container named sourceContainerName is copied to this container
-    - sourceContainerNameFrom support downwardAPI for container name, such as metadata.name, `metadata.labels['<KEY>']`, `metadata.annotations['<KEY>']`
+    - sourceContainerNameFrom support downwardAPI for container name, such as `metadata.labels['<KEY>']`, `metadata.annotations['<KEY>']`
 
 #### injection pause
 **FEATURE STATE:** Kruise v0.10.0

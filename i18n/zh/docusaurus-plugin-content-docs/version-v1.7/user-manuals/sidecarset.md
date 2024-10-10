@@ -206,7 +206,7 @@ spec:
     - 共享所有卷：通过 spec.containers[i].shareVolumePolicy.type = enabled | disabled 来控制是否挂载pod应用容器的卷，常用于日志收集等 sidecar，配置为 enabled 后会把应用容器中所有挂载点注入 sidecar 同一路经下(sidecar中本身就有声明的数据卷和挂载点除外）
 - 环境变量共享
     - 可以通过 spec.containers[i].transferEnv 来从别的容器获取环境变量，会把名为 sourceContainerName 容器中名为 envName 的环境变量拷贝到本容器
-    - sourceContainerNameFrom 支持 downwardAPI 来获取容器name，比如：metadata.name, `metadata.labels['<KEY>']`, `metadata.annotations['<KEY>']`
+    - sourceContainerNameFrom 支持 downwardAPI 来获取容器name，比如：`metadata.labels['<KEY>']`, `metadata.annotations['<KEY>']`
 
 #### 注入暂停
 **FEATURE STATE:** Kruise v0.10.0
