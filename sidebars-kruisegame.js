@@ -38,6 +38,7 @@ module.exports = {
                 'user-manuals/game-matchmaking',
                 'user-manuals/game-dashboard',
                 'user-manuals/crd-field-description',
+                'user-manuals/faq'
             ],
         },
         {
