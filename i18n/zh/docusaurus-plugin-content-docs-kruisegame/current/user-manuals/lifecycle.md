@@ -33,7 +33,7 @@ spec:
         - image: registry.cn-beijing.aliyuncs.com/chrisliu95/minecraft-demo:probe-v0
           name: minecraft
           volumeMounts:
-            - name: gsState
+            - name: gsinfo
               mountPath: /etc/gsinfo
       volumes:
         - name: gsinfo
