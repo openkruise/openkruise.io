@@ -28,29 +28,29 @@ spec:
       ### 为金丝雀发布创建一个额外的工作负载， 金丝雀发布后会被删除 ###
       enableExtraWorkloadForCanary: true
       steps:
-      ### 第一批h ###
-      # 将 5% 的流量路由到新版本
-      - traffic: 5%
-        # 需要手动确认才能进入下一批
-        pause: {}
-        # 第一批发布的实例数量
-        replicas: 1
-      ### 第二批 ###
-      - traffic: 50%
-        replicas: 50%
-        # 等待 2 小时后自动进入下一批
-        pause:
-          duration: 7200
-      ### 第三批 ###
-      - traffic: 100%
-        replicas: 100%
+        ### 第一批h ###
+        # 将 5% 的流量路由到新版本
+        - traffic: 5%
+          # 需要手动确认才能进入下一批
+          pause: {}
+          # 第一批发布的实例数量
+          replicas: 1
+        ### 第二批 ###
+        - traffic: 50%
+          replicas: 50%
+          # 等待 2 小时后自动进入下一批
+          pause:
+            duration: 7200
+        ### 第三批 ###
+        - traffic: 100%
+          replicas: 100%
       trafficRoutings:
-      # 工作负载相关的service名
-      - service: echoserver
-        # 与服务相关的 Ingress 名称
-        ingress:
-          name: echoserver
-        gracePeriodSeconds: 10
+        # 工作负载相关的service名
+        - service: echoserver
+          # 与服务相关的 Ingress 名称
+          ingress:
+            name: echoserver
+          gracePeriodSeconds: 10
 ```
 
   </TabItem>
@@ -203,9 +203,9 @@ spec:
 | `gateway.httpRouteName` | 字符串 | ""      | Gateway API的[HTTPRoute](https://gateway-api.sigs.k8s.io/concepts/api-overview/#httproute)资源名称 |
 | `gracePeriodSeconds`    | 整数| 3        | 在每个步骤中等待流量路由配置生效的时间（秒）| 
 注意：
-- 如果决定使用`trafficRoutings`，则`ingress`、`gateway`和`customNetworkRefs`不能同时为nil，且`ingress`、`gateway`和`customNetworkRefs` 不能同时配置在一个trafficRouting中。 
+- 如果决定使用`trafficRoutings`，则`ingress`、`gateway`和`customNetworkRefs`不能同时为nil，且`ingress`、`gateway`和`customNetworkRefs` 不能同时配置在一个trafficRouting中。
 
-除了使用`trafficRoutings`，也可以通过单独声明流量路由策略，并在Rollout配置中引用声明的流量路由配置。通常，在全链路灰度中会使用这种流量路由配置方式。 
+除了使用`trafficRoutings`，也可以通过单独声明流量路由策略，并在Rollout配置中引用声明的流量路由配置。通常，在全链路灰度中会使用这种流量路由配置方式。
 
 如下是一个独立声明流量路由策略的例子：
 
@@ -349,18 +349,18 @@ spec:
   strategy:
     canary:
       steps:
-      # the first step
-      - weight: 5
-        replicas:
-        pause:
-          duration: 1000
-        matches:
-          - headers:
-            - type: Exact # 或者 "RegularExpression"
-              name: matched-header-name
-              value: matched-header-value # value or reg-expression
-        # the second step
-      - weight: 10
+        # the first step
+        - weight: 5
+          replicas:
+          pause:
+            duration: 1000
+          matches:
+            - headers:
+                - type: Exact # 或者 "RegularExpression"
+                  name: matched-header-name
+                  value: matched-header-value # value or reg-expression
+          # the second step
+        - weight: 10
       patchPodTemplateMetadata:
         labels:
           opensergo.io/canary-gray: gray
@@ -368,16 +368,17 @@ spec:
 ```
 
 
-| 字段                        | 类型       | 默认值     | 说明                                             |
+| 字段                         | 类型       | 默认值     | 说明                                                   |
 |---------------------------|----------|---------|------------------------------------------------|
-| `steps[x].weight`         | *整数      | nil     | （可选）金丝雀流量新版本Pod的百分比权重。                         |
-| `steps[x].replicas`       | *整数或*字符串 | nil     | （可选）新版本Pod的绝对数量或百分比。如果为nil，则默认使用'weight'作为副本数。 |
-| `steps[x].pause`          | 对象       | {}      | （可选）进入下一步之前需要手动确认或自动确认。                        |
-| `steps[x].pause.duration` | *整数      | nil     | （可选）自动确认之前的持续时间。如果为nil，则表示需要手动确认。              |
-| `steps[x].matches`        | []对象     | []      | （可选）您想要将流量引导到新版本Pod的HTTP标头匹配规则。                |
-| `headers[x].type`         | 字符串      | "Exact" | 匹配键和值的规则，可以是"Exact"或"RegularExpression"。       |
-| `headers[x].name`         | 字符串      | ""      | 匹配的HTTP标头名称。（headers[i]和headers[j]之间的And关系）    |
-| `headers[x].value`        | 字符串      | ""      | 匹配的HTTP标头值。                                    |
+| `steps[x].weight`          | *整数      | nil     | （可选）金丝雀流量新版本Pod的百分比权重。                               |
+| `steps[x].replicas`        | *整数或*字符串 | nil     | （可选）新版本Pod的绝对数量或百分比。如果为nil，则默认使用'weight'作为副本数。       |
+| `steps[x].pause`           | 对象       | {}      | （可选）进入下一步之前需要手动确认或自动确认。                              |
+| `steps[x].pause.duration`  | *整数      | nil     | （可选）自动确认之前的持续时间。如果为nil，则表示需要手动确认。                    |
+| `steps[x].matches`         | []对象     | []      | （可选）您想要将流量引导到新版本Pod的HTTP标头匹配规则。                      |
+| `headers[x].type`          | 字符串      | "Exact" | 匹配键和值的规则，可以是"Exact"或"RegularExpression"。             |
+| `headers[x].name`          | 字符串      | ""      | 匹配的HTTP标头名称。（headers[i]和headers[j]之间的And关系）          |
+| `headers[x].value`         | 字符串      | ""      | 匹配的HTTP标头值。                                          |
+| `patchPodTemplateMetadata` | 对象       | {}      | （可选）通过 canary 工作负载的 patch podTemplate 添加额外的 pod 元数据。 |
 </TabItem>
 </Tabs>
 注意：
@@ -386,6 +387,8 @@ spec:
 - `steps[x].matches[i]和steps[x].matches[j]`之间具有**或**关系；
 - `steps[x].matches[y].headers[i]和steps[x].matches[y].header[j]`之间具有**且**关系。
 - `enableExtraWorkloadForCanary 在v1beta1的Rollout对象中可用， 在v1alpha1版本的Rollout对象中， 可以用Rollout的特殊annotation `rollouts.kruise.io/rolling-type` 来开启类似功能，rolling-type 如果设置为"canary"（默认值)， 则相当于设置enableExtraWorkloadForCanary=true; 如果设置为partition, 这相当于设置enableExtraWorkloadForCanar=false
+- `patchPodTemplateMetadata`只有在`enableExtraWorkloadForCanary = true`的情况下才会生效。
+
 
 
 ### 工作负载的特殊注释（可选）
