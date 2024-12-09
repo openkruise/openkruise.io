@@ -1679,13 +1679,11 @@ metadata:
   name: eip
   namespace: default
 spec:
-  containers:
-    - args:
-        - /data/server/start.sh
-      command:
-        - /bin/bash
-      image: gss-cn-north-1.jcr.service.jdcloud.com/gsshosting/pal:v1
-      name: game-server
+  gameServerTemplate:
+    spec:
+      containers:
+        - image: gss-cn-north-1.jcr.service.jdcloud.com/gsshosting/pal:v1
+          name: game-server
   network:
     networkType: JdCloud-EIP
     networkConf:
