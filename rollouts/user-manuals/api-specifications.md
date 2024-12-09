@@ -407,7 +407,7 @@ Note:
 - `steps[x].replicas` can not be nil.
 - `steps[x].matches[i] and steps[x].matches[j]` have **Or**-relationship.
 - `steps[x].matches[y].headers[i] and steps[x].matches[y].header[j]` have **And**-relationship. 
-- `steps[x].patchPodTemplateMetadata` can be set only if enableExtraWorkloadForCanary=true
+- `patchPodTemplateMetadata` can be set only if enableExtraWorkloadForCanary=true
 - `enableExtraWorkloadForCanary` is available in v1beta Rollout resource; In v1alpha1 Rollout resource, one can use the annotation of Rollout `rollouts.kruise.io/rolling-type`="canary" to enable `enableExtraWorkloadForCanary`
 
 ### Special Annotations of Workload (Optional)

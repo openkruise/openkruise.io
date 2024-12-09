@@ -378,6 +378,7 @@ spec:
 | `headers[x].type`         | 字符串      | "Exact" | 匹配键和值的规则，可以是"Exact"或"RegularExpression"。       |
 | `headers[x].name`         | 字符串      | ""      | 匹配的HTTP标头名称。（headers[i]和headers[j]之间的And关系）    |
 | `headers[x].value`        | 字符串      | ""      | 匹配的HTTP标头值。                                    |
+| `patchPodTemplateMetadata` | 对象       | {}      | （可选）通过 canary 工作负载的 patch podTemplate 添加额外的 pod 元数据。 |
 </TabItem>
 </Tabs>
 注意：
@@ -386,6 +387,7 @@ spec:
 - `steps[x].matches[i]和steps[x].matches[j]`之间具有**或**关系；
 - `steps[x].matches[y].headers[i]和steps[x].matches[y].header[j]`之间具有**且**关系。
 - `enableExtraWorkloadForCanary 在v1beta1的Rollout对象中可用， 在v1alpha1版本的Rollout对象中， 可以用Rollout的特殊annotation `rollouts.kruise.io/rolling-type` 来开启类似功能，rolling-type 如果设置为"canary"（默认值)， 则相当于设置enableExtraWorkloadForCanary=true; 如果设置为partition, 这相当于设置enableExtraWorkloadForCanar=false
+- `patchPodTemplateMetadata`只有在`enableExtraWorkloadForCanary = true`的情况下才会生效。
 
 
 ### 工作负载的特殊注释（可选）
