@@ -21,6 +21,8 @@ OpenKruiseGame supports the following network plugins:
 - Volcengine-CLB
 - AmazonWebServices-NLB
 - TencentCloud-CLB
+- JdCloud-NLB
+- JdCloud-EIP
 
 ---
 ### Kubernetes-HostPort
