@@ -1488,19 +1488,19 @@ The network status of GameServer would be as follows:
 
 ### JdCloud-NLB
 
-### Plugin name
+#### Plugin name
 
 `JdCloud-NLB`
 
-### Cloud Provider
+#### Cloud Provider
 
 JDCloud
 
-### Plugin description
+#### Plugin description
 
 JdCloud Container Service supports the reuse of NLB (Network Load Balancer) in Kubernetes. Different services (svcs) can use different ports of the same NLB. As a result, the JdCloud-NLB network plugin will record the port allocation for each NLB. For services that specify the network type as JdCloud-NLB, the JdCloud-NLB network plugin will automatically allocate a port and create a service object. Once it detects that the public IP of the svc has been successfully created, the GameServer's network will transition to the Ready state, completing the process.
 
-### Network parameters
+#### Network parameters
 
 NlbIds
 - Meaning：fill in the id of the clb. You can fill in more than one. You need to create the clb in [JdCloud].
