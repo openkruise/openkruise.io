@@ -77,7 +77,8 @@ module.exports = {
                 'blog-video/cloud-forward-okg',
                 'blog-video/ack-one-okg',
                 'blog-video/okg-911',
-                'blog-video/okg-gsshosting'
+                'blog-video/okg-gsshosting',
+                'blog-video/okg-360'
             ],
         }
   ],
