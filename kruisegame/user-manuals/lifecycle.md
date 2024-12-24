@@ -110,6 +110,6 @@ fi
 The process of elegant delete as follow:
 1. The game server is running normally, and the number of players is not 0.
 2. When the number of players drops to 0, set the opsState to WaitToBeDeleted using custom service quality settings.
-3. Through the automatic scaling policy, OKG deletes the GameServer with WaitToBeDeleted opsState. Since the lifecycle hook is configured and the delete-block label wil be set to true, the gs is not truly deleted but enters the PreDelete state, and the data flushing process is triggered by custom service quality.
+3. Through the automatic scaling policy, OKG deletes the GameServer with WaitToBeDeleted opsState. Since the lifecycle hook is configured and the delete-block label will be set to true, the gs is not truly deleted but enters the PreDelete state, and the data flushing process is triggered by custom service quality.
 4. Once data flushing is complete, set the delete-block label to false using custom service quality to release the checkpoint.
 5. After the checkpoint is released, the PreDelete phase moves into the Delete phase. The gs is then truly deleted.
