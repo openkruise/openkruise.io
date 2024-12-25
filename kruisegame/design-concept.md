@@ -66,5 +66,5 @@ The deployment model of OpenKruiseGame consists of three parts:
 2. OpenKruise controller      
    It performs lifecycle management of pods. It is a dependent component of OpenKruiseGame and the OpenKruiseGame users and developers do not need to manage the controller.
 
-3. OpenKruiseGame O&M console [to be built]      
+3. OpenKruiseGame O&M console
    It provides the O&M console and APIs for developers who want to use OpenKruiseGame in a visualized way. It allows you to perform lifecycle management and orchestration on game servers.

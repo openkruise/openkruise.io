@@ -64,5 +64,5 @@ OpenKruiseGame（OKG）的部署模型分为三个部分：
 2. OpenKruise控制器     
    负责管理Pod的生命周期管理，是OpenKruiseGame（OKG）的依赖组件，对OpenKruiseGame（OKG）使用者/开发者是无感的。
 
-3. OpenKruiseGame（OKG）运维后台【待完成】     
+3. OpenKruiseGame（OKG）运维后台     
    针对希望白屏化使用OpenKruiseGame（OKG）的开发者提供的运维后台与API，主要提供游戏服的生命周期管理和编排能力。
