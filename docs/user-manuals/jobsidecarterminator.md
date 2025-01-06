@@ -19,6 +19,7 @@ To solve such problem, job sidecar terminator controller watches and terminates 
 
 ### For Pods Running on Normal Nodes
 It is very easily to use this feature if your Pods run on normal nodes, you just need to add a special env to the sidecar containers you want to terminate in the Pods, and Kruise will terminate them using [CRR](containerrecreaterequest.md) at the right time:
+
 ```yaml
 kind: Job
 spec:
@@ -42,6 +43,7 @@ However, we can address this issue by utilizing the pod in-place-update mechanis
 - This image should be compatible with the commands and args of original sidecar container.
 
 #### Step 2: Config your sidecar container
+
 ```yaml
 kind: Job
 spec:
@@ -55,6 +57,7 @@ spec:
         - name: main
 ... ...
 ```
+
 Replace `"example/quick-exit:v1.0.0"` with your prepared image.
 
 ### Ignore sidecar container with non-zero exit code
