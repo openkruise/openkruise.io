@@ -2,7 +2,7 @@
 
 ## What is Kruise Rollouts? 
 Kruise Rollouts is a **Bypass** component that offers **Advanced Progressive Delivery Features**.
-Its support for canary, multi-batch, and A/B testing delivery modes can be helpful in achieving smooth and controlled rollouts of changes to your application, while its compatibility with Gateway API and various Ingress implementations makes it easier to integrate with your existing infrastructure. Overall, Kruise Rollouts is a valuable tool for Kubernetes users looking to optimize their deployment processes!
+Its support for canary, blue-green, multi-batch, and A/B testing delivery modes can be helpful in achieving smooth and controlled rollouts of changes to your application, while its compatibility with Gateway API and various Ingress implementations makes it easier to integrate with your existing infrastructure. Overall, Kruise Rollouts is a valuable tool for Kubernetes users looking to optimize their deployment processes!
 
 ![kruise-rollout-intro](../static/img/rollouts/intro.png)
 
@@ -10,6 +10,7 @@ Its support for canary, multi-batch, and A/B testing delivery modes can be helpf
 - **Rich release strategies**
   - Multi-batch update strategy for Deployment, CloneSet, StatefulSet, Advanced StatefulSet, Advanced DaemonSet.
   - Canary update strategy for Deployment.
+  - Blue-Green update strategy for Deployment, CloneSet.
 
 - **Rich traffic routing management strategies**
   - Traffic fine-grained, weighted traffic shifting when updating workloads.
@@ -30,16 +31,16 @@ There is a demo of multi-batch update strategy for Deployment.
 
 Kruise Rollouts vs. [Argo Rollout](https://argoproj.github.io/rollouts/) and [Flux Flagger](https://fluxcd.io/flagger/).
 
-| Component                   | **Kruise Rollouts**                                                     | Argo Rollouts                                      | Flux Flagger                                       |
-|-----------------------------|-------------------------------------------------------------------------|----------------------------------------------------|----------------------------------------------------|
-| Core Concept                | Enhance your existing workloads                                         | Replace your workloads                             | manage your workloads                              |
-| Architecture                | Bypass                                                                  | A new workload type                                | Bypass                                             |
-| Plug and Play, Hot-Swapping | Yes                                                                     | No                                                 | No                                                 |
-| Release Type                | Multi-Batch, Canary, A/B Testing, End-to-End Canary                     | Multi-Batch, Canary, Blue-Green, A/B Testing       | Canary, Blue-Green, A/B Testing                    |
-| Workload Type               | Deployment,StatefulSet,CloneSet,Advanced StatefulSet,Advanced DaemonSet | Agro-Rollout                                       | Deployment. DaemonSet                              | 
-| Traffic Type                | Ingress, GatewayAPI, CRD (Need Lua Script)                              | Ingress, GatewayAPI, APISIX, Traefik, SMI and more | Ingress, GatewayAPI, APISIX, Traefik, SMI and more |
-| Migration Costs             | No need migrate your workloads and pods                                 | Must migrate your workloads and pods               | Must migrate your pods                             | 
-| HPA compatible              | Yes                                                                     | Yes                                                | No                                                 |
+| Component                   | **Kruise Rollouts**                                          | Argo Rollouts                                      | Flux Flagger                                       |
+| --------------------------- | ------------------------------------------------------------ | -------------------------------------------------- | -------------------------------------------------- |
+| Core Concept                | Enhance your existing workloads                              | Replace your workloads                             | manage your workloads                              |
+| Architecture                | Bypass                                                       | A new workload type                                | Bypass                                             |
+| Plug and Play, Hot-Swapping | Yes                                                          | No                                                 | No                                                 |
+| Release Type                | Multi-Batch, Canary, A/B Testing, End-to-End Canary, Blue-Green | Multi-Batch, Canary, Blue-Green, A/B Testing       | Canary, Blue-Green, A/B Testing                    |
+| Workload Type               | Deployment,StatefulSet,CloneSet,Advanced StatefulSet,Advanced DaemonSet | Agro-Rollout                                       | Deployment. DaemonSet                              |
+| Traffic Type                | Ingress, GatewayAPI, CRD (Need Lua Script)                   | Ingress, GatewayAPI, APISIX, Traefik, SMI and more | Ingress, GatewayAPI, APISIX, Traefik, SMI and more |
+| Migration Costs             | No need migrate your workloads and pods                      | Must migrate your workloads and pods               | Must migrate your pods                             |
+| HPA compatible              | Yes                                                          | Yes                                                | No                                                 |
 
 ## What's Next
 Here are some recommended next steps:
