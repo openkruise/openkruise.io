@@ -402,63 +402,6 @@ minecraft-1   Ready   None       0     0
 minecraft-2   Ready   None       0     0
 ```
 
-#### 设置opsState为None的游戏服的最大个数
-
-OKG支持设置游戏服最大数目。在当前所有opsState为None的游戏服数量大于设置的值时，OKG将减少Replicas，使opsState为None的游戏服数量满足设置的最大个数。
-
-考虑GameServer空闲后再被复用的情况，此时opsState只存在两种状态：None 和 Allocated. None 代表游戏服空闲，Allocated 代表游戏服正在被使用。
-而游戏服的水平伸缩将完全根据 minAvailable 和 maxAvailable 参数进行控制。当None的数量小于minAvailable时，OKG将进行自动扩容，当None的数量大于maxAvailable时，OKG将进行自动缩容。
-
-maxAvailable 参数配置方式如下：
-
-```yaml
-apiVersion: keda.sh/v1alpha1
-kind: ScaledObject
-metadata:
-  name: minecraft #填写对应GameServerSet的名称
-spec:
-  scaleTargetRef:
-    name: minecraft #填写对应GameServerSet的名称
-    apiVersion: game.kruise.io/v1alpha1 
-    kind: GameServerSet
-  pollingInterval: 30
-  minReplicaCount: 0
-  advanced:
-    horizontalPodAutoscalerConfig: 
-      behavior: #继承HPA策略，可参考文档 https://kubernetes.io/zh-cn/docs/tasks/run-application/horizontal-pod-autoscale/#configurable-scaling-behavior
-        scaleDown:
-          stabilizationWindowSeconds: 30 #设置缩容稳定窗口时间为30秒
-          policies:
-            - type: Percent
-              value: 100
-              periodSeconds: 15
-  triggers:
-    - type: external
-      metricType: AverageValue
-      metadata:
-        maxAvailable: "3" # 设置opsState为None的游戏服的最大个数
-        scalerAddress: kruise-game-external-scaler.kruise-game-system:6000
-```
-
-初始部署replicas为4的GameServerSet，经过KEDA探测周期后，马上缩容一个游戏服。此时opsState为None的游戏服数量不大于设置的maxAvailable值，完成了自动缩容。
-
-```bash
-kubectl get gs
-NAME          STATE   OPSSTATE   DP    UP   AGE
-minecraft-0   Ready   None       0     0    10s
-minecraft-1   Ready   None       0     0    10s
-minecraft-2   Ready   None       0     0    10s
-minecraft-3   Ready   None       0     0    10s
-
-# After a while
-
-kubectl get gs
-NAME          STATE   OPSSTATE   DP    UP   AGE
-minecraft-0   Ready   None       0     0    50s
-minecraft-1   Ready   None       0     0    50s
-minecraft-2   Ready   None       0     0    50s
-```
-
 ### 自动扩容
 
 除了设置自动缩容策略，也可以设置自动扩容策略。
