@@ -18,6 +18,7 @@ OpenKruiseGame supports the following network plugins:
 - AlibabaCloud-EIP
 - AlibabaCloud-SLB-SharedPort
 - AlibabaCloud-NLB-SharedPort
+- AlibabaCloud-Multi-NLBs
 - Volcengine-CLB
 - AmazonWebServices-NLB
 - TencentCloud-CLB
@@ -1065,6 +1066,179 @@ After waiting for the entire update process to end, you can find that there are 
 #### Plugin configuration
 
 None
+
+---
+
+### AlibabaCloud-Multi-NLBs
+#### Plugin name
+`AlibabaCloud-Multi-NLBs`
+
+#### Cloud Provider
+AlibabaCloud
+
+#### Plugin description
+
+In gaming scenarios, there is often a need for multi-line access, that is, access through two or more operators' bandwidth to enable players to quickly access gaming servers across operators.
+In this case, a single gaming server requires multiple access endpoints, each of which is bound to an independent operator's public IP.
+
+#### Network parameters
+
+NlbIdNames
+
+- Meaning：the NLB instance ID and Name(self-define name). You can fill in multiple ids & names.
+- Value：in the format of {nlb-id-0}/{name-0},{nlb-id-1}/{name-1}。An example value can be: "nlb-ji8l844c0qzii1x6mc/DianXin,nlb-26jbknebrjlejt5abu/LianTong"
+- Configuration change supported or not: yes. You can add new nlbIds at the end. However, it is recommended not to change existing nlbId that is in use.
+
+PortProtocols
+
+- Meaning：the ports in the pod to be exposed and the protocols. You can specify multiple ports and protocols.
+- Value：in the format of port1/protocol1,port2/protocol2,... The protocol names must be in uppercase letters. support protocol types: TCP、UDP、TCPUDP(means use same port for TCP & UDP at same time)
+- Configuration change supported or not: yes.
+
+Fixed
+
+- Meaning: whether the mapping relationship is fixed. If the mapping relationship is fixed, the mapping relationship remains unchanged even if the pod is deleted and recreated.
+- Value: false or true.
+- Configuration change supported or not: yes.
+
+AllowNotReadyContainers
+
+- Meaning: the container names that are allowed not ready when inplace updating, when traffic will not be cut.
+- Value: {containerName_0},{containerName_1},... Example：sidecar
+- Configuration change supported or not: It cannot be changed during the in-place updating process.
+
+LBHealthCheckFlag
+
+- Meaning: Whether to enable health check
+- Format: "on" means on, "off" means off. Default is on
+- Whether to support changes: Yes
+
+LBHealthCheckType
+
+- Meaning: Health Check Protocol
+- Format: fill in "tcp" or "http", the default is tcp
+- Whether to support changes: Yes
+
+LBHealthCheckConnectPort
+
+- Meaning: Server port for health check.
+- Format: Value range [0, 65535]. Default value is "0"
+- Whether to support changes: Yes
+
+LBHealthCheckConnectTimeout
+
+- Meaning: Maximum timeout for health check response.
+- Format: Unit: seconds. The value range is [1, 300]. The default value is "5"
+- Whether to support changes: Yes
+
+LBHealthyThreshold
+
+- Meaning: After the number of consecutive successful health checks, the health check status of the server will be determined from failure to success.
+- Format: Value range [2, 10]. Default value is "2"
+- Whether to support changes: Yes
+
+LBUnhealthyThreshold
+
+- Meaning: After the number of consecutive health check failures, the health check status of the server will be determined from success to failure.
+- Format: Value range [2, 10]. The default value is "2"
+- Whether to support changes: Yes
+
+LBHealthCheckInterval
+
+- Meaning: health check interval.
+- Format: Unit: seconds. The value range is [1, 50]. The default value is "10"
+- Whether to support changes: Yes
+
+LBHealthCheckUri
+
+- Meaning: The corresponding uri when the health check type is HTTP.
+- Format: The length is 1~80 characters, only letters, numbers, and characters can be used. Must start with a forward slash (/). Such as "/test/index.html"
+- Whether to support changes: Yes
+
+LBHealthCheckDomain
+
+- Meaning: The corresponding domain name when the health check type is HTTP.
+- Format: The length of a specific domain name is limited to 1~80 characters. Only lowercase letters, numbers, dashes (-), and half-width periods (.) can be used.
+- Whether to support changes: Yes
+
+LBHealthCheckMethod
+
+- Meaning: The corresponding method when the health check type is HTTP.
+- Format: "GET" or "HEAD"
+- Whether to support changes: Yes
+
+#### Plugin configuration
+
+use the configuration of nlb，default is:
+
+```
+[alibabacloud.nlb]
+max_port = 1502
+min_port = 1000
+block_ports = [1025, 1434, 1068]
+```
+
+#### Example
+
+Deploy a GameServerSet yaml：
+```
+cat <<EOF | kubectl apply -f -
+apiVersion: game.kruise.io/v1alpha1
+kind: GameServerSet
+metadata:
+  name: multi-nlbs
+  namespace: default
+spec:
+  replicas: 2
+  updateStrategy:
+    rollingUpdate:
+      podUpdatePolicy: InPlaceIfPossible
+  network:
+    networkConf:
+    - name: NlbIdNames
+      value: nlb-ji8l844c0qzii1x6mc/DianXin,nlb-26jbknebrjlejt5abu/LianTong,nlb-qi8lz598c0qzks1x6p2/YiDong
+    - name: PortProtocols
+      value: "8888/TCPUDP"
+    networkType: AlibabaCloud-Multi-NLBs
+  gameServerTemplate:
+    spec:
+      containers:
+        - image: registry.cn-hangzhou.aliyuncs.com/gs-demo/gameserver:network
+          name: gameserver
+EOF
+```
+
+The GameServers will be like：
+```
+  networkStatus:
+    createTime: "2024-10-28T12:41:56Z"
+    currentNetworkState: Ready
+    desiredNetworkState: Ready
+    externalAddresses:
+    - endPoint: nlb-xxx0.cn.nlb.aliyuncs.com/DianXin,nlb-xxx1.cn.nlb.aliyuncs.com/LianTong,nlb-xxx2.cn.nlb.aliyuncs.com/YiDong
+      ip: ""
+      ports:
+      - name: "8888-udp"
+        port: 1047
+        protocol: UDP
+    - endPoint: nlb-xxx0.cn.nlb.aliyuncs.com/DianXin,nlb-xxx1.cn.nlb.aliyuncs.com/LianTong,nlb-xxx2.cn.nlb.aliyuncs.com/YiDong
+      ip: ""
+      ports:
+      - name: "8888-tcp"
+        port: 1047
+        protocol: TCP
+    internalAddresses:
+    - ip: 172.16.0.1
+      ports:
+      - name: "8888-udp"
+        port: 8888
+        protocol: UDP
+      - name: "8888-tcp"
+        port: 8888
+        protocol: TCP
+    lastTransitionTime: "2024-10-28T12:41:56Z"
+    networkType: AlibabaCloud-Multi-NLBs
+```
 
 ---
 

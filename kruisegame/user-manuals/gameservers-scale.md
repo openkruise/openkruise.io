@@ -406,6 +406,63 @@ minecraft-1   Ready   None       0     0
 minecraft-2   Ready   None       0     0
 ```
 
+#### Set the maximum number of game servers whose opsState is None
+
+OKG supports setting the maximum number of game servers. When the number of game servers with opsState None is greater than the set value, OKG will reduce Replicas so that the number of game servers with opsState None meets the set maximum number.
+
+Considering the situation where the GameServer is idle and then reused, there are only two states of opsState: None and Allocated. None means that the game server is idle, and Allocated means that the game server is being used.
+The horizontal scaling of the game server will be completely controlled by the minAvailable and maxAvailable parameters. When the number of None is less than minAvailable, OKG will automatically expand, and when the number of None is greater than maxAvailable, OKG will automatically shrink.
+
+The maxAvailable parameter configuration method is as follows:
+
+```yaml
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: minecraft # Fill in the name of the corresponding GameServerSet
+spec:
+  scaleTargetRef:
+    name: minecraft # Fill in the name of the corresponding GameServerSet
+    apiVersion: game.kruise.io/v1alpha1
+    kind: GameServerSet
+  pollingInterval: 30
+  minReplicaCount: 0
+  advanced:
+    horizontalPodAutoscalerConfig:
+      behavior: # Inherit from HPA behavior, refer to https://kubernetes.io/zh-cn/docs/tasks/run-application/horizontal-pod-autoscale/#configurable-scaling-behavior
+        scaleDown:
+          stabilizationWindowSeconds: 30 # Set the scaling-down stabilization window time to 30 seconds
+          policies:
+            - type: Percent
+              value: 100
+              periodSeconds: 15
+  triggers:
+    - type: external
+      metricType: AverageValue
+      metadata:
+        maxAvailable: "3" # set the maxAvailable of game servers whose opsState are None
+        scalerAddress: kruise-game-external-scaler.kruise-game-system:6000
+```
+
+Initially deploy GameServerSet with 4 replicas. After the KEDA detection cycle, immediately scale down one game server.
+At this time, the number of game servers with opsState of None is not greater than the set maxAvailable value, and the automatic scale-down is completed.
+
+```bash
+kubectl get gs
+NAME          STATE   OPSSTATE   DP    UP   AGE
+minecraft-0   Ready   None       0     0    10s
+minecraft-1   Ready   None       0     0    10s
+minecraft-2   Ready   None       0     0    10s
+minecraft-3   Ready   None       0     0    10s
+
+# After a while
+
+kubectl get gs
+NAME          STATE   OPSSTATE   DP    UP   AGE
+minecraft-0   Ready   None       0     0    50s
+minecraft-1   Ready   None       0     0    50s
+minecraft-2   Ready   None       0     0    50s
+```
 
 ### Auto Scaling-up
 
