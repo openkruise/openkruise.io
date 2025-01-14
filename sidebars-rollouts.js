@@ -31,6 +31,7 @@ module.exports = {
                     'Release Strategies': [
                         'user-manuals/strategy-canary-update',
                         'user-manuals/strategy-multi-batch-update',
+                        'user-manuals/strategy-bluegreen-update',
                         'user-manuals/strategy-ab-testing',
                         'user-manuals/strategy-end2end-canary-update',
                     ]

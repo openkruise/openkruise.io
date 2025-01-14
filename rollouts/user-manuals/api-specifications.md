@@ -312,6 +312,11 @@ spec:
 </Tabs>
 
 ### Strategy API (Mandatory)
+
+`canary`  is used for canary strategy and multi-batch strategy, while `blueGreen` is used for blue-green strategy. These two are mutually exclusive; they cannot both be empty or both be non-empty. The `blueGreen` strategy was introduced in Kruise-Rollout versions higher than v0.5.0 and is not supported in the v1alpha1 API.
+
+#### Canary
+
 Describe your strategy of rollout:
 
 <Tabs>
@@ -410,14 +415,56 @@ Note:
 - `patchPodTemplateMetadata` can be set only if enableExtraWorkloadForCanary=true
 - `enableExtraWorkloadForCanary` is available in v1beta Rollout resource; In v1alpha1 Rollout resource, one can use the annotation of Rollout `rollouts.kruise.io/rolling-type`="canary" to enable `enableExtraWorkloadForCanary`
 
+#### blueGreen
+
+Describe your strategy of rollout:
+
+```yaml
+apiVersion: rollouts.kruise.io/v1beta1
+kind: Rollout
+metadata:
+  namespace: your-workload-ns
+spec:
+  strategy:
+    blueGreen:
+      steps:
+      # the first step
+      - replicas: 100%
+      	traffic: 0%
+        pause:
+          duration: {}
+      # the second step
+      - replicas: 100%
+        matches:
+        - headers:
+          - type: Exact # or "RegularExpression"
+            name: matched-header-name
+            value: matched-header-value # value or reg-expression
+    # the third step
+      - replicas: 100%
+      	traffic: 100%
+
+```
+
+Note:
+
+- Except for the absence of the `patchPodTemplateMetadata` and `enableExtraWorkloadForCanary` fields, the configuration for `blueGreen` and `canary` are identical and follow the same precautions as `canary`.
+- For the differences between blue-green strategy and other strategies, please refer to "Release Strategies" - "Blue-Green Release."
+
+
+
 ### Special Annotations of Workload (Optional)
+
 There are some special annotations in Bounded Workload to enable specific abilities.
 
-| Annotations                     | Value      | Defaults | Explanation                                                                                                                                                                       |
-|---------------------------------|------------|----------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Annotations                     | Value      | Defaults | Explanation                                                  |
+| ------------------------------- | ---------- | -------- | ------------------------------------------------------------ |
 | `rollouts.kruise.io/rollout-id` | any string | ""       | The concept is similar to the release order number. To solve the problem that users should know whether the current changes of workload is observed by Kruise Rollout controller. |
 
 ### Rollout Status You Should Know
+
+#### Canary
+
 ```yaml
 kind: Rollout
 status:
@@ -434,16 +481,39 @@ status:
     podTemplateHash: 76fd76f75b
     stableRevision: b76b6f48f
 ```
-| Fields                             | Type    | Mode        | Explanation                                                                                                                                     |
-|------------------------------------|---------|-------------|-------------------------------------------------------------------------------------------------------------------------------------------------|
-| `phase`                            | string  | ready-only  | "Initial" means no bounded workload; "Healthy" means bounded workload is promoted; "Progressing" means rollout is working.                      |
-| `observedGeneration`               | integer | ready-only  | Observed rollout spec generation.                                                                                                               |
-| `canaryStatus`                     | *object | ready-only  | Information about rollout progressing.                                                                                                          |
-| `canaryStatus.canaryReplicas`      | integer | ready-only  | workload updated replicas                                                                                                                       |
-| `canaryStatus.canaryReadyReplicas` | integer | ready-only  | workload updated ready replicas.                                                                                                                |
-| `canaryStatus.podTemplateHash`     | string  | ready-only  | workload update(new) revision hash.                                                                                                             |
-| `canaryStatus.canaryRevision`      | string  | ready-only  | workload update(new) revision hash calculated by Kruise Rollout controller.                                                                     |
-| `canaryStatus.stableRevision`      | string  | ready-only  | workload stable(old) revision hash recorded before progressing.                                                                                 |
-| `canaryStatus.observedRolloutID`   | string  | ready-only  | corresponding to workload `rollouts.kruise.io/rollout-id` annotations. if they are equal, it means rollout controller watched workload changes. |
-| `canaryStatus.currentStepIndex`    | integer | ready-only  | rollout current step index. Start from 1.                                                                                                       |
-| `canaryStatus.currentStepState`    | string  | ready&write | rollout current step state. Both "StepReady" and "Complete" mean current step is ready.                                                         |
+| Fields                             | Type    | Mode       | Explanation                                                  |
+| ---------------------------------- | ------- | ---------- | ------------------------------------------------------------ |
+| `phase`                            | string  | read-only  | "Initial" means no bounded workload; "Healthy" means bounded workload is promoted; "Progressing" means rollout is working. |
+| `observedGeneration`               | integer | read-only  | Observed rollout spec generation.                            |
+| `canaryStatus`                     | *object | read-only  | Information about rollout progressing.                       |
+| `canaryStatus.canaryReplicas`      | integer | read-only  | workload updated replicas                                    |
+| `canaryStatus.canaryReadyReplicas` | integer | read-only  | workload updated ready replicas.                             |
+| `canaryStatus.podTemplateHash`     | string  | read-only  | workload update(new) revision hash.                          |
+| `canaryStatus.canaryRevision`      | string  | read-only  | workload update(new) revision hash calculated by Kruise Rollout controller. |
+| `canaryStatus.stableRevision`      | string  | read-only  | workload stable(old) revision hash recorded before progressing. |
+| `canaryStatus.observedRolloutID`   | string  | read-only  | corresponding to workload `rollouts.kruise.io/rollout-id` annotations. if they are equal, it means rollout controller watched workload changes. |
+| `canaryStatus.currentStepIndex`    | integer | read-only  | rollout current step index. Start from 1.                    |
+| `canaryStatus.nextStepIndex`       | integer | read&write | Indicates the next step to execute. If the current batch is the last batch or the release has ended, its value is set to -1. In other cases, it is typically equal to `canaryStatus.currentStepIndex` + 1. Users can modify it to a reasonable positive number to enable non-sequential step execution. |
+| `canaryStatus.currentStepState`    | string  | read&write | rollout current step state. Both "StepReady" and "Complete" mean current step is ready. |
+
+#### Blue-Green
+
+```yaml
+kind: Rollout
+status:
+  blueGreenStatus:
+    currentStepIndex: 1
+    currentStepState: StepPaused
+    lastUpdateTime: "2025-01-03T09:20:29Z"
+    message: BatchRelease is at state Ready, rollout-id , step 1
+    nextStepIndex: 2
+    observedWorkloadGeneration: 4
+    podTemplateHash: 64c6f99459
+    rolloutHash: 7w8dxcdc49wv4w49c469b27c6c7xb4f4c4dvf8dwd4b6zb5z4zcc852c7w9vf5dv
+    stableRevision: 65f957664d
+    updatedReadyReplicas: 10
+    updatedReplicas: 10
+    updatedRevision: 64448b955c
+```
+
+Just like `canaryStatus`, `blueGreenStatus` has **exactly the same** status fields, and their meanings are identical.

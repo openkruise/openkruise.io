@@ -291,6 +291,10 @@ spec:
 
 ### 策略API（必填）
 
+canary用于金丝雀发布和多批次发布，blueGreen用于蓝绿发布，二者是互斥选项，不能同时为空，也不能都非空。blueGreen选项是在Kruise-Rollout v0.5.0版本之后引入的，且不支持v1alpha1 API。
+
+#### canary
+
 描述您的发布策略：
 
 <Tabs>
@@ -389,16 +393,54 @@ spec:
 - `enableExtraWorkloadForCanary 在v1beta1的Rollout对象中可用， 在v1alpha1版本的Rollout对象中， 可以用Rollout的特殊annotation `rollouts.kruise.io/rolling-type` 来开启类似功能，rolling-type 如果设置为"canary"（默认值)， 则相当于设置enableExtraWorkloadForCanary=true; 如果设置为partition, 这相当于设置enableExtraWorkloadForCanar=false
 - `patchPodTemplateMetadata`只有在`enableExtraWorkloadForCanary = true`的情况下才会生效。
 
+#### blueGreen
+
+描述您的发布策略：
+
+```yaml
+apiVersion: rollouts.kruise.io/v1beta1
+kind: Rollout
+metadata:
+  namespace: your-workload-ns
+spec:
+  strategy:
+    blueGreen:
+      steps:
+      # the first step
+      - replicas: 100%
+      	traffic: 0%
+        pause:
+          duration: {}
+      # the second step
+      - replicas: 100%
+        matches:
+        - headers:
+          - type: Exact # or "RegularExpression"
+            name: matched-header-name
+            value: matched-header-value # value or reg-expression
+      # the third step
+      - replicas: 100%
+      	traffic: 100%
+
+```
+
+注意：
+
+- 除了没有`patchPodTemplateMetadata`字段和``enableExtraWorkloadForCanary`字段，blueGreen和canary的配置选项完全一样，也遵循和canary同样的注意事项。
+- 蓝绿发布和其他发布方式的区别请查阅“发布策略”-“蓝绿发布”。
+
 
 ### 工作负载的特殊注释（可选）
 
 绑定工作负载中有一些特殊的注释，用于启用特定功能。
 
-| 注释                              | 值     | 默认值 | 说明                                                    |
-|---------------------------------|-------|-----|-------------------------------------------------------|
-| `rollouts.kruise.io/rollout-id` | 任意字符串 | ""  | 这个概念类似于发布顺序号。用于解决用户是否观察到Kruise Rollout控制器当前工作负载更改的问题。 |
+| 注释                            | 值         | 默认值 | 说明                                                         |
+| ------------------------------- | ---------- | ------ | ------------------------------------------------------------ |
+| `rollouts.kruise.io/rollout-id` | 任意字符串 | ""     | 这个概念类似于发布顺序号。用于解决用户是否观察到Kruise Rollout控制器当前工作负载更改的问题。 |
 
 ### 您应该了解的Rollout状态
+
+#### Canary
 
 ```yaml
 kind: Rollout
@@ -417,16 +459,39 @@ status:
     stableRevision: b76b6f48f
 ```
 
-| 字段                                 | 类型  | 模式    | 说明                                                                    |
-|------------------------------------|-----|-------|-----------------------------------------------------------------------|
-| `phase`                            | 字符串 | 只读    | "Initial" 表示没有绑定的工作负载；"Healthy" 表示绑定的工作负载已推进；"Progressing" 表示卷出正在进行中。 |
-| `observedGeneration`               | 整数  | 只读    | 观察到的卷出规范的生成。                                                          |
-| `canaryStatus`                     | *对象 | 只读    | 有关卷出进展的信息。                                                            |
-| `canaryStatus.canaryReplicas`      | 整数  | 只读    | 工作负载更新的副本数。                                                           |
-| `canaryStatus.canaryReadyReplicas` | 整数  | 只读    | 工作负载更新的就绪副本数。                                                         |
-| `canaryStatus.podTemplateHash`     | 字符串 | 只读    | 工作负载更新（新版本）的哈希值。                                                      |
-| `canaryStatus.canaryRevision`      | 字符串 | 只读    | 由Kruise Rollout控制器计算的工作负载更新（新版本）的修订哈希值。                               |
-| `canaryStatus.stableRevision`      | 字符串 | 只读    | 进展之前记录的工作负载稳定（旧版本）的修订哈希值。                                             |
-| `canaryStatus.observedRolloutID`   | 字符串 | 只读    | 对应于工作负载的`rollouts.kruise.io/rollout-id`注释。如果它们相等，意味着卷出控制器观察到了工作负载的更改。 |
-| `canaryStatus.currentStepIndex`    | 整数  | 只读    | 卷出当前步骤索引。从1开始。                                                        |
-| `canaryStatus.currentStepState`    | 字符串 | 只读和写入 | 卷出当前步骤状态。"StepReady"和"Complete"都表示当前步骤就绪。                             |
+| 字段                               | 类型   | 模式 | 说明                                                         |
+| ---------------------------------- | ------ | ---- | ------------------------------------------------------------ |
+| `phase`                            | 字符串 | 只读 | "Initial" 表示没有绑定的工作负载；"Healthy" 表示绑定的工作负载已推进；"Progressing" 表示发布正在进行中。 |
+| `observedGeneration`               | 整数   | 只读 | 观察到的Rollout的Generation。                                |
+| `canaryStatus`                     | *对象  | 只读 | 有关Rollout进展的信息。                                      |
+| `canaryStatus.canaryReplicas`      | 整数   | 只读 | 工作负载更新的副本数。                                       |
+| `canaryStatus.canaryReadyReplicas` | 整数   | 只读 | 工作负载更新的就绪副本数。                                   |
+| `canaryStatus.podTemplateHash`     | 字符串 | 只读 | 工作负载更新（新版本）的哈希值。                             |
+| `canaryStatus.canaryRevision`      | 字符串 | 只读 | 由Kruise Rollout控制器计算的工作负载更新（新版本）的修订哈希值。 |
+| `canaryStatus.stableRevision`      | 字符串 | 只读 | 进展之前记录的工作负载稳定（旧版本）的修订哈希值。           |
+| `canaryStatus.observedRolloutID`   | 字符串 | 只读 | 对应于工作负载的`rollouts.kruise.io/rollout-id`注释。如果它们相等，意味着Rollout控制器观察到了工作负载的更改。 |
+| `canaryStatus.currentStepIndex`    | 整数   | 只读 | Rollout当前步骤索引。从1开始。                               |
+| `canaryStatus.nextStepIndex`       | 整数   | 可写 | 指示下一个执行的步骤。如果当前批次已经是最后一批或者发布已经结束，其值为-1，其余情况通常等于`canaryStatus.currentStepIndex`+1。允许用户修改为合理的正数以实现批次的非顺序执行。 |
+| `canaryStatus.currentStepState`    | 字符串 | 可写 | Rollout当前步骤状态。"StepReady"和"Complete"都表示当前步骤就绪。 |
+
+#### Blue-Green
+
+```yaml
+kind: Rollout
+status:
+  blueGreenStatus:
+    currentStepIndex: 1
+    currentStepState: StepPaused
+    lastUpdateTime: "2025-01-03T09:20:29Z"
+    message: BatchRelease is at state Ready, rollout-id , step 1
+    nextStepIndex: 2
+    observedWorkloadGeneration: 4
+    podTemplateHash: 64c6f99459
+    rolloutHash: 7w8dxcdc49wv4w49c469b27c6c7xb4f4c4dvf8dwd4b6zb5z4zcc852c7w9vf5dv
+    stableRevision: 65f957664d
+    updatedReadyReplicas: 10
+    updatedReplicas: 10
+    updatedRevision: 64448b955c
+```
+
+和`canaryStatus`一样，`blueGreenStatus`有**完全相同**的状态字段，它门的含义也相同。
