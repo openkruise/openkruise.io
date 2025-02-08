@@ -17,7 +17,7 @@ $ helm repo add openkruise https://openkruise.github.io/charts/
 $ helm repo update
 
 # Install the latest version.
-$ helm install kruise-rollout openkruise/kruise-rollout --version 0.5.0
+$ helm install kruise-rollout openkruise/kruise-rollout --version 0.6.0
 ```
 **Note:** [Changelog](https://github.com/openkruise/kruise/blob/master/CHANGELOG.md).
 ## Upgrade with helm
@@ -30,7 +30,7 @@ $ helm repo add openkruise https://openkruise.github.io/charts/
 $ helm repo update
 
 # Upgrade to the latest version.
-$ helm upgrade kruise-rollout openkruise/kruise-rollout --version 0.5.0 [--force]
+$ helm upgrade kruise-rollout openkruise/kruise-rollout --version 0.6.0 [--force]
 ```
 
 Note that:
@@ -69,7 +69,7 @@ The following table lists the configurable parameters of the kruise chart and th
 
 Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`. For example,
 ```bash
-$ helm install kruise-rollout openkruise/kruise-rollout --version 0.5.0 --set resources.limits.memory=2Gi
+$ helm install kruise-rollout openkruise/kruise-rollout --version 0.6.0 --set resources.limits.memory=2Gi
 ```
 
 #### Optional: the local image for China
