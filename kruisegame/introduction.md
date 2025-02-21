@@ -38,38 +38,42 @@ OpenKruiseGame(OKG) has the following core features:
 
 <table>
     <tr style={{"border":0}}>
-        <td style={{"border":0}}><center><img src={require('/static/img/kruisegame/lilith-logo.png').default} width="120" /></center></td>
-        <td style={{"border":0}}><center><img src={require('/static/img/kruisegame/hypergryph-logo.png').default} width="130" /></center></td>
-        <td style={{"border":0}}><center><img src={require('/static/img/kruisegame/bilibili-logo.png').default} width="130" /></center></td>
-        <td style={{"border":0}}><center><img src={require('/static/img/kruisegame/shangyou-logo.jpeg').default} width="130" /></center></td>
-        <td style={{"border":0}}><center><img src={require('/static/img/kruisegame/xingzhe-logo.png').default} width="125" /></center></td>
+        <td style={{"border":0}}><center><img src={require('/static/img/kruisegame/lilith-logo.png').default} width="100" /></center></td>
+        <td style={{"border":0}}><center><img src={require('/static/img/kruisegame/hypergryph-logo.png').default} width="100" /></center></td>
+        <td style={{"border":0}}><center><img src={require('/static/img/kruisegame/bilibili-logo.png').default} width="100" /></center></td>
+        <td style={{"border":0}}><center><img src={require('/static/img/kruisegame/shangyou-logo.png').default} width="100" /></center></td>
+        <td style={{"border":0}}><center><img src={require('/static/img/kruisegame/xingzhe-logo.png').default} width="100" /></center></td>
+        <td style={{"border":0}}><center><img src={require('/static/img/kruisegame/jjworld-logo.png').default} width="100" /></center></td>
     </tr>
     <tr style={{"border":0}}>
     </tr>
     <tr style={{"border":0}}>
-        <td style={{"border":0}}><center><img src={require('/static/img/kruisegame/juren-logo.png').default} width="95" /></center></td>
-        <td style={{"border":0}}><center><img src={require('/static/img/kruisegame/baibian-logo.png').default} width="120" /></center></td>
-        <td style={{"border":0}}><center><img src={require('/static/img/kruisegame/chillyroom-logo.png').default} width="130" /></center></td>
-        <td style={{"border":0}}><center><img src={require('/static/img/kruisegame/wuduan-logo.png').default} width="130" /></center></td>
-        <td style={{"border":0}}><center><img src={require('/static/img/kruisegame/xingchao-logo.png').default} width="110" /></center></td>
+        <td style={{"border":0}}><center><img src={require('/static/img/kruisegame/juren-logo.png').default} width="100" /></center></td>
+        <td style={{"border":0}}><center><img src={require('/static/img/kruisegame/baibian-logo.png').default} width="100" /></center></td>
+        <td style={{"border":0}}><center><img src={require('/static/img/kruisegame/chillyroom-logo.png').default} width="100" /></center></td>
+        <td style={{"border":0}}><center><img src={require('/static/img/kruisegame/wuduan-logo.png').default} width="100" /></center></td>
+        <td style={{"border":0}}><center><img src={require('/static/img/kruisegame/xingchao-logo.png').default} width="100" /></center></td>
+        <td style={{"border":0}}><center><img src={require('/static/img/kruisegame/jaco-logo.png').default} width="100" /></center></td>
     </tr>
     <tr style={{"border":0}}>
     </tr>
     <tr style={{"border":0}}>
-        <td style={{"border":0}}><center><img src={require('/static/img/kruisegame/wanglong-logo.png').default} width="145" /></center></td>
-        <td style={{"border":0}}><center><img src={require('/static/img/kruisegame/guanying-logo.png').default} width="140" /></center></td>
-        <td style={{"border":0}}><center><img src={require('/static/img/kruisegame/booming-logo.png').default} width="130" /></center></td>
-        <td style={{"border":0}}><center><img src={require('/static/img/kruisegame/gsshosting-logo.png').default} width="140" /></center></td>
-        <td style={{"border":0}}><center><img src={require('/static/img/kruisegame/yongshi-logo.png').default} width="130" /></center></td>
+        <td style={{"border":0}}><center><img src={require('/static/img/kruisegame/wanglong-logo.png').default} width="100" /></center></td>
+        <td style={{"border":0}}><center><img src={require('/static/img/kruisegame/guanying-logo.png').default} width="100" /></center></td>
+        <td style={{"border":0}}><center><img src={require('/static/img/kruisegame/booming-logo.png').default} width="100" /></center></td>
+        <td style={{"border":0}}><center><img src={require('/static/img/kruisegame/gsshosting-logo.png').default} width="100" /></center></td>
+        <td style={{"border":0}}><center><img src={require('/static/img/kruisegame/yongshi-logo.png').default} width="100" /></center></td>
+        <td style={{"border":0}}><center><img src={require('/static/img/kruisegame/lingxi-logo.png').default} width="100" /></center></td>
     </tr>
     <tr style={{"border":0}}>
     </tr>
     <tr style={{"border":0}}>
-        <td style={{"border":0}}><center><img src={require('/static/img/kruisegame/yahaha-logo.png').default} width="160" /></center></td>
-        <td style={{"border":0}}><center><img src={require('/static/img/kruisegame/yostar-logo.png').default} width="140" /></center></td>
-        <td style={{"border":0}}><center><img src={require('/static/img/kruisegame/360-logo.png').default} width="150" /></center></td>
-        <td style={{"border":0}}><center><img src={require('/static/img/kruisegame/vma-logo.png').default} width="145" /></center></td>
-        <td style={{"border":0}}><center><img src={require('/static/img/kruisegame/bekko-logo.png').default} width="130" /></center></td>
+        <td style={{"border":0}}><center><img src={require('/static/img/kruisegame/yahaha-logo.png').default} width="100" /></center></td>
+        <td style={{"border":0}}><center><img src={require('/static/img/kruisegame/yostar-logo.png').default} width="100" /></center></td>
+        <td style={{"border":0}}><center><img src={require('/static/img/kruisegame/360-logo.png').default} width="100" /></center></td>
+        <td style={{"border":0}}><center><img src={require('/static/img/kruisegame/vma-logo.png').default} width="100" /></center></td>
+        <td style={{"border":0}}><center><img src={require('/static/img/kruisegame/bekko-logo.png').default} width="100" /></center></td>
+        <td style={{"border":0}}><center><img src={require('/static/img/kruisegame/goat-logo.png').default} width="100" /></center></td>
     </tr>
 </table>
 
