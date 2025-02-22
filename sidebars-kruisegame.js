@@ -60,7 +60,8 @@ module.exports = {
             items: [
                 'developer-manuals/contribution',
                 'developer-manuals/faq',
-                'developer-manuals/go-client'
+                'developer-manuals/go-client',
+                'developer-manuals/kruise-game-api'
             ],
         },
         {
