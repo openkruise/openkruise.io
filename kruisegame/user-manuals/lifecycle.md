@@ -49,14 +49,14 @@ spec:
       exec:
         command: ["bash", "./probe.sh"]
       serviceQualityAction:
-        - state: true
+        - state: false
           result: done
           labels:
             gs-sync/delete-block: "false"
-        - state: true
+        - state: false
           result: WaitToBeDeleted
           opsState: WaitToBeDeleted
-        - state: false
+        - state: true
           opsState: None
 ```
 
