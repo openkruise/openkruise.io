@@ -170,7 +170,7 @@ PING minecraft-2.minecraft.default.svc.cluster.local (172.16.0.12): 56 data byte
 64 bytes from 172.16.0.12: seq=2 ttl=63 time=0.072 ms
 ```
 
-可以发现，accessor访问minecraft-2成功，DNS成功解析到对应的内网IP地址。在这里的DNS访问规则如下：{pod-name}.{gss-name}.{namespace-name}.svc.cluster.local
+可以发现，accessor访问minecraft-2成功，DNS成功解析到对应的内网IP地址。在这里的DNS访问规则如下：\{pod-name\}.\{gss-name\}.\{namespace-name\}.svc.cluster.local
 
 ## GameServer 与 Pod 标签/注释同步
 

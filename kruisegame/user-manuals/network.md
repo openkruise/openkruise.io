@@ -86,7 +86,7 @@ spec:
     networkConf:
     # The network configuration is specified in the form of a key-value pair. The network configuration is determined by the network plugin. Different network plugins correspond to different network configurations.
     - name: ContainerPorts
-      # The value of ContainerPorts is in the following format: {containerName}:{port1}/{protocol1},{port2}/{protocol2},...
+      # The value of ContainerPorts is in the following format: `{containerName}:{port1}/{protocol1},{port2}/{protocol2},...`
       value: "gameserver:80"
   gameServerTemplate:
     spec:
@@ -157,7 +157,7 @@ Fixed
 AllowNotReadyContainers
 
 - Meaning: the container names that are allowed not ready when inplace updating, when traffic will not be cut.
-- Value: {containerName_0},{containerName_1},... Example：sidecar
+- Value: `{containerName_0},{containerName_1},...` Example：sidecar
 - Configuration change supported or not: It cannot be changed during the in-place updating process.
 
 #### Plugin configuration
@@ -240,7 +240,7 @@ Kubernetes
 Path
 
 - Meaning: Access path. Each game server has its own access path based on its ID.
-- Value format: Add <id\> to any position in the original path(consistent with the Path field in HTTPIngressPath), and the plugin will generate the path corresponding to the game server ID. For example, when setting the path to /game<id\>, the path for game server 0 is /game0, the path for game server 1 is /game1, and so on.
+- Value format: Add `<id>` to any position in the original path(consistent with the Path field in HTTPIngressPath), and the plugin will generate the path corresponding to the game server ID. For example, when setting the path to /game`<id>`, the path for game server 0 is /game0, the path for game server 1 is /game1, and so on.
 - Configuration change supported or not: yes.
 
 PathType
@@ -264,7 +264,7 @@ IngressClassName
 Host
 
 - Meaning: Domain name.  Each game server has its own domain based on its ID.
-- Value format: Add <id\> to any position in the domain, and the plugin will generate the domain corresponding to the game server ID. For example, when setting the domain to test.game<id\>.cn-hangzhou.ali.com, the domain for game server 0 is test.game0.cn-hangzhou.ali.com, the domain for game server 1 is test.game1.cn-hangzhou.ali.com, and so on.
+- Value format: Add `<id>` to any position in the domain, and the plugin will generate the domain corresponding to the game server ID. For example, when setting the domain to `test.game<id>.cn-hangzhou.ali.com`, the domain for game server 0 is test.game0.cn-hangzhou.ali.com, the domain for game server 1 is test.game1.cn-hangzhou.ali.com, and so on.
 - Configuration change supported or not: yes.
 
 TlsHosts
@@ -535,7 +535,7 @@ Fixed
 AllowNotReadyContainers
 
 - Meaning: the container names that are allowed not ready when inplace updating, when traffic will not be cut.
-- Value: {containerName_0},{containerName_1},... Example：sidecar
+- Value: `{containerName_0},{containerName_1},...` Example：sidecar
 - Configuration change supported or not: It cannot be changed during the in-place updating process.
 
 LBHealthCheckSwitch
@@ -653,7 +653,7 @@ Fixed
 AllowNotReadyContainers
 
 - Meaning: the container names that are allowed not ready when inplace updating, when traffic will not be cut.
-- Value: {containerName_0},{containerName_1},... Example：sidecar
+- Value: `{containerName_0},{containerName_1},...` Example：sidecar
 - Configuration change supported or not: It cannot be changed during the in-place updating process.
 
 LBHealthCheckFlag
@@ -806,7 +806,7 @@ ReleaseStrategy
 - Meaning: Specifies the EIP release policy.
 - Value:
   - Follow: follows the lifecycle of the pod that is associated with the EIP. This is the default value.
-  - Never: does not release the EIP. You need to manually release the EIP when you no longer need the EIP. ( By 'kubectl delete podeip {gameserver name} -n {gameserver namespace}')
+  - Never: does not release the EIP. You need to manually release the EIP when you no longer need the EIP. ( By `kubectl delete podeip {gameserver name} -n {gameserver namespace}`)
   - You can also specify the timeout period of the EIP. For example, if you set the time period to 5m30s, the EIP is released 5.5 minutes after the pod is deleted. Time expressions written in Go are supported.
 - Configuration change supported or not: no.
 
@@ -923,7 +923,7 @@ status:
   status: InUse
 ```
 
-In addition, the generated EIP resource will be named after {pod namespace}/{pod name} in the Alibaba Cloud console, which corresponds to each game server one by one.
+In addition, the generated EIP resource will be named after `{pod namespace}/{pod name}` in the Alibaba Cloud console, which corresponds to each game server one by one.
 
 ---
 ### AlibabaCloud-SLB-SharedPort
@@ -959,7 +959,7 @@ PortProtocols
 AllowNotReadyContainers
 
 - Meaning: the container names that are allowed not ready when inplace updating, when traffic will not be cut.
-- Value: {containerName_0},{containerName_1},... Example：sidecar
+- Value: `{containerName_0},{containerName_1},...` Example：sidecar
 - Configuration change supported or not: It cannot be changed during the in-place updating process.
 
 ---
@@ -997,7 +997,7 @@ PortProtocols
 AllowNotReadyContainers
 
 - Meaning: the container names that are allowed not ready when inplace updating, when traffic will not be cut.
-- Value: {containerName_0},{containerName_1},... Example：sidecar
+- Value: `{containerName_0},{containerName_1},...` Example：sidecar
 - Configuration change supported or not: It cannot be changed during the in-place updating process.
 
 #### Plugin configuration
@@ -1086,7 +1086,7 @@ In this case, a single gaming server requires multiple access endpoints, each of
 NlbIdNames
 
 - Meaning：the NLB instance ID and Name(self-define name). You can fill in multiple ids & names.
-- Value：in the format of {nlb-id-0}/{name-0},{nlb-id-1}/{name-1}。An example value can be: "nlb-ji8l844c0qzii1x6mc/DianXin,nlb-26jbknebrjlejt5abu/LianTong"
+- Value：in the format of `{nlb-id-0}/{name-0},{nlb-id-1}/{name-1}`。An example value can be: "nlb-ji8l844c0qzii1x6mc/DianXin,nlb-26jbknebrjlejt5abu/LianTong"
 - Configuration change supported or not: yes. You can add new nlbIds at the end. However, it is recommended not to change existing nlbId that is in use.
 
 PortProtocols
@@ -1104,7 +1104,7 @@ Fixed
 AllowNotReadyContainers
 
 - Meaning: the container names that are allowed not ready when inplace updating, when traffic will not be cut.
-- Value: {containerName_0},{containerName_1},... Example：sidecar
+- Value: `{containerName_0},{containerName_1},...` Example：sidecar
 - Configuration change supported or not: It cannot be changed during the in-place updating process.
 
 LBHealthCheckFlag
@@ -1287,7 +1287,7 @@ Fixed
 AllowNotReadyContainers
 
 - Meaning：the container names that are allowed not ready when inplace updating, when traffic will not be cut.
-- Value：{containerName_0},{containerName_1},... eg：sidecar
+- Value：`{containerName_0},{containerName_1},...` eg：sidecar
 - Configurable：It cannot be changed during the in-place updating process.
 
 Annotations
@@ -1502,7 +1502,7 @@ Fixed
 AllowNotReadyContainers
 
 - Meaning: The corresponding container name that allows continuous traffic during in-place upgrades.
-- Format: {containerName_0},{containerName_1},... For example: sidecar
+- Format: `{containerName_0},{containerName_1},...` For example: sidecar
 - Support for change: Not changeable during in-place upgrades
 
 Annotations

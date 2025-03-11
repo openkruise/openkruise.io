@@ -335,8 +335,8 @@ spec:
     maxUnavailable: 20%
 ```
 Note that maxUnavailable and partition are not necessarily related. For example:
-- When {matched pod}=100,partition=50,maxUnavailable=10, the controller will update 50 PODS to the new version, and only 10 PODS will be updated at the same time, until the 50 updated is completed.
-- When {matched pod}=100,partition=80,maxUnavailable=30, the controller will update 20 PODS to the new version, because the maxUnavailable number is 30, so the 20 PODS will be updated simultaneously.
+- When `{matched pod}=100,partition=50,maxUnavailable=10`, the controller will update 50 PODS to the new version, and only 10 PODS will be updated at the same time, until the 50 updated is completed.
+- When `{matched pod}=100,partition=80,maxUnavailable=30`, the controller will update 20 PODS to the new version, because the maxUnavailable number is 30, so the 20 PODS will be updated simultaneously.
 
 #### Pause
 A user can pause the release by setting pause to true, and the injection capability will remain for newly created, expanded PODS, while updated PODS will remain the updated version, and those that have not been updated will be paused.
@@ -472,8 +472,8 @@ Hot upgrade consists of the following two processes:
 #### Inject Containers
 
 When the sidecar container upgradeStrategy=HotUpgrade, the SidecarSet Webhook will inject two containers into the Pod:
-1. {sidecarContainer.name}-1: as shown in the figure below: envoy-1, the container run the actual working sidecar container, such as envoy:1.16.0
-2. {sidecarContainer.name}-2: as shown in the figure below: envoy-2, the container run the hot upgrade empty container, and it doesn't have to deal with any real logic, as long as it stays in place, such as empty:1.0
+1. `{sidecarContainer.name}-1`: as shown in the figure below: envoy-1, the container run the actual working sidecar container, such as envoy:1.16.0
+2. `{sidecarContainer.name}-2`: as shown in the figure below: envoy-2, the container run the hot upgrade empty container, and it doesn't have to deal with any real logic, as long as it stays in place, such as empty:1.0
 
 ![sidecarset hotupgrade_injection](/img/docs/user-manuals/sidecarset_hotupgrade_injection.png)
 
@@ -521,7 +521,7 @@ patchPolicy is the injected policy, as follows:
   - **Retain:** By default, if annotation[key]=value exists in the Pod, the original value of the Pod will be retained. Inject annotations[key]=value2 only if annotation[key] does not exist in the Pod.
   - **Overwrite:** Corresponding to Retain, when annotation[key]=value exists in the Pod, it will be overwritten value2.
   - **MergePatchJson:** Corresponding to Overwrite, the annotations value is a json string. If the annotations[key] does not exist in the Pod, it will be injected directly. If it exists, do a json value merge.
-For example: annotations[oom-score]='{"main": 2}' exists in the Pod, after injection, the value json is merged into annotations[oom-score]='{"log-agent": 1, "main": 2}'.
+For example: `annotations[oom-score]='{"main": 2}'` exists in the Pod, after injection, the value json is merged into `annotations[oom-score]='{"log-agent": 1, "main": 2}'`.
 
 **Note:** When the patchPolicy is Overwrite and MergePatchJson, the annotations can be updated synchronously when the SidecarSet in-place update the Sidecar Container.
 However, if only the annotations are modified, it will not take effect. It must be in-place update together with the sidecar container image.

@@ -313,7 +313,7 @@ spec:
 
 **注意：**
 - k8s 1.28 feature-gate SidecarContainers 默认是关闭的需要主动打开，k8s 1.29 是默认开启的。
-- 如果 K8S 版本<1.28，你可以使用 Kruise 提供的 [Job Sidecar Terminator](/docs/user-manuals/jobsidecarterminator)
+- 如果 K8S 版本\<1.28，你可以使用 Kruise 提供的 [Job Sidecar Terminator](/docs/user-manuals/jobsidecarterminator)
 和 [Container Launch Priority](/docs/user-manuals/containerlaunchpriority) 来解决上述问题。
 
 **此外，当前版本只支持 Sidecar Containers 自动注入，暂时还不支持原地升级能力。**
@@ -355,8 +355,8 @@ spec:
     maxUnavailable: 20%
 ```
 注意，maxUnavailable 和 partition 两个值是没有必然关联。举例：
-- 当 {matched pod}=100,partition=50,maxUnavailable=10，控制器会发布 50 个 Pod 到新版本，但是发布窗口为 10，即同一时间只会发布 10 个 Pod，每发布好一个 Pod 才会再找一个发布，直到 50 个发布完成。
-- 当 {matched pod}=100,partition=80,maxUnavailable=30，控制器会发布 20 个 Pod 到新版本，因为满足 maxUnavailable 数量，所以这 20 个 Pod 会同时发布。
+- 当 `{matched pod}=100,partition=50,maxUnavailable=10`，控制器会发布 50 个 Pod 到新版本，但是发布窗口为 10，即同一时间只会发布 10 个 Pod，每发布好一个 Pod 才会再找一个发布，直到 50 个发布完成。
+- 当 `{matched pod}=100,partition=80,maxUnavailable=30`，控制器会发布 20 个 Pod 到新版本，因为满足 maxUnavailable 数量，所以这 20 个 Pod 会同时发布。
 
 #### 更新暂停
 用户可以通过设置 paused 为 true 暂停发布，此时对于新创建的、扩容的pod依旧会实现注入能力，已经更新的pod会保持更新后的版本不动，还没有更新的pod会暂停更新。
@@ -491,8 +491,8 @@ spec:
 #### 注入热升级容器
 
 Pod创建时，SidecarSet Webhook将会注入两个容器：
-1. {sidecarContainer.name}-1: 如下图所示 envoy-1，这个容器代表正在实际工作的sidecar容器，例如：envoy:1.16.0
-2. {sidecarContainer.name}-2: 如下图所示 envoy-2，这个容器是业务配置的hotUpgradeEmptyImage容器，例如：empty:1.0，用于后面的热升级机制
+1. `{sidecarContainer.name}-1`: 如下图所示 envoy-1，这个容器代表正在实际工作的sidecar容器，例如：envoy:1.16.0
+2. `{sidecarContainer.name}-2`: 如下图所示 envoy-2，这个容器是业务配置的hotUpgradeEmptyImage容器，例如：empty:1.0，用于后面的热升级机制
 
 ![sidecarset hotupgrade_injection](/img/docs/user-manuals/sidecarset_hotupgrade_injection.png)
 
@@ -539,7 +539,7 @@ patchPolicy为注入的策略，如下：
 - **Retain：** 默认策略，如果Pod中存在 annotation[key]=value ，则保留Pod原有的value。只有当 Pod中不存在 annotation[key] 时，才注入 annotations[key]=value。
 - **Overwrite：** 与 Retain 对应，当 Pod 中存在 annotation[key]=value，将被强制覆盖为 value2。
 - **MergePatchJson：** 与 Overwrite 对应，annotations value为 json 字符串。如果 Pod 不存在该 annotations[key]，则直接注入。如果存在，则进行 json value合并。
-例如：Pod中存在 annotations[oom-score]='{"main": 2}'，注入后将 value json合并为 annotations[oom-score]='{"log-agent": 1, "main": 2}'。
+例如：Pod中存在 `annotations[oom-score]='{"main": 2}'`，注入后将 value json合并为 `annotations[oom-score]='{"log-agent": 1, "main": 2}'`。
 
 **注意：** patchPolicy为Overwrite和MergePatchJson时，SidecarSet原地升级 Sidecar Container时，能够同步更新该 annotations。但是，如果只修改annotations则不能生效，只能搭配Sidecar容器镜像一起原地升级。
 patchPolicy为Retain时，SidecarSet原地升级 Sidecar Container时，将不会同步更新该 annotations。

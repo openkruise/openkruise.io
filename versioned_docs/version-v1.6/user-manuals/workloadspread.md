@@ -346,8 +346,8 @@ spec:
 
 #### Effect
 
-- When the number of `replicas` <= 100, the Pods are scheduled in `ACK` zone.
-- When the number of `replicas` > 100, the 100 Pods are in `ACK` zone, the extra Pods are scheduled in `ECI` zone.
+- When the number of `replicas <= 100`, the Pods are scheduled in `ACK` zone.
+- When the number of `replicas > 100`, the 100 Pods are in `ACK` zone, the extra Pods are scheduled in `ECI` zone.
 - The Pods in `ECI` elastic zone are removed first when scaling in.
 
 ### Multi-domain deployment

@@ -139,8 +139,8 @@ Partition indicates that the number or percentage of Pods of the old version is 
 MaxUnavailable indicates the maximum unavailable number of pods at the same time during the release, with the default value of 1. Users can set the MaxUnavailable value as absolute value or percentage. The percentage is used by the controller to calculate the absolute value based on the number of selected pods.
 
 **Note:** The values of maxUnavailable and partition are not necessarily associated. For example:
-- Under {matched pod} = 100, partition = 50, and maxUnavailable = 10, the controller will release 50 pods to the new version, but the release is limited to 10. That is, only 10 pods are released at the same time. A pod is released one after another until 50 pods are all released.
-- Under {matched pod} = 100, partition = 80, and maxUnavailable = 30, the controller will release 20 Pods to the new version. The controller releases all 20 pods at the same time because the number of maxUnavailable is met.
+- Under \{matched pod\} = 100, partition = 50, and maxUnavailable = 10, the controller will release 50 pods to the new version, but the release is limited to 10. That is, only 10 pods are released at the same time. A pod is released one after another until 50 pods are all released.
+- Under \{matched pod\} = 100, partition = 80, and maxUnavailable = 30, the controller will release 20 Pods to the new version. The controller releases all 20 pods at the same time because the number of maxUnavailable is met.
 
 ## Canary Release
 For businesses that require canary release, strategy.selector can be considered as a choice. The solution is to mark the labels[canary.release] = true into the Pods that require canary release, and then use strategy.selector.matchLabels to select the pods.

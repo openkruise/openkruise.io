@@ -53,8 +53,8 @@ The SidecarSet hot upgrade mechanism includes two steps: injection of Sidecar co
 
 ## Inject Sidecar Containers of the Hot Upgrade Type
 For Sidecar containers of the hot upgrade type, two containers will be injected by SidercarSet Webhook when creating the Pod:
-- {sidecar.name}-1: As shown in the following figure, envoy-1 represents a running sidecar container, for example, envoy:1.16.0.
-- {sidecar.name}-2: As shown in the following figure, envoy-2 represents the “hotUpgradeEmptyImage” container provided by the business, for example, empty:1.0.
+- \{sidecar.name\}-1: As shown in the following figure, envoy-1 represents a running sidecar container, for example, envoy:1.16.0.
+- \{sidecar.name\}-2: As shown in the following figure, envoy-2 represents the “hotUpgradeEmptyImage” container provided by the business, for example, empty:1.0.
 
 ![inject sidecar](../static/img/blog/2021-06-10-sidecarset-hot-update/inject_sidecar.png)
 

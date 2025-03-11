@@ -276,8 +276,8 @@ OKG Dashboard v0.1.0 为集群级别组件(v2.0.0 兼容 v0.1.0)。选择要操�
 ![](/img/kruisegame/user-manuals/dash-gss.png)
 
 字段说明
-- 模版镜像：GameServerTemplate设置的Image。格式为： {容器名称} -> {镜像名称及版本}
-- 模版资源配置：GameServerTemplate设置的Resources。格式为： {容器名称} -> { cpu request / mem request / cpu limit / mem limit }，留白意味着未设置对应字段。
+- 模版镜像：GameServerTemplate设置的Image。格式为： \{容器名称\} -> \{镜像名称及版本\}
+- 模版资源配置：GameServerTemplate设置的Resources。格式为： \{容器名称\} -> \{ cpu request / mem request / cpu limit / mem limit \}，留白意味着未设置对应字段。
 
 操作
 - 跳转资源页查看详情
@@ -294,7 +294,7 @@ OKG Dashboard v0.1.0 为集群级别组件(v2.0.0 兼容 v0.1.0)。选择要操�
 
 字段说明
 
-- 运行镜像：当前游戏服运行的镜像及版本，可能与对应GameServerSet的GameServerTemplate设置的镜像不同。格式为： {容器名称} -> {镜像名称及版本}
+- 运行镜像：当前游戏服运行的镜像及版本，可能与对应GameServerSet的GameServerTemplate设置的镜像不同。格式为： \{容器名称\} -> \{镜像名称及版本\}
 - 游戏服异常情况：GameServerStatus Condition State 为 False 的情况将在此显示。
 
 操作
