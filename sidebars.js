@@ -91,6 +91,15 @@ module.exports = {
     },
     {
       type: 'category',
+      label: 'Operator Manuals',
+      collapsed: true,
+      items: [
+        'operator-manuals/availability',
+        'operator-manuals/troubleshooting',
+      ],
+    },
+    {
+      type: 'category',
       label: 'Reference',
       collapsed: true,
       items: [
