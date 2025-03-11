@@ -171,7 +171,7 @@ PING minecraft-2.minecraft.default.svc.cluster.local (172.16.0.12): 56 data byte
 64 bytes from 172.16.0.12: seq=2 ttl=63 time=0.072 ms
 ```
 
-It can be found that the accessor successfully accessed minecraft-2, and the DNS successfully resolved to the corresponding intranet IP address. The DNS rules here are as follows: {pod-name}.{gss-name}.{namespace-name}.svc.cluster.local
+It can be found that the accessor successfully accessed minecraft-2, and the DNS successfully resolved to the corresponding intranet IP address. The DNS rules here are as follows: `{pod-name}.{gss-name}.{namespace-name}.svc.cluster.local`
 
 ## Synchronization of Labels/Annotations from GameServer to Pod
 

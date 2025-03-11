@@ -53,8 +53,8 @@ SidecarSet热升级机制主要包含注入热升级Sidecar容器和Mesh容器�
 
 ## 注入热升级Sidecar容器
 针对热升级类型的Sidecar容器，在Pod创建时SidecarSet Webhook将会注入两个容器：
-- {sidecar.name}-1: 如下图所示 envoy-1，这个容器代表正在实际工作的sidecar容器，例如：envoy:1.16.0
-- {sidecar.name}-2: 如下图所示 envoy-2，这个容器是业务提供的hotUpgradeEmptyImage容器，例如：empty:1.0
+- \{sidecar.name\}-1: 如下图所示 envoy-1，这个容器代表正在实际工作的sidecar容器，例如：envoy:1.16.0
+- \{sidecar.name\}-2: 如下图所示 envoy-2，这个容器是业务提供的hotUpgradeEmptyImage容器，例如：empty:1.0
 
 ![inject sidecar](../../../static/img/blog/2021-06-10-sidecarset-hot-update/inject_sidecar.png)
 

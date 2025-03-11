@@ -159,7 +159,7 @@ Fixed
 AllowNotReadyContainers
 
 - 含义：在容器原地升级时允许不断流的对应容器名称，可填写多个
-- 格式：{containerName_0},{containerName_1},... 例如：sidecar
+- 格式：`{containerName_0},{containerName_1},...` 例如：sidecar
 - 是否支持变更：在原地升级过程中不可变更。
 
 #### 插件配置
@@ -243,7 +243,7 @@ Kubernetes
 Path
 
 - 含义：访问路径。每个游戏服依据ID拥有各自的访问路径。
-- 填写格式：将<id\>添加到原始路径(与HTTPIngressPath中Path一致)的任意位置，该插件将会生成游戏服ID对应的路径。例如，当设置路径为 /game<id\>，游戏服0对应路径为/game0，游戏服1对应路径为/game1，以此类推。
+- 填写格式：将{'<id>'}添加到原始路径(与HTTPIngressPath中Path一致)的任意位置，该插件将会生成游戏服ID对应的路径。例如，当设置路径为 /game{'<id>'}，游戏服0对应路径为/game0，游戏服1对应路径为/game1，以此类推。
 - 是否支持变更：支持
 
 PathType
@@ -267,7 +267,7 @@ IngressClassName
 Host
 
 - 含义：域名。每个游戏服依据ID拥有各自的访问域名。
-- 填写格式：将<id\>添加域名的任意位置，该插件将会生成游戏服ID对应的域名。例如，当设置域名为 test.game<id\>.cn-hangzhou.ali.com，游戏服0对应域名为test.game0.cn-hangzhou.ali.com，游戏服1对应域名为test.game1.cn-hangzhou.ali.com，以此类推。
+- 填写格式：将{'<id>'}添加域名的任意位置，该插件将会生成游戏服ID对应的域名。例如，当设置域名为 test.game{'<id>'}.cn-hangzhou.ali.com，游戏服0对应域名为test.game0.cn-hangzhou.ali.com，游戏服1对应域名为test.game1.cn-hangzhou.ali.com，以此类推。
 - 是否支持变更：支持
 
 TlsHosts
@@ -537,7 +537,7 @@ Fixed
 AllowNotReadyContainers
 
 - 含义：在容器原地升级时允许不断流的对应容器名称，可填写多个
-- 格式：{containerName_0},{containerName_1},... 例如：sidecar
+- 格式：`{containerName_0},{containerName_1},...` 例如：sidecar
 - 是否支持变更：在原地升级过程中不可变更。
 
 LBHealthCheckSwitch
@@ -656,7 +656,7 @@ Fixed
 AllowNotReadyContainers
 
 - 含义：在容器原地升级时允许不断流的对应容器名称，可填写多个
-- 格式：{containerName_0},{containerName_1},... 例如：sidecar
+- 格式：`{containerName_0},{containerName_1},...` 例如：sidecar
 - 是否支持变更：在原地升级过程中不可变更。
 
 LBHealthCheckFlag
@@ -810,7 +810,7 @@ ReleaseStrategy
 - 含义：EIP回收策略。
 - 填写格式：
     - Follow：默认值，跟随游戏服生命周期。当游戏服被删除时，EIP也将被回收。
-    - Never：不删除podEIP。当不需要时需要手动删除这个podEIP。(通过kubectl delete podeip {游戏服name} -n {游戏服所在namespace})
+    - Never：不删除podEIP。当不需要时需要手动删除这个podEIP。(通过`kubectl delete podeip {游戏服name} -n {游戏服所在namespace}`)
     - 可直接配置过期时间，例如：5m30s，表示Pod删除5.5分钟后删除podEIP。支持Go类型时间表达式。
 - 是否支持变更：否
 
@@ -927,7 +927,7 @@ status:
   status: InUse
 ```
 
-此外，生成的EIP资源在阿里云控制台中会以{pod namespace}/{pod name}命名，与每一个游戏服一一对应。
+此外，生成的EIP资源在阿里云控制台中会以\{pod namespace\}/\{pod name\}命名，与每一个游戏服一一对应。
 
 ---
 
@@ -963,7 +963,7 @@ PortProtocols
 AllowNotReadyContainers
 
 - 含义：在容器原地升级时允许不断流的对应容器名称，可填写多个
-- 格式：{containerName_0},{containerName_1},... 例如：sidecar
+- 格式：\{containerName_0\},\{containerName_1\},... 例如：sidecar
 - 是否支持变更：在原地升级过程中不可变更。
 
 #### 插件配置
@@ -1005,7 +1005,7 @@ PortProtocols
 AllowNotReadyContainers
 
 - 含义：在容器原地升级时允许不断流的对应容器名称，可填写多个
-- 格式：{containerName_0},{containerName_1},... 例如：sidecar
+- 格式：\{containerName_0\},\{containerName_1\},... 例如：sidecar
 - 是否支持变更：在原地升级过程中不可变更。
 
 #### 插件配置
@@ -1087,7 +1087,7 @@ AlibabaCloud
 NlbIdNames
 
 - 含义：填写nlb的id以及对应名称。可填写多个。
-- 填写格式：{nlb-id-0}/{name-0},{nlb-id-1}/{name-1}。例如：nlb-ji8l844c0qzii1x6mc/DianXin,nlb-26jbknebrjlejt5abu/LianTong,...
+- 填写格式：\{nlb-id-0\}/\{name-0\},\{nlb-id-1\}/\{name-1\}。例如：nlb-ji8l844c0qzii1x6mc/DianXin,nlb-26jbknebrjlejt5abu/LianTong,...
 - 是否支持变更：不支持
 
 PortProtocols
@@ -1105,7 +1105,7 @@ Fixed
 AllowNotReadyContainers
 
 - 含义：在容器原地升级时允许不断流的对应容器名称，可填写多个
-- 格式：{containerName_0},{containerName_1},... 例如：sidecar
+- 格式：\{containerName_0\},\{containerName_1\},... 例如：sidecar
 - 是否支持变更：在原地升级过程中不可变更。
 
 LBHealthCheckFlag
@@ -1287,7 +1287,7 @@ AllocateLoadBalancerNodePorts
 AllowNotReadyContainers
 
 - 含义：在容器原地升级时允许不断流的对应容器名称，可填写多个
-- 格式：{containerName_0},{containerName_1},... 例如：sidecar
+- 格式：\{containerName_0\},\{containerName_1\},... 例如：sidecar
 - 是否支持变更：在原地升级过程中不可变更。
 
 Annotations
@@ -1510,7 +1510,7 @@ Fixed
 
 AllowNotReadyContainers
 - 含义：在容器原地升级时允许不断流的对应容器名称，可填写多个
-- 填写格式：{containerName_0},{containerName_1},... 例如：sidecar
+- 填写格式：\{containerName_0\},\{containerName_1\},... 例如：sidecar
 - 是否支持变更：在原地升级过程中不可变更
 
 Annotations
