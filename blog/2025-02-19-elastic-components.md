@@ -14,7 +14,7 @@ also genuinely benefit from true pay-as-you-go characteristics. Consequently, mo
 towards this new architectural paradigm.
 
 The core capability of "flexible configurability" in Serverless technology focuses on enabling specific cloud usage
-scenarios to fully utilize elastic resources through simple, minimally invasive, and highly configurable methods. Its
+scenarios to fully utilize cloud resources through simple, minimally invasive, and highly configurable methods. Its
 essence lies in resolving the conflict between capacity planning and actual cluster load configuration. This article
 will sequentially introduce two configurable components — `WorkloadSpread` and `UnitedDeployment` — discussing their
 core capabilities, technical principles, advantages and disadvantages, as well as real-world applications. Through these
@@ -23,14 +23,14 @@ elasticity.
 
 # Overview of Elastic Scenarios
 
-As Serverless technology matures, more enterprises prefer using elastic resources (such as Alibaba Cloud ACS Serverless
-container instances) over static resources (like managed resource pools or self-built IDC data centers) to host
+As Serverless technology matures, more enterprises prefer using cloud resources (such as Alibaba Cloud ACS Serverless
+container instances) over on-premise resources (like managed resource pools or on-premise IDC data centers) to host
 applications with temporary, tidal, or bursty characteristics. This approach enhances resource utilization efficiency
 and reduces overall costs by adopting a pay-as-you-go model. Below are some typical elastic scenarios:
 
-1. Prioritize using self-built resources in offline IDC data centers; expand application replicas to the cloud when
+1. Prioritize using on-premise resources in offline IDC data centers; scale application to the cloud when
    resources are insufficient.
-2. Prefer using reserved managed node resource pools; use pay-as-you-go Serverless instances for additional replicas
+2. Prefer using pre-paid resource pool in the cloud; use pay-as-you-go Serverless instances for additional replicas
    when resources are insufficient.
 3. Use high-quality stable compute power (e.g., dedicated cloud server instances) first; then use lower-quality compute
    power (e.g., Spot instances).
@@ -47,7 +47,8 @@ appropriate capabilities based on their specific scenarios to effectively levera
 - **WorkloadSpread**: Utilizes a Mutating Webhook to intercept Pod creation requests that meet certain criteria and
   apply Patch operations to inject differentiated configurations. Suitable for existing applications requiring multiple
   elastic partitions with customized Pod Metadata and Spec fields.
-- **UnitedDeployment**: A natively supported workload for elastic partitioning and Pod customization, offering stronger
+- **UnitedDeployment**: A workload with built-in capability of elastic partitioning and pod customization, offering
+  stronger
   elasticity and capacity planning capabilities. Ideal for new applications needing detailed partitioning and individual
   configurations for each partition.
 
@@ -231,13 +232,13 @@ spec:
 
 A company had a web service running on an IDC that needed to scale up due to business growth but could not
 expand the local data center. They chose to use virtual nodes to access cloud-based Serverless elastic compute power,
-forming a hybrid cloud. Their application used acceleration services like `fluid`, which were pre-deployed on nodes in
+forming a hybrid cloud. Their application used acceleration services
+like [Fluid](https://github.com/fluid-cloudnative/fluid), which were pre-deployed on nodes in
 the IDC but not available in the serverless subset. Therefore, they needed to inject a sidecar into cloud Pods to
 provide acceleration capabilities.
 
-To achieve this without modifying the existing Deployment's 8 replicas, they combined OpenKruise's SidecarSet and
-WorkloadSpread capabilities. They deployed a SidecarSet to inject an acceleration component into Pods labeled
-`needs-acceleration-sidecar=true`, and used WorkloadSpread to add this label to Pods scaled to the Serverless subset.
+To achieve this without modifying the existing Deployment's 8 replicas, they used WorkloadSpread to add a label to Pods
+scaled to each subset, which controlled the Fluid sidecar injection.
 
 ```yaml
 apiVersion: apps.kruise.io/v1alpha1
@@ -255,12 +256,12 @@ spec:
       patch:
         metadata:
           labels:
-            needs-acceleration-sidecar: "false"
+            serverless.fluid.io/inject: "false"
     - name: aliyun-acs
       patch:
         metadata:
           labels:
-            needs-acceleration-sidecar: "true"
+            serverless.fluid.io/inject: "true"
 ```
 
 # UnitedDeployment: A Native Workload with Built-in Elasticity
@@ -354,18 +355,11 @@ UnitedDeployment also offers adaptive Pod rescheduling capabilities similar to W
 configuration of timeout durations for scheduling failures and recovery times for subsets from unscheduable status,
 providing enhanced control over adaptive scheduling.
 
-The adaptive rescheduling strategy in UnitedDeployment includes an optional temporary rescheduling feature. When
-enabled, failed Pods are reserved while temporary substitutes are launched in other partitions. Once the reserved Pod is
-successfully scheduled and operational for a period, its substitute will be removed. This feature is particularly
-beneficial in scenarios with stringent partition requirements (e.g., multi-region disaster recovery, PD separation using
-different GPU specifications), addressing temporary unavailability of partitions due to unforeseen issues and ensuring
-resources ultimately meet expected utilization states.
-
 ## Limitations of UnitedDeployment
 
 The many advantages of UnitedDeployment stem from its all-in-one management capabilities as an independent workload.
 However, this also leads to the drawback of higher business transformation intrusiveness. For users' existing
-application, it is necessary to modify the upper-layer platforms (such as operation and maintenance systems, release
+application, it is necessary to modify PaaS systems and tools (such as operation and maintenance systems, release
 systems, etc.) to switch from existing workloads like Deployment and CloneSet to UnitedDeployment.
 
 ## Case Study 1: Elastic Scaling of Pods to Virtual Nodes with Adaptation for Serverless Containers
@@ -506,6 +500,7 @@ spec:
                     cpu: 2000m
                     memory: 6000Mi
 ```
+
 # Summary
 
 Elastic computing power can significantly reduce business costs and effectively increase the performance ceiling of

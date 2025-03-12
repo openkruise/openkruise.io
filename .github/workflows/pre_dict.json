@@ -251,6 +251,7 @@
     "^apps",
     "^custom",
     "^oom-score$",
+    "oom-score$",
     "accessModes",
     "acj-test",
     "ack",
