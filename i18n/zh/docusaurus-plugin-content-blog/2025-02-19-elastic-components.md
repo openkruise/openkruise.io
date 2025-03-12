@@ -416,13 +416,13 @@ spec:
               values:
                 - acs-virtual-kubelet
           # 通过 patch 修改调度到弹性算力的 Pod 环境变量，启用应用的 Serverless 模式
-          patch:
-            spec:
-              containers:
-                - name: main
-                  env:
-                    - name: APP_RUNTIME_MODE
-                      value: SERVERLESS
+        patch:
+          spec:
+            containers:
+              - name: main
+                env:
+                  - name: APP_RUNTIME_MODE
+                    value: SERVERLESS
 ---
 # 结合 HPA 自动扩缩容
 apiVersion: autoscaling/v2beta1
