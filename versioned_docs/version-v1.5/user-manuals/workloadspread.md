@@ -86,7 +86,7 @@ spec:
 
 - `name`: the name of `subset`, it is distinct in a WorkloadSpread, which represents a topology.
 
-- `maxReplicas`：the replicas limit of `subset`, and must be Integer and >= 0. There is no replicas limit while the `maxReplicas` is nil.
+- `maxReplicas`：the replicas limit of `subset`, and must be Integer and `>= 0`. There is no replicas limit while the `maxReplicas` is nil.
 > Don't support percentage type in current version.
 
 - `requiredNodeSelectorTerm`: match zone hardly。
@@ -175,7 +175,7 @@ If the `PodWebhook` feature-gate is set to false, WorkloadSpread will also be di
 ### deletion-cost feature
 `CloneSet` has supported deletion-cost feature in the latest versions.
 
-The other native workload need kubernetes version >= 1.21. (In 1.21, users need to enable PodDeletionCost feature-gate, and since 1.22 it will be enabled by default)
+The other native workload need kubernetes `version >= 1.21`. (In 1.21, users need to enable PodDeletionCost feature-gate, and since 1.22 it will be enabled by default)
 
 ## Scale order:
 
@@ -258,8 +258,8 @@ spec:
 
 #### Effect
 
-- When the number of `replicas` <= 100, the Pods are scheduled in `ACK` zone.
-- When the number of `replicas` > 100, the 100 Pods are in `ACK` zone, the extra Pods are scheduled in `ECI` zone.
+- When the number of `replicas <= 100`, the Pods are scheduled in `ACK` zone.
+- When the number of `replicas > 100`, the 100 Pods are in `ACK` zone, the extra Pods are scheduled in `ECI` zone.
 - The Pods in `ECI` elastic zone are removed first when scaling in.
 
 ### Multi-domain deployment

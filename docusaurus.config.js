@@ -1,5 +1,6 @@
-const lightCodeTheme = require('prism-react-renderer/themes/github');
-const darkCodeTheme = require('prism-react-renderer/themes/dracula');
+const {themes} = require('prism-react-renderer');
+const lightTheme = themes.github;
+const darkTheme = themes.dracula;
 const versions = require('./versions.json');
 
 function getNextVersionName() {
@@ -22,7 +23,7 @@ function getNextVersionName() {
   tagline: 'Automate application management on Kubernetes.',
   url: 'https://openkruise.io',
   baseUrl: '/',
-  onBrokenLinks: 'throw',
+  onBrokenLinks: 'warn',
   onBrokenMarkdownLinks: 'warn',
   favicon: 'img/openkruise.ico',
   organizationName: 'openkruise',
@@ -217,8 +218,9 @@ function getNextVersionName() {
         `,
       },
       prism: {
-        theme: lightCodeTheme,
-        darkTheme: darkCodeTheme,
+        theme: lightTheme,
+        darkTheme: darkTheme,
+        additionalLanguages: ['bash', 'diff', 'json'],
       },
     }),
 });

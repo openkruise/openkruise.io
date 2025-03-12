@@ -278,8 +278,8 @@ Click "GameServerSets" to view all GameServerSets in the current cluster
 ![](/img/kruisegame/user-manuals/dash-gss.png)
 
 Field description
-- templateImages: Image set by GameServerTemplate. The format is: {container name} -> {image name and version}
-- templateResources: Resources set by GameServerTemplate. The format is: {container name} -> { cpu request / mem request / cpu limit / mem limit }, leaving blank means that the corresponding field is not set.
+- templateImages: Image set by GameServerTemplate. The format is: `{container name} -> {image name and version}`
+- templateResources: Resources set by GameServerTemplate. The format is: `{container name} -> { cpu request / mem request / cpu limit / mem limit }, leaving blank means that the corresponding field is not set.`
 
 operate
 - Jump to the resource page to view details
@@ -297,7 +297,7 @@ Click "GameServer" to view all GameServers in the current cluster
 
 Field description
 
-- images: The image and version currently running on the game server may be different from the image set by the GameServerTemplate of the corresponding GameServerSet. The format is: {container name} -> {image name and version}
+- images: The image and version currently running on the game server may be different from the image set by the GameServerTemplate of the corresponding GameServerSet. The format is: `{container name} -> {image name and version}`
 - conditions: GameServerStatus Condition State is False will be displayed here.
 
 operate
