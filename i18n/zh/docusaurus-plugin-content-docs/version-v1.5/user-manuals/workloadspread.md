@@ -256,8 +256,8 @@ spec:
 2. 创建workload，副本数可以自由调整。
 
 #### 部署效果
-- 当replicas <= 100 时，Pod被调度到ack上。
-- 当replicas > 100 时，100个在ack，多余的Pod在弹性域eci。
+- 当`replicas <= 100` 时，Pod被调度到ack上。
+- 当`replicas > 100` 时，100个在ack，多余的Pod在弹性域eci。
 - 缩容时优先从弹性域eci上缩容。
 
 ### 多域部署

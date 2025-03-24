@@ -85,7 +85,7 @@ spec:
 
 - `name`: subset的名称，在同一个WorkloadSpread下name唯一，代表一个topology区域。
 
-- `maxReplicas`：该subset所期望调度的最大副本数，需为 >= 0的整数。若设置为空，代表不限制subset的副本数。
+- `maxReplicas`：该subset所期望调度的最大副本数，需为 `>= 0`的整数。若设置为空，代表不限制subset的副本数。
 > 当前版本暂不支持百分比类型。
 
 - `requiredNodeSelectorTerm`: 强制匹配到某个zone。
@@ -339,8 +339,8 @@ spec:
 2. 创建workload，副本数可以自由调整。
 
 #### 部署效果
-- 当replicas <= 100 时，Pod被调度到ack上。
-- 当replicas > 100 时，100个在ack，多余的Pod在弹性域eci。
+- 当`replicas <= 100` 时，Pod被调度到ack上。
+- 当`replicas > 100` 时，100个在ack，多余的Pod在弹性域eci。
 - 缩容时优先从弹性域eci上缩容。
 
 ### 多域部署

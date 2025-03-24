@@ -16,10 +16,10 @@ title: Golang client
 require github.com/openkruise/kruise-api v1.6.0
 ```
 
-| Kubernetes Version in your Project | Import Kruise-api < v0.10    | Import Kruise-api >= v0.10   |
+| Kubernetes Version in your Project | Import Kruise-api `< v0.10`    | Import Kruise-api `>= v0.10`   |
 | ---------------------------------- | ---------------------------- | ---------------------------- |
-| < 1.18                             | v0.x.y (x <= 9)              | v0.x.y-legacy (x >= 10)      |
-| >= 1.18                            | v0.x.y-1.18 (7 <= x <= 9)    | v0.x.y (x >= 10)             |
+| `< 1.18`                             | `v0.x.y (x <= 9)`              | `v0.x.y-legacy (x >= 10)`      |
+| `>= 1.18`                            | `v0.x.y-1.18 (7 <= x <= 9)`    | `v0.x.y (x >= 10)`             |
 
 然后，有两种方式在你的代码中使用 `kruise-api`：直接使用 或 通过 `controller-runtime` 使用。
 
