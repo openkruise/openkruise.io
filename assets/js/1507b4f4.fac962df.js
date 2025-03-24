@@ -1,1 +1,0 @@
-"use strict";(self.webpackChunkopenkruise_io=self.webpackChunkopenkruise_io||[]).push([[1758],{91767:function(e){e.exports=JSON.parse('{"permalink":"/blog/tags/sidecar","page":1,"postsPerPage":10,"totalPages":1,"totalCount":2,"blogDescription":"Blog","blogTitle":"Blog"}')}}]);
