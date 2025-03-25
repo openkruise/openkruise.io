@@ -79,7 +79,8 @@ module.exports = {
                 'blog-video/ack-one-okg',
                 'blog-video/okg-911',
                 'blog-video/okg-gsshosting',
-                'blog-video/okg-360'
+                'blog-video/okg-360',
+                'blog-video/gameserver-scale'
             ],
         }
   ],
