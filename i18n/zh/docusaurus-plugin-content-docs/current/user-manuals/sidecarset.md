@@ -282,6 +282,32 @@ spec:
 ```
 以上两种版本选择方式，任选其一即可。
 
+#### 支持 Partial 注入策略
+**FEATURE STATE:** Kruise v1.8.0
+
+虽然之前的版本选择方式（指定具体 revision 或 customVersion）可以控制新 Pod 的注入版本，但在按比例灰度发布时，可能需要对新创建的 Pod 按比例随机分配注入版本。
+
+为此，我们引入了 **Partial 注入策略**： 通过配置 `.spec.injectionStrategy.revision.policy: Partial`，SidecarSet 将根据指定的百分比比例，
+通过随机算法动态决定是否对新 Pod 注入最新版本 Sidecar。
+
+例如，若设置 `.spec.updateStrategy.partition: 70%`，则 30% 的新 Pod 将注入最新版本，其余 70% 仍使用旧版本。
+这种方式可自动实现灰度流量的渐进式控制，无需手动管理具体 Pod 的版本选择。配置示例：
+```yaml
+apiVersion: apps.kruise.io/v1alpha1
+kind: SidecarSet 
+metadata: 
+  name: sidecarset 
+spec:
+  #...
+  injectionStrategy:
+    revision:
+      policy: Partial 
+  updateStrategy:
+    partition: 70%
+```
+
+**注意**：该策略使用随机数来选择注入版本，因此可能会导致新 Pod 的注入版本与预期不完全一致。
+
 ### 支持 k8s 1.28 Sidecar 容器
 **FEATURE STATE:** Kruise v1.7.0
 

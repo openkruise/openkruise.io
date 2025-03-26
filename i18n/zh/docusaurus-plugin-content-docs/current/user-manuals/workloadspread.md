@@ -88,6 +88,9 @@ spec:
 - `maxReplicas`：该subset所期望调度的最大副本数，需为 >= 0的整数。若设置为空，代表不限制subset的副本数。
 > 当前版本暂不支持百分比类型。
 
+- `minReplicas`：该subset所期望调度的最小副本数，需为 >= 0的整数。若设置为空，代表不限制subset的副本数。比如，按照地域打散时，可以使用minReplicas保证每个地域至少有一个副本，其余副本按照自适应调度策略弹性部署。
+> 当前版本暂不支持百分比类型。
+
 - `requiredNodeSelectorTerm`: 强制匹配到某个zone。
 
 - `preferredNodeSelectorTerms`: 尽量匹配到某个zone。
@@ -285,6 +288,65 @@ spec:
   subsets:
     ...
 ```
+
+### 支持 AI 负载
+
+**FEATURE STATE:** Kruise v1.8.0
+
+在AI场景中，某些工作负载（如 Kubeflow 的 TFJob）包含多个角色（如 PS、Worker），其副本数定义可能与标准 Scale 子资源不一致。
+WorkloadSpread 通过新增的 `targetFilter` 字段，支持对这类负载进行细粒度的资源打散。
+
+#### 典型场景示例
+以 TFJob 为例，需要将 Worker 角色的 Pod 分布到不同区域：
+```yaml
+apiVersion: kubeflow.org/v1
+kind: TFJob
+metadata:
+  name: tfjob-demo
+spec:
+  tfReplicaSpecs:
+  PS:
+    replicas: 1
+    # ...
+  Worker:
+    replicas: 2
+    # ...
+```
+
+#### 配置步骤
+1. **配置自定义工作负载白名单**  
+   参考[章节：在自定义工作负载上使用 WorkloadSpread](#在自定义工作负载上使用-workloadspread)，将 TFJob 加入白名单并配置 rbac 权限。
+
+
+2. **定义WorkloadSpread配置**
+```yaml
+apiVersion: apps.kruise.io/v1alpha1
+kind: WorkloadSpread
+metadata:
+  name: ws-tfjob-demo
+spec:
+  targetRef:
+    apiVersion: kubeflow.org/v1alpha1
+    kind: TFJob
+    name: tfjob-demo
+  targetFilter: 
+    selector:
+      matchLabels:
+        role: worker
+    replicasPathList:
+    - spec.tfReplicaSpecs.Worker.replicas
+  #...
+```
+
+#### 关键参数说明
+| 参数              | 作用                                                                 |
+|-------------------|----------------------------------------------------------------------|
+| `targetFilter`    | 用于筛选目标工作负载中的特定角色（如Worker），并指定其副本数路径。   |
+| `replicasPathList`| 指定目标角色的副本数在CRD中的路径，例如`spec.tfReplicaSpecs.Worker.replicas`。|
+
+#### 预期行为
+- WorkloadSpread 将仅管理 TFJob 中 Worker 角色的 Pod 分布，PS 角色的 Pod 不受影响。
+- 扩缩容时，Worker 的 Pod 将按照 `subsets` 定义的规则分布到不同区域。
 
 ## feature-gates
 WorkloadSpread 默认是关闭的，如果要开启请通过设置 feature-gates *WorkloadSpread*.
