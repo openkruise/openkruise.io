@@ -61,6 +61,8 @@ def highlight(e_path, z_path):
         data = f.read()
         cn_emphasizes = re.findall(reg, data, re.S)
     if len(cn_emphasizes) != len(en_emphasizes):
+        log("The number of highlighted strings in the Chinese and English documents is inconsistent. "
+            "The details of file paths, quantities and contents are as follows. 🔽🔽🔽")
         log("file://" + e_path)
         log(len(en_emphasizes), json.dumps(dict(Counter(en_emphasizes)), indent=4, ensure_ascii=False))
         log("file://" + z_path)
@@ -77,6 +79,8 @@ def link(e_path, z_path):
         data = f.read()
         zn_links = re.findall(reg, data, re.S)
     if dict(Counter(en_links)) != dict(Counter(zn_links)):
+        log("The number of links in the Chinese and English documents is inconsistent. "
+            "The details of file paths, quantities and contents are as follows. 🔽🔽🔽")
         log("file://" + e_path)
         log(len(en_links), json.dumps(dict(Counter(en_links)), indent=4, ensure_ascii=False))
         log("file://" + z_path)
@@ -88,6 +92,8 @@ def title_count(e_path, z_path):
     en_titles = ignore_code_blocks(e_path)
     zn_titles = ignore_code_blocks(z_path)
     if len(en_titles) != len(zn_titles):
+        log("The number of titles in the Chinese and English documents is inconsistent. "
+            "The details of file paths, quantities and contents are as follows. 🔽🔽🔽")
         log("file://" + e_path)
         log(len(en_titles), json.dumps(dict(Counter(en_titles)), indent=4, ensure_ascii=False))
         log("file://" + z_path)
@@ -107,6 +113,8 @@ def inline_count(e_path, z_path):
     en_ins = list(filter(lambda x: not x.startswith('``'), en_ins))
 
     if len(en_ins) != len(zn_ins):
+        log("The number of code block in the Chinese and English documents is inconsistent. "
+            "The details of file paths, quantities and contents are as follows. 🔽🔽🔽")
         log("file://" + e_path)
         log(len(en_ins), json.dumps(list(set(en_ins) - set(zn_ins)), indent=4, ensure_ascii=False))
         log("file://" + z_path)
