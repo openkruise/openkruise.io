@@ -56,7 +56,7 @@ $ helm upgrade kruise-game openkruise/kruise-game --version 0.10.0 [--force]
 | `resources.limits.memory`        | kruise-game容器的内存资源限制                                    | `1Gi`                            |
 | `resources.requests.cpu`         | kruise-game容器的CPU资源请求                                   | `10m`                            |
 | `resources.requests.memory`      | kruise-game容器的内存资源请求                                    | `64Mi`                           |
-| `prometheus.enabled`             | 是否创建指标监控服务                                              | `true`                           |
+| `prometheus.enabled`             | 是否创建指标监控服务                                              | `false`                          |
 | `prometheus.monitorService.port` | monitorService的监听端口                                     | `8080`                           |
 | `scale.service.port`             | 伸缩服务监听端口                                                | `6000`                           |
 | `scale.service.targetPort`       | 伸缩服务目标端口                                                | `6000`                           |
