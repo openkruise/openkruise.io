@@ -56,7 +56,7 @@ The following table lists the configurable parameters of the kruise-game chart a
 | `resources.limits.memory`        | Memory resource limit of kruise-game container                                                   | `1Gi`                            |
 | `resources.requests.cpu`         | CPU resource request of kruise-game container                                                    | `10m`                            |
 | `resources.requests.memory`      | Memory resource request of kruise-game container                                                 | `64Mi`                           |
-| `prometheus.enabled`             | Whether to bind metric endpoint                                                                  | `true`                           |
+| `prometheus.enabled`             | Whether to bind metric endpoint                                                                  | `false`                          |
 | `prometheus.monitorService.port` | Port of the monitorservice bind to                                                               | `8080`                           |
 | `scale.service.port`             | Port of the external scaler server binds to                                                      | `6000`                           |
 | `scale.service.targetPort`       | TargetPort of the external scaler server binds to                                                | `6000`                           |
