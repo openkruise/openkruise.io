@@ -20,19 +20,20 @@ type GameServerSetSpec struct {
 
     // Reserved game server IDs, optional. If specified, existing game servers with those IDs will be deleted,
     // and new game servers will not be created with those IDs.
-	ReserveGameServerIds []intstr.IntOrString `json:"reserveGameServerIds,omitempty"`
+    // You can also use ranges along with numbers, such as [1, 3-5], which is a shortcut for [1, 3, 4, 5].
+    ReserveGameServerIds []intstr.IntOrString `json:"reserveGameServerIds,omitempty"`
 
     // Custom service qualities for game servers.
-    ServiceQualities     []ServiceQuality   `json:"serviceQualities,omitempty"`
+    ServiceQualities     []ServiceQuality     `json:"serviceQualities,omitempty"`
 
     // Batch update strategy for game servers.
-    UpdateStrategy       UpdateStrategy     `json:"updateStrategy,omitempty"`
+    UpdateStrategy       UpdateStrategy       `json:"updateStrategy,omitempty"`
  
     // Horizontal scaling strategy for game servers.
-    ScaleStrategy        ScaleStrategy      `json:"scaleStrategy,omitempty"`
+    ScaleStrategy        ScaleStrategy        `json:"scaleStrategy,omitempty"`
 
     // Network settings for game server access layer.
-    Network              *Network           `json:"network,omitempty"`
+    Network              *Network             `json:"network,omitempty"`
     
     // Lifecycle hook defined by users
     Lifecycle            *appspub.Lifecycle `json:"lifecycle,omitempty"`
