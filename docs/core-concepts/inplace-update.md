@@ -45,7 +45,7 @@ What changes does it consider to be possible to in-place update?
 3. **Since Kruise v1.0 (including v1.0 alpha/beta)**, update `spec.template.metadata.labels/annotations` and there exists container env from the changed labels/annotations, Kruise will in-place update them to renew the env value in containers.
 4. **Since Kruise v1.8**, if the Kubernetes cluster has `InPlacePodVerticalScaling` enabled and the Kruise `InPlaceWorkloadVerticalScaling` feature is also enabled, updating `spec.template.spec.containers[x].resources` will trigger Kruise to perform an in-place update of these container resources without recreate them.
 
-Otherwise, the changes to other fields such as `spec.template.spec.containers[x].env` or `spec.template.spec.containers[x].resources` will go back to ReCreate Update.
+Otherwise, the changes to other fields such as `spec.template.spec.containers[x].env` or `spec.template.spec.containers[x].resources`(if the Kruise `InPlaceWorkloadVerticalScaling` feature is disabled) will go back to ReCreate Update.
 
 Take the CloneSet YAML below as an example:
 
