@@ -153,5 +153,5 @@ if __name__ == '__main__':
                     func(en_path, zn_path)
 
     if result:
-        print(json.dumps(sorted(list(pre_dict_increment))))
+        print("Please add these abnormal words to pre_dict.json :",json.dumps(sorted(list(pre_dict_increment))))
         sys.exit(1)
