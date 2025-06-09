@@ -43,9 +43,9 @@ title: 原地升级
 1. 更新 workload 中的 `spec.template.metadata.*`，比如 labels/annotations，Kruise 只会将 metadata 中的改动更新到存量 Pod 上。
 2. 更新 workload 中的 `spec.template.spec.containers[x].image`，Kruise 会原地升级 Pod 中这些容器的镜像，而不会重建整个 Pod。
 3. **从 Kruise v1.0 版本开始（包括 v1.0 alpha/beta）**，更新 `spec.template.metadata.labels/annotations` 并且 container 中有配置 env from 这些改动的 labels/anntations，Kruise 会原地升级这些容器来生效新的 env 值。
-4. **从 Kruise v1.8 版本开始**, 如果在启用了`InPlacePodVerticalScaling`的 kubernetes 集群中并且启用了kruise `InPlaceWorkloadVerticalScaling` 特性时，更新`spec.template.spec.containers[x].resources`，Kruise 会原地升级 Pod 中这些容器的资源，而不会重建整个 Pod。 
+4. **从 Kruise v1.8 版本开始**，若 Kubernetes 集群已启用`InPlacePodVerticalScaling`特性，且 Kruise 中也启用了`InPlaceWorkloadVerticalScaling`特性，当更新`spec.template.spec.containers[x].resources`时，Kruise 将直接对 Pod 中相应容器的资源进行原地升级，而无需重建整个 Pod。
 
-否则，其他字段的改动，比如 `spec.template.spec.containers[x].env` 或 `spec.template.spec.containers[x].resources`，都是会回退为重建升级。
+否则，其他字段的改动，比如 `spec.template.spec.containers[x].env` 或 `spec.template.spec.containers[x].resources`(未启用 Kruise `InPlaceWorkloadVerticalScaling` 特性)，都是会回退为重建升级。
 
 例如对下述 CloneSet YAML：
 
