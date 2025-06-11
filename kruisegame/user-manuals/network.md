@@ -1569,7 +1569,7 @@ TencentCloud
 #### Plugin description
 
 - TencentCloud-CLB enables game servers to be accessed from the Internet by using Cloud Load Balancer (CLB) of Tencent Cloud. CLB is a type of Server Load Balancer (CLB). TencentCloud-CLB uses different ports for different game servers. The CLB instance only forwards traffic, but does not implement load balancing.
-- The [tke-extend-network-controller](https://github.com/tkestack/tke-extend-network-controller) network plugin needs to be installed (can be installed through the TKE application market).
+- Requires installation of the [tke-extend-network-controller](https://github.com/tkestack/tke-extend-network-controller) network plugin (available via the TKE Marketplace), with a minimum version requirement of `2.1.1`. Additionally, [cert-manager](https://cert-manager.io/) must be installed (a dependency for `tke-extend-network-controller`, also available through the TKE Marketplace).
 - This network plugin supports network isolation.
 
 
@@ -1587,15 +1587,24 @@ PortProtocols
 - Value: in the format of port1/protocol1,port2/protocol2,... The protocol names must be in uppercase letters.
 - Configuration change supported or not: yes.
 
+MinPort
+
+- Meaning: (Optional) Specifies the starting port number when allocating CLB ports. Default value: 30000.
+- Format: Numeric (e.g., 30000).
+- Configuration change supported or not: no.
+
+ListenerQuota
+
+- Meaning: (Optional) Specifies the listener quota per CLB instance. Default value: 50.
+(Note: Configure this parameter only if you have modified the instance-level listener quota. Do not configure if you modified the account-level quota or made no changes)
+- Format: Numeric (e.g. 50).
+- Configuration change supported or not: no.
+
 #### Plugin configuration
 
 ```toml
 [tencentcloud]
 enable = true
-[tencentcloud.clb]
-# Specify the range of available ports of the CLB instance. Ports in this range can be used to forward Internet traffic to pods. In this example, the range includes 200 ports.
-min_port = 1000
-max_port = 1100
 ```
 
 #### Example
@@ -1618,6 +1627,8 @@ spec:
         value: "lb-3ip9k5kr,lb-4ia8k0yh"
       - name: PortProtocols
         value: "80/TCP,7777/UDP"
+      - name: MinPort
+        value: "30000"
   gameServerTemplate:
     spec:
       containers:
@@ -1629,32 +1640,32 @@ The network status of GameServer would be as follows:
 
 ```yaml
   networkStatus:
-    createTime: "2024-10-28T03:16:20Z"
+    createTime: "2025-06-09T12:28:39Z"
     currentNetworkState: Ready
     desiredNetworkState: Ready
     externalAddresses:
     - ip: 139.155.64.52
       ports:
       - name: "80"
-        port: 1002
+        port: 30000
         protocol: TCP
     - ip: 139.155.64.52
       ports:
       - name: "7777"
-        port: 1003
+        port: 30000
         protocol: UDP
     internalAddresses:
-    - ip: 172.16.7.106
+    - ip: 172.16.41.2
       ports:
       - name: "80"
         port: 80
         protocol: TCP
-    - ip: 172.16.7.106
+    - ip: 172.16.41.2
       ports:
       - name: "7777"
         port: 7777
         protocol: UDP
-    lastTransitionTime: "2024-10-28T03:16:20Z"
+    lastTransitionTime: "2025-06-09T12:28:39Z"
     networkType: TencentCloud-CLB
 ```
 
