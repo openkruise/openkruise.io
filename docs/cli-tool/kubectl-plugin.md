@@ -72,7 +72,6 @@ Manage rollout resources. This command provides deep inspection and control of t
 
 **Available Commands:**
 
-* **`describe`**: Provides a detailed, real-time view of the status of a Rollout object. This is invaluable for inspecting the progress of an update, debugging issues, and understanding the current state of your deployment.
 * **`approve`**: Manually promotes a Rollout to the next step. When a rollout is paused for manual verification, this command signals that the canary version has been validated and the full rollout can proceed.
 * **`undo`**: Rolls back a workload to its previous version. This is a critical command for quickly reverting a deployment if the new version is found to be unstable or buggy.
 * **`history`**: View the revision history of a workload.
@@ -84,9 +83,6 @@ Manage rollout resources. This command provides deep inspection and control of t
 **Usage Examples:**
 
 ```bash
-# Get a detailed description of the rollout 'my-rollout' in the 'production' namespace
-$ kubectl-kruise rollout describe rollout/my-rollout -n production
-
 $ kubectl kruise rollout undo cloneset/nginx
 
 # built-in statefulsets
@@ -97,6 +93,17 @@ $ kubectl kruise rollout status statefulsets.apps.kruise.io/sts2
 
 # approve a kruise rollout resource named "rollout-demo" in "ns-demo" namespace
 $ kubectl-kruise rollout approve rollout-demo -n ns-demo
+```
+### describe
+
+Perform a deep inspection of any Kruise object (including Rollouts).
+
+```bash
+# Inspect the “rollouts-demo” Rollout in namespace default:
+kubectl kruise describe rollout rollouts-demo -n default
+
+# You can also describe other kruise objects, for example:
+kubectl kruise describe cloneset my-cloneset -n default
 ```
 
 ### set

@@ -107,7 +107,26 @@ $ kubectl patch deployment workload-demo -p \
 Wait a while, we will see the Deployment status show **Only 1 Pod** is upgraded.
 ![](../../static/img/rollouts/basic-1st-batch.jpg)
 
-### Step 3: Continue to release the 2-nd batch
+### Step 3: Inspect or continue your rollout
+**Inspect** the rollout’s detailed status, steps, and recent events:
+```bash
+$ kubectl-kruise describe rollout rollouts-demo -n default
+```
+**Example output:**
+```
+Name:         rollouts-demo
+Namespace:    default
+Status:       Healthy
+Strategy:     Canary
+Step:         1/4
+Steps:
+  - Replicas: 1   State: StepUpgrade
+  - Replicas: 2
+  - Replicas: 3
+  - Replicas: 4
+```
+
+**Approve** the next batch if everything looks good:
 ```bash
 $ kubectl-kruise rollout approve rollout/rollouts-demo -n default
 ```
