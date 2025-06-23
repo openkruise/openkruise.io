@@ -96,14 +96,11 @@ $ kubectl-kruise rollout approve rollout-demo -n ns-demo
 ```
 ### describe
 
-Perform a deep inspection of any Kruise object (including Rollouts).
+Perform a deep inspection of a Rollout resource, including its step status, history, conditions, and recent events.
 
 ```bash
 # Inspect the “rollouts-demo” Rollout in namespace default:
 kubectl kruise describe rollout rollouts-demo -n default
-
-# You can also describe other kruise objects, for example:
-kubectl kruise describe cloneset my-cloneset -n default
 ```
 
 ### set
