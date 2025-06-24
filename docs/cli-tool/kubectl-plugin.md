@@ -68,7 +68,19 @@ It equals to `kubectl scale --replicas=3 cloneset nginx`.
 
 ### rollout
 
-Available commands: `history`, `pause`, `restart`, `resume`, `status`, `undo`, `approve`.
+Manage rollout resources. This command provides deep inspection and control of the Kruise Rollout objects.
+
+**Available Commands:**
+
+* **`approve`**: Manually promotes a Rollout to the next step. When a rollout is paused for manual verification, this command signals that the canary version has been validated and the full rollout can proceed.
+* **`undo`**: Rolls back a workload to its previous version. This is a critical command for quickly reverting a deployment if the new version is found to be unstable or buggy.
+* **`history`**: View the revision history of a workload.
+* **`pause`**: Pause a Rollout.
+* **`resume`**: Resume a paused Rollout.
+* **`restart`**: Restart a Rollout.
+* **`status`**: Display the status of a Rollout.
+
+**Usage Examples:**
 
 ```bash
 $ kubectl kruise rollout undo cloneset/nginx
@@ -81,6 +93,14 @@ $ kubectl kruise rollout status statefulsets.apps.kruise.io/sts2
 
 # approve a kruise rollout resource named "rollout-demo" in "ns-demo" namespace
 $ kubectl-kruise rollout approve rollout-demo -n ns-demo
+```
+### describe
+
+Perform a deep inspection of a Rollout resource, including its step status, history, conditions, and recent events.
+
+```bash
+# Inspect the “rollouts-demo” Rollout in namespace default:
+kubectl kruise describe rollout rollouts-demo -n default
 ```
 
 ### set

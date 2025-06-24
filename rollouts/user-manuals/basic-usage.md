@@ -107,7 +107,26 @@ $ kubectl patch deployment workload-demo -p \
 Wait a while, we will see the Deployment status show **Only 1 Pod** is upgraded.
 ![](../../static/img/rollouts/basic-1st-batch.jpg)
 
-### Step 3: Continue to release the 2-nd batch
+### Step 3: Inspect or continue your rollout
+**Inspect** the rollout’s detailed status, steps, and recent events:
+```bash
+$ kubectl-kruise describe rollout rollouts-demo -n default
+```
+**Example output:**
+```
+Name:         rollouts-demo
+Namespace:    default
+Status:       Healthy
+Strategy:     Canary
+Step:         1/4
+Steps:
+  - Replicas: 1   State: StepUpgrade
+  - Replicas: 2
+  - Replicas: 3
+  - Replicas: 4
+```
+
+**Approve** the next batch if everything looks good:
 ```bash
 $ kubectl-kruise rollout approve rollout/rollouts-demo -n default
 ```
@@ -142,7 +161,7 @@ spec:
       - ... ...
 ```
 
-- **For method two**, you don't need to change anything before the next release. However, before confirming, you need to check the status of Rollout and use the update interface instead of the patch interface of Kubernetes client, or use our  [kubectl-kruise](https://github.com/openkruise/kruise-tools) tools.
+- **For method two**, you don't need to change anything before the next release. However, before confirming, you need to check the status of Rollout and use the update interface instead of the patch interface of Kubernetes client, or use our  [kubectl-kruise](https://github.com/openkruise/kruise-tools) tools. For a detailed guide on all rollout-related commands like `describe`, `approve`, and `undo`, please see the [Kubectl Plugin documentation](../cli-tool/kubectl-plugin.md#rollout).
 ```bash
 $ kubectl-kruise rollout approve rollout/<your-rollout-name> -n <your-rollout-namespace>
 ```
