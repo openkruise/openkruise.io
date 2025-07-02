@@ -39,6 +39,48 @@ spec:
 ```
 
 ### Step 1: Prepare and apply Rollout configuration
+
+### Disabling a Rollout
+Completely stop Rollout reconciliation (controller will ignore this resource):
+```bash
+kubectl apply -f - <<EOF
+apiVersion: rollouts.kruise.io/v1beta1
+kind: Rollout
+metadata:
+  name: rollouts-demo
+  namespace: default
+spec:
+  disabled: true  # Disables Rollout reconciliation
+  workloadRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: workload-demo
+  strategy:
+    canary:
+      steps: [...] 
+EOF
+```
+### Pausing a Rollout
+Halt progression while keeping Rollout active (resume later by setting to `false`):
+```bash
+kubectl apply -f - <<EOF
+apiVersion: rollouts.kruise.io/v1beta1
+kind: Rollout
+metadata:
+  name: rollouts-demo
+  namespace: default
+spec:
+  strategy:
+    paused: true   # Pauses rollout progression
+    canary:
+      steps: [...] 
+  workloadRef:
+      apiVersion: apps/v1
+      kind: Deployment
+      name: workload-demo
+EOF
+```
+
 Assume that you want to use multi-batch update strategy to upgrade your Deployment from "version-1" to "version-2":
 - In the 1-st batch: **Only 1** Pod should be upgraded;
 - In the 2-nd batch: **50%** Pods should be upgraded, i.e., **5 updated Pods**;
