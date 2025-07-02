@@ -106,13 +106,13 @@ There are 3 major parts of api specifications you should pay attention to:
 ## API Details
 
 ### Rollout Spec Fields
-| Field               | Type    | Default | Description   
-|
-|---------------------|---------|---------|-----------------------------------------------------------------------------|
-| `disabled`          | boolean | false   | When true, completely disables Rollout reconciliation 
-| `strategy.paused`   | boolean | false   | When true, pauses rollout progression until manually resumed               |
-| `workloadRef`       | Object  |         | Reference to the workload being managed                                    |
-| `strategy`          | Object  |         | Rollout strategy configuration (canary or blue-green)                      |
+
+| Field             | Type    | Default | Description                                                              |
+|-------------------|---------|---------|--------------------------------------------------------------------------|
+| `disabled`        | boolean | false   | When true, completely disables Rollout reconciliation                    |
+| `strategy.paused` | boolean | false   | When true, pauses rollout progression until manually resumed             |
+| `workloadRef`     | Object  |         | Reference to the workload being managed                                  |
+| `strategy`        | Object  |         | Rollout strategy configuration (canary or blue‑green)                     |
 
 **Note: Difference between Disabled and Paused**
 - **Disabled**: Stops all Rollout reconciliation. The controller ignores this Rollout until re-enabled.
