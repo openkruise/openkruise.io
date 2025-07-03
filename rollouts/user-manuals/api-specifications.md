@@ -110,13 +110,8 @@ There are 3 major parts of api specifications you should pay attention to:
 | Field             | Type    | Default | Description                                                              |
 |-------------------|---------|---------|--------------------------------------------------------------------------|
 | `disabled`        | boolean | false   | When true, completely disables Rollout reconciliation                    |
-| `strategy.paused` | boolean | false   | When true, pauses rollout progression until manually resumed             |
 | `workloadRef`     | Object  |         | Reference to the workload being managed                                  |
 | `strategy`        | Object  |         | Rollout strategy configuration (canary or blue‑green)                     |
-
-**Note: Difference between Disabled and Paused**
-- **Disabled**: Stops all Rollout reconciliation. The controller ignores this Rollout until re-enabled.
-- **Paused**: Keeps the Rollout active but halts progression between steps. Useful for inspections or troubleshooting.
 
 **Version Compatibility**
 - `blueGreen` strategy requires Kruise Rollout v0.5.0+
@@ -338,6 +333,10 @@ spec:
 | `paused`     | boolean | false   | When true, pauses rollout progression until manually resumed             |
 | `canary`     | Object  | nil     | Canary strategy configuration                                            |
 | `blueGreen`  | Object  | nil     | Blue-green strategy configuration (requires v0.5.0+)                     |
+
+**Note: Difference between Disabled and Paused**
+- **Disabled**: Stops all Rollout reconciliation; the controller ignores this Rollout until re-enabled.
+- **Paused**: Keeps the Rollout active but halts progression between steps. Useful for inspections or troubleshooting.
 
 `canary`  is used for canary strategy and multi-batch strategy, while `blueGreen` is used for blue-green strategy. These two are mutually exclusive; they cannot both be empty or both be non-empty. The `blueGreen` strategy was introduced in Kruise-Rollout versions higher than v0.5.0 and is not supported in the v1alpha1 API.
 

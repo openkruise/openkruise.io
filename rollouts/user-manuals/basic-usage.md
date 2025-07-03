@@ -40,47 +40,6 @@ spec:
 
 ### Step 1: Prepare and apply Rollout configuration
 
-### Disabling a Rollout
-Completely stop Rollout reconciliation (controller will ignore this resource):
-```bash
-kubectl apply -f - <<EOF
-apiVersion: rollouts.kruise.io/v1beta1
-kind: Rollout
-metadata:
-  name: rollouts-demo
-  namespace: default
-spec:
-  disabled: true  # Disables Rollout reconciliation
-  workloadRef:
-    apiVersion: apps/v1
-    kind: Deployment
-    name: workload-demo
-  strategy:
-    canary:
-      steps: [...] 
-EOF
-```
-### Pausing a Rollout
-Halt progression while keeping Rollout active (resume later by setting to `false`):
-```bash
-kubectl apply -f - <<EOF
-apiVersion: rollouts.kruise.io/v1beta1
-kind: Rollout
-metadata:
-  name: rollouts-demo
-  namespace: default
-spec:
-  strategy:
-    paused: true   # Pauses rollout progression
-    canary:
-      steps: [...] 
-  workloadRef:
-      apiVersion: apps/v1
-      kind: Deployment
-      name: workload-demo
-EOF
-```
-
 Assume that you want to use multi-batch update strategy to upgrade your Deployment from "version-1" to "version-2":
 - In the 1-st batch: **Only 1** Pod should be upgraded;
 - In the 2-nd batch: **50%** Pods should be upgraded, i.e., **5 updated Pods**;
@@ -297,3 +256,35 @@ You can use the command `kubectl kruise rollout undo rollout/rollout-demo` to ro
 ## Other Statements
 - **Continuous Release**: Assume that Rollout is progressing from "version-1" to "version-2"(uncompleted). Now, workload is modified to "version-3", Rollout will start to progress from beginning step (1-st step).
 - **HPA compatible**: Assume that you config HPA to your workload and use multi-batch update strategy, we suggest to use "Percent" to specify "steps[x].replicas". If replicas is scaled up/down during rollout progressing, the old and new version replicas will be scaled according the "Percent" configuration.
+
+## Optional: Pausing and Disabling a Rollout
+
+You can control the lifecycle of a rollout by pausing it during progression or disabling it after completion.
+
+### Pausing a Rollout (During Progression)
+
+This is an optional step to halt the rollout process between steps, which is useful for manual checks or troubleshooting. The controller continues to watch the resource but will not proceed to the next step until the rollout is unpaused.
+
+To pause an in-progress rollout, patch the `spec.strategy.paused` field to `true`.
+
+```bash
+# Pause the current rollout
+kubectl patch rollout rollouts-demo --type merge -p '{"spec":{"strategy":{"paused":true}}}'
+
+# To resume, set the field back to false
+kubectl patch rollout rollouts-demo --type merge -p '{"spec":{"strategy":{"paused":false}}}'
+```
+
+### Disabling a Rollout (After Completion)
+
+After a rollout has successfully finished, you may want to stop the Kruise Rollout controller from managing the object entirely without deleting it. This is recommended over deleting the Rollout object because it makes debugging easier and simplifies re-enabling progressive delivery later.
+
+To disable a completed rollout, patch the `spec.disabled` field to `true`.
+
+```bash
+# Disable the rollout after it has finished
+kubectl patch rollout rollouts-demo --type merge -p '{"spec":{"disabled":true}}'
+
+# To re-enable, set the field back to false
+kubectl patch rollout rollouts-demo --type merge -p '{"spec":{"disabled":false}}'
+```
