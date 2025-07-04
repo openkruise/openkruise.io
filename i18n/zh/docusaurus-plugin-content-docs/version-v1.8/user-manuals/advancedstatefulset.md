@@ -402,7 +402,7 @@ spec:
       unorderedUpdate:
         priorityStrategy:
           orderPriority:
-          - orderedKey: some-label-key
+            - orderedKey: some-label-key
 ```
 
 ### MaxUnavailable 最大不可用

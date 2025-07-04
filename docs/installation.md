@@ -327,21 +327,3 @@ To uninstall kruise if it is installed with helm charts:
 $ helm uninstall kruise
 release "kruise" uninstalled
 ```
-
-## Kruise State Metrics
-
-[kruise-state-metrics](https://github.com/openkruise/kruise-state-metrics) is a simple service that listens to the
-Kubernetes API server and generates metrics about the state of the objects.
-It is not focused on the health of the individual OpenKruise components, but rather on the health of the various objects
-inside, such as clonesets, advanced statefulsets and sidecarsets.
-
-```bash
-# Firstly add openkruise charts repository if you haven't do this.
-$ helm repo add openkruise https://openkruise.github.io/charts/
-
-# [Optional]
-$ helm repo update
-
-# Install the latest version.
-$ helm install kruise openkruise/kruise-state-metrics --version 0.1.0
-```

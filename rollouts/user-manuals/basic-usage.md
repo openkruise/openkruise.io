@@ -108,25 +108,7 @@ $ kubectl patch deployment workload-demo -p \
 Wait a while, we will see the Deployment status show **Only 1 Pod** is upgraded.
 ![](../../static/img/rollouts/basic-1st-batch.jpg)
 
-### Step 3: Inspect or continue your rollout
-**Inspect** the rollout’s detailed status, steps, and recent events:
-```bash
-$ kubectl-kruise describe rollout rollouts-demo -n default
-```
-**Example output:**
-```
-Name:         rollouts-demo
-Namespace:    default
-Status:       Healthy
-Strategy:     Canary
-Step:         1/4
-Steps:
-  - Replicas: 1   State: StepUpgrade
-  - Replicas: 2
-  - Replicas: 3
-  - Replicas: 4
-```
-
+### Step 3: Continue to release the 2-nd batch
 **Approve** the next batch if everything looks good:
 ```bash
 $ kubectl-kruise rollout approve rollout/rollouts-demo -n default
@@ -207,6 +189,49 @@ func IsRolloutCurrentStepReady(workload appsv1.Deployment, rollout *rolloutsv1be
 }
 ```
 
+## How to examine the newly deployed pods
+
+One can examine the newly deployed pods by using `kubectl kruise describe rollout`. Note that the command will show concise information about the rollout and list the newly deployed pods related to current step. 
+```bash
+$ kubectl kruise describe rollout rollouts-demo -n default
+```
+**Example output:**
+```
+Name:              rollouts-demo
+Namespace:         default
+Status:            ⚠ Progressing
+Message:           Rollout is in step(1/3), and you need manually confirm to enter the next step
+Strategy:          Canary
+ Step:             1/3
+ Steps:
+  -  Replicas:     1
+     State:        StepPaused
+  -  Replicas:     2
+  -  Replicas:     3
+Images:            registry.cn-hangzhou.aliyuncs.com/acs-sample/nginx:latest
+Current Revision:  5555d6dcc8
+Update Revision:   579589c5cd
+Replicas:
+ Desired:          4
+ Updated:          1
+ Current:          4
+ Ready:            4
+ Available:        4
+NAME                                     READY  BATCH ID  REVISION    AGE  RESTARTS  STATUS
+nginx-deployment-basic-579589c5cd-rx5nm  1/1    1         579589c5cd  22s  0         ✔ Running
+```
+
+alternatively, one can directly filter the pods using the following pod labels:
+1. `rollouts.kruise.io/rollout-id`: used to identify different rollout actions. The value of this label comes from the label of the workload with the same name. If the `rollouts.kruise.io/rollout-id` label does not exist in the workload, Kruise Rollout will generate one using the revision. 
+2. `rollouts.kruise.io/rollout-batch-id`: used to identify different steps. The value is a number that starts from 1.
+
+one can use the following command to filter the pods directly:
+```bash
+% kubectl get pods -l rollouts.kruise.io/rollout-id=579589c5cd,rollouts.kruise.io/rollout-batch-id=1
+NAME                                      READY   STATUS    RESTARTS   AGE
+nginx-deployment-basic-579589c5cd-rx5nm   1/1     Running   0          18m
+
+```
 ## How to do rollback?
 
 In fact, Kruise Rollout **DOES NOT** provide the ability to rollback directly. **Kruise Rollout prefers that users can rollback workload spec directly to rollback their application.** When users need to rollback from “version-2” to ”version-1“, Kruise Rollout will use the native rolling upgrade strategy to quickly rollback, instead of following the multi-batch checkpoint strategy.
