@@ -113,11 +113,6 @@ There are 3 major parts of api specifications you should pay attention to:
 | `workloadRef`     | Object  |         | Reference to the workload being managed                                  |
 | `strategy`        | Object  |         | Rollout strategy configuration (canary or blue‑green)                     |
 
-**Version Compatibility**
-- `blueGreen` strategy requires Kruise Rollout v0.5.0+
-- `spec.disabled` is available in both v1alpha1 and v1beta1 APIs
-- The `blueGreen` strategy is only supported in v1beta1 API
-
 ### Workload Binding API (Mandatory)
 Tell Kruise Rollout which workload should be bounded:
 
@@ -327,15 +322,15 @@ spec:
 
 ### Strategy API (Mandatory)
 
-| Field        | Type    | Default | Description                                                               |
-|--------------|---------|---------|---------------------------------------------------------------------------|
-| `paused`     | boolean | false   | When true, pauses rollout progression until manually resumed             |
-| `canary`     | Object  | nil     | Canary strategy configuration                                            |
-| `blueGreen`  | Object  | nil     | Blue-green strategy configuration (requires v0.5.0+)                     |
+| Field        | Type    | Default | Description                                                  |
+|--------------|---------|---------|--------------------------------------------------------------|
+| `paused`     | boolean | false   | When true, pauses rollout progression until manually resumed |
+| `canary`     | Object  | nil     | Canary strategy configuration                                |
+| `blueGreen`  | Object  | nil     | Blue-green strategy configuration (requires v0.6.0+)         |
 
 **Note: Difference between Disabled and Paused**
-- **Disabled**: Stops all Rollout reconciliation; the controller ignores this Rollout until re-enabled.
-- **Paused**: Keeps the Rollout active but halts progression between steps. Useful for inspections or troubleshooting. `paused` field is available in both v1alpha1 and v1beta1 APIs.
+- **Disabled**: Stops all Rollout reconciliation and routes all traffic to the stable workload; the controller will ignore this Rollout until re-enabled, it is equivalent to deleting the Rollout object.
+- **Paused**: Keeps the Rollout active but halts progression between steps. Useful for inspections or troubleshooting. 
 
 `canary`  is used for canary strategy and multi-batch strategy, while `blueGreen` is used for blue-green strategy. These two are mutually exclusive; they cannot both be empty or both be non-empty. The `blueGreen` strategy was introduced in Kruise-Rollout versions higher than v0.5.0 and is not supported in the v1alpha1 API.
 
