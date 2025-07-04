@@ -39,6 +39,7 @@ spec:
 ```
 
 ### Step 1: Prepare and apply Rollout configuration
+
 Assume that you want to use multi-batch update strategy to upgrade your Deployment from "version-1" to "version-2":
 - In the 1-st batch: **Only 1** Pod should be upgraded;
 - In the 2-nd batch: **50%** Pods should be upgraded, i.e., **5 updated Pods**;
@@ -107,7 +108,26 @@ $ kubectl patch deployment workload-demo -p \
 Wait a while, we will see the Deployment status show **Only 1 Pod** is upgraded.
 ![](../../static/img/rollouts/basic-1st-batch.jpg)
 
-### Step 3: Continue to release the 2-nd batch
+### Step 3: Inspect or continue your rollout
+**Inspect** the rollout’s detailed status, steps, and recent events:
+```bash
+$ kubectl-kruise describe rollout rollouts-demo -n default
+```
+**Example output:**
+```
+Name:         rollouts-demo
+Namespace:    default
+Status:       Healthy
+Strategy:     Canary
+Step:         1/4
+Steps:
+  - Replicas: 1   State: StepUpgrade
+  - Replicas: 2
+  - Replicas: 3
+  - Replicas: 4
+```
+
+**Approve** the next batch if everything looks good:
 ```bash
 $ kubectl-kruise rollout approve rollout/rollouts-demo -n default
 ```
@@ -142,7 +162,7 @@ spec:
       - ... ...
 ```
 
-- **For method two**, you don't need to change anything before the next release. However, before confirming, you need to check the status of Rollout and use the update interface instead of the patch interface of Kubernetes client, or use our  [kubectl-kruise](https://github.com/openkruise/kruise-tools) tools.
+- **For method two**, you don't need to change anything before the next release. However, before confirming, you need to check the status of Rollout and use the update interface instead of the patch interface of Kubernetes client, or use our  [kubectl-kruise](https://github.com/openkruise/kruise-tools) tools. For a detailed guide on all rollout-related commands like `describe`, `approve`, and `undo`, please see the [Kubectl Plugin documentation](../cli-tool/kubectl-plugin.md#rollout).
 ```bash
 $ kubectl-kruise rollout approve rollout/<your-rollout-name> -n <your-rollout-namespace>
 ```
@@ -236,3 +256,35 @@ You can use the command `kubectl kruise rollout undo rollout/rollout-demo` to ro
 ## Other Statements
 - **Continuous Release**: Assume that Rollout is progressing from "version-1" to "version-2"(uncompleted). Now, workload is modified to "version-3", Rollout will start to progress from beginning step (1-st step).
 - **HPA compatible**: Assume that you config HPA to your workload and use multi-batch update strategy, we suggest to use "Percent" to specify "steps[x].replicas". If replicas is scaled up/down during rollout progressing, the old and new version replicas will be scaled according the "Percent" configuration.
+
+## Optional: Pausing and Disabling a Rollout
+
+You can control the lifecycle of a rollout by pausing it during progression or disabling it after completion.
+
+### Pausing a Rollout (During Progression)
+
+This is an optional step to halt the rollout process between steps, which is useful for manual checks or troubleshooting. The controller continues to watch the resource but will not proceed to the next step until the rollout is unpaused.
+
+To pause an in-progress rollout, patch the `spec.strategy.paused` field to `true`.
+
+```bash
+# Pause the current rollout
+kubectl patch rollout rollouts-demo --type merge -p '{"spec":{"strategy":{"paused":true}}}'
+
+# To resume, set the field back to false
+kubectl patch rollout rollouts-demo --type merge -p '{"spec":{"strategy":{"paused":false}}}'
+```
+
+### Disabling a Rollout (After Completion)
+
+After a rollout has successfully finished, you may want to stop the Kruise Rollout controller from managing the object entirely without deleting it. This is recommended over deleting the Rollout object because it makes debugging easier and simplifies re-enabling progressive delivery later.
+
+To disable a completed rollout, patch the `spec.disabled` field to `true`.
+
+```bash
+# Disable the rollout after it has finished
+kubectl patch rollout rollouts-demo --type merge -p '{"spec":{"disabled":true}}'
+
+# To re-enable, set the field back to false
+kubectl patch rollout rollouts-demo --type merge -p '{"spec":{"disabled":false}}'
+```
