@@ -170,6 +170,49 @@ func IsRolloutCurrentStepReady(workload appsv1.Deployment, rollout *rolloutsv1be
 }
 ```
 
+## 如何查看新部署的Pod
+你可以使用`kubectl kruise describe rollout`命令来查看新部署的 Pod。请注意，该命令会显示 rollout 的简要信息，并列出与当前步骤相关的已部署 Pod。
+```bash
+$ kubectl kruise describe rollout rollouts-demo -n default
+```
+**实例输出:**
+```
+Name:              rollouts-demo
+Namespace:         default
+Status:            ⚠ Progressing
+Message:           Rollout is in step(1/3), and you need manually confirm to enter the next step
+Strategy:          Canary
+ Step:             1/3
+ Steps:
+  -  Replicas:     1
+     State:        StepPaused
+  -  Replicas:     2
+  -  Replicas:     3
+Images:            registry.cn-hangzhou.aliyuncs.com/acs-sample/nginx:latest
+Current Revision:  5555d6dcc8
+Update Revision:   579589c5cd
+Replicas:
+ Desired:          10
+ Updated:          1
+ Current:          10
+ Ready:            10
+ Available:        10
+NAME                                     READY  BATCH ID  REVISION    AGE  RESTARTS  STATUS
+nginx-deployment-basic-579589c5cd-rx5nm  1/1    1         579589c5cd  22s  0         ✔ Running
+```
+或者，你也可以通过以下 Pod 标签直接过滤出相关 Pod：
+1. `rollouts.kruise.io/rollout-id`：用于标识不同的rollout单子。该标签的值来源于工作负载上的同名标签。如果工作负载上没有`rollouts.kruise.io/rollout-id` 标签，Kruise Rollout 将会使用 revision（修订版本）生成一个。
+2. `rollouts.kruise.io/rollout-batch-id`：用于标识不同的发布批次。其值是一个从 1 开始递增的数字
+
+你可以使用如下命令直接过滤 Pod：
+```bash
+% kubectl get pods -l rollouts.kruise.io/rollout-id=579589c5cd,rollouts.kruise.io/rollout-batch-id=1
+NAME                                      READY   STATUS    RESTARTS   AGE
+nginx-deployment-basic-579589c5cd-rx5nm   1/1     Running   0          18m
+
+```
+
+
 ## 如何回滚
 
 事实上，Kruise Rollout **不提供** 直接回滚的功能。**Kruise Rollout
@@ -192,3 +235,34 @@ kruise-tools 是 OpenKruise 的 kubectl 插件，它为 kruise 功能提供了�
   将从开始步骤（第一步）重新开始进展。
 - **HPA兼容**：假设您为工作负载配置了水平Pod自动伸缩（HPA）并使用多批次升级策略，我们建议使用“百分比”来指定“steps[x]
   .replicas”。如果在升级进行过程中扩展或缩小副本数量，旧版本和新版本的副本将根据“百分比”配置进行伸缩，以确保伸缩与升级进展保持一致。
+
+## 可选操作
+
+### 暂停Rollout处理
+
+在Rollout发布过程中，可以暂停Rollout的处理，这对于手动检查或故障排除很有用。控制器继续监视资源，直到Rollout被取消暂停才开始处理下一个步骤。 
+
+要暂停Rollout的处理，请patch`spec.strategy.paused` 字段为 `true`.
+
+```bash
+# Pause the current rollout
+kubectl patch rollout rollouts-demo --type merge -p '{"spec":{"strategy":{"paused":true}}}'
+
+# To resume, set the field back to false
+kubectl patch rollout rollouts-demo --type merge -p '{"spec":{"strategy":{"paused":false}}}'
+```
+
+### 禁止Rollout处理
+
+在Rollout发布完成后，一般而言，您不需要删除或者禁止Rollout，Rollout只会在发布过程中处理。然而， 你如果想要确保Rollout不再处理， 或则不再想使用渐进式发布， 可以使用`spec.disabled`字段来禁用Rollout。相对于之间删除Rollout对象， 禁用Rollout可以更容易做问题排查， 并且允许您更快速地重新启用渐进式发布。 
+
+要禁止Rollout的处理, 请patch`spec.disabled`字段为`true`.
+
+```bash
+# Disable the rollout after it has finished
+kubectl patch rollout rollouts-demo --type merge -p '{"spec":{"disabled":true}}'
+
+# To re-enable, set the field back to false
+kubectl patch rollout rollouts-demo --type merge -p '{"spec":{"disabled":false}}'
+```
+

@@ -923,5 +923,19 @@
     "zhangsean",
     "zhaomingshan",
     "zxvf",
-    "：the"
+    "：the",
+    "DoNotSchedule",
+    "Entrypoint",
+    "ScheduleAnyway",
+    "matchLabelKeys",
+    "maxSkew",
+    "topologyKey",
+    "topologySpreadConstraints",
+    "workqueue",
+    "whenUnsatisfiable",
+    "oom",
+    "pprof-addr",
+    "enable-pprof",
+    "jsonpath",
+    "ip"
 ]
