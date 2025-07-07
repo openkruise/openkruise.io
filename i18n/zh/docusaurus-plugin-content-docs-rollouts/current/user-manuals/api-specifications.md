@@ -110,6 +110,14 @@ API 规范的主要部分包括 3 部分，您应该注意：
 
 ## API 详细信息
 
+### Rollout Spec 字段
+
+| Field             | Type    | Default | Description                          |
+|-------------------|---------|---------|--------------------------------------|
+| `disabled`        | boolean | false   | 当设置为true， 释放Rollout对工作负载的托管， 并恢复流量路由 |
+| `workloadRef`     | Object  |         | 工作负载绑定 API                           |
+| `strategy`        | Object  |         | 发布策略配置 (金丝雀或者蓝绿)                     |
+
 ### 工作负载绑定 API（必填）
 
 告诉 Kruise Rollout 应该绑定哪个工作负载：
@@ -291,7 +299,18 @@ spec:
 
 ### 策略API（必填）
 
-canary用于金丝雀发布和多批次发布，blueGreen用于蓝绿发布，二者是互斥选项，不能同时为空，也不能都非空。blueGreen选项是在Kruise-Rollout v0.5.0版本之后引入的，且不支持v1alpha1 API。
+
+| Field        | Type    | Default | Description               |
+|--------------|---------|---------|---------------------------|
+| `paused`     | boolean | false   | 当为`true`时，暂停Rollout对发布的处理 |
+| `canary`     | Object  | nil     | 金丝雀发布策略配置                 |
+| `blueGreen`  | Object  | nil     | 蓝绿发布策略配置 (需要 v0.6.0及以上)   |
+
+**注意：`Disabled` 和 `Paused` 的区别**
+- **Disabled**: 释放Rollout对工作负责的托管，并将流量全部路由到稳定版本的实例；控制器会忽略该Rollout对象， 效果相当于删除了Rollout对象。
+- **Paused**: 保持Rollout对工作负载的托管，但不再推进发布进展.
+
+canary用于金丝雀发布和多批次发布，blueGreen用于蓝绿发布，二者是互斥选项，不能同时为空，也不能都非空。blueGreen选项是在Kruise-Rollout v0.6.0版本引入的，且不支持v1alpha1 API。
 
 #### canary
 
