@@ -937,5 +937,6 @@
     "pprof-addr",
     "enable-pprof",
     "jsonpath",
-    "ip"
+    "ip",
+    "api"
 ]
