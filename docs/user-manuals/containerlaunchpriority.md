@@ -57,6 +57,45 @@ spec:
 2. The container with higher priority will be guaranteed to start before the others with lower priority.
 3. The containers with same priority have no limit to their start sequence.
 
+## Advanced Example: Multiple Containers with Mixed Priorities
+
+Here is an example of a Pod with three containers, each assigned a different launch priority:
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: multi-priority-pod
+  annotations:
+    apps.kruise.io/container-launch-priority: Ordered
+spec:
+  containers:
+    - name: init
+      image: busybox
+      command: ["sh", "-c", "echo Init"]
+      env:
+        - name: KRUISE_CONTAINER_PRIORITY
+          value: "10"
+    - name: main
+      image: nginx
+      env:
+        - name: KRUISE_CONTAINER_PRIORITY
+          value: "5"
+    - name: sidecar
+      image: busybox
+      command: ["sh", "-c", "echo Sidecar"]
+      env:
+        - name: KRUISE_CONTAINER_PRIORITY
+          value: "1"
+```
+
+**Expected behavior:**
+- The `init` container (priority 10) will start first.
+- The `main` container (priority 5) will start after `init` is running and ready.
+- The `sidecar` container (priority 1) will start last, after both `init` and `main` are running and ready.
+
+This allows you to control complex startup dependencies between containers in a Pod.
+
 ## Requirement
 
 ContainerLaunchPriority requires `PodWebhook` feature-gate to be enabled, which is the default state.
