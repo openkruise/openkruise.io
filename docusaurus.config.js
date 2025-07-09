@@ -122,9 +122,9 @@ function getNextVersionName() {
           '⭐️ If you like OpenKruise, give it a star on <a target="_blank" rel="noopener noreferrer" href="https://github.com/openkruise/kruise">GitHub</a>! ⭐️',
       },
       algolia: {
-        apiKey: '72ec0a3c892141cf32490c676bb66628',
+        apiKey: process.env.Algolia_API_KEY || 'default key',
         indexName: 'openkruise',
-        appId: 'FKASWWQYOP',
+        appId: process.env.Algolia_APP_ID || 'default id',
         contextualSearch: false,
         searchParameters: {},
       },
