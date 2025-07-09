@@ -125,6 +125,8 @@ function getNextVersionName() {
         apiKey: '72ec0a3c892141cf32490c676bb66628',
         indexName: 'openkruise',
         appId: 'FKASWWQYOP',
+        contextualSearch: false,
+        searchParameters: {},
       },
       navbar: {
         title: 'OpenKruise',
