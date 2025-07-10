@@ -8,6 +8,7 @@ import useBaseUrl from '@docusaurus/useBaseUrl';
 import GitHubButton from 'react-github-btn';
 import styles from './index.module.css';
 import HomepageFeatures from '../components/HomepageFeatures';
+import SupportersSection from '../components/SupportersSection';
 
 function Feature({ imgUrl, title, description, reverse }) {
   return (
@@ -80,6 +81,9 @@ export default function Home() {
           </section>
         </div>
       </main>
+
+      <SupportersSection />
+
       <div className={clsx('hero', styles.hero)}>
       
         <div className="container text--center">

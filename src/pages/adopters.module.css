@@ -1,0 +1,123 @@
+.heroBanner {
+  padding: 4rem 0;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.adoptersSection {
+  padding: 4rem 0;
+  background-color: var(--ifm-background-color);
+}
+
+.becomeAdopterSection {
+  padding: 4rem 0;
+  background-color: var(--ifm-color-emphasis-100);
+}
+
+.adopterCard {
+  margin-bottom: 2rem;
+  padding: 0 1rem;
+}
+
+.card {
+  background: var(--ifm-card-background-color);
+  border: 1px solid var(--ifm-color-emphasis-200);
+  border-radius: var(--ifm-card-border-radius);
+  box-shadow: var(--ifm-global-shadow-lw);
+  height: 100%;
+  padding: 1.5rem;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--ifm-global-shadow-md);
+}
+
+.cardHeader {
+  margin-bottom: 1rem;
+  border-bottom: 1px solid var(--ifm-color-emphasis-200);
+  padding-bottom: 1rem;
+}
+
+.companyName {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--ifm-color-primary);
+}
+
+.location {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--ifm-color-emphasis-700);
+  font-style: italic;
+}
+
+.cardBody {
+  flex: 1;
+}
+
+.useCase h4 {
+  margin: 0 0 0.75rem 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--ifm-color-emphasis-800);
+}
+
+.useCase p {
+  margin: 0;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: var(--ifm-color-emphasis-700);
+}
+
+.becomeAdopterTitle {
+  margin-bottom: 1.5rem;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--ifm-color-emphasis-800);
+  font-family: var(--ifm-font-family-base);
+}
+
+.becomeAdopterButton {
+  display: inline-block;
+  padding: 0.5rem 1.5rem;
+  background-color: var(--ifm-color-primary);
+  color: white !important;
+  text-decoration: none;
+  border-radius: var(--ifm-button-border-radius);
+  font-weight: var(--ifm-font-weight-normal);
+  font-size: var(--ifm-font-size-base);
+  font-family: var(--ifm-font-family-base);
+  transition: background-color 0.2s ease-in-out, transform 0.2s ease-in-out;
+}
+
+.becomeAdopterButton:hover {
+  background-color: var(--ifm-color-primary-dark);
+  color: white !important;
+  text-decoration: none;
+  transform: translateY(-1px);
+}
+
+@media screen and (max-width: 996px) {
+  .adopterCard {
+    --ifm-col-width: calc(50% - var(--ifm-spacing-horizontal));
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .adopterCard {
+    --ifm-col-width: calc(100% - var(--ifm-spacing-horizontal));
+  }
+  
+  .heroBanner {
+    padding: 2rem 0;
+  }
+  
+  .adoptersSection,
+  .becomeAdopterSection {
+    padding: 2rem 0;
+  }
+}
