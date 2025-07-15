@@ -457,7 +457,7 @@ Advanced DaemonSet 目前只支持 PreDelete hook。</p>
 <p>值得注意的是，OpenKruise v1.1 已经将 Kubernetes <strong>代码依赖版本</strong>升级到 v1.22，这意味着用户可以在 CloneSet 等工作负载的 pod template 模板中使用 up to v1.22 的新字段等，
 但用户安装使用 OpenKruise 所兼容的 Kubernetes 集群版本仍然保持在 &gt;= v1.16。</p>
 <h3 class="anchor anchorWithStickyNavbar_LWe7" id="1-原地升级支持容器顺序优先级">1. 原地升级支持容器顺序优先级<a href="https://openkruise.io/zh/blog/openkruise-1.1#1-%E5%8E%9F%E5%9C%B0%E5%8D%87%E7%BA%A7%E6%94%AF%E6%8C%81%E5%AE%B9%E5%99%A8%E9%A1%BA%E5%BA%8F%E4%BC%98%E5%85%88%E7%BA%A7" class="hash-link" aria-label="Direct link to heading" title="Direct link to heading">​</a></h3>
-<p>去年底发布的 v1.0 版本，OpenKruise 引入了<a href="https://openkruise.io/zh/docs/user-manuals/containerlaunchpriority/">容器启动顺序控制</a>功能，
+<p>去年底发布的 v1.0 版本，OpenKruise 引入了<a href="https://openkruise.io/zh/docs/user-manuals/containerlaunchpriority">容器启动顺序控制</a>功能，
 它支持为一个 Pod 中的多个容器定义不同的权重关系，并在 Pod 创建时按照权重来控制不同容器的启动顺序。</p>
 <p>在 v1.0 中，这个功能仅仅能够作用于每个 Pod 的创建阶段。当创建完成后，如果对 Pod 中多个容器做原地升级，则这些容器都会被同时执行升级操作。</p>
 <p>最近一段时间，社区与 LinkedIn 等公司做过一些交流，获得了更多用户使用场景的输入。

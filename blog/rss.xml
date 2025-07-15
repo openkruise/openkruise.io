@@ -482,7 +482,7 @@ Here we are going to introduce some changes of it.</p>
 <p>Note that OpenKruise v1.1 bumps Kubernetes dependencies to v1.22, which means we can use new fields of up to K8s v1.22 in Pod template of workloads like CloneSet and Advanced StatefulSet.
 But OpenKruise can still be used in Kubernetes cluster &gt;= 1.16 version.</p>
 <h3 class="anchor anchorWithStickyNavbar_LWe7" id="1-keep-containers-order-for-in-place-update">1. Keep containers order for in-place update<a href="https://openkruise.io/blog/openkruise-1.1#1-keep-containers-order-for-in-place-update" class="hash-link" aria-label="Direct link to 1. Keep containers order for in-place update" title="Direct link to 1. Keep containers order for in-place update">​</a></h3>
-<p>In the release v1.0 we published last year, OpenKruise has intruduced <a href="https://openkruise.io/docs/user-manuals/containerlaunchpriority/">Container Launch Priority</a>,
+<p>In the release v1.0 we published last year, OpenKruise has intruduced <a href="https://openkruise.io/docs/user-manuals/containerlaunchpriority">Container Launch Priority</a>,
 which supports to define different priorities for containers in a Pod and keeps their start order during Pod creation.</p>
 <p>But in v1.0, it can only control the order in Pod creation. If you try to update the containers in-place, they will be updated at the same time.</p>
 <p>Recently, the community has discussed with some companies such as LinkedIn and get more input from the users.
