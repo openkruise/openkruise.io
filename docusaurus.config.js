@@ -157,6 +157,7 @@ function getNextVersionName() {
             activeBasePath: 'kruisegame',
           },
           {to: '/blog', label: 'Blog', position: 'left'},
+          {to: '/adopters', label: 'Adopters', position: 'left'},
           {
             type: 'localeDropdown',
             position: 'right',

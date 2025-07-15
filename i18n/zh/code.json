@@ -268,5 +268,41 @@
     "theme.SearchBar.label": {
       "message": "Search",
       "description": "The ARIA label and placeholder for search button"
+    },
+    "Adopters": {
+      "message": "采用者",
+      "description": "Adopters section title"
+    },
+    "Companies and organizations using OpenKruise in production": {
+      "message": "在生产环境中使用OpenKruise的公司和组织",
+      "description": "Adopters section subtitle"
+    },
+    "Supporters": {
+      "message": "支持者",
+      "description": "Supporters section title"
+    },
+    "Recognition": {
+      "message": "认可",
+      "description": "Recognition section title"
+    },
+    "Use Case": {
+      "message": "使用场景",
+      "description": "Use case label in adopter cards"
+    },
+    "Companies that have contributed to OpenKruise with meaningful contributions": {
+      "message": "为OpenKruise做出有意义贡献的公司",
+      "description": "Supporters section subtitle on homepage"
+    },
+    "Become a Supporter": {
+      "message": "成为支持者",
+      "description": "Button text to become a supporter"
+    },
+    "Already using Kruise? Fill the details in the below link": {
+      "message": "已经在使用Kruise？请在下面的链接中填写详细信息",
+      "description": "Text for become adopter section"
+    },
+    "Open": {
+    "message": "打开",
+    "description": "Button text to open"
     }
   }
