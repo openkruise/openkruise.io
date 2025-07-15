@@ -199,6 +199,18 @@ minecraft-5   Deleting   None       0     0     9m55s
 minecraft-6   Deleting   None       0     0     9m55s
 ```
 
+OKG v1.0 ReserveGameServerIds supports Range type. In the above example, it can be rewritten as:
+
+```bash
+kubectl edit gss minecraft
+...
+spec:
+  replicas: 3
+  reserveGameServerIds:
+  - 3-6
+...
+```
+
 **When downsizing, OKG will give priority to the game suits that are Reserved, and then follow the downsizing order mentioned above**
 
 ### Kill GameServer
@@ -549,7 +561,7 @@ spec:
     - type: external
       metricType: AverageValue
       metadata:
-        minAvailable: "3" # 设置opsState为None的游戏服的最小个数
+        minAvailable: "3" 
         scalerAddress: kruise-game-external-scaler.kruise-game-system:6000
 ```
 
@@ -568,6 +580,8 @@ minecraft-0   Ready   None       0     0    20s
 minecraft-1   Ready   None       0     0    5s
 minecraft-2   Ready   None       0     0    5s
 ```
+
+OKG v1.0 minAvailable supports percentage type. When minAvailable < 1, it indicates the minimum available (opsState is None) gs ratio.
 
 ### Other Settings
 

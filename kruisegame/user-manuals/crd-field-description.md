@@ -20,7 +20,7 @@ type GameServerSetSpec struct {
 
     // Reserved game server IDs, optional. If specified, existing game servers with those IDs will be deleted,
     // and new game servers will not be created with those IDs.
-    ReserveGameServerIds []int              `json:"reserveGameServerIds,omitempty"`
+	ReserveGameServerIds []intstr.IntOrString `json:"reserveGameServerIds,omitempty"`
 
     // Custom service qualities for game servers.
     ServiceQualities     []ServiceQuality   `json:"serviceQualities,omitempty"`
@@ -36,6 +36,11 @@ type GameServerSetSpec struct {
     
     // Lifecycle hook defined by users
     Lifecycle            *appspub.Lifecycle `json:"lifecycle,omitempty"`
+    
+    // PersistentVolumeClaimRetentionPolicy describes the policy used for PVCs created from
+	// the StatefulSet VolumeClaimTemplates. This requires the
+	// StatefulSetAutoDeletePVC feature gate to be enabled, which is alpha.
+	PersistentVolumeClaimRetentionPolicy *kruiseV1beta1.StatefulSetPersistentVolumeClaimRetentionPolicy `json:"persistentVolumeClaimRetentionPolicy,omitempty"`
 }
 
 ```
@@ -269,6 +274,9 @@ type GameServerSetStatus struct {
 
     // The number of game servers that are in WaitToBeDeleted state.
     WaitToBeDeletedReplicas *int32 `json:"waitToBeDeletedReplicas,omitempty"`
+    
+    // The number of game servers that are in PreDelete state.
+    PreDeleteReplicas       *int32 `json:"preDeleteReplicas,omitempty"`
 
     // The label selector used to query game servers that should match the replica count used by HPA.
     LabelSelector string `json:"labelSelector,omitempty"`

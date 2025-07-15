@@ -16,19 +16,19 @@ $ helm repo add openkruise https://openkruise.github.io/charts/
 # [Optional]
 $ helm repo update
 # Install the latest version.
-$ helm install kruise openkruise/kruise --version 1.7.0
+$ helm install kruise openkruise/kruise --version 1.8.0
 ```
 
 ### 安装Kruise-Game
 
 ```shell
-$ helm install kruise-game openkruise/kruise-game --version 0.10.0
+$ helm install kruise-game openkruise/kruise-game --version 1.0.0
 ```
 
 ### 升级 Kruise-Game
 
 ```shell
-$ helm upgrade kruise-game openkruise/kruise-game --version 0.10.0 [--force]
+$ helm upgrade kruise-game openkruise/kruise-game --version 1.0.0 [--force]
 ```
 
 ### 可选项
@@ -37,32 +37,45 @@ $ helm upgrade kruise-game openkruise/kruise-game --version 0.10.0 [--force]
 
 下表列出了 kruise-game 的可配置参数及其默认值。
 
-| Parameter                        | Description                                             | Default                          |
-|----------------------------------|---------------------------------------------------------|----------------------------------|
-| `installation.namespace`         | kruise-game 安装到的 namespace，一般不建议修改                      | `kruise-game-system`             |
-| `installation.createNamespace`   | 是否需要创建上述 namespace，一般不建议修改，除非指定安装到已有的 ns 中              | `true`                           |
-| `kruiseGame.fullname`            | kruise-game 部署和其他配置的名称                                  | `kruise-game-controller-manager` |
-| `kruiseGame.healthBindPort`      | 用于检查 kruise-game 容器健康检查的端口                              | `8082`                           |
-| `kruiseGame.webhook.port`        | kruise-game 容器服务的 webhook 端口                            | `443`                            |
-| `kruiseGame.webhook.targetPort`  | 用于 MutatingWebhookConfigurations 中工作负载的 ObjectSelector  | `9876`                           |
-| `kruiseGame.apiServerQps`        | kruise-game-controller-manager 每秒发送到 API server的最大持续查询数 | `5`                              |
-| `kruiseGame.apiServerQpsBurst`   | kruise-game-controller-manager 每秒发送到 API server的最大突发查询数 | `10`                             |
-| `replicaCount`                   | kruise-game 的期望副本数                                      | `1`                              |
-| `image.repository`               | kruise-game 的镜像仓库                                       | `openkruise/kruise-game-manager` |
-| `image.tag`                      | kruise-game 的镜像版本                                       | `v0.10.0`                        |
-| `image.pullPolicy`               | kruise-game 的镜像拉取策略                                     | `Always`                         |
-| `serviceAccount.annotations`     | kruise-game的serviceAccount注解                            | ` `                              |
-| `resources.limits.cpu`           | kruise-game容器的CPU资源限制                                   | `500m`                           |
-| `resources.limits.memory`        | kruise-game容器的内存资源限制                                    | `1Gi`                            |
-| `resources.requests.cpu`         | kruise-game容器的CPU资源请求                                   | `10m`                            |
-| `resources.requests.memory`      | kruise-game容器的内存资源请求                                    | `64Mi`                           |
-| `prometheus.enabled`             | 是否创建指标监控服务                                              | `false`                          |
-| `prometheus.monitorService.port` | monitorService的监听端口                                     | `8080`                           |
-| `scale.service.port`             | 伸缩服务监听端口                                                | `6000`                           |
-| `scale.service.targetPort`       | 伸缩服务目标端口                                                | `6000`                           |
-| `network.totalWaitTime`          | 等待网络Ready的最长时间，单位是秒                                     | `60`                             |
-| `network.probeIntervalTime`      | 探测网络状态的时间间隔，单位是秒                                        | `5`                              |
-| `cloudProvider.installCRD`       | 是否安装 CloudProvider 相关CRD资源                              | `true`                           |
+| Parameter                                  | Description                                             | Default                          |
+|--------------------------------------------|---------------------------------------------------------|----------------------------------|
+| `installation.namespace`                   | kruise-game 安装到的 namespace，一般不建议修改                      | `kruise-game-system`             |
+| `installation.createNamespace`             | 是否需要创建上述 namespace，一般不建议修改，除非指定安装到已有的 ns 中              | `true`                           |
+| `kruiseGame.fullname`                      | kruise-game 部署和其他配置的名称                                  | `kruise-game-controller-manager` |
+| `kruiseGame.healthBindPort`                | 用于检查 kruise-game 容器健康检查的端口                              | `8082`                           |
+| `kruiseGame.webhook.port`                  | kruise-game 容器服务的 webhook 端口                            | `443`                            |
+| `kruiseGame.webhook.targetPort`            | 用于 MutatingWebhookConfigurations 中工作负载的 ObjectSelector  | `9876`                           |
+| `kruiseGame.apiServerQps`                  | kruise-game-controller-manager 每秒发送到 API server的最大持续查询数 | `5`                              |
+| `kruiseGame.apiServerQpsBurst`             | kruise-game-controller-manager 每秒发送到 API server的最大突发查询数 | `10`                             |
+| `replicaCount`                             | kruise-game 的期望副本数                                      | `1`                              |
+| `image.repository`                         | kruise-game 的镜像仓库                                       | `openkruise/kruise-game-manager` |
+| `image.tag`                                | kruise-game 的镜像版本                                       | `v0.10.0`                        |
+| `image.pullPolicy`                         | kruise-game 的镜像拉取策略                                     | `Always`                         |
+| `serviceAccount.annotations`               | kruise-game的serviceAccount注解                            | ` `                              |
+| `resources.limits.cpu`                     | kruise-game容器的CPU资源限制                                   | `500m`                           |
+| `resources.limits.memory`                  | kruise-game容器的内存资源限制                                    | `1Gi`                            |
+| `resources.requests.cpu`                   | kruise-game容器的CPU资源请求                                   | `10m`                            |
+| `resources.requests.memory`                | kruise-game容器的内存资源请求                                    | `64Mi`                           |
+| `prometheus.enabled`                       | 是否创建指标监控服务                                              | `false`                          |
+| `prometheus.monitorService.port`           | monitorService的监听端口                                     | `8080`                           |
+| `scale.service.port`                       | 伸缩服务监听端口                                                | `6000`                           |
+| `scale.service.targetPort`                 | 伸缩服务目标端口                                                | `6000`                           |
+| `network.totalWaitTime`                    | 等待网络Ready的最长时间，单位是秒                                     | `60`                             |
+| `network.probeIntervalTime`                | 探测网络状态的时间间隔，单位是秒                                        | `5`                              |
+| `cloudProvider.installCRD`                 | 是否安装 CloudProvider 相关CRD资源                              | `true`                           |
+| `indexOffsetScheduler.enabled`             | 是否安装游戏服序号感知调度器                                          | `false`                          |
+| `certificates.autoGenerated`               | 是否自动生成 webhook 证书                                       | `true`                           |
+| `certificates.secretName`                  | 包含 webhook 证书的 secret 名称                                | `kruise-game-certs`              |
+| `certificates.mountPath`                   | 在容器中挂载 webhook 证书的路径                                    | `/tmp/webhook-certs/`            |
+| `certificates.certManager.enabled`         | 是否使用 cert-manager 进行证书管理                                | `false`                          |
+| `certificates.certManager.duration`        | 证书有效期                                                   | `8760h0m0s`                      |
+| `certificates.certManager.renewBefore`     | 证书到期前续订时间                                               | `5840h0m0s`                      |
+| `certificates.certManager.generateCA`      | 是否生成证书颁发机构                                              | `true`                           |
+| `certificates.certManager.caSecretName`    | 包含 CA 证书的机密名称                                           | `kruise-game-ca`                 |
+| `certificates.certManager.issuer.generate` | 是否自动生成issuer                                            | `true`                           |
+| `certificates.certManager.issuer.name`     | issuer 的名称                                              | `kruise-ca`                      |
+| `certificates.certManager.issuer.kind`     | issuer 类型                                               | `ClusterIssuer`                  |
+| `certificates.certManager.issuer.group`    | issuer的API group                                        | `cert-manager.io`                |
 
 使用 `--set key=value[,key=value]` 参数指定每个参数到 `helm install`,例如,
 

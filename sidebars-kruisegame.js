@@ -27,6 +27,7 @@ module.exports = {
             collapsed: false,
             items: [
                 'user-manuals/deploy-gameservers',
+                'user-manuals/gameserver-state',
                 'user-manuals/hot-update',
                 'user-manuals/update-strategy',
                 'user-manuals/gameservers-scale',
@@ -37,6 +38,7 @@ module.exports = {
                 'user-manuals/gameserver-monitor',
                 'user-manuals/game-matchmaking',
                 'user-manuals/game-dashboard',
+                'user-manuals/gameserver-scheduler',
                 'user-manuals/crd-field-description',
                 'user-manuals/faq'
             ],
@@ -73,6 +75,7 @@ module.exports = {
                 'blog-video/kubecon-chillyroom-20240823',
                 'blog-video/meetup-guangzhou-20231125',
                 'blog-video/lilith-okg',
+                'blog-video/yahaha-okg',
                 'blog-video/guanying-20231129',
                 'blog-video/higress',
                 'blog-video/cloud-forward-okg',
