@@ -66,6 +66,7 @@ export default function SupportersSection() {
                 and improving the website.
               </Translate>
             </p>
+
             <div className="text--center margin-top--lg">
               <Link
                 className={styles.becomeSupporter}

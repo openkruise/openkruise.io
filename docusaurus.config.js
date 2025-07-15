@@ -28,6 +28,7 @@ function getNextVersionName() {
   favicon: 'img/openkruise.ico',
   organizationName: 'openkruise',
   projectName: 'openkruise.io',
+  trailingSlash: false,
 
   presets: [
     [
@@ -122,10 +123,10 @@ function getNextVersionName() {
           '⭐️ If you like OpenKruise, give it a star on <a target="_blank" rel="noopener noreferrer" href="https://github.com/openkruise/kruise">GitHub</a>! ⭐️',
       },
       algolia: {
-        apiKey: process.env.Algolia_API_KEY || 'default key',
+        apiKey: process.env.Algolia_API_KEY || '72ec0a3c892141cf32490c676bb66628',
         indexName: 'openkruise',
-        appId: process.env.Algolia_APP_ID || 'default id',
-        contextualSearch: false,
+        appId: process.env.Algolia_APP_ID || 'FKASWWQYOP',
+        contextualSearch: true,
         searchParameters: {},
       },
       navbar: {
