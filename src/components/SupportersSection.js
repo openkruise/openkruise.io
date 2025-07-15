@@ -49,7 +49,23 @@ export default function SupportersSection() {
                 <SupporterLogo key={idx} supporter={supporter} />
               ))}
             </div>
+          </div>
+        </section>
+      )}
 
+      <section className={styles.guidelinesSection}>
+        <div className="container">
+          <div className="text--center">
+            <p className={styles.sectionSubtitle}>
+              <Translate>
+                We invite companies that have contributed to Kruise to provide their logos for the OpenKruise homepage.
+                They will have the opportunity to be recognized for their contributions to the development of OpenKruise
+                at various open-source conferences attended by Kruise. To recognize and reward companies that actively contribute to the community, we should consider setting a threshold
+                for supporters. For instance, a company should have at least three contributors who have made meaningful
+                contributions to Kruise, including submitting issues, creating pull requests, enhancing documentation,
+                and improving the website.
+              </Translate>
+            </p>
             <div className="text--center margin-top--lg">
               <Link
                 className={styles.becomeSupporter}
@@ -58,8 +74,8 @@ export default function SupportersSection() {
               </Link>
             </div>
           </div>
-        </section>
-      )}
+        </div>
+      </section>
     </>
   );
 }
