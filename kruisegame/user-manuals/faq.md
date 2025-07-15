@@ -1,28 +1,5 @@
 # FAQ
 
-### The State and OpsState of GameServer respectively represent what? What is the difference?
-
-State represents the runtime state of the game server, related to the lifecycle of the pod and cannot be customized by the user. The current State includes the following values:
-
-- Creating —— indicates that the pod is being created, equivalent to Pod Pending
-- Ready —— indicates that the pod is ready, with the pod ready condition being true
-- NotReady —— indicates that the pod is not ready, with the pod ready condition being false
-- Crash —— indicates that the pod has failed, equivalent to Pod Failed
-- Deleting —— indicates that the pod is being deleted, equivalent to Pod Terminating
-- Updating —— indicates that the pod is undergoing in-place upgrade
-- PreDelete —— indicates that the pod is in a pre-deletion state. It appears after executing the pod's deletion action with a deletion lifecycle hook set and entering the Deleting state after resolving the deadlock
-- PreUpdate —— indicates that the pod is in a pre-upgrade state. It appears after performing an in-place upgrade of the pod with an update lifecycle hook set and entering the Updating state after resolving the deadlock
-- Unknown —— all other states not mentioned above
-
-OpsState represents the operational state of the game server, determined by the business and can be freely modified by the user. OKG provides some reserved values with special meanings, including:
-- None —— default value, representing no exceptions or special states
-- WaitToBeDeleted —— the highest priority for game server scaling down, and will be automatically reclaimed after configuring automatic scaling policy
-- Maintaining —— the lowest priority for game server scaling down
-- Allocated —— the scaling down priority of the game server is greater than Maintaining but less than None. It usually represents that the game server has been allocated and can be used in game matching scenarios.
-- Kill —— game servers with Kill set will be directly deleted by the OKG controller
-
-Users can change the GameServer opsState by calling the K8s API (or kubectl), and can also automatically trigger the corresponding GameServer opsState change by customizing the service quality features within the business container.
-
 ### What is the horizontal scaling logic of the GameServer when ReserveId is configured?
 
 In the case of configuring ReserveId, the horizontally scaled GameServer that is being scaled down actually falls into two categories:
@@ -47,3 +24,22 @@ Here are a few examples:
 
    It is important to note that, due to the principle of minimal changes, after removing ID 4 from ReserveId, it transitions to the implicit scaling down list, and there is no scaling up or scaling down behavior for the existing GameServers as there is no scaling up requirement at the moment.
 
+### What is the Gss scaling logic for Gs in the PreDelete state?
+
+The actual offline time of a GameServer in the PreDelete state cannot be determined. If the user does not remove the lifecycle card, Gs will remain in the PreDelete state.
+At this time, when the number of Gss replicas increases, OKG will not use the GameServer in the PreDelete state as a new expansion object. For example:
+
+Current Gss replicas=1:
+```
+NAME          STATE        OPSSTATE    DP    UP    AGE
+minecraft-0   Ready        None        0     0     40s
+minecraft-1   PreDelete    None        0     0     30s
+```
+
+Setting Gss replicas to 2 will expand minecraft-2:
+```
+NAME          STATE        OPSSTATE    DP    UP    AGE
+minecraft-0   Ready        None        0     0     50s
+minecraft-1   PreDelete    None        0     0     40s
+minecraft-2   Ready        None        0     0     10s
+```

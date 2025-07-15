@@ -1,29 +1,5 @@
 # 常见问题
 
-### GameServer 的 State 和 OpsState 分别代表什么？有什么区别？
-
-State代表游戏服运行时状态（Runtime State），跟Pod生命周期有关，用户不可自定义更改。当前的State包含以下值：
-
-- Creating —— 表示Pod创建中，等同于Pod Pending
-- Ready —— 表示Pod是Ready的，Pod ready condition 为 true
-- NotReady —— 表示Pod是NotReady的，Pod ready condition 为 false
-- Crash —— 表示Pod失败，等同于Pod Failed
-- Deleting —— 表示Pod正在删除，等同于Pod Terminating
-- Updating —— 表示Pod正在进行原地升级
-- PreDelete —— 表示Pod处于删除前的状态。设置了删除生命周期钩子且执行Pod删除动作后出现，解除卡点后进入Deleting状态
-- PreUpdate —— 表示Pod处于原地升级前的状态。设置了更新生命周期钩子且执行Pod原地升级后出现，解除卡点后进入Updating状态
-- Unknown —— 除上述此外的状态
-
-OpsState表示游戏服运维状态，由业务决定，用户可随意修改。OKG提供了一些保留值，有着特殊含义，包括：
-
-- None —— 默认值，代表不存在任何异常和特殊状态
-- WaitToBeDeleted —— gs缩容优先级最高，且配置自动伸缩策略后会被自动回收
-- Maintaining —— gs缩容优先级最低
-- Allocated —— gs缩容优先级大于Maintaining，小于None。通常代表gs已经被分配，在游戏匹配场景下可以使用。
-- Kill —— 设置Kill的gs将被OKG控制器直接删除
-
-用户可以通过调用K8s API（或kubectl）更改GameServer opsState，也可以通过自定义服务质量功能自动化由容器内业务触发更改对应的GameServer opsState
-
 ### 在配置了ReserveId的情况下，GameServer的水平伸缩逻辑是怎么样的？
 
 在配置ReserveId的情况下，被缩容的GameServer实际上存在两个类别：
@@ -47,3 +23,23 @@ OpsState表示游戏服运维状态，由业务决定，用户可随意修改。
 2. 当前存在的 ID 为 [0, 2, 3, 5], reserveId 为 [4]. 若将replicas不变，reserve置空，则变更后的情况为：reserveId 为 [], 存在的 ID 为 [0, 2, 3, 5]
 
    这里需要注意的是，由于最小改动原则，ID 4 从reserveId拿掉后转变进入隐式缩容列表，此时没有扩容需求所以不会对存量的GameServer产生任何扩容会缩容行为。
+
+### 对于存在 PreDelete 状态 Gs 的 Gss 伸缩逻辑是怎么样的？
+
+处于 PreDelete 状态的 GameServer 真正下线的时间是无法确定的，如果用户一直不解除 lifecycle 卡点，Gs 会一直处于 PreDelete 状态。
+此时，当 Gss 的 replicas数量增多时，OKG 不会将处于 PreDelete 状态的 GameServer 作为新扩容的对象。举个例子：
+
+当前 Gss replicas=1，
+```
+NAME          STATE        OPSSTATE    DP    UP    AGE
+minecraft-0   Ready        None        0     0     40s
+minecraft-1   PreDelete    None        0     0     30s
+```
+
+将Gss replicas 设置为 2，则会扩容出 minecraft-2
+```
+NAME          STATE        OPSSTATE    DP    UP    AGE
+minecraft-0   Ready        None        0     0     50s
+minecraft-1   PreDelete    None        0     0     40s
+minecraft-2   Ready        None        0     0     10s
+```

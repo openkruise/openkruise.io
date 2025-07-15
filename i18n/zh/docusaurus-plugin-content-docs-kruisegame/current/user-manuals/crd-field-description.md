@@ -18,7 +18,7 @@ type GameServerSetSpec struct {
 	ServiceName          string             `json:"serviceName,omitempty"`
 
     // 保留的游戏服序号，可选项。若指定了该序号，已经存在的游戏服将被删除；而未存在的游戏服，新建时将跳过、不创建该序号
-    ReserveGameServerIds []int              `json:"reserveGameServerIds,omitempty"`
+    ReserveGameServerIds []intstr.IntOrString `json:"reserveGameServerIds,omitempty"`
 
     // 游戏服自定义服务质量。用户通过该字段实现游戏服自动化状态感知。
     ServiceQualities     []ServiceQuality   `json:"serviceQualities,omitempty"`
@@ -34,6 +34,10 @@ type GameServerSetSpec struct {
     
     // 用户自定义设置生命周期钩子
     Lifecycle            *appspub.Lifecycle `json:"lifecycle,omitempty"`
+    
+    // PersistentVolumeClaimRetentionPolicy 描述了从 StatefulSet VolumeClaimTemplates 创建的 PVC 所使用的策略。
+    // 这需要启用 StatefulSetAutoDeletePVC 特性门控，该特性门控目前处于 alpha 阶段。
+	PersistentVolumeClaimRetentionPolicy *kruiseV1beta1.StatefulSetPersistentVolumeClaimRetentionPolicy `json:"persistentVolumeClaimRetentionPolicy,omitempty"`
 }
 ```
 
@@ -229,6 +233,9 @@ type GameServerSetStatus struct {
 
     // 处于WaitToBeDeleted状态的游戏服数目
     WaitToBeDeletedReplicas *int32 `json:"waitToBeDeletedReplicas,omitempty"`
+    
+    // 处于PreDelete状态的游戏服数目
+    PreDeleteReplicas       *int32 `json:"preDeleteReplicas,omitempty"`
 
     // LabelSelector 是标签选择器，用于查询应与 HPA 使用的副本数相匹配的游戏服。
     LabelSelector string `json:"labelSelector,omitempty"`

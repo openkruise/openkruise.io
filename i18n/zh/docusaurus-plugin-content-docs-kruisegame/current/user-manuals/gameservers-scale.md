@@ -199,6 +199,18 @@ minecraft-5   Deleting   None       0     0     9m55s
 minecraft-6   Deleting   None       0     0     9m55s
 ```
 
+OKG v1.0 ReserveGameServerIds 支持Range类型，上述示例中，可以改写为：
+
+```bash
+kubectl edit gss minecraft
+...
+spec:
+  replicas: 3
+  reserveGameServerIds:
+  - 3-6
+...
+```
+
 **在缩容时，OKG将优先考虑被Reserve的游戏服，再按照上文提到的缩容顺序进行缩容**
 
 ### 游戏服 Kill
@@ -563,6 +575,8 @@ minecraft-0   Ready   None       0     0    20s
 minecraft-1   Ready   None       0     0    5s
 minecraft-2   Ready   None       0     0    5s
 ```
+
+OKG v1.0 minAvailable 支持百分比类型，当 minAvailable < 1 时，表示最小可用(opsState 为 None)的gs的比例应该为多少
 
 ### 其他设置
 

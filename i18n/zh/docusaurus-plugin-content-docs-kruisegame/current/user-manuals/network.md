@@ -24,6 +24,7 @@ OKG 会集成不同云提供商的不同网络插件，用户可通过GameServer
 - TencentCloud-CLB
 - JdCloud-NLB
 - JdCloud-EIP
+- HwCloud-ELB
 
 ---
 ### Kubernetes-HostPort
@@ -51,7 +52,7 @@ Kubernetes
 ContainerPorts
 
 - 含义：填写提供服务的容器名以及对应暴露的端口和协议
-- 填写格式：containerName:port1/protocol1,port2/protocol2,...（协议需大写） 比如：`game-server:25565/TCP`
+- 填写格式：containerName:port1/protocol1,port2/protocol2,...（协议需大写） 比如：`game-server:25565/TCP`。 port 支持填写 SameAsHost ，表示容器使用与宿主机相同端口 比如: `game-server:SameAsHost/UDP`. protocol 支持填写 TCPUDP，表示TCP与UDP使用同个端口
 - 是否支持变更：不支持，在创建时即永久生效，随pod生命周期结束而结束
 
 #### 插件配置
@@ -1243,6 +1244,54 @@ EOF
 
 ---
 
+### AlibabaCloud-AutoNLBs
+
+#### 插件名称
+`AlibabaCloud-AutoNLBs`
+
+#### Cloud Provider
+AlibabaCloud
+
+#### 插件说明
+
+高效、灵活、自动化和扩展行更佳。支持：
+1. 自动化NLB实例创建
+2. 提供自动预热能力，根据用户参数定义，随着pod数量增多提前创建nlb端口，加快pod与nlb端口绑定速率。
+
+#### 网络参数
+
+PortProtocols
+- 含义：pod暴露的端口及协议，支持填写多个端口/协议
+- 格式：port1/protocol1,port2/protocol2,...（协议需大写)。支持协议如下：TCP、UDP、TCPUDP（表示同时使用TCP与UDP）。
+- 是否支持变更：不支持
+
+ReserveNlbNum
+- 含义：为该GameServerSet预留的NLB个数
+- 填写格式：正整数。默认为1。
+- 是否支持变更：不支持
+
+ZoneMaps
+- 含义：希望创建NLB所在可用区及对应的交换机
+- 填写格式：可用区1:vsw实例ID1,可用区2:vsw实例ID2,....例如，ap-southeast-1a:vsw-t4n9vjefpmmvu3uswixxx,ap-southeast-1b:vsw-t4nr8iynqud2mxu1lyxxx
+- 是否支持变更：不支持
+
+MinPort
+- 含义：NLB实例Listener起始端口号
+- 填写格式：正整数，必填
+- 是否支持变更：不支持
+
+MaxPort
+- 含义：NLB实例Listener最大端口号
+- 填写格式：正整数，必填
+- 是否支持变更：不支持
+
+BlockPorts
+- 含义：NLB实例Listener禁用端口。遇到改列表下的端口号跳过不使用设计原因：https://github.com/openkruise/kruise-game/issues/174
+- 填写格式：端口1,端口2,... 如，3127,3128
+- 是否支持变更：不支持
+
+---
+
 ### Volcengine-CLB
 #### 插件名称
 
@@ -1885,6 +1934,123 @@ networkStatus:
     networkType: JdCloud-EIP
 ```
 
+---
+
+### HwCloud-ELB
+
+#### Plugin name
+
+`HwCloud-ELB`
+
+#### Cloud Provider
+
+HwCloud
+
+#### Plugin description
+- HwCloud-ELB 使用华为云负载均衡器（ELB）作为对外服务的承载实体，在此模式下，不同游戏服使用 ELB 的不同端口对外暴露，此时 ELB 只做转发，并未均衡流量。
+- 需安装https://github.com/kubernetes-sigs/cloud-provider-huaweicloud。
+- 是否支持网络隔离：是。
+
+#### Network parameters
+
+
+ElbIds
+- 含义: elb 的ID, 可填写多个 (必须至少1)
+- 填写格式: 例如 "lb-9zeo7prq1m25ctpfrw1m7,lb-bp1qz7h50yd3w58h2f8je"
+- 是否支持变更：支持，只追加
+
+PortProtocols
+- 含义：pod暴露的端口及协议，支持填写多个端口/协议。
+- 格式：port1/protocol1,port2/protocol2,...（协议需大写）
+- 是否支持变更：支持。
+
+Fixed
+- 含义：是否固定访问IP/端口。若是，即使pod删除重建，网络内外映射关系不会改变
+- 填写格式：false / true
+- 是否支持变更：支持
+
+AllowNotReadyContainers
+- 含义：在容器原地升级时允许不断流的对应容器名称，可填写多个
+- 格式：containerName_0, containerName_1,... 例如：sidecar
+- 是否支持变更：在原地升级过程中不可变更。
+
+ExternalTrafficPolicyType
+- 含义：Service LB 是否只转发给本地实例。若是Local， 创建Local类型Service, 配合cloud-manager只配置对应Node，可以保留客户端源IP地址
+- 填写格式: Local/Cluster 默认Cluster
+- 是否支持变更：不支持。跟是否固定IP/端口有关系，建议不更改
+
+LB config parameters consistent with huawei cloud ccm https://github.com/kubernetes-sigs/cloud-provider-huaweicloud/blob/master/docs/usage-guide.md
+
+LBHealthCheckFlag
+- 含义：是否开启健康检查
+- 填写格式: on 或者 off。默认 on
+- 是否支持变更：支持
+
+LBHealthCheckOption
+- 含义：健康检查的配置信息
+- 填写格式: json 字符串。默认空
+- 是否支持变更：支持
+
+ElbClass
+- 含义：elb 类型
+- 填写格式: 独享（dedicated）或者 共享（shared）默认 dedicated
+- 是否支持变更：不支持
+
+ElbConnLimit
+- 含义：共享型LB的连接限制数
+- 填写格式: -1 到 2147483647。默认-1 不限制
+- 是否支持变更：不支持
+
+ElbLbAlgorithm
+- 含义：RS 的 LB 算法
+- 填写格式:  ROUND_ROBIN,LEAST_CONNECTIONS,SOURCE_IP default ROUND_ROBIN
+- 是否支持变更： 支持
+
+ElbSessionAffinityFlag
+- 含义：是否开启session亲和
+- 填写格式: on 或者 off 默认 off
+- 是否支持变更：不支持
+
+ElbSessionAffinityOption
+- 含义：session亲和的超时配置
+- 填写格式: json 字符串
+- 是否支持变更：支持
+
+ElbTransparentClientIP
+- 含义：是否透传源IP
+- 填写格式: true 或者 false 默认 false
+- 是否支持变更：支持
+
+ElbXForwardedHost
+- 含义：是否重写X-Forwarded-Host头
+- 填写格式: true 或者 false 默认 false
+- 是否支持变更：支持
+
+ElbIdleTimeout
+- 含义：rs 的空闲超时时间，最后会彻底删除
+- 填写格式: 0 到 4000，默认不设置使用LB的默认配置
+- 是否支持变更：支持
+
+ElbRequestTimeout
+- 含义：http，https请求超时时间
+- 填写格式: 1 到 300，默认不设置使用LB的默认配置
+- 是否支持变更：支持
+
+ElbResponseTimeout
+- 含义：http，https响应超时时间
+- 填写格式: 1 到 300，默认不设置使用LB的默认配置
+- 是否支持变更：支持
+
+#### Plugin configuration
+
+```
+[hwcloud]
+enable = true
+[hwcloud.elb]
+max_port = 700
+min_port = 500
+block_ports = []
+```
 
 ## 网络隔离
 
