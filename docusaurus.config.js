@@ -126,7 +126,7 @@ function getNextVersionName() {
         apiKey: process.env.Algolia_API_KEY || '72ec0a3c892141cf32490c676bb66628',
         indexName: 'openkruise',
         appId: process.env.Algolia_APP_ID || 'FKASWWQYOP',
-        contextualSearch: false,
+        contextualSearch: true,
         searchParameters: {},
       },
       navbar: {
