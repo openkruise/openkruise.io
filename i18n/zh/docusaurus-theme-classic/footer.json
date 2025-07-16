@@ -1,1 +1,46 @@
-{}
+{
+  "link.title.Documentation": {
+    "message": "Documentation",
+    "description": "The title of the footer links column with title=Documentation in the footer"
+  },
+  "link.title.Community": {
+    "message": "Community",
+    "description": "The title of the footer links column with title=Community in the footer"
+  },
+  "link.title.More": {
+    "message": "More",
+    "description": "The title of the footer links column with title=More in the footer"
+  },
+  "link.item.label.Getting Started": {
+    "message": "Getting Started",
+    "description": "The label of footer link with label=Getting Started linking to /docs/installation"
+  },
+  "link.item.label.Kubernetes Slack ( #openkruise channel )": {
+    "message": "Kubernetes Slack ( #openkruise channel )",
+    "description": "The label of footer link with label=Kubernetes Slack ( #openkruise channel ) linking to https://kubernetes.slack.com/channels/openkruise"
+  },
+  "link.item.label.DingTalk (GroupID: 23330762 )": {
+    "message": "DingTalk (GroupID: 23330762 )",
+    "description": "The label of footer link with label=DingTalk (GroupID: 23330762 ) linking to ."
+  },
+  "link.item.label.WeChat (User: openkruise )": {
+    "message": "WeChat (User: openkruise )",
+    "description": "The label of footer link with label=WeChat (User: openkruise ) linking to ."
+  },
+  "link.item.label.Bi-week Meeting (APAC, Chinese)": {
+    "message": "Bi-week Meeting (APAC, Chinese)",
+    "description": "The label of footer link with label=Bi-week Meeting (APAC, Chinese) linking to https://shimo.im/docs/gXqmeQOYBehZ4vqo"
+  },
+  "link.item.label.GitHub": {
+    "message": "GitHub",
+    "description": "The label of footer link with label=GitHub linking to https://github.com/openkruise/kruise"
+  },
+  "link.item.label.Community Membership": {
+    "message": "Community Membership",
+    "description": "The label of footer link with label=Community Membership linking to https://github.com/openkruise/community/blob/master/community-membership.md"
+  },
+  "copyright": {
+    "message": "\n        <br />\n        <strong>© 2025 The OpenKruise Authors. All rights reserved. The Linux Foundation has registered trademarks and uses trademarks. For a list of trademarks of The Linux Foundation, please see our <a href=\"https://www.linuxfoundation.org/trademark-usage/\"> Trademark Usage</a> page.</strong\n        ",
+    "description": "The footer copyright"
+  }
+}
