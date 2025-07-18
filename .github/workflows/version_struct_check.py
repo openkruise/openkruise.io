@@ -4,6 +4,7 @@ import re
 import subprocess
 import sys
 from collections import defaultdict
+from typing import Dict, List, Tuple
 
 kruise_version_map = defaultdict(list)
 kruise_game_version_map = defaultdict(list)
@@ -29,7 +30,7 @@ game_api_version_map = {
 }
 
 
-def fill_version_map():
+def fill_version_map() -> None:
     def find_apiVersion(txt):
         for item in txt.split('\n'):
             if item.strip().lower().startswith('apiversion:'):
@@ -60,7 +61,7 @@ def fill_version_map():
                 read_file(p, kruise_version_map, kruise_api_version_map)
 
 
-def _exec(command):
+def _exec(command: str) -> None:
     print(command)
     process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
@@ -73,7 +74,7 @@ def _exec(command):
         sys.exit(returncode)
 
 
-def _download_version(_f, version):
+def _download_version(_f: str, version: str) -> Tuple[int, str]:
     cmd = _f.format(version=version)
     print(cmd)
     code, out = subprocess.getstatusoutput(cmd)
@@ -134,7 +135,7 @@ def write_info(files):
         f.write(json.dumps(files, ensure_ascii=False, indent=4))
 
 
-def handle():
+def handle() -> None:
     for version, files in rollouts_version_map.items():
         if version and version != 'master':
             print(version)
