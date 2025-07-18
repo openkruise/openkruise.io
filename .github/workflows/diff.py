@@ -45,14 +45,14 @@ def ignore_code_blocks(md_file):
     return [convert(str(item)) for item in soup.find_all(['h1', 'h2', 'h3', 'h4', 'h5', 'h6'])]
 
 
-def log(*args):
+def log(*args) -> None:
     global result
     result = True
     print(' '.join([str(item) for item in args]))
 
 
 # Check that the number of highlighted strings is consistent across all English and Chinese documents
-def highlight(e_path, z_path):
+def highlight(e_path: str, z_path: str) -> None:
     reg = r'\*\*.*?\*\*'
     with open(e_path, 'r', encoding='utf8') as f:
         data = f.read()
@@ -70,7 +70,7 @@ def highlight(e_path, z_path):
 
 
 #  Check that the number of links in all English and Chinese documents is consistent
-def link(e_path, z_path):
+def link(e_path: str, z_path: str) -> None:
     reg = r'https?://(?:[-\w.]|(?:%[\da-fA-F]{2}))+'
     with open(e_path, 'r', encoding='utf8') as f:
         data = f.read()
