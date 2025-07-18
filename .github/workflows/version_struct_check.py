@@ -4,6 +4,7 @@ import re
 import subprocess
 import sys
 from collections import defaultdict
+from typing import Dict, List, Tuple
 
 kruise_version_map = defaultdict(list)
 kruise_game_version_map = defaultdict(list)
