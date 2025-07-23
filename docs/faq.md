@@ -129,6 +129,7 @@ spec:
   containers:
   - name: logging-agent
     image: fluent/fluent-bit:latest
+    command: ["fluent-bit", "-c", "/fluent-bit/etc/fluent-bit.conf"]
 ```
 
 #### **Q**: Can I update sidecar containers without affecting main containers?
@@ -292,7 +293,7 @@ Use SidecarSet for consistent sidecar injection across workloads.
 For comprehensive autoscaling strategies, see the [autoscaling best practices](https://openkruise.io/docs/best-practices/elastic-deployment).
 
 ```yaml
-apiVersion: autoscaling/v2
+apiVersion: autoscaling/v2beta2
 kind: HorizontalPodAutoscaler
 metadata:
   name: cloneset-hpa
@@ -307,9 +308,7 @@ spec:
   - type: Resource
     resource:
       name: cpu
-      target:
-        type: Utilization
-        averageUtilization: 70
+      targetAverageUtilization: 70
 ```
 
 ## Best Practices and Recommendations
