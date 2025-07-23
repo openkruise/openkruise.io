@@ -18,7 +18,8 @@ type GameServerSetSpec struct {
 	ServiceName          string             `json:"serviceName,omitempty"`
 
     // 保留的游戏服序号，可选项。若指定了该序号，已经存在的游戏服将被删除；而未存在的游戏服，新建时将跳过、不创建该序号
-    ReserveGameServerIds []intstr.IntOrString `json:"reserveGameServerIds,omitempty"`
+    // 允许指定的序号的范围, 例如 [1, 3, 4, 5] 可以表示为 [1, 3-5]
+    ReserveGameServerIds []intintstr.IntOrString `json:"reserveGameServerIds,omitempty"`
 
     // 游戏服自定义服务质量。用户通过该字段实现游戏服自动化状态感知。
     ServiceQualities     []ServiceQuality   `json:"serviceQualities,omitempty"`
