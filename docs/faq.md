@@ -56,27 +56,7 @@ CloneSet is ideal for large-scale stateless applications where update speed and 
 
 #### **Q**: How do I migrate from Deployment to CloneSet?
 
-**A**: Follow these steps:
-1. **Backup your current Deployment** configuration
-2. **Scale down the Deployment** to 0 replicas
-3. **Create a CloneSet** with the same pod template and selector
-4. **Scale up the CloneSet** to desired replicas
-5. **Delete the old Deployment** after verification
-
-```yaml
-# Example migration
-apiVersion: apps.kruise.io/v1alpha1
-kind: CloneSet
-metadata:
-  name: my-app-cloneset
-spec:
-  replicas: 3
-  selector:
-    matchLabels:
-      app: my-app
-  template:
-    # Copy from your Deployment's pod template
-```
+**A**: Use the [kruise-tools](https://github.com/openkruise/kruise-tools?tab=readme-ov-file#migrate) command for migration.
 
 #### **Q**: What's the difference between Advanced StatefulSet and native StatefulSet?
 
@@ -165,7 +145,7 @@ This is particularly useful for logging agents, monitoring sidecars, and service
 
 **A**: Use SidecarSet's container lifecycle management:
 - **Init containers**: Use `initContainers` for setup dependencies
-- **Container ordering**: Configure startup order with `containerStartupProbe`
+- **Container ordering**: Configure injection order with `podInjectPolicy` (BeforeAppContainer/AfterAppContainer)
 - **Shared volumes**: Use volume mounts for inter-container communication
 - **Environment sharing**: Use `transferEnv` to share environment variables
 
@@ -255,7 +235,7 @@ curl localhost:8080/metrics
 - **Error rates**: `controller_runtime_reconcile_errors_total`
 - **Resource states**: Custom metrics from kruise-state-metrics
 
-Set up alerts for high error rates, queue depths, and webhook timeouts.
+For detailed monitoring guidance, see the [troubleshooting documentation](https://openkruise.io/docs/operator-manuals/troubleshooting).
 
 ## Troubleshooting and Debugging
 
@@ -289,7 +269,7 @@ Check the workload status and events to identify the specific cause. Verify that
 - **Tekton/Jenkins**: Can deploy Kruise workloads in CI/CD pipelines
 - **Helm**: Native Helm chart support for templating
 
-Configure your GitOps tool to recognize Kruise CRDs for proper health monitoring.
+For detailed ArgoCD integration, see the [ArgoCD integration best practices](https://openkruise.io/docs/best-practices/gitops-with-kruise).
 
 #### **Q**: Can I use OpenKruise with service mesh (Istio/Linkerd)?
 
@@ -308,6 +288,8 @@ Use SidecarSet for consistent sidecar injection across workloads.
 - **VPA**: Supports vertical scaling recommendations
 - **Custom metrics**: Use custom metrics for advanced scaling decisions
 - **Scaling policies**: Configure scaling behavior for smooth operations
+
+For comprehensive autoscaling strategies, see the [autoscaling best practices](https://openkruise.io/docs/best-practices/elastic-deployment).
 
 ```yaml
 apiVersion: autoscaling/v2
@@ -342,6 +324,8 @@ spec:
 - **Use feature gates**: Enable features gradually
 - **Regular updates**: Keep OpenKruise updated for security and features
 - **Documentation**: Document your Kruise configurations and procedures
+
+For detailed production deployment guidance, see the [high availability operations manual](https://openkruise.io/docs/operator-manuals/availability).
 
 #### **Q**: How do I plan capacity for OpenKruise?
 
