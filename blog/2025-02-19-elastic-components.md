@@ -391,8 +391,6 @@ spec:
       adaptive:
         # Start scheduling to ACS Serverless instances 10 seconds after ECS node scheduling failure
         rescheduleCriticalSeconds: 10
-        # Do not schedule to ECS nodes within one hour after the above scheduling failure
-        unschedulableLastSeconds: 3600
     subsets:
       # Prioritize ECS without an upper limit; only schedule to ACS when ECS fails
       # During scale-in, delete ACS instances first, then ECS node pool Pods
