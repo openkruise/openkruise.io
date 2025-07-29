@@ -396,8 +396,6 @@ spec:
       adaptive:
         # ECS 节点调度失败 10 秒后开始调度到 ACS Serverless 实例
         rescheduleCriticalSeconds: 10
-        # 上述调度失败后 1 小时内不再调度到 ECS 节点
-        unschedulableLastSeconds: 3600
     subsets:
       # 优先调度 ECS 并不设上限，直到调度失败才将 Pod 调度到 ACS
       # 缩容时，先删除 ACS 实例，之后再删除 ECS 节点池中的 Pod
