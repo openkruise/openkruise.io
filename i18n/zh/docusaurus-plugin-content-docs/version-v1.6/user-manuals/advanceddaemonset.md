@@ -71,7 +71,7 @@ type RollingUpdateDaemonSet struct {
 
 Advanced DaemonSet 在 `spec.updateStrategy.rollingUpdate` 中有一个 `rollingUpdateType` 字段，标识了如何进行滚动升级：
 
-- `Standard`: 对于每个 node，控制器会先删除旧的 daemon Pod，再创建一个新 Pod，和原生 DaemonSet 行为一致。
+- `RollingUpdate`: 对于每个 node，控制器会先删除旧的 daemon Pod，再创建一个新 Pod，和原生 DaemonSet 行为一致。
 - `Surging`: 对于每个 node，控制器会先创建一个新 Pod，等它 ready 之后再删除老 Pod。
 
 - `Standard` (默认): 控制器会重建升级 Pod，与原生 DaemonSet 行为一致。你可以通过 `maxUnavailable` 或 `maxSurge` 来控制重建新旧 Pod 的顺序。
