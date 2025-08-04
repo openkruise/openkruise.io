@@ -61,6 +61,9 @@ module.exports = {
           "Application Protection": [
             'user-manuals/deletionprotection',
             'user-manuals/podunavailablebudget',
+          ],
+          "Cli Reference": [
+            "user-manuals/cli-reference"
           ]
         },
       ],
