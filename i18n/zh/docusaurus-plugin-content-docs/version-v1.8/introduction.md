@@ -65,5 +65,5 @@ PaaS 平台可以通过使用 OpenKruise 提供的这些扩展功能，来使得
 
 接下来，我们推荐你：
 
-- 开始 [安装使用 OpenKruise](./installation).
-- 了解 OpenKruise 的 [系统架构](core-concepts/architecture).
+- 开始 [安装使用 OpenKruise](./docs/installation).
+- 了解 OpenKruise 的 [系统架构](./docs/core-concepts/architecture).

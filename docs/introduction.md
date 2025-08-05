@@ -65,5 +65,5 @@ PaaS can use the features provided by OpenKruise to make applications deployment
 
 Here are some recommended next steps:
 
-- Start to [install OpenKruise](./installation).
-- Learn OpenKruise's [Architecture](core-concepts/architecture).
+- Start to [install OpenKruise](./docs/installation).
+- Learn OpenKruise's [Architecture](./docs/core-concepts/architecture).
