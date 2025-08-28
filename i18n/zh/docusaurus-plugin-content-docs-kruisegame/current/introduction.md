@@ -88,6 +88,16 @@ OpenKruiseGame（OKG）具有如下核心能力：
         <td style={{"border":0}}><center><img src={require('/static/img/kruisegame/bekko-logo.png').default} width="100" /></center></td>
         <td style={{"border":0}}><center><img src={require('/static/img/kruisegame/goat-logo.png').default} width="100" /></center></td>
     </tr>
+    <tr style={{"border":0}}>
+    </tr>
+    <tr style={{"border":0}}>
+        <td style={{"border":0}}> <img src={require('/static/img/kruisegame/paper-logo.png').default} width="100" /> </td>
+        <td style={{"border":0}}> <img src={require('/static/img/kruisegame/hero-logo.png').default} width="100" /> </td>
+        <td style={{"border":0}}> <img src={require('/static/img/kruisegame/ctw-logo.png').default} width="100" /> </td>
+        <td style={{"border":0}}> <img src={require('/static/img/kruisegame/leyuansu-logo.png').default} width="100" /> </td>
+        <td style={{"border":0}}> <img src={require('/static/img/kruisegame/gale-logo.png').default} width="100" /> </td>
+        <td style={{"border":0}}> <img src={require('/static/img/kruisegame/dhf-logo.png').default} width="100"  /> </td>
+    </tr>
 </table>
 
 ## What's Next
