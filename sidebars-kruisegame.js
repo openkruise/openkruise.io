@@ -75,6 +75,7 @@ module.exports = {
                 'blog-video/lilith-okg',
                 'blog-video/guanying-20231129',
                 'blog-video/higress',
+                'blog-video/api-gateway-okg',
                 'blog-video/cloud-forward-okg',
                 'blog-video/ack-one-okg',
                 'blog-video/okg-911',
