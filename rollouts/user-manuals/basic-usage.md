@@ -234,7 +234,7 @@ nginx-deployment-basic-579589c5cd-rx5nm   1/1     Running   0          18m
 ```
 ## How to do rollback?
 
-In fact, Kruise Rollout **DOES NOT** provide the ability to rollback directly. **Kruise Rollout prefers that users can rollback workload spec directly to rollback their application.** When users need to rollback from “version-2” to ”version-1“, Kruise Rollout will use the native rolling upgrade strategy to quickly rollback, instead of following the multi-batch checkpoint strategy.
+In fact, Kruise Rollout **DOES NOT** provide the ability to rollback directly. **Kruise Rollout prefers that users can rollback workload spec directly to rollback their application.** When users need to rollback from “version-2” to “version-1”, Kruise Rollout will use the native rolling upgrade strategy to quickly rollback, instead of following the multi-batch checkpoint strategy.
 
 ### 1. Apply your old version yaml to kubernetes
 If an anomaly is detected in the new version during the Rollout process, you can roll back to the previous version using the Deployment configuration. For example, deploy the deployment manifest of previous version using the command `kubectl apply -f depolyment.yaml` without making any changes to the Rollout resource.

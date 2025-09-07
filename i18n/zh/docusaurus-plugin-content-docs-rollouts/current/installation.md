@@ -83,8 +83,7 @@ $ helm install kruise-rollout openkruise/kruise-rollout --version 0.5.0 --set re
 如果您在中国并且在官方 DockerHub 上拉取镜像时遇到问题，您可以使用阿里云托管的镜像库：
 
 ```bash
-$ helm install kruise https://... --set image.repository=openkruise-registry.cn-shanghai.cr.aliyuncs.com/openkruise/kruise-rollout
-...
+$ helm install kruise-rollout openkruise/kruise-rollout --set image.repository=openkruise-registry.cn-shanghai.cr.aliyuncs.com/openkruise/kruise-rollout
 ```
 
 ## 卸载
@@ -94,7 +93,7 @@ $ helm install kruise https://... --set image.repository=openkruise-registry.cn-
 
 只有在您充分理解后才执行此操作。
 
-要卸载使用 Helm Charts安装的 kruise rollout：
+要卸载使用 Helm Charts安装的 Kruise Rollout：
 
 ```bash
 $ helm uninstall kruise-rollout
