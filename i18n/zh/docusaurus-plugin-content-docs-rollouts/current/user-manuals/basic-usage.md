@@ -201,7 +201,7 @@ NAME                                     READY  BATCH ID  REVISION    AGE  RESTA
 nginx-deployment-basic-579589c5cd-rx5nm  1/1    1         579589c5cd  22s  0         ✔ Running
 ```
 或者，你也可以通过以下 Pod 标签直接过滤出相关 Pod：
-1. `rollouts.kruise.io/rollout-id`：用于标识不同的分布操作。该标签的值来源于工作负载上的同名标签。如果工作负载上没有`rollouts.kruise.io/rollout-id` 标签，Kruise Rollout 将会使用 revision（修订版本）生成一个。
+1. `rollouts.kruise.io/rollout-id`：用于标识不同的发布操作。该标签的值来源于工作负载上的同名标签。如果工作负载上没有`rollouts.kruise.io/rollout-id` 标签，Kruise Rollout 将会使用 revision（修订版本）生成一个。
 2. `rollouts.kruise.io/rollout-batch-id`：用于标识不同的发布批次。其值是一个从 1 开始递增的数字
 
 你可以使用如下命令直接过滤 Pod：
