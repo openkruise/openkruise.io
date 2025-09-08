@@ -28,7 +28,7 @@ spec:
       ### 为金丝雀发布创建一个额外的工作负载， 金丝雀发布后会被删除 ###
       enableExtraWorkloadForCanary: true
       steps:
-      ### 第一批h ###
+      ### 第一批 ###
       # 将 5% 的流量路由到新版本
       - traffic: 5%
         # 需要手动确认才能进入下一批
@@ -45,7 +45,7 @@ spec:
       - traffic: 100%
         replicas: 100%
       trafficRoutings:
-      # 工作负载相关的service名
+      # 工作负载相关的 service 名称
       - service: echoserver
         # 与服务相关的 Ingress 名称
         ingress:
@@ -445,7 +445,7 @@ spec:
 
 注意：
 
-- 除了没有`patchPodTemplateMetadata`字段和``enableExtraWorkloadForCanary`字段，blueGreen和canary的配置选项完全一样，也遵循和canary同样的注意事项。
+- 除了没有`patchPodTemplateMetadata`字段和`enableExtraWorkloadForCanary`字段，blueGreen和canary的配置选项完全一样，也遵循和canary同样的注意事项。
 - 蓝绿发布和其他发布方式的区别请查阅“发布策略”-“蓝绿发布”。
 
 

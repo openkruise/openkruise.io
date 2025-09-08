@@ -77,8 +77,7 @@ $ helm install kruise-rollout openkruise/kruise-rollout --version 0.6.0 --set re
 If you are in China and have problem to pull image from official DockerHub, you can use the registry hosted on Alibaba Cloud:
 
 ```bash
-$ helm install kruise https://... --set image.repository=openkruise-registry.cn-shanghai.cr.aliyuncs.com/openkruise/kruise-rollout
-...
+$ helm install kruise-rollout openkruise/kruise-rollout --set image.repository=openkruise-registry.cn-shanghai.cr.aliyuncs.com/openkruise/kruise-rollout
 ```
 
 ## Uninstall
@@ -87,7 +86,7 @@ Note that this will lead to all resources created by Kruise Rollout, including w
 
 Please do this ONLY when you fully understand the consequence.
 
-To uninstall kruise rollout if it is installed with helm charts:
+To uninstall Kruise Rollout if it is installed with helm charts:
 
 ```bash
 $ helm uninstall kruise-rollout

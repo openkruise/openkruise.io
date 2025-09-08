@@ -74,5 +74,5 @@ When you apply a new revision for `workload-demo`:
 
 When you thought the verification of canary is ok, and confirmed to next step:
 - The workload `workload-demo` will be upgraded using native rolling update strategy;
-- The traffic will be restored to native load balance strategy.
+- The traffic will be restored to native load balance strategy;
 - The canary Deployment and Pods will be deleted.
