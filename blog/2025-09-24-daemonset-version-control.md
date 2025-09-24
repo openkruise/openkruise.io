@@ -1,7 +1,7 @@
 ---
 slug: daemonSet version control
 title: Deep Dive into Kubernetes DaemonSet Version Control
-authors: [ Marco Ma ]
+authors: [ Marco ]
 tags: [ workload, controller-revision-hash, version control, rolling update ]
 ---
 
