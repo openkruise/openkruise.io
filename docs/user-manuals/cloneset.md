@@ -549,8 +549,19 @@ Once this value is set, the CloneSet controller will continuously check the roll
 
 Therefore, by configuring `.spec.progressDeadlineSeconds`, a CloneSet will traverse multiple states during its lifecycle:
 - Progressing: the rollout is ongoing.
-- Complete: the partition update is successful or the rollout is successful.
+- Available: the partition update is successful or the rollout is successful.
 - Failed: the rollout is timeout.
+
+#### Progressing State Reason
+
+The following are cases where the Progressing condition status is True:
+
+| Reason                             | Message                                         | Description                        |
+|------------------------------------|-------------------------------------------------|------------------------------------|
+| CloneSetUpdated                    | CloneSet is progressing/CloneSet is resumed     | Rollout is in progress             |
+| CloneSetAvailable                  | CloneSet is available                           | Rollout has completed successfully |
+| CloneSetProgressPaused             | CloneSet is paused                              | Rollout is paused                  |
+| CloneSetProgressPartitionAvailable | CloneSet has been paused due to partition ready | Partition update is successful     |
 
 #### Progressing CloneSet
 A CloneSet is marked as Progressing when performing any of the following operations:
@@ -567,9 +578,7 @@ status: "True"
 reason: CloneSetUpdated
 ```
 
-#### Complete CloneSet
-The Complete state is divided into two substates:
-
+#### Available CloneSet
 **Partition Paused:** 
 
 A CloneSet enters the partition paused state when:

@@ -527,8 +527,20 @@ CloneSet 默认不会设置该值，因此在默认情况下 CloneSet 控制器�
 
 因此，通过配置 `.spec.progressDeadlineSeconds`，会使得 CloneSet 在其生命周期中会经历多种状态：
 - Progressing（进行中）：部署过程正在进行。
-- Complete（完成）：分组部署完成或者整体部署成功。
+- Available（可用）：分组部署完成或者整体部署成功。
 - Failed（失败）：部署超时以至于无法继续进行。
+
+#### Progressing 状态原因说明
+
+以下为 Progressing 状况条目为 True 的情况：
+
+| Reason                             | Message                                         | Description |
+|------------------------------------|-------------------------------------------------|-------------|
+| CloneSetUpdated                    | CloneSet is progressing/CloneSet is resumed     | 发布升级过程中     |
+| CloneSetAvailable                  | CloneSet is available                           | 发布升级已完成     |
+| CloneSetProgressPaused             | CloneSet is paused                              | 发布升级暂停中     |
+| CloneSetProgressPartitionAvailable | CloneSet has been paused due to partition ready | 发布升级达到指定比例  |
+
 
 #### 进行中的 CloneSet
 当执行以下任一操作时，CloneSet 将被标记为 Progressing 状态：
@@ -545,7 +557,7 @@ status: "True"
 reason: CloneSetUpdated
 ```
 
-#### 完成的 CloneSet
+#### 可用的 CloneSet
 Complete 状态分为两种子状态：
 
 **分组暂停状态：**
