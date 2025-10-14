@@ -284,7 +284,7 @@ func (dsc *DaemonSetsController) manage(ctx context.Context, ds *apps.DaemonSet,
 **syncNodes 在不同场景下的作用：**
 
 虽然 `syncNodes` 主要由 `manage` 函数调用以执行常规的 Pod 生命周期操作，但它在 `rollingUpdate` 函数中也扮演着至关重要的角色。
-在滚动更新场景中，该函数严重依赖通过 `findUpdatedPodsOnNode` 实现的基于哈希的 Pod 分类：
+在滚动更新场景中，该函数依赖通过 `findUpdatedPodsOnNode` 实现的，基于哈希的 Pod 分类：
 
 ```go
 func findUpdatedPodsOnNode(ds *apps.DaemonSet, podsOnNode []*v1.Pod, hash string) (newPod, oldPod *v1.Pod, ok bool) {
@@ -307,8 +307,8 @@ func findUpdatedPodsOnNode(ds *apps.DaemonSet, podsOnNode []*v1.Pod, hash string
 }
 ```
 
-`rollingUpdate` 函数利用这种分类机制来智能地决定删除哪些 Pod 以及哪些节点需要新 Pod，然后将这些决策传递给 `syncNodes` 执行。
-这种基于哈希的方法确保了只有过时的 Pod 会被替换，同时保留已匹配期望版本的 Pod，从而实现了精确高效的滚动更新。
+`rollingUpdate` 函数利用这种分类机制来决定删除哪些 Pod 以及哪些节点需要新 Pod，然后将这些决策传递给 `syncNodes` 执行。
+这种基于哈希的方法确保了只有过时的 Pod 会被替换，同时保留期望版本的 Pod，从而实现了精确高效的滚动更新。
 
 ### 7\. Pod 模板准备: CreatePodTemplate
 
@@ -369,4 +369,3 @@ DaemonSet 控制器通过一个设计优雅且严谨的工作流，确保了其�
 4.  **标签是运行时的标识**：最后，这个哈希值通过 `controller-revision-hash` 标签被注入到 Pod 中，使得控制器在运行时能够轻松识别其版本。
 
 这种“哈希-历史-标签”（hash-history-label）机制是控制器模式在 Kubernetes 中实现可靠、自动化滚动更新的典范。
-它不仅保证了操作的幂等性（idempotency）和最终一致性（eventual consistency），也为我们理解和调试 Kubernetes 的声明式 API 行为提供了清晰的思路。

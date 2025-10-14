@@ -304,7 +304,7 @@ func findUpdatedPodsOnNode(ds *apps.DaemonSet, podsOnNode []*v1.Pod, hash string
 }
 ```
 
-The `rollingUpdate` function leverages this classification to make intelligent decisions about which Pods to delete and which nodes need new Pods, then passes these decisions to `syncNodes` for execution. 
+The `rollingUpdate` function leverages this classification to make decisions about which Pods to delete and which nodes need new Pods, then passes these decisions to `syncNodes` for execution. 
 This hash-based approach ensures that only outdated Pods are targeted for replacement while preserving Pods that already match the desired version, enabling precise and efficient rolling updates.
 
 ### 7. Pod Template Preparation: CreatePodTemplate
@@ -363,5 +363,4 @@ The DaemonSet controller ensures that all Pods it manages carry the correct vers
 3. **ControllerRevision as Persistent Evidence**: The hash-to-template relationship is recorded in `ControllerRevision` objects, providing reliable evidence for version tracking and management.
 4. **Labels as Runtime Identifiers**: Finally, this hash value is injected into Pods through the `controller-revision-hash` label, enabling easy identification by the controller at runtime.
 
-This "hash-history-label" mechanism exemplifies the controller pattern's implementation of reliable, automated rolling updates in Kubernetes. 
-It not only ensures operation idempotency and eventual consistency but also provides clear insights for understanding and debugging Kubernetes declarative API behavior.
+This "hash-history-label" mechanism exemplifies the controller pattern's implementation of reliable, automated rolling updates in Kubernetes.
