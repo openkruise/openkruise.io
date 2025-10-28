@@ -76,6 +76,7 @@ module.exports = {
                 'blog-video/meetup-guangzhou-20231125',
                 'blog-video/lilith-okg',
                 'blog-video/yahaha-okg',
+                'blog-video/paomu',
                 'blog-video/guanying-20231129',
                 'blog-video/higress',
                 'blog-video/api-gateway-okg',
