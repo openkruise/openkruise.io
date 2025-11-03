@@ -177,6 +177,16 @@ spec:
     # default K8s Container fields
   - name: nginx
     image: nginx:alpine
+    resourcesPolicy: # extended sidecar container fields
+      targetContainerMode: sum
+      targetContainersNameRegex: ^nginx$ # only applies to container nginx
+      resourceExpr:
+        limits:
+          cpu: max(cpu*50%, 100m)
+          memory: max(memory*50%, 200Mi)
+        requests:
+          cpu: max(cpu*40%, 50m)
+          memory: max(memory*40%, 100Mi)
     volumeMounts:
     - mountPath: /nginx/conf
       name: nginx.conf
@@ -207,6 +217,8 @@ spec:
 - 环境变量共享
     - 可以通过 spec.containers[i].transferEnv 来从别的容器获取环境变量，会把名为 sourceContainerName 容器中名为 envName 的环境变量拷贝到本容器
     - sourceContainerNameFrom 支持 downwardAPI 来获取容器name，比如：metadata.name, `metadata.labels['<KEY>']`, `metadata.annotations['<KEY>']`
+- 动态资源注入
+    - 可以通过 .spec.containers[i].resourcesPolicy 和 .spec.initContainers[i].resourcesPolicy 来配置 sidecar 容器的资源，使得它能够根据目标Pod容器的资源动态调整。
 
 #### 注入暂停
 **FEATURE STATE:** Kruise v0.10.0
@@ -239,6 +251,90 @@ spec:
   - name: my-secret
 ```
 **特别注意**: 对于需要拉取私有 sidecar 镜像的 Pod，用户必需确保这些 Pod 所在的命名空间中已存在对应的 Secret，否则会导致拉取私有镜像失败。
+
+#### 动态资源注入
+**FEATURE STATE:** Kruise v0.xx.0
+
+SidecarSet 支持在 Pod 创建时根据 Pod 规格配置 sidecar 容器资源。
+
+相关设计文档请参考：[proposals sidecarset dynamic resources when pod creating](https://github.com/openkruise/kruise/blob/master/docs/proposals/20250913-sidecarset-dynamic-resources-when-creating.md)
+
+```yaml
+apiVersion: apps.kruise.io/v1alpha1
+kind: SidecarSet
+spec:
+  containers:
+  - name: sidecar1
+    image: centos:6.7
+    resourcesPolicy:
+      targetContainerMode: sum
+      targetContainersNameRegex: ^large-engine-v4$ # 仅应用于 large-engine-v4 容器
+      resourceExpr:
+        limits:
+          cpu: max(cpu*50%, 50m)
+          memory: 200Mi
+        requests:
+          cpu: max(cpu*50%, 50m)
+          memory: 100Mi
+---
+apiVersion: v1
+kind: Pod
+spec:
+  containers:
+  - name: large-engine-v4
+    image: nginx:1.14.2
+    resources:
+      limits:
+        cpu: 200m
+        memory: 200Mi
+      requests:
+        cpu: 50m
+        memory: 100Mi
+  - name: large-engine-v8
+    image: nginx:1.14.2
+    resources:
+      limits:
+        cpu: 200m
+        memory: 200Mi
+      requests:
+        cpu: 50m
+        memory: 100Mi
+```
+
+在这种情况下，sidecar 容器的资源将为：
+```yaml
+limits:
+  cpu: max(sum(200m) * 50%, 50m ) = 100m
+  memory: 200Mi
+requests:
+  cpu: max(sum(50m) * 50%, 50m ) = 50m
+  memory: 100Mi
+```
+
+我们还提供了一些工具来帮助用户轻松生成资源表达式。以下是一些示例：
+1. 克隆 kruise 仓库：`git clone https://github.com/openkruise/kruise.git`
+2. 进入 kruise 目录：`cd kruise`
+3. 运行 `python3 hack/calculator-helper/generator/generate_expression.py "[[0,0], [1,2], [2,1], [3,3]]" -v cpu` 根据给定点生成 CPU 分段线性表达式。这将输出 `max(min(2*cpu,-cpu+3.0),2*cpu-3.0)`。更多详情请阅读 `hack/calculator-helper/generator/README.md`。
+4. 验证表达式并绘制图表：
+   1. 通过运行命令 `cd hack/calculator-helper/validator && go build -o validator` 构建验证器二进制文件
+   2. 运行 `./validator -expr "max(min(2*cpu,-cpu+3.0),2*cpu-3.0)" -var cpu -min 0 -max 5000m -output plot.png"` 验证表达式。这将在当前目录生成 plot.png 文件，显示 [0, 5000m] 范围内的资源表达式曲线。
+![plot.png](sidecarset-resourcespolicy-plot.png)
+
+**注意**：
+- 支持的表达式运算：
+  - 基本算术：`+`、`-`、`*`、`/`
+  - 括号：`(` 和 `)`
+  - 函数：`max()`、`min()`
+  - 百分比：例如 `50%`（表示 0.5）
+  - Kubernetes 资源：例如 `40m`（40 毫核）、`100Mi`（100 兆字节）
+- 支持的表达式值类型：
+  - 整数：例如 `42`
+  - 浮点数：例如 `3.14`
+  - 百分比：例如 `50%`（自动转换为 0.5）
+  - Kubernetes 资源：例如 `200m`、`512Mi`、`1Gi`
+- 如果同时配置了 resourcesPolicy 和 resources，验证 webhook 将拒绝 Pod 创建请求。
+- `targetContainersNameRegex` 是用于匹配目标容器名称的正则表达式模式。如果没有容器名称与此正则表达式匹配，验证 webhook 将拒绝 Pod 创建请求。目标容器包括原生 sidecar 容器和普通容器，不包括 Kruise sidecar 容器。
+- `resourcesPolicy` 可以应用于原生 sidecar 容器（`sidecarset.spec.initContainers.resourcesPolicy`）和普通容器（`sidecarset.spec.containers.resourcesPolicy`）。
 
 ### sidecar注入时版本控制
 **FEATURE STATE:** Kruise v1.3.0
