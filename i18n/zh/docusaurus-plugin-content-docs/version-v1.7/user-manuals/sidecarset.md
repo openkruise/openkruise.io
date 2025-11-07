@@ -238,7 +238,7 @@ spec:
   imagePullSecrets:
   - name: my-secret
 ```
-**特别注意**: 对于需要拉取私有 sidecar 镜像的 Pod，用户必需确保这些 Pod 所在的命名空间中已存在对应的 Secret，否则会导致拉取私有镜像失败。
+**特别注意**: 对于需要拉取私有 sidecar 镜像的 Pod，用户必须确保这些 Pod 所在的命名空间中已存在对应的 Secret，否则会导致拉取私有镜像失败。
 
 ### sidecar注入时版本控制
 **FEATURE STATE:** Kruise v1.3.0
@@ -498,7 +498,7 @@ Pod创建时，SidecarSet Webhook将会注入两个容器：
 
 #### 热升级流程
 
-热升级流程主要分为一下三个步骤：
+热升级流程主要分为以下三个步骤：
 1. Upgrade: 将empty容器升级为当前最新的sidecar容器，例如：envoy-2.Image = envoy:1.17.0
 2. Migration: lifecycle.postStart完成热升级流程中的状态迁移，当迁移完成后退出。(**注意:PostStartHook在迁移过程中必须阻塞，迁移完成后退出。**)
 3. Reset: 状态迁移完成后，热升级流程将设置envoy-1容器为empty镜像，例如：envoy-1.Image = empty:1.0
