@@ -177,6 +177,16 @@ spec:
     # default K8s Container fields
   - name: nginx
     image: nginx:alpine
+    resourcesPolicy: # extended sidecar container fields
+      targetContainerMode: sum
+      targetContainersNameRegex: ^nginx$ # only applies to container nginx
+      resourceExpr:
+        limits:
+          cpu: max(cpu*50%, 100m)
+          memory: max(memory*50%, 200Mi)
+        requests:
+          cpu: max(cpu*40%, 50m)
+          memory: max(memory*40%, 100Mi)
     volumeMounts:
     - mountPath: /nginx/conf
       name: nginx.conf
@@ -207,6 +217,8 @@ spec:
 - 环境变量共享
     - 可以通过 spec.containers[i].transferEnv 来从别的容器获取环境变量，会把名为 sourceContainerName 容器中名为 envName 的环境变量拷贝到本容器
     - sourceContainerNameFrom 支持 downwardAPI 来获取容器name，比如：metadata.name, `metadata.labels['<KEY>']`, `metadata.annotations['<KEY>']`
+- 动态资源注入
+    - 可以通过 `spec.containers[i].resourcesPolicy` 和 `spec.initContainers[i].resourcesPolicy` 来配置 sidecar 容器的资源，使得它能够根据目标Pod容器的资源动态调整。
 
 #### 注入暂停
 **FEATURE STATE:** Kruise v0.10.0
@@ -239,6 +251,65 @@ spec:
   - name: my-secret
 ```
 **特别注意**: 对于需要拉取私有 sidecar 镜像的 Pod，用户必需确保这些 Pod 所在的命名空间中已存在对应的 Secret，否则会导致拉取私有镜像失败。
+
+#### 动态资源注入
+**FEATURE STATE:** Kruise v0.xx.0
+
+SidecarSet 支持在 Pod 创建时根据 Pod 规格配置 sidecar 容器资源。
+
+相关设计文档请参考：[proposals sidecarset dynamic resources when pod creating](https://github.com/openkruise/kruise/blob/master/docs/proposals/20250913-sidecarset-dynamic-resources-when-creating.md)
+
+```yaml
+apiVersion: apps.kruise.io/v1alpha1
+kind: SidecarSet
+spec:
+  containers:
+  - name: sidecar1
+    image: centos:6.7
+    resourcesPolicy:
+      targetContainerMode: sum
+      targetContainersNameRegex: ^large-engine-v4$ # 仅应用于 large-engine-v4 容器
+      resourceExpr:
+        limits:
+          cpu: max(cpu*50%, 50m)
+          memory: 200Mi
+        requests:
+          cpu: max(cpu*50%, 50m)
+          memory: 100Mi
+---
+apiVersion: v1
+kind: Pod
+spec:
+  containers:
+  - name: large-engine-v4
+    image: nginx:1.14.2
+    resources:
+      limits:
+        cpu: 200m
+        memory: 200Mi
+      requests:
+        cpu: 50m
+        memory: 100Mi
+  - name: large-engine-v8
+    image: nginx:1.14.2
+    resources:
+      limits:
+        cpu: 200m
+        memory: 200Mi
+      requests:
+        cpu: 50m
+        memory: 100Mi
+```
+
+在这种情况下，sidecar 容器的资源将为：
+```yaml
+limits:
+  cpu: max(sum(200m) * 50%, 50m ) = 100m
+  memory: 200Mi
+requests:
+  cpu: max(sum(50m) * 50%, 50m ) = 50m
+  memory: 100Mi
+```
 
 ### sidecar注入时版本控制
 **FEATURE STATE:** Kruise v1.3.0

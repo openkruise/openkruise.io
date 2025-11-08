@@ -187,6 +187,16 @@ spec:
     # default K8s Container fields
   - name: nginx
     image: nginx:alpine
+    resourcesPolicy: # extended sidecar container fields
+      targetContainerMode: sum
+      targetContainersNameRegex: ^nginx$ # only applies to container nginx
+      resourceExpr:
+        limits:
+          cpu: max(cpu*50%, 100m)
+          memory: max(memory*50%, 200Mi)
+        requests:
+          cpu: max(cpu*40%, 50m)
+          memory: max(memory*40%, 100Mi)
     volumeMounts:
     - mountPath: /nginx/conf
       name: nginx.conf
@@ -217,6 +227,8 @@ spec:
 - Environment variable sharing
     - Environment variables can be fetched from another container through spec.containers[x].transferenv, and the environment variable named envName from the container named sourceContainerName is copied to this container
     - sourceContainerNameFrom support downwardAPI for container name, such as `metadata.labels['<KEY>']`, `metadata.annotations['<KEY>']`
+- Injection ResourcesPolicy
+    - User can configure the resource expression for sidecar container to dynamically adjust its resources based on the target container's resources by field `.spec.containers[i].resourcesPolicy` and `.spec.initContainers[i].resourcesPolicy`
 
 #### injection pause
 **FEATURE STATE:** Kruise v0.10.0
@@ -249,6 +261,64 @@ spec:
   - name: my-secret
 ```
 **Note**: Users must ensure that the corresponding Secrets have already existed in the namespaces where Pods need to pull the private images. Otherwise, pulling private images will not succeed.
+
+#### Injection ResourcesPolicy
+**FEATURE STATE:** Kruise v0.xx.0
+
+SidecarSet supports configuring sidecar container resources based on pod specifications during pod creation.
+
+For design documentation, please refer to: [proposals sidecarset dynamic resources when pod creating](https://github.com/openkruise/kruise/blob/master/docs/proposals/20250913-sidecarset-dynamic-resources-when-creating.md)
+
+```yaml
+apiVersion: apps.kruise.io/v1alpha1
+kind: SidecarSet
+spec:
+  containers:
+  - name: sidecar1
+    image: centos:6.7
+    resourcesPolicy:
+      targetContainerMode: sum
+      targetContainersNameRegex: ^large-engine-v4$ # only applies to container large-engine-v4
+      resourceExpr:
+        limits:
+          cpu: max(cpu*50%, 50m)
+          memory: 200Mi
+        requests:
+          cpu: max(cpu*50%, 50m)
+          memory: 100Mi
+---
+apiVersion: v1
+kind: Pod
+spec:
+  containers:
+  - name: large-engine-v4
+    image: nginx:1.14.2
+    resources:
+      limits:
+        cpu: 200m
+        memory: 200Mi
+      requests:
+        cpu: 50m
+        memory: 100Mi
+  - name: large-engine-v8
+    image: nginx:1.14.2
+    resources:
+      limits:
+        cpu: 200m
+        memory: 200Mi
+      requests:
+        cpu: 50m
+        memory: 100Mi
+```
+In this case, the sidecar container resources will be:
+```yaml
+limits:
+  cpu: max(sum(200m) * 50%, 50m ) = 100m
+  memory: 200Mi
+requests:
+  cpu: max(sum(50m) * 50%, 50m ) = 50m
+  memory: 100Mi
+```
 
 ### version control for injection
 **FEATURE STATE:** Kruise v1.3.0
