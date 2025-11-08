@@ -77,6 +77,7 @@ module.exports = {
         'best-practices/cloneset-lifecycle',
         'best-practices/elastic-deployment',
         'best-practices/acronjob+broadcastjob',
+        'best-practices/resource-policy-sidecarset',
       ],
     },
     {
