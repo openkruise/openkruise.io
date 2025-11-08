@@ -218,7 +218,7 @@ spec:
     - 可以通过 spec.containers[i].transferEnv 来从别的容器获取环境变量，会把名为 sourceContainerName 容器中名为 envName 的环境变量拷贝到本容器
     - sourceContainerNameFrom 支持 downwardAPI 来获取容器name，比如：metadata.name, `metadata.labels['<KEY>']`, `metadata.annotations['<KEY>']`
 - 动态资源注入
-    - 可以通过 .spec.containers[i].resourcesPolicy 和 .spec.initContainers[i].resourcesPolicy 来配置 sidecar 容器的资源，使得它能够根据目标Pod容器的资源动态调整。
+    - 可以通过 `spec.containers[i].resourcesPolicy` 和 `spec.initContainers[i].resourcesPolicy` 来配置 sidecar 容器的资源，使得它能够根据目标Pod容器的资源动态调整。
 
 #### 注入暂停
 **FEATURE STATE:** Kruise v0.10.0
@@ -310,31 +310,6 @@ requests:
   cpu: max(sum(50m) * 50%, 50m ) = 50m
   memory: 100Mi
 ```
-
-我们还提供了一些工具来帮助用户轻松生成资源表达式。以下是一些示例：
-1. 克隆 kruise 仓库：`git clone https://github.com/openkruise/kruise.git`
-2. 进入 kruise 目录：`cd kruise`
-3. 运行 `python3 hack/calculator-helper/generator/generate_expression.py "[[0,0], [1,2], [2,1], [3,3]]" -v cpu` 根据给定点生成 CPU 分段线性表达式。这将输出 `max(min(2*cpu,-cpu+3.0),2*cpu-3.0)`。更多详情请阅读 `hack/calculator-helper/generator/README.md`。
-4. 验证表达式并绘制图表：
-   1. 通过运行命令 `cd hack/calculator-helper/validator && go build -o validator` 构建验证器二进制文件
-   2. 运行 `./validator -expr "max(min(2*cpu,-cpu+3.0),2*cpu-3.0)" -var cpu -min 0 -max 5000m -output plot.png"` 验证表达式。这将在当前目录生成 plot.png 文件，显示 [0, 5000m] 范围内的资源表达式曲线。
-![plot.png](sidecarset-resourcespolicy-plot.png)
-
-**注意**：
-- 支持的表达式运算：
-  - 基本算术：`+`、`-`、`*`、`/`
-  - 括号：`(` 和 `)`
-  - 函数：`max()`、`min()`
-  - 百分比：例如 `50%`（表示 0.5）
-  - Kubernetes 资源：例如 `40m`（40 毫核）、`100Mi`（100 兆字节）
-- 支持的表达式值类型：
-  - 整数：例如 `42`
-  - 浮点数：例如 `3.14`
-  - 百分比：例如 `50%`（自动转换为 0.5）
-  - Kubernetes 资源：例如 `200m`、`512Mi`、`1Gi`
-- 如果同时配置了 resourcesPolicy 和 resources，验证 webhook 将拒绝 Pod 创建请求。
-- `targetContainersNameRegex` 是用于匹配目标容器名称的正则表达式模式。如果没有容器名称与此正则表达式匹配，验证 webhook 将拒绝 Pod 创建请求。目标容器包括原生 sidecar 容器和普通容器，不包括 Kruise sidecar 容器。
-- `resourcesPolicy` 可以应用于原生 sidecar 容器（`sidecarset.spec.initContainers.resourcesPolicy`）和普通容器（`sidecarset.spec.containers.resourcesPolicy`）。
 
 ### sidecar注入时版本控制
 **FEATURE STATE:** Kruise v1.3.0

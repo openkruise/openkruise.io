@@ -320,31 +320,6 @@ requests:
   memory: 100Mi
 ```
 
-We also provide tools to help users generate resource expressions easily. Here are some examples:
-1. Clone the kruise repo: `git clone https://github.com/openkruise/kruise.git`
-2. Navigate to the kruise directory: `cd kruise`
-3. Run `python3 hack/calculator-helper/generator/generate_expression.py "[[0,0], [1,2], [2,1], [3,3]]" -v cpu` to generate a CPU piecewise linear expression from the given points. This will output `max(min(2*cpu,-cpu+3.0),2*cpu-3.0)`. For more details, please read `hack/calculator-helper/generator/README.md`.
-4. Validate your expression and plot it: 
-   1. Build the validator binary by running `cd hack/calculator-helper/validator && go build -o validator`
-   2. Run `./validator -expr "max(min(2*cpu,-cpu+3.0),2*cpu-3.0)" -var cpu -min 0 -max 5000m -output plot.png"` to validate the expression. This will generate a plot.png file in the current directory showing the resource expression curve over the range [0, 5000m].
-![plot.png](sidecarset-resourcespolicy-plot.png)
-
-**Note**:
-- Supported expression operations:
-  - Basic arithmetic: `+`, `-`, `*`, `/`
-  - Parentheses: `(` and `)`
-  - Functions: `max()`, `min()`
-  - Percentages: e.g., `50%` (represents 0.5)
-  - Kubernetes resources: e.g., `40m` (40 milli), `100Mi` (100 Mebibytes)
-- Supported value types in expressions:
-  - Integers: e.g., `42`
-  - Floats: e.g., `3.14`
-  - Percentages: e.g., `50%` (automatically converts to 0.5)
-  - Kubernetes resources: e.g., `200m`, `512Mi`, `1Gi`
-- The validation webhook will reject pod creation requests if both resourcesPolicy and resources are configured.
-- `targetContainersNameRegex` is the regex pattern used to match target container names. If no container names match this regex, the pod creation request will be rejected by the webhook. Target containers include native sidecar containers and regular containers, excluding Kruise sidecar containers.
-- `resourcesPolicy` can be applied to both native sidecar containers (`sidecarset.spec.initContainers.resourcesPolicy`) and regular containers (`sidecarset.spec.containers.resourcesPolicy`).
-
 ### version control for injection
 **FEATURE STATE:** Kruise v1.3.0
 
