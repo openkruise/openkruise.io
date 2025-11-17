@@ -188,7 +188,7 @@ spec:
   - name: nginx
     image: nginx:alpine
     resourcesPolicy: # extended sidecar container fields
-      targetContainerMode: sum
+      targetContainerMode: sum # sum | max, TargetContainerMode defines how to aggregate resources from target containers. Sum means sum up all target containers' resources, max means choose the max value of each resource
       targetContainersNameRegex: ^nginx$ # only applies to container nginx
       resourceExpr:
         limits:
@@ -263,11 +263,11 @@ spec:
 **Note**: Users must ensure that the corresponding Secrets have already existed in the namespaces where Pods need to pull the private images. Otherwise, pulling private images will not succeed.
 
 #### Injection ResourcesPolicy
-**FEATURE STATE:** Kruise v0.xx.0
+**FEATURE STATE:** Kruise v1.9.0
 
 SidecarSet supports configuring sidecar container resources based on pod specifications during pod creation.
 
-For design documentation, please refer to: [proposals sidecarset dynamic resources when pod creating](https://github.com/openkruise/kruise/blob/master/docs/proposals/20250913-sidecarset-dynamic-resources-when-creating.md)
+For design documentation, please refer to: [proposals sidecarset dynamic resources when pod creating](https://github.com/openkruise/kruise/blob/master/docs/proposals/20250913-sidecarset-dynamic-resources-when-creating.md). Best practice: [Dynamic Resource Injection with SidecarSet](docs/best-practices/resource-policy-sidecarset.md)
 
 ```yaml
 apiVersion: apps.kruise.io/v1alpha1
@@ -319,6 +319,23 @@ requests:
   cpu: max(sum(50m) * 50%, 50m ) = 50m
   memory: 100Mi
 ```
+
+**Note**:
+- Supported expression operators:
+  - Basic arithmetic: `+`, `-`, `*`, `/`
+  - Parentheses: `(` and `)`
+  - Functions: `max()`, `min()`
+  - Percentages: e.g., `50%` (equals 0.5)
+  - Kubernetes resources: e.g., `40m` (40 millicores), `100Mi` (100 mebibytes)
+- Supported expression value types:
+  - Integers: e.g., `42`
+  - Floating-point numbers: e.g., `3.14`
+  - Percentages: e.g., `50%` (automatically converted to 0.5)
+  - Kubernetes resources: e.g., `200m`, `512Mi`, `1Gi`
+- If both `resourcesPolicy` and `resources` are configured, the Kruise validating webhook will reject the Pod creation request.
+- `targetContainersNameRegex` is a regular expression pattern for matching target container names. If no container names match this regex, the validating webhook will reject the Pod creation request. Target containers include native sidecar containers and regular containers, but exclude Kruise sidecar containers.
+- `resourcesPolicy` can be applied to both native sidecar containers (`sidecarset.spec.initContainers.resourcesPolicy`) and regular containers (`sidecarset.spec.containers.resourcesPolicy`).
+- Injection only happened when pod creating, and will not be updated when pod running.
 
 ### version control for injection
 **FEATURE STATE:** Kruise v1.3.0

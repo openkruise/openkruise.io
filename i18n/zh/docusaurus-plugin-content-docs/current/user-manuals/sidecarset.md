@@ -178,7 +178,7 @@ spec:
   - name: nginx
     image: nginx:alpine
     resourcesPolicy: # extended sidecar container fields
-      targetContainerMode: sum
+      targetContainerMode: sum # sum | max, TargetContainerMode defines how to aggregate resources from target containers. Sum means sum up all target containers' resources, max means choose the max value of each resource
       targetContainersNameRegex: ^nginx$ # only applies to container nginx
       resourceExpr:
         limits:
@@ -253,11 +253,11 @@ spec:
 **特别注意**: 对于需要拉取私有 sidecar 镜像的 Pod，用户必需确保这些 Pod 所在的命名空间中已存在对应的 Secret，否则会导致拉取私有镜像失败。
 
 #### 动态资源注入
-**FEATURE STATE:** Kruise v0.xx.0
+**FEATURE STATE:** Kruise v1.9.0
 
 SidecarSet 支持在 Pod 创建时根据 Pod 规格配置 sidecar 容器资源。
 
-相关设计文档请参考：[proposals sidecarset dynamic resources when pod creating](https://github.com/openkruise/kruise/blob/master/docs/proposals/20250913-sidecarset-dynamic-resources-when-creating.md)
+相关设计文档请参考: [proposals sidecarset dynamic resources when pod creating](https://github.com/openkruise/kruise/blob/master/docs/proposals/20250913-sidecarset-dynamic-resources-when-creating.md), 最佳实践请参考: [sidecarset 动态资源注入](i18n/zh/docusaurus-plugin-content-docs/current/best-practices/resource-policy-sidecarset.md)
 
 ```yaml
 apiVersion: apps.kruise.io/v1alpha1
@@ -310,6 +310,24 @@ requests:
   cpu: max(sum(50m) * 50%, 50m ) = 50m
   memory: 100Mi
 ```
+
+**注意**：
+- 支持的表达式运算：
+  - 基本算术：`+`、`-`、`*`、`/`
+  - 括号：`(` 和 `)`
+  - 函数：`max()`、`min()`
+  - 百分比：例如 `50%`（表示 0.5）
+  - Kubernetes 资源：例如 `40m`（40 毫核）、`100Mi`（100 兆字节）
+- 支持的表达式值类型：
+  - 整数：例如 `42`
+  - 浮点数：例如 `3.14`
+  - 百分比：例如 `50%`（自动转换为 0.5）
+  - Kubernetes 资源：例如 `200m`、`512Mi`、`1Gi`
+- 如果同时配置了 resourcesPolicy 和 resources, kruise validating webhook 将拒绝 Pod 创建请求。
+- `targetContainersNameRegex` 是用于匹配目标容器名称的正则表达式模式。如果没有容器名称与此正则表达式匹配，验证 webhook 将拒绝 Pod 创建请求。目标容器包括原生 sidecar 容器和普通容器，不包括 Kruise sidecar 容器。
+- `resourcesPolicy` 可以应用于原生 sidecar 容器（`sidecarset.spec.initContainers.resourcesPolicy`）和普通容器（`sidecarset.spec.containers.resourcesPolicy`）。
+- 动态资源注入仅在 Pod 创建时生效，不会在 Pod 运行时动态更新。
+
 
 ### sidecar注入时版本控制
 **FEATURE STATE:** Kruise v1.3.0
