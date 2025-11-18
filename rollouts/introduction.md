@@ -37,7 +37,7 @@ Kruise Rollouts vs. [Argo Rollout](https://argoproj.github.io/rollouts/) and [Fl
 | Architecture                | Bypass                                                       | A new workload type                                | Bypass                                             |
 | Plug and Play, Hot-Swapping | Yes                                                          | No                                                 | No                                                 |
 | Release Type                | Multi-Batch, Canary, A/B Testing, End-to-End Canary, Blue-Green | Multi-Batch, Canary, Blue-Green, A/B Testing       | Canary, Blue-Green, A/B Testing                    |
-| Workload Type               | Deployment,StatefulSet,CloneSet,Advanced StatefulSet,Advanced DaemonSet | Agro-Rollout                                       | Deployment. DaemonSet                              |
+| Workload Type               | Deployment,StatefulSet,CloneSet,Advanced StatefulSet,Advanced DaemonSet | Argo-Rollout                                       | Deployment. DaemonSet                              |
 | Traffic Type                | Ingress, GatewayAPI, CRD (Need Lua Script)                   | Ingress, GatewayAPI, APISIX, Traefik, SMI and more | Ingress, GatewayAPI, APISIX, Traefik, SMI and more |
 | Migration Costs             | No need migrate your workloads and pods                      | Must migrate your workloads and pods               | Must migrate your pods                             |
 | HPA compatible              | Yes                                                          | Yes                                                | No                                                 |

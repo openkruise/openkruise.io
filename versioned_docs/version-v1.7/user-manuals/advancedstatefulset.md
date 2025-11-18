@@ -205,7 +205,7 @@ Advanced StatefulSet adds a `podUpdatePolicy` field in `spec.updateStrategy.roll
 which controls recreate or in-place update for Pods.
 
 - `ReCreate` controller will delete old Pods and create new ones. This is the same behavior as default StatefulSet.
-- `InPlaceIfPossible` controller will try to in-place update Pod instead of recreating them if possible. Please ready the concept doc below.
+- `InPlaceIfPossible` controller will try to in-place update Pod instead of recreating them if possible. Please read the concept doc below.
 - `InPlaceOnly` controller will in-place update Pod instead of recreating them. With `InPlaceOnly` policy, user cannot modify any fields other than the fields that supported to in-place update.
 
 **You may need to read the [concept doc](../core-concepts/inplace-update) for more details of in-place update.**
