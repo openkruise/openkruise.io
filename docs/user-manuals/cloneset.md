@@ -529,6 +529,112 @@ spec:
     paused: true
 ```
 
+### Progress Deadline Seconds
+
+**FEATURE STATE:** Kruise v1.9.0
+
+The `.spec.progressDeadlineSeconds` field is an optional field that defines the maximum time (in seconds) the CloneSet controller waits before determining that a rollout has failed to make progress. When this deadline is exceeded without progress, the CloneSet controller records the following condition in the resource status:
+```yaml
+type: Progressing
+status: False
+reason: ProgressDeadlineExceeded
+```
+
+By default, CloneSet does not set this value, so the CloneSet controller will not record the condition to `.status.conditions` while the rollout is ongoing.
+
+Once this value is set, the CloneSet controller will continuously check the rollout status within the specified time. Higher-level orchestration systems can leverage this status to trigger corresponding actions, e.g.rollback the CloneSet (even when this status is marked as timeout, it does not affect the underlying CloneSet controller's continued rolling updates of Pods).
+> **Note:**
+>
+> If specified, this field value must be greater than `.spec.minReadySeconds`.
+
+Therefore, by configuring `.spec.progressDeadlineSeconds`, a CloneSet will traverse multiple states during its lifecycle:
+- Progressing: the rollout is ongoing.
+- Available: the partition update is successful or the rollout is successful.
+- Failed: the rollout is timeout.
+
+#### Progressing State Reason
+
+The following are cases where the Progressing condition status is True:
+
+| Reason                             | Message                                         | Description                        |
+|------------------------------------|-------------------------------------------------|------------------------------------|
+| CloneSetUpdated                    | CloneSet is progressing/CloneSet is resumed     | Rollout is in progress             |
+| CloneSetAvailable                  | CloneSet is available                           | Rollout has completed successfully |
+| CloneSetProgressPaused             | CloneSet is paused                              | Rollout is paused                  |
+| CloneSetProgressPartitionAvailable | CloneSet has been paused due to partition ready | Partition update is successful     |
+
+#### Progressing CloneSet
+A CloneSet is marked as Progressing when performing any of the following operations:
+
+- Rolling out a new revision.
+- Scaling up the newest revision during upgrade.
+- Scaling down older revisions during upgrade.
+- New Pods are ready or available (satisfying MinReadySeconds condition).
+
+When the rollout enters the "Progressing" state, the CloneSet controller adds the following condition to the CloneSet's `.status.conditions`:
+```yaml
+type: Progressing
+status: "True"
+reason: CloneSetUpdated
+```
+
+#### Available CloneSet
+**Partition Paused:** 
+
+A CloneSet enters the partition paused state when:
+- All replicas associated with the CloneSet partition have been updated to the specified latest revision.
+- All replicas associated with the CloneSet partition are available.
+
+The CloneSet controller adds the following condition to the CloneSet's `.status.conditions`:
+```yaml
+type: Progressing
+status: "True"
+reason: ProgressPartitionAvailable
+```
+
+**Available:** 
+
+A CloneSet is marked as available when:
+
+- All replicas have been updated to the latest specified revision.
+- All replicas are available.
+- No old revision replicas are running.
+
+The CloneSet controller adds the following condition to the CloneSet's `.status.conditions`:
+```yaml
+type: Progressing
+status: "True"
+reason: CloneSetAvailable
+```
+
+The Progressing condition maintains a status value of "True" until a new revision is initiated. This condition persists even when replica availability changes (which affects the Available condition instead).
+
+#### Failed CloneSet
+A CloneSet enters the Failed state when it cannot successfully deploy the latest revision. Common causes include:
+
+- Insufficient quota
+- Readiness probe failures
+- Image pull errors
+- Insufficient permissions
+- Limit ranges
+- Application runtime misconfiguration
+
+This condition can be detected by configuring the `.spec.progressDeadlineSeconds` parameter. Once the deadline is exceeded, the CloneSet controller adds the following condition to the CloneSet's `.status.conditions`:
+```yaml
+type: Progressing
+status: "False"
+reason: ProgressDeadlineExceeded
+```
+
+> **Note:**
+>
+> When a CloneSet rollout is paused, the controller stops progress checking against the specified deadline. Users can safely pause and resume a CloneSet rollout in the middle of the rollout without triggering the deadline exceeded condition.
+
+#### Operations on Failed CloneSet
+All operations applicable to a Complete CloneSet can also be applied to a Failed CloneSet, including:
+- Rolling back to a previous revision.
+- Pausing the rollout to make multiple adjustments to the Pod template.
+
 ### In-Place Update Support for Modifying Resources
 
 **FEATURE STATE:** Kruise v1.8.0
@@ -762,4 +868,3 @@ Currently, both status and metadata changes of Pods will trigger the reconcile o
 
 However, for larger clusters or scenarios with frequent Pod update events, these unnecessary reconciles will block the real CloneSet reconciles, resulting in delayed rolling updates and other changes.
 To solve this problem, you can enable the **feature-gate CloneSetEventHandlerOptimization** to reduce some unnecessary reconcile enqueues.
-
