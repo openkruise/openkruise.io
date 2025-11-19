@@ -156,7 +156,7 @@ spec:
 | `kind`       | string | ""       | Workload Kind       |
 | `name`       | string | ""       | Workload Name       |
 
-Currently, Kruise Rollout supports Deployment, CloneSet, StatefulSet, Advanced StatefulSet and Advanced DaemonSet.
+Currently, Kruise Rollout supports Deployment, CloneSet, StatefulSet, DaemonSet, Advanced StatefulSet and Advanced DaemonSet.
 
 **Note: The workload should be at the same namespace as the Rollout.**
 
