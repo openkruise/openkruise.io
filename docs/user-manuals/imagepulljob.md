@@ -73,6 +73,11 @@ Also, ImagePullJob has two completionPolicy types:
   - `ttlSecondsAfterFinished`: after this job finished (including success or failure) over this time, this job will be removed
 - `Never` means this job will never complete, it will continuously pull image on the desired Nodes every day.
 
+**FEATURE STATE:** Kruise v1.9.0
+
+We can also use [AdvancedCronjob](./advancedcronjob.md) to schedule ImageListPullJob now.
+With this feature, user can preheat their large images for the pods using by AI/ML jobs.
+
 ### Configure secrets
 
 If the image is in a private registry, you may want to configure the pull secrets for the image:
@@ -260,6 +265,11 @@ spec:
 
 You can read the NodeImage status using `kubectl get nodeimage node-xxx -o yaml`,
 and you will find the task removed from spec and status after it has finished over 300s.
+
+**FEATURE STATE:** Kruise v1.9.0
+
+If you want to change the default ttl extra seconds (300s) for Nodeimage tasks, you can specify the parameter `--default-ttlseconds-for-always-nodeimage` when starting kruise-controller-manager.
+Notice that you can't set `ttlSecondsAfterFinished` in AdvancedCronJob, as this will also impact the lifecycle of ImageListPullJob. For detail, please refer to issue [#2213](https://github.com/openkruise/kruise/issues/2213) and [#2214](https://github.com/openkruise/kruise/issues/2214).
 
 ## FAQ
 1. If ImagePullJob failed, as follows:
