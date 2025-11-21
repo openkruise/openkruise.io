@@ -8,7 +8,7 @@ Its support for canary, blue-green, multi-batch, and A/B testing delivery modes 
 
 ## Key Features
 - **Rich release strategies**
-  - Multi-batch update strategy for Deployment, CloneSet, StatefulSet, Advanced StatefulSet, Advanced DaemonSet.
+  - Multi-batch update strategy for Deployment, CloneSet, StatefulSet, DaemonSet, Advanced StatefulSet, Advanced DaemonSet.
   - Canary update strategy for Deployment.
   - Blue-Green update strategy for Deployment, CloneSet.
 

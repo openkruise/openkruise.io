@@ -10,7 +10,7 @@ Kruise Rollouts 是一个 **Bypass(旁路)** 组件，提供 **高级渐进式�
 ## 主要特点
 
 - **丰富的发布策略**
-    - 用于 Deployment、CloneSet、StatefulSet、Advanced StatefulSet、Advanced DaemonSet 的多批次更新策略。
+    - 用于 Deployment、CloneSet、StatefulSet、DaemonSet、Advanced StatefulSet、Advanced DaemonSet 的多批次更新策略。
     - 用于 Deployment 的金丝雀(Canary)更新策略。
     - 用于 Deployment、CloneSet 的蓝绿(Blue-Green)更新策略。
 

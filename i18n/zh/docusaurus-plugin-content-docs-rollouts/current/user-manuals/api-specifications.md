@@ -162,7 +162,7 @@ spec:
 | `kind`       | 字符串 | ""   | 工作负载种类       |
 | `name`       | 字符串 | ""   | 工作负载名称       |
 
-目前，Kruise Rollout 支持 Deployment、CloneSet、StatefulSet、Advanced StatefulSet和Advanced DaemonSet。
+目前，Kruise Rollout 支持 Deployment、CloneSet、StatefulSet、DaemonSet、Advanced StatefulSet和Advanced DaemonSet。
 
 注意：
 
@@ -409,7 +409,7 @@ spec:
 - `steps[x].replicas`不能为nil。
 - `steps[x].matches[i]和steps[x].matches[j]`之间具有**或**关系；
 - `steps[x].matches[y].headers[i]和steps[x].matches[y].header[j]`之间具有**且**关系。
-- `enableExtraWorkloadForCanary 在v1beta1的Rollout对象中可用， 在v1alpha1版本的Rollout对象中， 可以用Rollout的特殊annotation `rollouts.kruise.io/rolling-type` 来开启类似功能，rolling-type 如果设置为"canary"（默认值)， 则相当于设置enableExtraWorkloadForCanary=true; 如果设置为partition, 这相当于设置enableExtraWorkloadForCanar=false
+- `enableExtraWorkloadForCanary` 在v1beta1的Rollout对象中可用，在v1alpha1版本的Rollout对象中，可以用Rollout的特殊annotation `rollouts.kruise.io/rolling-type` 来开启类似功能，rolling-type 如果设置为"canary"（默认值)， 则相当于设置enableExtraWorkloadForCanary=true; 如果设置为partition, 这相当于设置enableExtraWorkloadForCanar=false
 - `patchPodTemplateMetadata`只有在`enableExtraWorkloadForCanary = true`的情况下才会生效。
 
 #### blueGreen
