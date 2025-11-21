@@ -37,11 +37,11 @@ spec:
   - name: sidecar1
     image: centos:6.7
     resourcesPolicy:
-      targetContainerMode: sum # 表示根据所有目标容器的资源 limits 之和来计算 sidecarContainer 的资源
+      targetContainersMode: sum # 表示根据所有目标容器的资源 limits 之和来计算 sidecarContainer 的资源
       targetContainersNameRegex: ^.*$ # 匹配所有容器
-      resourceExpr:
+      resourcesExpr:
         limits:
-          cpu: min(max(max(max(0.5,0.5*cpu),cpu-1.0),cpu-1.0),3.0) # 表达式变量中的 cpu 代表目标容器的 cpu 资源 limits 之和，它值的计算方式通过 targetContainerMode 和 targetContainersNameRegex 来确定
+          cpu: min(max(max(max(0.5,0.5*cpu),cpu-1.0),cpu-1.0),3.0) # 表达式变量中的 cpu 代表目标容器的 cpu 资源 limits 之和，它值的计算方式通过 targetContainersMode 和 targetContainersNameRegex 来确定
           memory: 200Mi
         requests:
           cpu: 50m
