@@ -18,7 +18,6 @@ en_tool = language_tool_python.LanguageTool(
     config={
         'cacheSize': 100000,
         'pipelineCaching': True,
-        'fasttextModel': 'en',
     }
 )
 #  https://github.com/jxmorris12/language_tool_python
@@ -126,10 +125,10 @@ def inline_count(e_path, z_path):
 def lexical_analysis(e_path, _):
     with open(e_path, 'r', encoding='utf8') as f:
         for item in list(filter(lambda x: x.category == 'TYPOS', en_tool.check(f.read()))):
-            if item.matchedText not in pre_dict:
-                pre_dict.add(item.matchedText)
-                pre_dict_increment.add(item.matchedText)
-                log(item.matchedText)
+            if item.matched_text not in pre_dict:
+                pre_dict.add(item.matched_text)
+                pre_dict_increment.add(item.matched_text)
+                log(item.matched_text)
 
 
 handler['title_count'] = title_count
@@ -152,6 +151,7 @@ if __name__ == '__main__':
                 for name, func in handler.items():
                     func(en_path, zn_path)
 
+    en_tool.close()
     if result:
         print("Please add these abnormal words to pre_dict.json :",json.dumps(sorted(list(pre_dict_increment))))
         sys.exit(1)

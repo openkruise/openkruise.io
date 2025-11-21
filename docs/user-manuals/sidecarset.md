@@ -187,6 +187,16 @@ spec:
     # default K8s Container fields
   - name: nginx
     image: nginx:alpine
+    resourcesPolicy: # extended sidecar container fields
+      targetContainersMode: sum # sum | max, TargetContainersMode defines how to aggregate resources from target containers. Sum means sum up all target containers' resources, max means choose the max value of each resource
+      targetContainersNameRegex: ^nginx$ # only applies to container nginx
+      resourcesExpr:
+        limits:
+          cpu: max(cpu*50%, 100m)
+          memory: max(memory*50%, 200Mi)
+        requests:
+          cpu: max(cpu*40%, 50m)
+          memory: max(memory*40%, 100Mi)
     volumeMounts:
     - mountPath: /nginx/conf
       name: nginx.conf
@@ -217,6 +227,8 @@ spec:
 - Environment variable sharing
     - Environment variables can be fetched from another container through spec.containers[x].transferenv, and the environment variable named envName from the container named sourceContainerName is copied to this container
     - sourceContainerNameFrom support downwardAPI for container name, such as `metadata.labels['<KEY>']`, `metadata.annotations['<KEY>']`
+- Injection ResourcesPolicy
+    - User can configure the resource expression for sidecar container to dynamically adjust its resources based on the target container's resources by field `.spec.containers[i].resourcesPolicy` and `.spec.initContainers[i].resourcesPolicy`
 
 #### injection pause
 **FEATURE STATE:** Kruise v0.10.0
@@ -249,6 +261,81 @@ spec:
   - name: my-secret
 ```
 **Note**: Users must ensure that the corresponding Secrets have already existed in the namespaces where Pods need to pull the private images. Otherwise, pulling private images will not succeed.
+
+#### Injection ResourcesPolicy
+**FEATURE STATE:** Kruise v1.9.0
+
+SidecarSet supports configuring sidecar container resources based on pod specifications during pod creation.
+
+For design documentation, please refer to: [proposals sidecarset dynamic resources when pod creating](https://github.com/openkruise/kruise/blob/master/docs/proposals/20250913-sidecarset-dynamic-resources-when-creating.md). Best practice: [Dynamic Resource Injection with SidecarSet](docs/best-practices/resource-policy-sidecarset.md)
+
+```yaml
+apiVersion: apps.kruise.io/v1alpha1
+kind: SidecarSet
+spec:
+  containers:
+  - name: sidecar1
+    image: centos:6.7
+    resourcesPolicy:
+      targetContainersMode: sum
+      targetContainersNameRegex: ^large-engine-v4$ # only applies to container large-engine-v4
+      resourcesExpr:
+        limits:
+          cpu: max(cpu*50%, 50m)
+          memory: 200Mi
+        requests:
+          cpu: max(cpu*50%, 50m)
+          memory: 100Mi
+---
+apiVersion: v1
+kind: Pod
+spec:
+  containers:
+  - name: large-engine-v4
+    image: nginx:1.14.2
+    resources:
+      limits:
+        cpu: 200m
+        memory: 200Mi
+      requests:
+        cpu: 50m
+        memory: 100Mi
+  - name: large-engine-v8
+    image: nginx:1.14.2
+    resources:
+      limits:
+        cpu: 200m
+        memory: 200Mi
+      requests:
+        cpu: 50m
+        memory: 100Mi
+```
+In this case, the sidecar container resources will be:
+```yaml
+limits:
+  cpu: max(sum(200m) * 50%, 50m ) = 100m
+  memory: 200Mi
+requests:
+  cpu: max(sum(50m) * 50%, 50m ) = 50m
+  memory: 100Mi
+```
+
+**Note**:
+- Supported expression operators:
+  - Basic arithmetic: `+`, `-`, `*`, `/`
+  - Parentheses: `(` and `)`
+  - Functions: `max()`, `min()`
+  - Percentages: e.g., `50%` (equals 0.5)
+  - Kubernetes resources: e.g., `40m` (40 millicores), `100Mi` (100 mebibytes)
+- Supported expression value types:
+  - Integers: e.g., `42`
+  - Floating-point numbers: e.g., `3.14`
+  - Percentages: e.g., `50%` (automatically converted to 0.5)
+  - Kubernetes resources: e.g., `200m`, `512Mi`, `1Gi`
+- If both `resourcesPolicy` and `resources` are configured, the Kruise validating webhook will reject the Pod creation request.
+- `targetContainersNameRegex` is a regular expression pattern for matching target container names. If no container names match this regex, the validating webhook will reject the Pod creation request. Target containers include native sidecar containers and regular containers, but exclude Kruise sidecar containers.
+- `resourcesPolicy` can be applied to both native sidecar containers (`sidecarset.spec.initContainers.resourcesPolicy`) and regular containers (`sidecarset.spec.containers.resourcesPolicy`).
+- Injection only happened when pod creating, and will not be updated when pod running.
 
 ### version control for injection
 **FEATURE STATE:** Kruise v1.3.0

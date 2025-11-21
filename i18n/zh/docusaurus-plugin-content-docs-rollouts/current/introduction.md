@@ -10,7 +10,7 @@ Kruise Rollouts 是一个 **Bypass(旁路)** 组件，提供 **高级渐进式�
 ## 主要特点
 
 - **丰富的发布策略**
-    - 用于 Deployment、CloneSet、StatefulSet、Advanced StatefulSet、Advanced DaemonSet 的多批次更新策略。
+    - 用于 Deployment、CloneSet、StatefulSet、Advanced StatefulSet、Advanced DaemonSet 和 DaemonSet 的多批次更新策略。
     - 用于 Deployment 的金丝雀(Canary)更新策略。
     - 用于 Deployment、CloneSet 的蓝绿(Blue-Green)更新策略。
 
@@ -41,7 +41,7 @@ Kruise Rollouts 与 [Argo Rollout](https://argoproj.github.io/rollouts/) 和 [Fl
 | 架构      | Bypass                                                                  | 新的工作负载类型                                 | Bypass                                   |
 | 插拔和热切换  | 是                                                                       | 否                                        | 否                                        |
 | 发布类型    | 多批次、金丝雀、A/B测试、全链路灰度、蓝绿                                                      | 多批次、金丝雀、蓝绿、A/B测试                         | 金丝雀、蓝绿、A/B测试                             |
-| 工作负载类型  | Deployment、StatefulSet、CloneSet、Advanced StatefulSet、Advanced DaemonSet | Argo-Rollout                             | Deployment、DaemonSet                     | 
+| 工作负载类型  | Deployment、StatefulSet、CloneSet、DaemonSet、Advanced StatefulSet、Advanced DaemonSet | Argo-Rollout                             | Deployment、DaemonSet                     | 
 | 流量类型    | Ingress、GatewayAPI、CRD（需要 Lua 脚本）                                       | Ingress、GatewayAPI、APISIX、Traefik、SMI 等等 | Ingress、GatewayAPI、APISIX、Traefik、SMI 等等 |
 | 迁移成本    | 无需迁移工作负载和Pods                                                           | 必须迁移工作负载和Pods                            | 必须迁移Pods                                 | 
 | HPA 兼容性 | 是                                                                       | 是                                        | 否                                        |
