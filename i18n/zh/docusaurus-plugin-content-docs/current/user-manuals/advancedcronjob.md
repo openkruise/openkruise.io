@@ -6,7 +6,7 @@ AdvancedCronJob 是对于原生 CronJob 的扩展版本。
 后者根据用户设置的 schedule 规则，周期性创建 Job 执行任务，而 AdvancedCronJob 的 template 支持多种不同的 job 资源：
 
 ```yaml
-apiVersion: apps.kruise.io/v1alpha1
+apiVersion: apps.kruise.io/v1beta1
 kind: AdvancedCronJob
 spec:
   template:
@@ -19,15 +19,22 @@ spec:
     broadcastJobTemplate:
       # ...
 
-    # Options 3(future): ...
+    # Option 3: use imageListPullJobTemplate, which will create an ImageListPullJobTemplate object when cron schedule triggers
+    imageListPullJobTemplate:
+      # ...
+
+    # Options 4(future): ...
 ```
 
 - jobTemplate：与原生 CronJob 一样创建 Job 执行任务
 - broadcastJobTemplate：周期性创建 [BroadcastJob](./broadcastjob) 执行任务
+- imageListPullJobTemplate：周期性创建 [ImageListPullJob](./imagepulljob) 执行任务
 
 ![AdvancedCronjob](/img/docs/user-manuals/advancedcronjob.png)
 
 ## 用例
+
+### BroadcastJob的定时任务
 
 ```yaml
 apiVersion: apps.kruise.io/v1alpha1
@@ -52,6 +59,40 @@ spec:
 ```
 
 上述 YAML 定义了一个 AdvancedCronJob，每分钟创建一个 BroadcastJob 对象，这个 BroadcastJob 会在所有节点上运行一个 job 任务。
+
+### ImageListPullJob的定时任务
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: AdvancedCronJob
+metadata:
+  name: acj-test
+spec:
+  schedule: "0 */2 * * *"
+  concurrencyPolicy: Replace
+  template:
+    imageListPullJobTemplate:
+      spec:
+        parallelism: 5
+        images:
+        - nginx:1.14.2
+        - busybox:latest
+        pullSecrets:
+        - default-secret
+        selector:
+          names:
+          - node1
+          - node2
+        pullPolicy:
+          timeoutSeconds: 60
+        imagePullPolicy: IfNotPresent
+```
+
+上述 YAML 定义了一个 AdvancedCronJob，每2小时创建一个 ImageListPullJob 对象，这个 ImageListPullJob 会在所选节点上下载指定的镜像。
+
+**FEATURE STATE:** Kruise v1.9.0
+在 v1.9.0 版本中，我们引入了 `spec.template.imageListPullJobTemplate` 字段。
+你可以设置它来定时下载指定镜像的到所选节点上。
 
 ## 时区
 
