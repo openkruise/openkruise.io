@@ -40,11 +40,11 @@ spec:
   - name: sidecar1
     image: centos:6.7
     resourcesPolicy:
-      targetContainerMode: sum # Calculate sidecar resources based on the sum of all target container limits
+      targetContainersMode: sum # Calculate sidecar resources based on the sum of all target container limits
       targetContainersNameRegex: ^.*$ # Match all containers
-      resourceExpr:
+      resourcesExpr:
         limits:
-          cpu: min(max(max(max(0.5,0.5*cpu),cpu-1.0),cpu-1.0),3.0) # The 'cpu' variable represents the sum of target container CPU limits, calculated according to targetContainerMode and targetContainersNameRegex
+          cpu: min(max(max(max(0.5,0.5*cpu),cpu-1.0),cpu-1.0),3.0) # The 'cpu' variable represents the sum of target container CPU limits, calculated according to targetContainersMode and targetContainersNameRegex
           memory: 200Mi
         requests:
           cpu: 50m

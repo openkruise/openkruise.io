@@ -178,9 +178,9 @@ spec:
   - name: nginx
     image: nginx:alpine
     resourcesPolicy: # extended sidecar container fields
-      targetContainerMode: sum # sum | max, TargetContainerMode defines how to aggregate resources from target containers. Sum means sum up all target containers' resources, max means choose the max value of each resource
+      targetContainersMode: sum # sum | max, TargetContainersMode defines how to aggregate resources from target containers. Sum means sum up all target containers' resources, max means choose the max value of each resource
       targetContainersNameRegex: ^nginx$ # only applies to container nginx
-      resourceExpr:
+      resourcesExpr:
         limits:
           cpu: max(cpu*50%, 100m)
           memory: max(memory*50%, 200Mi)
@@ -267,9 +267,9 @@ spec:
   - name: sidecar1
     image: centos:6.7
     resourcesPolicy:
-      targetContainerMode: sum
+      targetContainersMode: sum
       targetContainersNameRegex: ^large-engine-v4$ # 仅应用于 large-engine-v4 容器
-      resourceExpr:
+      resourcesExpr:
         limits:
           cpu: max(cpu*50%, 50m)
           memory: 200Mi
