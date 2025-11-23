@@ -2,6 +2,11 @@
 title: BroadcastJob
 ---
 
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+**Note: v1beta1 available from Kruise v1.9.0**
+
 This controller distributes a Pod on every node in the cluster.
 Like a [DaemonSet](https://kubernetes.io/docs/concepts/workloads/controllers/daemonset/),
 a BroadcastJob makes sure a Pod is created and run on all selected nodes once in a cluster.
@@ -101,6 +106,30 @@ added node in the cluster, he can deploy a BroadcastJob with `Never` policy.
 Run a BroadcastJob that each Pod computes a pi, with `ttlSecondsAfterFinished` set to 30.
 The job will be deleted in 30 seconds after it is finished.
 
+<Tabs>
+<TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: BroadcastJob
+metadata:
+  name: broadcastjob-ttl
+spec:
+  template:
+    spec:
+      containers:
+        - name: pi
+          image: perl
+          command: ["perl", "-Mbignum=bpi", "-wle", "print bpi(2000)"]
+      restartPolicy: Never
+  completionPolicy:
+    type: Always
+    ttlSecondsAfterFinished: 30
+```
+
+</TabItem>
+<TabItem value="v1alpha1" label="v1alpha1">
+
 ```yaml
 apiVersion: apps.kruise.io/v1alpha1
 kind: BroadcastJob
@@ -118,11 +147,37 @@ spec:
     type: Always
     ttlSecondsAfterFinished: 30
 ```
+</TabItem>
+</Tabs>
 
 ### activeDeadlineSeconds
 
 Run a BroadcastJob that each Pod sleeps for 50 seconds, with `activeDeadlineSeconds` set to 10 seconds.
 The job will be marked as Failed after it runs for 10 seconds, and the running Pods will be deleted.
+
+<Tabs>
+<TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: BroadcastJob
+metadata:
+  name: broadcastjob-active-deadline
+spec:
+  template:
+    spec:
+      containers:
+        - name: sleep
+          image: busybox
+          command: ["sleep", "50000"]
+      restartPolicy: Never
+  completionPolicy:
+    type: Always
+    activeDeadlineSeconds: 10
+```
+
+</TabItem>
+<TabItem value="v1alpha1" label="v1alpha1">
 
 ```yaml
 apiVersion: apps.kruise.io/v1alpha1
@@ -141,10 +196,35 @@ spec:
     type: Always
     activeDeadlineSeconds: 10
 ```
+</TabItem>
+</Tabs>
 
 ### completionPolicy
 
 Run a BroadcastJob with `Never` completionPolicy. The job will continue to run even if all Pods have completed on all nodes.
+
+<Tabs>
+<TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: BroadcastJob
+metadata:
+  name: broadcastjob-never-complete
+spec:
+  template:
+    spec:
+      containers:
+        - name: sleep
+          image: busybox
+          command: ["sleep", "5"]
+      restartPolicy: Never
+  completionPolicy:
+    type: Never
+```
+
+</TabItem>
+<TabItem value="v1alpha1" label="v1alpha1">
 
 ```yaml
 apiVersion: apps.kruise.io/v1alpha1
@@ -162,12 +242,40 @@ spec:
   completionPolicy:
     type: Never
 ```
+</TabItem>
+</Tabs>
 
 ### failurePolicy
 
 #### restartLimit
 
 Run a BroadcastJob with `FailFast` failurePolicy. The job will be failed, when failed pod is found.
+
+<Tabs>
+<TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: BroadcastJob
+metadata:
+  name: broadcastjob-restart-limit
+spec:
+  template:
+    spec:
+      containers:
+        - name: sleep
+          image: busybox
+          command: ["cat", "/path/not/exist"]
+      restartPolicy: Never
+  completionPolicy:
+    type: Never
+  failurePolicy:
+    type: FailFast
+    restartLimit: 3
+```
+
+</TabItem>
+<TabItem value="v1alpha1" label="v1alpha1">
 
 ```yaml
 apiVersion: apps.kruise.io/v1alpha1
@@ -188,3 +296,5 @@ spec:
     type: FailFast
     restartLimit: 3
 ```
+</TabItem>
+</Tabs>
