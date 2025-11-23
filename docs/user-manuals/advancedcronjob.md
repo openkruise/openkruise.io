@@ -2,8 +2,36 @@
 title: AdvancedCronJob
 ---
 
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+**Note: v1beta1 available from Kruise v1.9.0**
+
 AdvancedCronJob is an enhanced version of CronJob.
 The original CronJob creates Job periodically according to schedule rule, but AdvancedCronJob provides template supported multiple job resources.
+
+<Tabs>
+<TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: AdvancedCronJob
+spec:
+  template:
+
+    # Option 1: use jobTemplate, which is equivalent to original CronJob
+    jobTemplate:
+      # ...
+
+    # Option 2: use broadcastJobTemplate, which will create a BroadcastJob object when cron schedule triggers
+    broadcastJobTemplate:
+      # ...
+
+    # Options 3(future): ...
+```
+
+</TabItem>
+<TabItem value="v1alpha1" label="v1alpha1">
 
 ```yaml
 apiVersion: apps.kruise.io/v1beta1
@@ -25,6 +53,8 @@ spec:
 
     # Options 4(future): ...
 ```
+</TabItem>
+</Tabs>
 
 - jobTemplate：create Jobs periodically, which is equivalent to original CronJob
 - broadcastJobTemplate：create [BroadcastJobs](./broadcastjob) periodically, which support to dispatch Jobs on every node
@@ -35,6 +65,33 @@ spec:
 ## Example
 
 ### CronJob for BroadcastJob
+<Tabs>
+<TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: AdvancedCronJob
+metadata:
+  name: acj-test
+spec:
+  schedule: "*/1 * * * *"
+  template:
+    broadcastJobTemplate:
+      spec:
+        template:
+          spec:
+            containers:
+              - name: pi
+                image: perl
+                command: ["perl",  "-Mbignum=bpi", "-wle", "print bpi(2000)"]
+            restartPolicy: Never
+        completionPolicy:
+          type: Always
+          ttlSecondsAfterFinished: 30
+```
+
+</TabItem>
+<TabItem value="v1alpha1" label="v1alpha1">
 
 ```yaml
 apiVersion: apps.kruise.io/v1alpha1
@@ -57,6 +114,8 @@ spec:
           type: Always
           ttlSecondsAfterFinished: 30
 ```
+</TabItem>
+</Tabs>
 
 The YAML above defines an AdvancedCronJob. It will create a BroadcastJob every minute, which will run a job on every node.
 
