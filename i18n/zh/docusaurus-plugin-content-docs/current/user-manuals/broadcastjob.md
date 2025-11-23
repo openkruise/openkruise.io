@@ -1,6 +1,10 @@
 ---
 title: BroadcastJob
 ---
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+**Note: v1beta1在Kruise v1.9.0 后可用**
 
 这个控制器将 Pod 分发到集群中每个 node 上，类似于 [DaemonSet](https://kubernetes.io/docs/concepts/workloads/controllers/daemonset/)，
 但是 BroadcastJob 管理的 Pod 并不是长期运行的 daemon 服务，而是类似于 [Job](https://kubernetes.io/docs/concepts/workloads/controllers/jobs-run-to-completion/) 的任务类型 Pod。
@@ -78,6 +82,29 @@ title: BroadcastJob
 
 创建 BroadcastJob 配置 `ttlSecondsAfterFinished` 为 30。
 这个 job 会在执行结束后 30s 被删除。
+<Tabs>
+<TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: BroadcastJob
+metadata:
+  name: broadcastjob-ttl
+spec:
+  template:
+    spec:
+      containers:
+        - name: pi
+          image: perl
+          command: [ "perl",  "-Mbignum=bpi", "-wle", "print bpi(2000)" ]
+      restartPolicy: Never
+  completionPolicy:
+    type: Always
+    ttlSecondsAfterFinished: 30
+```
+
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
 
 ```yaml
 apiVersion: apps.kruise.io/v1alpha1
@@ -90,17 +117,43 @@ spec:
       containers:
         - name: pi
           image: perl
-          command: ["perl",  "-Mbignum=bpi", "-wle", "print bpi(2000)"]
+          command: [ "perl",  "-Mbignum=bpi", "-wle", "print bpi(2000)" ]
       restartPolicy: Never
   completionPolicy:
     type: Always
     ttlSecondsAfterFinished: 30
 ```
+  </TabItem>
+</Tabs>
 
 ### activeDeadlineSeconds
 
 创建 BroadcastJob 配置 `activeDeadlineSeconds` 为 10。
 这个 job 会在运行超过 10s 之后被标记为失败，并把下面还在运行的 Pod 删除掉。
+
+<Tabs>
+<TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: BroadcastJob
+metadata:
+  name: broadcastjob-active-deadline
+spec:
+  template:
+    spec:
+      containers:
+        - name: sleep
+          image: busybox
+          command: [ "sleep",  "50000" ]
+      restartPolicy: Never
+  completionPolicy:
+    type: Always
+    activeDeadlineSeconds: 10
+```
+
+</TabItem>
+<TabItem value="v1alpha1" label="v1alpha1">
 
 ```yaml
 apiVersion: apps.kruise.io/v1alpha1
@@ -113,17 +166,42 @@ spec:
       containers:
         - name: sleep
           image: busybox
-          command: ["sleep",  "50000"]
+          command: [ "sleep",  "50000" ]
       restartPolicy: Never
   completionPolicy:
     type: Always
     activeDeadlineSeconds: 10
 ```
+</TabItem>
+</Tabs>
 
 ### completionPolicy
 
 创建 BroadcastJob 配置 `completionPolicy` 为 `Never`。
 这个 job 会持续运行即使当前所有 node 上的 Pod 都执行完成了。
+
+<Tabs>
+<TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: BroadcastJob
+metadata:
+  name: broadcastjob-never-complete
+spec:
+  template:
+    spec:
+      containers:
+        - name: sleep
+          image: busybox
+          command: [ "sleep",  "5" ]
+      restartPolicy: Never
+  completionPolicy:
+    type: Never
+```
+
+</TabItem>
+<TabItem value="v1alpha1" label="v1alpha1">
 
 ```yaml
 apiVersion: apps.kruise.io/v1alpha1
@@ -136,17 +214,47 @@ spec:
       containers:
         - name: sleep
           image: busybox
-          command: ["sleep",  "5"]
+          command: [ "sleep",  "5" ]
       restartPolicy: Never
   completionPolicy:
     type: Never
 ```
+</TabItem>
+</Tabs>
 
 ### failurePolicy
 
 #### restartLimit
+
 创建 BroadcastJob 配置 `failurePolicy` 为 `FailFast`。
 当找到失败的pod时，job将失败。
+
+<Tabs>
+<TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: BroadcastJob
+metadata:
+  name: broadcastjob-restart-limit
+spec:
+  template:
+    spec:
+      containers:
+        - name: sleep
+          image: busybox
+          command: [ "cat", "/path/not/exist" ]
+      restartPolicy: Never
+  completionPolicy:
+    type: Never
+  failurePolicy:
+    type: FailFast
+    restartLimit: 3
+```
+
+</TabItem>
+<TabItem value="v1alpha1" label="v1alpha1">
+
 ```yaml
 apiVersion: apps.kruise.io/v1alpha1
 kind: BroadcastJob
@@ -158,7 +266,7 @@ spec:
       containers:
         - name: sleep
           image: busybox
-          command: ["cat", "/path/not/exist"]
+          command: [ "cat", "/path/not/exist" ]
       restartPolicy: Never
   completionPolicy:
     type: Never
@@ -166,4 +274,6 @@ spec:
     type: FailFast
     restartLimit: 3
 ```
+</TabItem>
+</Tabs>
 
