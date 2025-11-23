@@ -5,6 +5,8 @@ title: ImagePullJob
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
+**Note: v1beta1 available from Kruise v1.9.0**
+
 NodeImage and ImagePullJob are new CRDs provided since Kruise v0.8.0 version.
 
 Kruise will create a NodeImage for each Node, and it contains images that should be downloaded on this Node.
@@ -28,7 +30,44 @@ $ helm install/upgrade kruise https://... --set featureGates="ImagePullJobGate=t
 
 ImagePullJob is a **namespaced-scope** resource.
 
-API definition: https://github.com/openkruise/kruise/blob/master/apis/apps/v1alpha1/imagepulljob_types.go
+API definition: https://github.com/openkruise/kruise/blob/master/apis/apps/v1beta1/imagepulljob_types.go
+
+<Tabs>
+<TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: ImagePullJob
+metadata:
+  name: job-with-always
+spec:
+  image: nginx:1.9.1   # [required] image to pull
+  parallelism: 10      # [optional] the maximal number of Nodes that pull this image at the same time, defaults to 1
+  selector:            # [optional] the names or label selector to assign Nodes (only one of them can be set)
+    names:
+    - node-1
+    - node-2
+    matchLabels:
+      node-type: xxx
+# podSelector:         # [optional] label selector over pods that should pull image on nodes of these pods. Mutually exclusive with selector.
+#   matchLabels:
+#     pod-label: xxx
+#   matchExpressions:
+#   - key: pod-label
+#     operator: In
+#     values:
+#     - xxx
+  completionPolicy:
+    type: Always                  # [optional] defaults to Always
+    activeDeadlineSeconds: 1200   # [optional] no default, only work for Always type
+    ttlSecondsAfterFinished: 300  # [optional] no default, only work for Always type
+  pullPolicy:                     # [optional] defaults to backoffLimit=3, timeoutSeconds=600
+    backoffLimit: 3
+    timeoutSeconds: 300
+```
+
+</TabItem>
+<TabItem value="v1alpha1" label="v1alpha1">
 
 ```yaml
 apiVersion: apps.kruise.io/v1alpha1
@@ -60,6 +99,8 @@ spec:
     backoffLimit: 3
     timeoutSeconds: 300
 ```
+</TabItem>
+</Tabs>
 
 You can write the names or label selector in the `selector` field to assign Nodes **(only one of them can be set)**.
 If no `selector` is set, the image will be pulled on all Nodes in the cluster.
@@ -150,6 +191,25 @@ helm install kruise https://... --set installation.createNamespace=false --set d
 When kubelet creates pods, kubelet will attach pod metadata as podSandboxConfig params in the PullImage CRI interface.
 The OpenKruise ImagePullJob also supports the similar capability, as follows:
 
+<Tabs>
+<TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: ImagePullJob
+spec:
+  ...
+  image: nginx:1.9.1
+  sandboxConfig:
+    annotations:
+      io.kubernetes.image.metrics.tags: "cluster=cn-shanghai"
+    labels:
+      io.kubernetes.image.app: "foo"
+```
+
+</TabItem>
+<TabItem value="v1alpha1" label="v1alpha1">
+
 ```yaml
 apiVersion: apps.kruise.io/v1alpha1
 kind: ImagePullJob
@@ -162,6 +222,8 @@ spec:
     labels:
       io.kubernetes.image.app: "foo"
 ```
+</TabItem>
+</Tabs>
 
 ### Image Pull Policy support 'Always'
 
@@ -171,6 +233,21 @@ spec:
 - **spec.imagePullPolicy=IfNotPresent** means that kruise only pull the image if it isn't present on node.
 - Defaults is IfNotPresent.
 
+<Tabs>
+<TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: ImagePullJob
+spec:
+  ...
+  image: nginx:1.9.1
+  imagePullPolicy: Always | IfNotPresent
+```
+
+</TabItem>
+<TabItem value="v1alpha1" label="v1alpha1">
+
 ```yaml
 apiVersion: apps.kruise.io/v1alpha1
 kind: ImagePullJob
@@ -179,12 +256,45 @@ spec:
   image: nginx:1.9.1
   imagePullPolicy: Always | IfNotPresent
 ```
+</TabItem>
+</Tabs>
 
 ## ImageListPullJob
 
 **FEATURE STATE:** Kruise v1.5.0
 
 ImagePullJob can only support a single image pre-download, one can use multiple ImagePullJob to download multiple images, or use ImageListPullJob to pre-download multiple images in a single job, as follows:
+
+<Tabs>
+<TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: ImageListPullJob
+metadata:
+  name: job-with-always
+spec:
+  images:
+  - nginx:1.9.1   # [required] image to pull
+  - busybox:1.29.2
+  parallelism: 10      # [optional] the maximal number of Nodes that pull this image at the same time, defaults to 1
+  selector:            # [optional] the names or label selector to assign Nodes (only one of them can be set)
+    names:
+    - node-1
+    - node-2
+    matchLabels:
+      node-type: xxx
+  completionPolicy:
+    type: Always                  # [optional] defaults to Always
+    activeDeadlineSeconds: 1200   # [optional] no default, only work for Always type
+    ttlSecondsAfterFinished: 300  # [optional] no default, only work for Always type
+  pullPolicy:                     # [optional] defaults to backoffLimit=3, timeoutSeconds=600
+    backoffLimit: 3
+    timeoutSeconds: 300
+```
+
+</TabItem>
+<TabItem value="v1alpha1" label="v1alpha1">
 
 ```yaml
 apiVersion: apps.kruise.io/v1alpha1
@@ -210,12 +320,14 @@ spec:
     backoffLimit: 3
     timeoutSeconds: 300
 ```
+</TabItem>
+</Tabs>
 
 ## NodeImage (low-level)
 
 NodeImage is a **cluster-scope** resource.
 
-API definition: https://github.com/openkruise/kruise/blob/master/apis/apps/v1alpha1/nodeimage_types.go
+API definition: https://github.com/openkruise/kruise/blob/master/apis/apps/v1beta1/nodeimage_types.go
 
 When Kruise has been installed, nodeimage-controller will create NodeImages for Nodes with the same names immediately.
 And when a Node has been added or removed, nodeimage-controller will also create or delete NodeImage for this Node.
@@ -283,7 +395,7 @@ job-with-always   4       0        0         4        9m49s   job has completed
 ```
 % kubectl get imagepulljob job-with-always -oyaml
 
-apiVersion: apps.kruise.io/v1alpha1
+apiVersion: apps.kruise.io/v1beta1
 kind: ImagePullJob
 status:
   active: 0
@@ -303,7 +415,7 @@ status:
 ```
 % kubectl get nodeimage cn-hangzhou.x.125 -oyaml
 
-apiVersion: apps.kruise.io/v1alpha1
+apiVersion: apps.kruise.io/v1beta1
 kind: NodeImage
 status:
   desired: 1
