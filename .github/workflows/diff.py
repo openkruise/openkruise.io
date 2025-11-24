@@ -18,7 +18,6 @@ en_tool = language_tool_python.LanguageTool(
     config={
         'cacheSize': 100000,
         'pipelineCaching': True,
-        'fasttextModel': 'en',
     }
 )
 #  https://github.com/jxmorris12/language_tool_python
