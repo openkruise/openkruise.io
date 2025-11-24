@@ -2,6 +2,10 @@
 title: Advanced DaemonSet
 ---
 
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+
 This controller enhances the rolling update workflow of Kubernetes [DaemonSet](https://kubernetes.io/docs/concepts/workloads/controllers/daemonset/)
 controller in large-scale scenarios, such as support for image pre-download, in-place upgrade, etc.
 
@@ -14,7 +18,22 @@ Note that Advanced DaemonSet extends the same CRD schema of default DaemonSet wi
 The CRD kind name is still `DaemonSet`.
 This is done on purpose so that user can easily migrate workload to the Advanced DaemonSet from the
 default DaemonSet. For example, one may simply replace the value of `apiVersion` in the DaemonSet yaml
-file from `apps/v1` to `apps.kruise.io/v1alpha1` after installing Kruise manager.
+file from `apps/v1` to `apps.kruise.io/v1beta1` after installing Kruise manager.
+
+<Tabs>
+<TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+-  apiVersion: apps/v1
++  apiVersion: apps.kruise.io/v1beta1
+   kind: DaemonSet
+   metadata:
+     name: sample-ds
+   spec:
+     #...
+```
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
 
 ```yaml
 -  apiVersion: apps/v1
@@ -25,6 +44,8 @@ file from `apps/v1` to `apps.kruise.io/v1alpha1` after installing Kruise manager
    spec:
      #...
 ```
+  </TabItem>
+</Tabs>
 
 ## Enhanced strategies
 
@@ -60,7 +81,7 @@ type RollingUpdateDaemonSet struct {
 +    // Default value is 0.
 +    // Maximum value is status.DesiredNumberScheduled, which means no pod will be updated.
 +    // +optional
-+    Partition *int32 `json:"partition,omitempty" protobuf:"varint,4,opt,name=partition"`
++    Partition *intstr.IntOrString `json:"partition,omitempty" protobuf:"varint,4,opt,name=partition"`
 
 +    // Indicates that the daemon set is paused and will not be processed by the
 +    // daemon set controller.
@@ -80,6 +101,22 @@ which controls the way to rolling update.
   You may need to read the [concept doc](../core-concepts/inplace-update) for more details of in-place update.
   Note that in this type, you can only use `maxUnavailable` without `maxSurge`.
 
+<Tabs>
+  <TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: DaemonSet
+spec:
+  # ...
+  updateStrategy:
+    type: RollingUpdate
+    rollingUpdate:
+      rollingUpdateType: Standard
+```
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
+
 ```yaml
 apiVersion: apps.kruise.io/v1alpha1
 kind: DaemonSet
@@ -90,10 +127,30 @@ spec:
     rollingUpdate:
       rollingUpdateType: Standard
 ```
+  </TabItem>
+</Tabs>
 
 ### Selector for rolling update
 
 It helps users to update Pods on specific nodes whose labels could be matched with the selector.
+
+<Tabs>
+  <TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: DaemonSet
+spec:
+  # ...
+  updateStrategy:
+    type: RollingUpdate
+    rollingUpdate:
+      selector:
+        matchLabels:
+          nodeType: canary
+```
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
 
 ```yaml
 apiVersion: apps.kruise.io/v1alpha1
@@ -107,11 +164,33 @@ spec:
         matchLabels:
           nodeType: canary
 ```
+  </TabItem>
+</Tabs>
 
 ### Partition for rolling update and scaling up
 
-This strategy defines rules for calculating the priority of updating pods.
-**Partition is the number of DaemonSet pods that should be remained to be old version.**
+
+The semantic of `partition` is **the number or percentage of Pods to remain in the old version**, with a default of `0`. This partition does not represent any order number.
+
+If `partition` is set during the release process:
+- If it is a number, the controller will only update `(status.DesiredNumberScheduled - partition)` number of Pods to the latest version.
+- If it is a percentage, the controller will only update `(status.DesiredNumberScheduled * (100% - partition))` number of Pods to the latest version.
+
+<Tabs>
+  <TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: DaemonSet
+spec:
+  # ...
+  updateStrategy:
+    type: RollingUpdate
+    rollingUpdate:
+      partition: 10 # or 20%
+```
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
 
 ```yaml
 apiVersion: apps.kruise.io/v1alpha1
@@ -123,9 +202,45 @@ spec:
     rollingUpdate:
       partition: 10
 ```
+  </TabItem>
+</Tabs>
 
-And if you put `daemonset.kruise.io/progressive-create-pod: "true"` annotation into Advanced DaemonSet,
-the `partition` will also control the number of pods to be created when scaling up.
+Additionally, if you define the `scaleStrategy.partitionedScaling: true` field in Advanced DaemonSet,
+`partition` will also control the number of Pods created during scaling.
+<Tabs>
+<TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: DaemonSet
+spec:
+  # ...
+  updateStrategy:
+    type: RollingUpdate
+    rollingUpdate:
+      partition: 10
+  scaleStrategy:
+    partitionedScaling: true
+```
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
+
+```yaml
+apiVersion: apps.kruise.io/v1alpha1
+kind: DaemonSet
+metadata:
+  annotations:
+    daemonset.kruise.io/progressive-create-pod: "true"
+spec:
+  # ...
+  updateStrategy:
+    type: RollingUpdate
+    rollingUpdate:
+      partition: 10
+```
+  </TabItem>
+</Tabs>
+**Note: The `scaleStrategy.partitionedScaling: true` field only supports v1beta1 apiVersion. If you are using v1alpha1 apiVersion, please use the `daemonset.kruise.io/progressive-create-pod: "true"` annotation.**
 
 <!--
 ### MaxSurge for rolling update
@@ -156,6 +271,21 @@ spec:
 
 `paused` indicates that Pods updating is paused, controller will not update Pods but just maintain the number of replicas.
 
+<Tabs>
+  <TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: DaemonSet
+spec:
+  # ...
+  updateStrategy:
+    rollingUpdate:
+      paused: true
+```
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
+
 ```yaml
 apiVersion: apps.kruise.io/v1alpha1
 kind: DaemonSet
@@ -165,6 +295,8 @@ spec:
     rollingUpdate:
       paused: true
 ```
+  </TabItem>
+</Tabs>
 
 ### In-Place Update Support for Modifying Resources
 
@@ -173,6 +305,29 @@ spec:
 If you have enabled `InPlaceWorkloadVerticalScaling` during [Kruise installation or upgrade](../installation##optional-feature-gate),
 Advanced DaemonSet supports modifying container resources (CPU/Memory) during in-place updates.
 This feature allows users to directly update the following fields without triggering Pod recreation:
+
+<Tabs>
+  <TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: DaemonSet
+spec:
+  #...
+  template:
+    spec:
+      containers:
+      - name: <container-name>
+        resources:
+          requests:
+            cpu: "2"       # Can be modified
+            memory: "2Gi"  # Can be modified
+          limits:
+            cpu: "4"       # Can be modified
+            memory: "4Gi"  # Can be modified
+```
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
 
 ```yaml
 apiVersion: apps.kruise.io/v1alpha1
@@ -191,6 +346,8 @@ spec:
             cpu: "4"       # Can be modified
             memory: "4Gi"  # Can be modified
 ```
+  </TabItem>
+</Tabs>
 #### Notes
 
 1. This feature requires the Kubernetes cluster to have the `InPlacePodVerticalScaling` feature-gate enabled. Ensure your cluster supports this capability. For more information, refer to the [Kubernetes documentation](https://kubernetes.io/zh-cn/blog/2023/05/12/in-place-pod-resize-alpha/).
@@ -219,6 +376,19 @@ The parallelism of each new image pre-downloading by DaemonSet is `1`, which mea
 You can change the parallelism using `apps.kruise.io/image-predownload-parallelism` annotation on DaemonSet according to the capability of image registry,
 for registries with more bandwidth and P2P image downloading ability, a larger parallelism can speed up the pre-download process.
 
+<Tabs>
+  <TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: DaemonSet
+metadata:
+  annotations:
+    apps.kruise.io/image-predownload-parallelism: "10"
+```
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
+
 ```yaml
 apiVersion: apps.kruise.io/v1alpha1
 kind: DaemonSet
@@ -226,6 +396,8 @@ metadata:
   annotations:
     apps.kruise.io/image-predownload-parallelism: "10"
 ```
+  </TabItem>
+</Tabs>
 
 ### Lifecycle hook
 
@@ -261,6 +433,23 @@ type LifecycleHook struct {
 
 Examples:
 
+<Tabs>
+  <TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: DaemonSet
+spec:
+
+  # define with label
+  lifecycle:
+    preDelete:
+      labelsHandler:
+        example.io/block-deleting: "true"
+```
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
+
 ```yaml
 apiVersion: apps.kruise.io/v1alpha1
 kind: DaemonSet
@@ -272,6 +461,8 @@ spec:
       labelsHandler:
         example.io/block-deleting: "true"
 ```
+  </TabItem>
+</Tabs>
 
 - When Advanced DaemonSet delete a Pod (including scale in and recreate update):
   - Delete it directly if no lifecycle hook definition or Pod not matched preDelete hook
@@ -306,6 +497,26 @@ If you set `markPodNotReady=true` for `preDelete`, Kruise will try to set `Kruis
 
 Same as yaml example above, we should firstly define `example.io/block-deleting` label in template and lifecycle of Advanced DaemonSet.
 
+<Tabs>
+  <TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: DaemonSet
+spec:
+  template:
+    metadata:
+      labels:
+        example.io/block-deleting: "true"
+  # ...
+  lifecycle:
+    preDelete:
+      labelsHandler:
+        example.io/block-deleting: "true"
+```
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
+
 ```yaml
 apiVersion: apps.kruise.io/v1alpha1
 kind: DaemonSet
@@ -320,6 +531,8 @@ spec:
       labelsHandler:
         example.io/block-deleting: "true"
 ```
+  </TabItem>
+</Tabs>
 
 User controller logic:
 

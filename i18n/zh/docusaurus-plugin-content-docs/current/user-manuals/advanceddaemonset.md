@@ -2,6 +2,10 @@
 title: Advanced DaemonSet
 ---
 
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+
 这个控制器基于原生 [DaemonSet](https://kubernetes.io/docs/concepts/workloads/controllers/daemonset/) 上增强了发布能力，比如 灰度分批、按 Node label 选择、暂停、热升级等。
 
 如果你对原生 DaemonSet 不是很了解，我们强烈建议你先阅读它的文档（在学习 Advanced DaemonSet 之前）：
@@ -9,10 +13,25 @@ title: Advanced DaemonSet
 - [Perform a Rolling Update on a DaemonSet](https://kubernetes.io/docs/tasks/manage-daemon/update-daemon-set/)
 - [Perform a Rollback on a DaemonSet](https://kubernetes.io/docs/tasks/manage-daemon/rollback-daemon-set/)
 
-注意 `Advanced DaemonSet` 是一个 CRD，kind 名字也是 `DaemonSet`，但是 apiVersion 是 `apps.kruise.io/v1alpha1`。
+注意 `Advanced DaemonSet` 是一个 CRD，kind 名字也是 `DaemonSet`，但是 apiVersion 是 `apps.kruise.io/v1beta1`。
 这个 CRD 的所有默认字段、默认行为与原生 DaemonSet 完全一致，除此之外还提供了一些 optional 字段来扩展增强的策略。
 
 因此，用户从原生 `DaemonSet` 迁移到 `Advanced DaemonSet`，只需要把 `apiVersion` 修改后提交即可：
+
+<Tabs>
+<TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+-  apiVersion: apps/v1
++  apiVersion: apps.kruise.io/v1beta1
+   kind: DaemonSet
+   metadata:
+     name: sample-ds
+   spec:
+     #...
+```
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
 
 ```yaml
 -  apiVersion: apps/v1
@@ -23,6 +42,8 @@ title: Advanced DaemonSet
    spec:
      #...
 ```
+  </TabItem>
+</Tabs>
 
 ## 增强策略
 
@@ -58,7 +79,7 @@ type RollingUpdateDaemonSet struct {
 +    // Default value is 0.
 +    // Maximum value is status.DesiredNumberScheduled, which means no pod will be updated.
 +    // +optional
-+    Partition *int32 `json:"partition,omitempty" protobuf:"varint,4,opt,name=partition"`
++    Partition *intstr.IntOrString `json:"partition,omitempty" protobuf:"varint,4,opt,name=partition"`
 
 +    // Indicates that the daemon set is paused and will not be processed by the
 +    // daemon set controller.
@@ -71,12 +92,25 @@ type RollingUpdateDaemonSet struct {
 
 Advanced DaemonSet 在 `spec.updateStrategy.rollingUpdate` 中有一个 `rollingUpdateType` 字段，标识了如何进行滚动升级：
 
-- `Standard`: 对于每个 node，控制器会先删除旧的 daemon Pod，再创建一个新 Pod，和原生 DaemonSet 行为一致。
-- `Surging`: 对于每个 node，控制器会先创建一个新 Pod，等它 ready 之后再删除老 Pod。
-
 - `Standard` (默认): 控制器会重建升级 Pod，与原生 DaemonSet 行为一致。你可以通过 `maxUnavailable` 或 `maxSurge` 来控制重建新旧 Pod 的顺序。
 - `InPlaceIfPossible`: 控制器会尽量采用原地升级的方式，如果不行则重建升级。请阅读[该文档](../core-concepts/inplace-update)了解更多原地升级的细节。
   注意，在这个类型下，只能使用 `maxUnavailable` 而不能用 `maxSurge`。
+
+<Tabs>
+  <TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: DaemonSet
+spec:
+  # ...
+  updateStrategy:
+    type: RollingUpdate
+    rollingUpdate:
+      rollingUpdateType: Standard
+```
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
 
 ```yaml
 apiVersion: apps.kruise.io/v1alpha1
@@ -88,10 +122,30 @@ spec:
     rollingUpdate:
       rollingUpdateType: Standard
 ```
+  </TabItem>
+</Tabs>
 
 ### Selector 标签选择升级
 
 这个策略支持用户通过配置 node 标签的 selector，来指定灰度升级某些特定类型 node 上的 Pod。
+
+<Tabs>
+  <TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: DaemonSet
+spec:
+  # ...
+  updateStrategy:
+    type: RollingUpdate
+    rollingUpdate:
+      selector:
+        matchLabels:
+          nodeType: canary
+```
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
 
 ```yaml
 apiVersion: apps.kruise.io/v1alpha1
@@ -105,11 +159,33 @@ spec:
         matchLabels:
           nodeType: canary
 ```
+  </TabItem>
+</Tabs>
 
 ### 分批灰度升级或扩容
 
-Partition 的语义是 **保留旧版本 Pod 的数量**，默认为 `0`。
-如果在发布过程中设置了 `partition`，则控制器只会将 `(status.DesiredNumberScheduled - partition)` 数量的 Pod 更新到最新版本。
+
+Partition 的语义是 **保留旧版本 Pod 的数量或百分比**，默认为 `0`。这里的 partition 不表示任何 order 序号。 
+
+如果在发布过程中设置了 `partition`：
+- 如果是数字，控制器只会将 `(status.DesiredNumberScheduled - partition)` 数量的 Pod 更新到最新版本。
+- 如果是百分比，控制器只会将 `(status.DesiredNumberScheduled * (100% - partition))` 数量的 Pod 更新到最新版本。
+
+<Tabs>
+  <TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: DaemonSet
+spec:
+  # ...
+  updateStrategy:
+    type: RollingUpdate
+    rollingUpdate:
+      partition: 10 # 或者20%
+```
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
 
 ```yaml
 apiVersion: apps.kruise.io/v1alpha1
@@ -121,9 +197,46 @@ spec:
     rollingUpdate:
       partition: 10
 ```
+  </TabItem>
+</Tabs>
 
-另外如果你在 Advanced DaemonSet 中定义了 `daemonset.kruise.io/progressive-create-pod: "true"` annotation，
+另外如果你在 Advanced DaemonSet 中定义了 `scaleStrategy.partitionedScaling: true` 字段，
 `partition` 同样会在扩容的时候控制创建出来 Pod 的数量。
+<Tabs>
+<TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: DaemonSet
+spec:
+  # ...
+  updateStrategy:
+    type: RollingUpdate
+    rollingUpdate:
+      partition: 10
+  scaleStrategy:
+    partitionedScaling: true
+```
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
+
+```yaml
+apiVersion: apps.kruise.io/v1alpha1
+kind: DaemonSet
+metadata:
+  annotations:
+    daemonset.kruise.io/progressive-create-pod: "true"
+spec:
+  # ...
+  updateStrategy:
+    type: RollingUpdate
+    rollingUpdate:
+      partition: 10
+```
+  </TabItem>
+</Tabs>
+**注意：`scaleStrategy.partitionedScaling: true` 字段只支持v1beta1 apiVersion，如果您使用的是v1alpha1 apiVersion，请使用`daemonset.kruise.io/progressive-create-pod: "true"` annotation。**
+
 
 <!--
 ### 热升级
@@ -150,6 +263,21 @@ spec:
 
 用户可以通过设置 paused 为 true 暂停发布，不过控制器还是会做 replicas 数量管理：
 
+<Tabs>
+  <TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: DaemonSet
+spec:
+  # ...
+  updateStrategy:
+    rollingUpdate:
+      paused: true
+```
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
+
 ```yaml
 apiVersion: apps.kruise.io/v1alpha1
 kind: DaemonSet
@@ -159,6 +287,8 @@ spec:
     rollingUpdate:
       paused: true
 ```
+  </TabItem>
+</Tabs>
 
 ### 原地升级支持修改资源
 
@@ -166,6 +296,29 @@ spec:
 
 如果你在[安装或升级 Kruise](../installation##optional-feature-gate) 的时候启用了 `InPlaceWorkloadVerticalScaling`，
 Advanced DaemonSet 支持在原地升级过程中修改容器资源（CPU/Memory）。该功能允许用户直接更新以下字段而不触发 Pod 重建：
+
+<Tabs>
+  <TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: DaemonSet
+spec:
+  #...
+  template:
+    spec:
+      containers:
+      - name: <container-name>
+        resources:
+          requests:
+            cpu: "2"       # 可修改
+            memory: "2Gi"  # 可修改
+          limits:
+            cpu: "4"       # 可修改
+            memory: "4Gi"  # 可修改
+```
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
 
 ```yaml
 apiVersion: apps.kruise.io/v1alpha1
@@ -184,6 +337,8 @@ spec:
             cpu: "4"       # 可修改
             memory: "4Gi"  # 可修改
 ```
+  </TabItem>
+</Tabs>
 
 #### 注意事项
 
@@ -211,6 +366,19 @@ DaemonSet 控制器会自动在所有旧版本 pod 所在 node 节点上预热�
 默认情况下 DaemonSet 每个新镜像预热时的并发度都是 `1`，也就是一个个节点拉镜像。
 如果需要调整，你可以通过 `apps.kruise.io/image-predownload-parallelism` annotation 来设置并发度。
 
+<Tabs>
+  <TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: DaemonSet
+metadata:
+  annotations:
+    apps.kruise.io/image-predownload-parallelism: "10"
+```
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
+
 ```yaml
 apiVersion: apps.kruise.io/v1alpha1
 kind: DaemonSet
@@ -218,6 +386,8 @@ metadata:
   annotations:
     apps.kruise.io/image-predownload-parallelism: "10"
 ```
+  </TabItem>
+</Tabs>
 
 ### 生命周期钩子
 
@@ -252,6 +422,23 @@ type LifecycleHook struct {
 
 例如:
 
+<Tabs>
+  <TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: DaemonSet
+spec:
+
+  # define with label
+  lifecycle:
+    preDelete:
+      labelsHandler:
+        example.io/block-deleting: "true"
+```
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
+
 ```yaml
 apiVersion: apps.kruise.io/v1alpha1
 kind: DaemonSet
@@ -263,6 +450,8 @@ spec:
       labelsHandler:
         example.io/block-deleting: "true"
 ```
+  </TabItem>
+</Tabs>
 
 当 DaemonSet 删除一个 Pod 时（包括缩容和重建升级）：
 - 如果没有定义 lifecycle hook 或者 Pod 不符合 preDelete 条件，则直接删除
@@ -297,6 +486,26 @@ metadata:
 
 与上述 yaml 例子类似，我们需要先将 `example.io/block-deleting` label 定义在 Advanced DaemonSet 的 template 和 lifecycle 中。
 
+<Tabs>
+  <TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: DaemonSet
+spec:
+  template:
+    metadata:
+      labels:
+        example.io/block-deleting: "true"
+  # ...
+  lifecycle:
+    preDelete:
+      labelsHandler:
+        example.io/block-deleting: "true"
+```
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
+
 ```yaml
 apiVersion: apps.kruise.io/v1alpha1
 kind: DaemonSet
@@ -311,6 +520,8 @@ spec:
       labelsHandler:
         example.io/block-deleting: "true"
 ```
+  </TabItem>
+</Tabs>
 
 用户自定义 controller 的执行逻辑:
 
