@@ -2,7 +2,12 @@
 title: PodUnavailableBudget
 ---
 
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 **FEATURE STATE:** Kruise v0.10.0
+
+**Note: v1beta1 is available from Kruise v1.9.0.**
 
 Kubernetes offers [Pod Disruption Budget](https://kubernetes.io/docs/tasks/run-application/configure-pdb/) to help you
 run highly available applications even when you introduce
@@ -26,6 +31,60 @@ In voluntary disruption scenarios, PodUnavailableBudget can achieve the effect o
 SLA degradation, which greatly improves the high availability of application services.
 
 ## API Definition
+
+<Tabs>
+  <TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: policy.kruise.io/v1beta1
+kind: PodUnavailableBudget
+metadata:
+  name: web-server-pub
+  namespace: web
+spec:
+  targetRef:
+    apiVersion: apps.kruise.io/v1beta1
+    # cloneset, deployment, statefulset etc.
+    kind: CloneSet
+    name: web-server
+  # selector label query over pods managed by the budget
+  # selector and TargetReference are mutually exclusive, targetRef is priority to take effect.
+  # selector is commonly used in scenarios where applications are deployed using multiple workloads,
+  # and targetRef is used for protection against a single workload.
+# selector:
+#   matchLabels:
+#     app: web-server
+  # maximum number of Pods unavailable for the current cloneset, the example is cloneset.replicas(5) * 60% = 3
+  # maxUnavailable and minAvailable are mutually exclusive, maxUnavailable is priority to take effect
+  maxUnavailable: 60%
+  # Minimum number of Pods available for the current cloneset, the example is cloneset.replicas(5) * 40% = 2
+# minAvailable: 40%
+-----------------------
+
+apiVersion: apps.kruise.io/v1beta1
+kind: CloneSet
+metadata:
+  labels:
+    app: web-server
+  name: web-server
+  namespace: web
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      app: web-server
+  template:
+    metadata:
+      labels:
+        app: web-server
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:alpine
+```
+
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
 
 ```yaml
 apiVersion: policy.kruise.io/v1alpha1
@@ -51,7 +110,7 @@ spec:
   maxUnavailable: 60%
   # Minimum number of Pods available for the current cloneset, the example is cloneset.replicas(5) * 40% = 2
 # minAvailable: 40%
-  -----------------------
+-----------------------
 
 apiVersion: apps.kruise.io/v1alpha1
 kind: CloneSet
@@ -75,6 +134,9 @@ spec:
         image: nginx:alpine
 ```
 
+  </TabItem>
+</Tabs>
+
 ### Support Custom Workload
 
 **FEATURE STATE:** Kruise v1.2.0
@@ -83,6 +145,25 @@ Many companies to meet the needs of more complex application deployment, often t
 Workload to manage business Pod.
 From kruise v1.2.0, PodUnavailableBudget(PUB) support protect any custom workload with scale sub-resource, e.g.
 Argo-Rollout:
+
+<Tabs>
+  <TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: policy.kruise.io/v1beta1
+kind: PodUnavailableBudget
+metadata:
+  name: rollouts-demo
+spec:
+  targetRef:
+    apiVersion: argoproj.io/v1alpha1
+    kind: Rollout
+    name: rollouts-demo
+  minAvailable: 80%
+```
+
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
 
 ```yaml
 apiVersion: policy.kruise.io/v1alpha1
@@ -97,13 +178,35 @@ spec:
   minAvailable: 80%
 ```
 
+  </TabItem>
+</Tabs>
+
 ### Support for Custom Workloads Without Scale Sub-Resource
 
 **FEATURE STATE:** Kruise v1.8.0
 
 In certain special scenarios, there may be custom workloads that do not implement the Scale sub-resource but still
-require protection. In such cases, users can use an annotation on the PUB resource to specify the total number of
-replicas to be protected. For example:
+require protection. In such cases, users can directly specify the total number of replicas to be protected. The configuration methods differ between versions:
+
+- **v1alpha1**: Use the annotation `pub.kruise.io/protect-total-replicas` to specify the total number of replicas to be protected (value is string type)
+- **v1beta1**: Use the `spec.protectTotalReplicas` field to specify the total number of replicas to be protected (value is integer type)
+
+<Tabs>
+  <TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: policy.kruise.io/v1beta1
+kind: PodUnavailableBudget
+metadata:
+  name: crd-demo
+spec:
+  # Specify the total number of replicas to be protected via spec field
+  protectTotalReplicas: 5
+  ...
+```
+
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
 
 ```yaml
 apiVersion: policy.kruise.io/v1alpha1
@@ -111,11 +214,14 @@ kind: PodUnavailableBudget
 metadata:
   name: crd-demo
   annotations:
-    # 通过 annotation 直接声明目标防护副本数
+    # Specify the total number of replicas to be protected via annotation (string type)
     pub.kruise.io/protect-total-replicas: "5"
 spec:
   ...
 ```
+
+  </TabItem>
+</Tabs>
 
 ## Implementation
 

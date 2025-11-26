@@ -2,7 +2,12 @@
 title: PodUnavailableBudget
 ---
 
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 **FEATURE STATE:** Kruise v0.10.0
+
+**注意: v1beta1 从 Kruise v1.9.0 版本开始可用。**
 
 在诸多[Voluntary Disruption](https://kubernetes.io/docs/concepts/workloads/pods/disruptions/) 场景中 Kubernetes [Pod Disruption Budget](https://kubernetes.io/docs/tasks/run-application/configure-pdb/)
 通过限制同时中断的Pod数量，来保证应用的高可用性。然而，PDB只能防控通过 [Eviction API](https://kubernetes.io/docs/tasks/administer-cluster/safely-drain-node/#eviction-api) 来触发的Pod Disruption，例如：kubectl drain驱逐node上面的所有Pod。
@@ -16,6 +21,60 @@ title: PodUnavailableBudget
 在上面这些 kubernetes PDB 无法很好防护的场景中，Kruise PodUnavailableBudget 通过对Pod Mutating Webhook的拦截，能够覆盖更多的Voluntary Disruption场景，进而提供应用更加强大的防护能力。
 
 ## API定义
+
+<Tabs>
+  <TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: policy.kruise.io/v1beta1
+kind: PodUnavailableBudget
+metadata:
+  name: web-server-pub
+  namespace: web
+spec:
+  targetRef:
+    apiVersion: apps.kruise.io/v1beta1
+    # cloneset, deployment, statefulset etc.
+    kind: CloneSet
+    name: web-server
+  # selector label query over pods managed by the budget
+  # selector and TargetReference are mutually exclusive, targetRef is priority to take effect.
+  # selector is commonly used in scenarios where applications are deployed using multiple workloads,
+  # and targetRef is used for protection against a single workload.
+# selector:
+#   matchLabels:
+#     app: web-server
+  # maximum number of Pods unavailable for the current cloneset, the example is cloneset.replicas(5) * 60% = 3
+  # maxUnavailable and minAvailable are mutually exclusive, maxUnavailable is priority to take effect
+  maxUnavailable: 60%
+  # Minimum number of Pods available for the current cloneset, the example is cloneset.replicas(5) * 40% = 2
+# minAvailable: 40%
+-----------------------
+
+apiVersion: apps.kruise.io/v1beta1
+kind: CloneSet
+metadata:
+  labels:
+    app: web-server
+  name: web-server
+  namespace: web
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      app: web-server
+  template:
+    metadata:
+      labels:
+        app: web-server
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:alpine
+```
+
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
 
 ```yaml
 apiVersion: policy.kruise.io/v1alpha1
@@ -65,11 +124,33 @@ spec:
         image: nginx:alpine
 ```
 
+  </TabItem>
+</Tabs>
+
 ### 支持自定义 Workload
 
 **FEATURE STATE:** Kruise v1.2.0
 
 很多公司为满足复杂性更高的应用部署需求，往往会通过实现定制化Workload的方式来管理业务Pod。从kruise v1.2.0开始，pub能够防护实现了scale子资源的自定义Workload，如下防护Argo-Rollout：
+
+<Tabs>
+  <TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: policy.kruise.io/v1beta1
+kind: PodUnavailableBudget
+metadata:
+  name: rollouts-demo
+spec:
+  targetRef:
+    apiVersion: argoproj.io/v1alpha1
+    kind: Rollout
+    name: rollouts-demo
+  minAvailable: 80%
+```
+
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
 
 ```yaml
 apiVersion: policy.kruise.io/v1alpha1
@@ -84,11 +165,34 @@ spec:
   minAvailable: 80%
 ```
 
+  </TabItem>
+</Tabs>
+
 ### 支持未实现 Scale 子资源的自定义 Workload
 
 **FEATURE STATE:** Kruise v1.8.0
 
-在部分特殊场景下，存在一些未实现 Scale 子资源的 Workload 但也有防护的需求。此时用户可以在 pub 资源上使用 annotation 来指定目标防护的总副本数。如：
+在部分特殊场景下，存在一些未实现 Scale 子资源的 Workload 但也有防护的需求。此时用户可以直接指定目标防护的总副本数，不同版本的配置方式有所差异：
+
+- **v1alpha1**：通过 annotation `pub.kruise.io/protect-total-replicas` 来声明目标防护副本数（值为字符串类型）
+- **v1beta1**：通过 `spec.protectTotalReplicas` 字段来声明目标防护副本数（值为整数类型）
+
+<Tabs>
+  <TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: policy.kruise.io/v1beta1
+kind: PodUnavailableBudget
+metadata:
+  name: crd-demo
+spec:
+  # 通过 spec 字段直接声明目标防护副本数
+  protectTotalReplicas: 5
+  ...
+```
+
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
 
 ```yaml
 apiVersion: policy.kruise.io/v1alpha1
@@ -96,11 +200,14 @@ kind: PodUnavailableBudget
 metadata:
   name: crd-demo
   annotations:
-    # 通过 annotation 直接声明目标防护副本数
+    # 通过 annotation 声明目标防护副本数（字符串类型）
     pub.kruise.io/protect-total-replicas: "5"
 spec:
   ...
 ```
+
+  </TabItem>
+</Tabs>
 
 ## Implementation
 PUB实现原理如下，详细设计请参考：[Pub Proposal](https://github.com/openkruise/kruise/blob/master/docs/proposals/20210614-podunavailablebudget.md)
