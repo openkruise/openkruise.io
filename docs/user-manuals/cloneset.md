@@ -2,12 +2,45 @@
 title: CloneSet
 ---
 
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 This controller provides advanced features to efficiently manage stateless applications in large-scale scenarios that
 do not have instance order requirement during scaling and rollout.
 Analogously, CloneSet can be recognized as an enhanced version of upstream `Deployment` workload, but it does many more.
 
+**Note: v1beta1 is available from Kruise v1.9.0.**
+
 As name suggests, CloneSet is a [**Set** -suffix controller](/blog/workload-classification-guidance) which
 manages Pods directly. A sample CloneSet yaml looks like following:
+
+<Tabs>
+  <TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: CloneSet
+metadata:
+  labels:
+    app: sample
+  name: sample
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      app: sample
+  template:
+    metadata:
+      labels:
+        app: sample
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:alpine
+```
+
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
 
 ```yaml
 apiVersion: apps.kruise.io/v1alpha1
@@ -31,6 +64,9 @@ spec:
         image: nginx:alpine
 ```
 
+  </TabItem>
+</Tabs>
+
 ## Scale features
 
 ### Support PVCs
@@ -48,6 +84,45 @@ A few reminders:
 - When a Pod is updated using **in-place** policy, all PVCs related to it are preserved.
 
 The following shows a sample CloneSet yaml file which contains PVC templates.
+
+<Tabs>
+  <TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: CloneSet
+metadata:
+  labels:
+    app: sample
+  name: sample-data
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      app: sample
+  template:
+    metadata:
+      labels:
+        app: sample
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:alpine
+        volumeMounts:
+        - name: data-vol
+          mountPath: /usr/share/nginx/html
+  volumeClaimTemplates:
+    - metadata:
+        name: data-vol
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        resources:
+          requests:
+            storage: 20Gi
+```
+
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
 
 ```yaml
 apiVersion: apps.kruise.io/v1alpha1
@@ -82,12 +157,44 @@ spec:
             storage: 20Gi
 ```
 
+  </TabItem>
+</Tabs>
+
 **FEATURE STATE:** Kruise v1.4.0
 
-When a Pod has been deleted manually, all PVCs related to the Pod are preserved, and CloneSet controller will create a new Pod with the same **instance-id** and reuse the PVCs.
+#### PVC Reuse Behavior
 
-However, if the Node where the Pod is located experiences an exception, reusing the PVCs may result in the failure of the new Pod to start. For more details, please refer to [issue 1099](https://github.com/openkruise/kruise/issues/1099).
-To address this issue, you can set the **DisablePVCReuse=true** field, and the PVCs associated with the Pod will be automatically deleted and no longer reused.
+When a Pod is deleted manually or evicted, its associated PVCs are preserved. When CloneSet controller detects insufficient Pods and scales up, the handling of PVCs differs between versions:
+
+- **v1alpha1**: **PVC reuse is enabled by default**, newly created Pods will reuse the original Pod's **instance-id** and associate with the existing PVCs
+- **v1beta1**: **PVC reuse is disabled by default**, newly created Pods will not reuse PVCs but recreate new ones
+
+#### Configuration
+
+PVC reuse may cause issues in certain scenarios. For example, when the Node where the Pod is located experiences an exception, reusing PVCs may result in the new Pod failing to start (see [issue 1099](https://github.com/openkruise/kruise/issues/1099)). Therefore, the following configuration options are provided:
+
+- **v1alpha1**: Set `scaleStrategy.disablePVCReuse: true` to disable PVC reuse
+- **v1beta1**: Controlled by the `scaleStrategy.enablePVCReuse` field, default value is `false` (reuse disabled). To enable PVC reuse, explicitly set it to `true`
+
+When PVC reuse is disabled, the PVCs associated with a Pod will be automatically deleted when the Pod is deleted.
+
+<Tabs>
+  <TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: CloneSet
+spec:
+  ...
+  replicas: 4
+  scaleStrategy:
+    # enablePVCReuse defaults to false, no need to set explicitly
+    # To enable PVC reuse, set to true
+    enablePVCReuse: false
+```
+
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
 
 ```yaml
 apiVersion: apps.kruise.io/v1alpha1
@@ -99,6 +206,9 @@ spec:
     disablePVCReuse: true
 ```
 
+  </TabItem>
+</Tabs>
+
 #### When volumeClaimTemplates changed, always recreate pods and related volumes
 **FEATURE STATE:** Kruise v1.7.0
 
@@ -106,27 +216,59 @@ By default, if the image and volumeClaimTemplates change at the same time, Clone
 causing the volumeClaimTemplates configuration to not take effect.
 
 1. Initially, image=nginx:v1, volumeClaimTemplates storage=20G
+
+<Tabs>
+  <TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: CloneSet
+spec:
+  template:
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:v1
+        volumeMounts:
+        - name: data-vol
+          mountPath: /usr/share/nginx/html
+      volumeClaimTemplates:
+      - metadata:
+          name: data-vol
+        spec:
+          accessModes: [ "ReadWriteOnce" ]
+          resources:
+            requests:
+              storage: 20Gi
 ```
+
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
+
+```yaml
 apiVersion: apps.kruise.io/v1alpha1
 kind: CloneSet
 spec:
   template:
-  spec:
-    containers:
-    - name: nginx
-      image: nginx:v1
-      volumeMounts:
-      - name: data-vol
-        mountPath: /usr/share/nginx/html
-    volumeClaimTemplates:
-    - metadata:
-        name: data-vol
-      spec:
-        accessModes: [ "ReadWriteOnce" ]
-        resources:
-          requests:
-            storage: 20Gi
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:v1
+        volumeMounts:
+        - name: data-vol
+          mountPath: /usr/share/nginx/html
+      volumeClaimTemplates:
+      - metadata:
+          name: data-vol
+        spec:
+          accessModes: [ "ReadWriteOnce" ]
+          resources:
+            requests:
+              storage: 20Gi
 ```
+
+  </TabItem>
+</Tabs>
 2. Change image to nginx:v2, and volumeClaimTemplates storage to 40G
 3. CloneSet in-place update Pod and does not rebuild the volume, so the volume size corresponding to the new Pod is still 20 Gi and is not up-to-date.
 
@@ -144,6 +286,23 @@ in order and `Deployment`/`ReplicaSet` only delete Pod by its own sorted sequenc
 CloneSet allows user to specify to-be-deleted Pod names when scaling down `replicas`. Take the following
 sample as an example,
 
+<Tabs>
+  <TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: CloneSet
+spec:
+  # ...
+  replicas: 4
+  scaleStrategy:
+    podsToDelete:
+    - sample-9m4hp
+```
+
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
+
 ```yaml
 apiVersion: apps.kruise.io/v1alpha1
 kind: CloneSet
@@ -154,6 +313,9 @@ spec:
     podsToDelete:
     - sample-9m4hp
 ```
+
+  </TabItem>
+</Tabs>
 
 when controller receives above update request, it ensures the number of replicas to be 4. If some Pods needs to be
 deleted, the Pods listed in `podsToDelete` will be deleted first.
@@ -236,6 +398,22 @@ This value can be an **absolute number** (e.g., 5) or a **percentage** of desire
 
 `ScaleStrategy.MaxUnavailable` field can cooperate with 'Spec.MinReadySeconds' field to work, for example:
 
+<Tabs>
+  <TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: CloneSet
+spec:
+  # ...
+  minReadySeconds: 60
+  scaleStrategy:
+    maxUnavailable: 1
+```
+
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
+
 ```yaml
 apiVersion: apps.kruise.io/v1alpha1
 kind: CloneSet
@@ -245,6 +423,9 @@ spec:
   scaleStrategy:
     maxUnavailable: 1
 ```
+
+  </TabItem>
+</Tabs>
 
 The effect of the above configuration is that during scaling up, CloneSet will not create the next pod until the previous pod has been ready for more than one minute.
 
@@ -264,6 +445,25 @@ We also bring **graceful period** into in-place update. CloneSet has supported `
 duration between controller update pod status and update pod images.
 So that endpoints-controller could have enough time to remove this Pod from endpoints.
 
+<Tabs>
+  <TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: CloneSet
+spec:
+  # ...
+  updateStrategy:
+    type: RollingUpdate
+    rollingUpdate:
+      podUpdatePolicy: InPlaceIfPossible
+      inPlaceUpdateStrategy:
+        gracePeriodSeconds: 10
+```
+
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
+
 ```yaml
 apiVersion: apps.kruise.io/v1alpha1
 kind: CloneSet
@@ -275,12 +475,41 @@ spec:
       gracePeriodSeconds: 10
 ```
 
+  </TabItem>
+</Tabs>
+
 ### Template and revision
 
 `spec.template` defines the latest pod template in the CloneSet.
 Controller will calculate a revision hash for each version of `spec.template` when it has been initialized or modified.
 For example, when we create a sample CloneSet, controller will calculate the revision hash `sample-744d4796cc` and
 present the hash in CloneSet Status.
+
+<Tabs>
+  <TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: CloneSet
+metadata:
+  generation: 1
+  # ...
+spec:
+  replicas: 5
+  # ...
+status:
+  observedGeneration: 1
+  readyReplicas: 5
+  replicas: 5
+  currentRevision: sample-d4d4fb5bd
+  updateRevision: sample-d4d4fb5bd
+  updatedReadyReplicas: 5
+  updatedReplicas: 5
+  # ...
+```
+
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
 
 ```yaml
 apiVersion: apps.kruise.io/v1alpha1
@@ -301,6 +530,9 @@ status:
   updatedReplicas: 5
   # ...
 ```
+
+  </TabItem>
+</Tabs>
 
 Here are the explanations for the counters presented in CloneSet status:
 
@@ -329,6 +561,44 @@ When `partition` is set during update:
 - One can use the condition `.status.updatedReplicas >= .status.expectedUpdatedReplicas` to decide whether workload had finish rolling out new revision under partition restriction.
 
 For example, when we update sample CloneSet's container image to `nginx:mainline` and set `partition=3`, after a while, the sample CloneSet yaml looks like the following:
+
+<Tabs>
+  <TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: CloneSet
+metadata:
+  # ...
+  generation: 2
+spec:
+  replicas: 5
+  template:
+    metadata:
+      labels:
+        app: sample
+    spec:
+      containers:
+      - image: nginx:mainline
+        imagePullPolicy: Always
+        name: nginx
+  updateStrategy:
+    type: RollingUpdate
+    rollingUpdate:
+      partition: 3
+  # ...
+status:
+  observedGeneration: 2
+  readyReplicas: 5
+  replicas: 5
+  currentRevision: sample-d4d4fb5bd
+  updateRevision: sample-56dfb978d4
+  updatedReadyReplicas: 2
+  updatedReplicas: 2
+```
+
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
 
 ```yaml
 apiVersion: apps.kruise.io/v1alpha1
@@ -360,6 +630,9 @@ status:
   updatedReplicas: 2
 ```
 
+  </TabItem>
+</Tabs>
+
 Note that `status.updateRevision` has been updated to `sample-56dfb978d4`, a new hash.
 Since we set `partition=3`, controller only updates two Pods to the latest revision.
 
@@ -390,6 +663,23 @@ MaxUnavailable is the maximum number of Pods that can be unavailable.
 Value can be an **absolute number** (e.g., 5) or a **percentage** of desired number of Pods (e.g., 10%).
 Default value is 20%.
 
+<Tabs>
+  <TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: CloneSet
+spec:
+  # ...
+  updateStrategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 20%
+```
+
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
+
 ```yaml
 apiVersion: apps.kruise.io/v1alpha1
 kind: CloneSet
@@ -398,6 +688,9 @@ spec:
   updateStrategy:
     maxUnavailable: 20%
 ```
+
+  </TabItem>
+</Tabs>
 
 Since Kruise `v0.9.0`, `maxUnavailable` not only controls Pods update, but also affect Pods specified deletion.
 
@@ -419,6 +712,23 @@ What's more, maxSurge is forbidden to use with `InPlaceOnly` policy.
 When maxSurge is used with `InPlaceIfPossible`, controller will create additional Pods with latest revision first,
 and then update the rest Pods with old revisions,
 
+<Tabs>
+  <TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: CloneSet
+spec:
+  # ...
+  updateStrategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 3
+```
+
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
+
 ```yaml
 apiVersion: apps.kruise.io/v1alpha1
 kind: CloneSet
@@ -427,6 +737,9 @@ spec:
   updateStrategy:
     maxSurge: 3
 ```
+
+  </TabItem>
+</Tabs>
 
 Since Kruise `v0.9.0`, `maxSurge` not only controls Pods update, but also affect Pods specified deletion.
 
@@ -461,6 +774,32 @@ All update candidates will be applied with the priority terms.
 
 - `weight`: Priority is determined by the sum of weights for terms that match selector. For example,
 
+<Tabs>
+  <TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: CloneSet
+spec:
+  # ...
+  updateStrategy:
+    type: RollingUpdate
+    rollingUpdate:
+      priorityStrategy:
+        weightPriority:
+        - weight: 50
+          matchSelector:
+            matchLabels:
+              test-key: foo
+        - weight: 30
+          matchSelector:
+            matchLabels:
+              test-key: bar
+```
+
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
+
 ```yaml
 apiVersion: apps.kruise.io/v1alpha1
 kind: CloneSet
@@ -479,7 +818,29 @@ spec:
             test-key: bar
 ```
 
+  </TabItem>
+</Tabs>
+
 - `order`: Priority will be determined by the value of the orderKey. The update candidates are sorted based on the "int" part of the value string. For example, 5 in string "5" and 10 in string "sts-10".
+
+<Tabs>
+  <TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: CloneSet
+spec:
+  # ...
+  updateStrategy:
+    type: RollingUpdate
+    rollingUpdate:
+      priorityStrategy:
+        orderPriority:
+          - orderedKey: some-label-key
+```
+
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
 
 ```yaml
 apiVersion: apps.kruise.io/v1alpha1
@@ -492,11 +853,33 @@ spec:
         - orderedKey: some-label-key
 ```
 
+  </TabItem>
+</Tabs>
+
 #### scatter
 
 This strategy defines rules to make certain Pods be scattered during update.
 For example, if a CloneSet has `replica=10`, and we add `foo=bar` label in 3 Pods and specify the following scatter rule. These 3 Pods will
 be the 1st, 6th and 10th updated Pods.
+
+<Tabs>
+  <TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: CloneSet
+spec:
+  # ...
+  updateStrategy:
+    type: RollingUpdate
+    rollingUpdate:
+      scatterStrategy:
+      - key: foo
+        value: bar
+```
+
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
 
 ```yaml
 apiVersion: apps.kruise.io/v1alpha1
@@ -509,6 +892,9 @@ spec:
       value: bar
 ```
 
+  </TabItem>
+</Tabs>
+
 Note that:
 
 - Although `priority` strategy and `scatter` strategy can be applied together, we strongly suggest to just use one of them to avoid confusion.
@@ -520,6 +906,23 @@ Last but not the least, the above advanced update strategies require independent
 
 `paused` indicates that Pods updating is paused, controller will not update Pods but just maintain the number of replicas.
 
+<Tabs>
+  <TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: CloneSet
+spec:
+  # ...
+  updateStrategy:
+    type: RollingUpdate
+    rollingUpdate:
+      paused: true
+```
+
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
+
 ```yaml
 apiVersion: apps.kruise.io/v1alpha1
 kind: CloneSet
@@ -528,6 +931,9 @@ spec:
   updateStrategy:
     paused: true
 ```
+
+  </TabItem>
+</Tabs>
 
 ### Progress Deadline Seconds
 
@@ -635,6 +1041,7 @@ All operations applicable to a Complete CloneSet can also be applied to a Failed
 - Rolling back to a previous revision.
 - Pausing the rollout to make multiple adjustments to the Pod template.
 
+
 ### In-Place Update Support for Modifying Resources
 
 **FEATURE STATE:** Kruise v1.8.0
@@ -642,6 +1049,30 @@ All operations applicable to a Complete CloneSet can also be applied to a Failed
 If you have enabled `InPlaceWorkloadVerticalScaling` during [Kruise installation or upgrade](../installation##optional-feature-gate),
 CloneSet supports modifying container resources (CPU/Memory) during in-place updates.
 This feature allows users to directly update the following fields without triggering Pod recreation:
+
+<Tabs>
+  <TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: CloneSet
+spec:
+  #...
+  template:
+    spec:
+      containers:
+      - name: <container-name>
+        resources:
+          requests:
+            cpu: "2"       # Can be modified
+            memory: "2Gi"  # Can be modified
+          limits:
+            cpu: "4"       # Can be modified
+            memory: "4Gi"  # Can be modified
+```
+
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
 
 ```yaml
 apiVersion: apps.kruise.io/v1alpha1
@@ -660,6 +1091,9 @@ spec:
             cpu: "4"       # Can be modified
             memory: "4Gi"  # Can be modified
 ```
+
+  </TabItem>
+</Tabs>
 #### Notes
 
 1. This feature requires the Kubernetes cluster to have the `InPlacePodVerticalScaling` feature-gate enabled. Ensure your cluster supports this capability. For more information, refer to the [Kubernetes documentation](https://kubernetes.io/zh-cn/blog/2023/05/12/in-place-pod-resize-alpha/).
@@ -684,11 +1118,34 @@ If you have enabled the `PreDownloadImageForInPlaceUpdate` feature-gate during [
 CloneSet controller will automatically pre-download the image you want to update to the nodes of all old Pods.
 It is quite useful to accelerate the progress of applications upgrade.
 
-The parallelism of each new image pre-downloading by CloneSet is `1`, which means the image is downloaded on nodes one by one.
-You can change the parallelism using `apps.kruise.io/image-predownload-parallelism` annotation on CloneSet according to the capability of image registry,
-for registries with more bandwidth and P2P image downloading ability, a larger parallelism can speed up the pre-download process.
+The parallelism of each new image pre-downloading by CloneSet is `1`, which means the image is downloaded on nodes one by one. If you need to adjust the parallelism or control the pre-download timing, the configuration methods differ between versions:
 
-Since Kruise v1.1.0, you can use `apps.kruise.io/image-predownload-min-updated-ready-pods` to make sure the new image starting pre-download after a few new Pods have been updated ready. Its value can be absolute number or percentage.
+- **v1alpha1**: Controlled through annotations
+  - `apps.kruise.io/image-predownload-parallelism`: Set the parallelism for image pre-download
+  - `apps.kruise.io/image-predownload-min-updated-ready-pods` (Kruise v1.1.0+): Control image pre-download to start after a few new Pods have been updated ready. The value can be absolute number or percentage
+  
+- **v1beta1**: Controlled through `updateStrategy.rollingUpdate.inPlaceUpdateStrategy` fields
+  - `imagePreDownloadParallelism`: Set the parallelism for image pre-download
+  - `imagePreDownloadMinUpdatedReadyPods`: Control image pre-download to start after a few new Pods have been updated ready. The value can be absolute number or percentage
+
+<Tabs>
+  <TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: CloneSet
+spec:
+  # ...
+  updateStrategy:
+    type: RollingUpdate
+    rollingUpdate:
+      inPlaceUpdateStrategy:
+        imagePreDownloadParallelism: 10
+        imagePreDownloadMinUpdatedReadyPods: 3
+```
+
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
 
 ```yaml
 apiVersion: apps.kruise.io/v1alpha1
@@ -697,7 +1154,12 @@ metadata:
   annotations:
     apps.kruise.io/image-predownload-parallelism: "10"
     apps.kruise.io/image-predownload-min-updated-ready-pods: "3"
+spec:
+  # ...
 ```
+
+  </TabItem>
+</Tabs>
 
 Note that to avoid most unnecessary image downloading, now controller will only pre-download images for CloneSet with replicas > `3`.
 
@@ -743,6 +1205,36 @@ type LifecycleHook struct {
 
 Examples:
 
+<Tabs>
+  <TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: CloneSet
+spec:
+
+  # define with finalizer
+  lifecycle:
+    preNormal:
+      finalizersHandler:
+      - example.io/unready-blocker
+    preDelete:
+      finalizersHandler:
+      - example.io/unready-blocker
+    inPlaceUpdate:
+      finalizersHandler:
+      - example.io/unready-blocker
+
+  # or define with label
+  # lifecycle:
+  #   inPlaceUpdate:
+  #     labelsHandler:
+  #       example.io/block-unready: "true"
+```
+
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
+
 ```yaml
 apiVersion: apps.kruise.io/v1alpha1
 kind: CloneSet
@@ -766,6 +1258,9 @@ spec:
   #     labelsHandler:
   #       example.io/block-unready: "true"
 ```
+
+  </TabItem>
+</Tabs>
 
 ### MarkPodNotReady
 **FEATURE STATE:** Kruise v1.2.0
@@ -818,6 +1313,30 @@ Same as yaml example above, we can firstly define：
 
 Add these fields into CloneSet template:
 
+<Tabs>
+  <TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: CloneSet
+spec:
+  lifecycle:
+    preNormal:
+      finalizersHandler:
+      - example.io/unready-blocker
+    preDelete:
+      finalizersHandler:
+      - example.io/unready-blocker
+    inPlaceUpdate:
+      finalizersHandler:
+      - example.io/unready-blocker
+  template:
+  # ...
+```
+
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
+
 ```yaml
 apiVersion: apps.kruise.io/v1alpha1
 kind: CloneSet
@@ -835,6 +1354,9 @@ spec:
   template:
   # ...
 ```
+
+  </TabItem>
+</Tabs>
 
 User controller logic:
 - For Pod in `PreparingNormal` state, if there is no `example.io/unready-blocker`, patch the finalizer to Pod, and Pod will be available for CloneSet, and will enter `Normal` state.
