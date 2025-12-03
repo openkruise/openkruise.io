@@ -67,6 +67,11 @@ spec:
     - `ttlSecondsAfterFinished`: 结束后超过这个时间，自动清理删除 job
 - `Never` 表示这个 job 是长期运行、不会结束，并且会每天都会在匹配的节点上重新预热一次指定的镜像
 
+**FEATURE STATE:** Kruise v1.9.0
+
+我们还可以使用 [AdvancedCronjob](./advancedcronjob.md) 实现定时调度镜像下载。
+通过这个特性，用户可以提前为他们的 AI 或机器学习等任务提前预热下载大镜像，从而提升 Pod 的启动速度。
+
 ### 配置 secrets
 
 如果这个镜像来自一个私有仓库，你可能需要配置一些 secret：
@@ -253,6 +258,11 @@ spec:
 2. `kubectl patch nodeimage node-xxx --type=merge -p '{"spec":{"images":{"ubuntu":{"tags":[{"tag":"latest","pullPolicy":{"ttlSecondsAfterFinished":300}}]}}}}'`
 
 你可以执行 `kubectl get nodeimage node-xxx -o yaml`，从 status 中看到拉取进度以及结果，并且你会发现拉取完成 600s 后任务会被清除。
+
+**FEATURE STATE:** Kruise v1.9.0
+
+如果你想修改默认的 Nodeimage ttl 额外时间(默认为300秒)，你可以在启动 kruise-controller-manager 时指定参数 `--default-ttlseconds-for-always-nodeimage`。
+请注意你不能在 AdvancedCronJob 中设置 `ttlSecondsAfterFinished` ，这也会影响 ImageListPullJob 的生命周期。详情请参考 issue [#2213](https://github.com/openkruise/kruise/issues/2213) 和 [#2214](https://github.com/openkruise/kruise/issues/2214)。
 
 ## FAQ
 1. 如果 ImagePullJob 失败了：

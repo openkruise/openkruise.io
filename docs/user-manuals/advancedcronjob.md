@@ -6,7 +6,7 @@ AdvancedCronJob is an enhanced version of CronJob.
 The original CronJob creates Job periodically according to schedule rule, but AdvancedCronJob provides template supported multiple job resources.
 
 ```yaml
-apiVersion: apps.kruise.io/v1alpha1
+apiVersion: apps.kruise.io/v1beta1
 kind: AdvancedCronJob
 spec:
   template:
@@ -19,15 +19,22 @@ spec:
     broadcastJobTemplate:
       # ...
 
-    # Options 3(future): ...
+    # Option 3: use imageListPullJobTemplate, which will create an ImageListPullJobTemplate object when cron schedule triggers
+    imageListPullJobTemplate:
+      # ...
+
+    # Options 4(future): ...
 ```
 
 - jobTemplate：create Jobs periodically, which is equivalent to original CronJob
 - broadcastJobTemplate：create [BroadcastJobs](./broadcastjob) periodically, which support to dispatch Jobs on every node
+- imageListPullJobTemplate: create [ImageListPullJobs](./imagepulljob) periodically, which support to pull images on every node
 
 ![AdvancedCronjob](/img/docs/user-manuals/advancedcronjob.png)
 
 ## Example
+
+### CronJob for BroadcastJob
 
 ```yaml
 apiVersion: apps.kruise.io/v1alpha1
@@ -51,7 +58,42 @@ spec:
           ttlSecondsAfterFinished: 30
 ```
 
-The YAML below defines an AdvancedCronJob. It will create a BroadcastJob every minute, which will run a job on every node.
+The YAML above defines an AdvancedCronJob. It will create a BroadcastJob every minute, which will run a job on every node.
+
+### CronJob for ImageListPullJob
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: AdvancedCronJob
+metadata:
+  name: acj-test
+spec:
+  schedule: "0 */2 * * *"
+  concurrencyPolicy: Replace
+  template:
+    imageListPullJobTemplate:
+      spec:
+        parallelism: 5
+        images:
+        - nginx:1.14.2
+        - busybox:latest
+        pullSecrets:
+        - default-secret
+        selector:
+          names:
+          - node1
+          - node2
+        pullPolicy:
+          timeoutSeconds: 60
+        imagePullPolicy: IfNotPresent
+```
+
+The YAML above defines an AdvancedCronJob. It will create an ImageListPullJob every 2 hours, which will pull special images on the selected nodes.
+
+**FEATURE STATE:** Kruise v1.9.0
+
+We have introduce a `spec.template.imageListPullJobTemplate` field in v1.9.0.
+You can set it to periodically schedule pulling images job on the selected nodes.
 
 ## Time zones
 
