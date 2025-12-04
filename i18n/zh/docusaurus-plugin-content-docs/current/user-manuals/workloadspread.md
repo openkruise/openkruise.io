@@ -88,9 +88,6 @@ spec:
 - `maxReplicas`：该subset所期望调度的最大副本数，需为 >= 0的整数。若设置为空，代表不限制subset的副本数。
 > 当前版本暂不支持百分比类型。
 
-- `minReplicas`：该subset所期望调度的最小副本数，需为 >= 0的整数。若设置为空，代表不限制subset的副本数。比如，按照地域打散时，可以使用minReplicas保证每个地域至少有一个副本，其余副本按照自适应调度策略弹性部署。
-> 当前版本暂不支持百分比类型。
-
 - `requiredNodeSelectorTerm`: 强制匹配到某个zone。
 
 - `preferredNodeSelectorTerms`: 尽量匹配到某个zone。
