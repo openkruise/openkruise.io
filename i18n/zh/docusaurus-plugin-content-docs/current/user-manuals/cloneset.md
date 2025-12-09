@@ -227,14 +227,14 @@ spec:
         volumeMounts:
         - name: data-vol
           mountPath: /usr/share/nginx/html
-      volumeClaimTemplates:
-      - metadata:
-          name: data-vol
-        spec:
-          accessModes: [ "ReadWriteOnce" ]
-          resources:
-            requests:
-              storage: 20Gi
+  volumeClaimTemplates:
+    - metadata:
+        name: data-vol
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        resources:
+          requests:
+            storage: 20Gi
 ```
 
   </TabItem>
@@ -252,14 +252,14 @@ spec:
         volumeMounts:
         - name: data-vol
           mountPath: /usr/share/nginx/html
-      volumeClaimTemplates:
-      - metadata:
-          name: data-vol
-        spec:
-          accessModes: [ "ReadWriteOnce" ]
-          resources:
-            requests:
-              storage: 20Gi
+  volumeClaimTemplates:
+    - metadata:
+        name: data-vol
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        resources:
+          requests:
+            storage: 20Gi
 ```
 
   </TabItem>
