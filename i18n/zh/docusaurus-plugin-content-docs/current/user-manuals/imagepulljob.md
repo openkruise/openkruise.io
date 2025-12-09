@@ -2,6 +2,11 @@
 title: ImagePullJob
 ---
 
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+**注意：v1beta1 从 Kruise v1.9.0 版本开始可用**
+
 NodeImage 和 ImagePullJob 是从 Kruise v0.8.0 版本开始提供的 CRD。
 
 Kruise 会自动为每个 Node 创建一个 NodeImage，它包含了哪些镜像需要在这个 Node 上做预热。
@@ -23,7 +28,44 @@ $ helm install/upgrade kruise https://... --set featureGates="ImagePullJobGate=t
 
 ImagePullJob 是一个 **namespaced-scope** 的资源。
 
-API 定义: https://github.com/openkruise/kruise/blob/master/apis/apps/v1alpha1/imagepulljob_types.go
+API 定义: https://github.com/openkruise/kruise/blob/master/apis/apps/v1beta1/imagepulljob_types.go
+
+<Tabs>
+<TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: ImagePullJob
+metadata:
+  name: job-with-always
+spec:
+  image: nginx:1.9.1   # [required] 完整的镜像名 name:tag
+  parallelism: 10      # [optional] 最大并发拉取的节点梳理, 默认为 1
+  selector:            # [optional] 指定节点的 名字列表 或 标签选择器 (只能设置其中一种)
+    names:
+    - node-1
+    - node-2
+    matchLabels:
+      node-type: xxx
+# podSelector:         # [optional] 通过 podSelector 匹配Pod，在这些 Pod 所在节点上拉取镜像, 与 selector 不能同时设置.
+#   matchLabels:
+#     pod-label: xxx
+#   matchExpressions:
+#   - key: pod-label
+#      operator: In
+#        values:
+#        - xxx
+  completionPolicy:
+    type: Always                  # [optional] 默认为 Always
+    activeDeadlineSeconds: 1200   # [optional] 无默认值, 只对 Always 类型生效
+    ttlSecondsAfterFinished: 300  # [optional] 无默认值, 只对 Always 类型生效
+  pullPolicy:                     # [optional] 默认 backoffLimit=3, timeoutSeconds=600
+    backoffLimit: 3
+    timeoutSeconds: 300
+```
+
+</TabItem>
+<TabItem value="v1alpha1" label="v1alpha1">
 
 ```yaml
 apiVersion: apps.kruise.io/v1alpha1
@@ -55,6 +97,8 @@ spec:
     backoffLimit: 3
     timeoutSeconds: 300
 ```
+</TabItem>
+</Tabs>
 
 你可以在 `selector` 字段中指定节点的 名字列表 或 标签选择器 **(只能设置其中一种)**，如果没有设置 `selector` 则会选择所有节点做预热。
 
@@ -143,6 +187,25 @@ helm install kruise https://... --set installation.createNamespace=false --set d
 
 当 Kubelet 创建 Pod 时，Kubelet 将会 attach metadata 到 container runtime cri 接口。OpenKruise 镜像预热同样支持类似的能力，如下：
 
+<Tabs>
+<TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: ImagePullJob
+spec:
+  ...
+  image: nginx:1.9.1
+  sandboxConfig:
+    annotations:
+      io.kubernetes.image.metrics.tags: "cluster=cn-shanghai"
+    labels:
+      io.kubernetes.image.app: "foo"
+```
+
+</TabItem>
+<TabItem value="v1alpha1" label="v1alpha1">
+
 ```yaml
 apiVersion: apps.kruise.io/v1alpha1
 kind: ImagePullJob
@@ -155,6 +218,8 @@ spec:
     labels:
       io.kubernetes.image.app: "foo"
 ```
+</TabItem>
+</Tabs>
 
 ### 镜像拉取支持 'Always' 策略
 
@@ -164,6 +229,21 @@ spec:
 - **spec.imagePullPolicy=IfNotPresent** 表示 kruise 只有镜像在Node机器不存在时，才会拉取镜像
 - 默认策略是 IfNotPresent
 
+<Tabs>
+<TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: ImagePullJob
+spec:
+  ...
+  image: nginx:1.9.1
+  imagePullPolicy: Always | IfNotPresent
+```
+
+</TabItem>
+<TabItem value="v1alpha1" label="v1alpha1">
+
 ```yaml
 apiVersion: apps.kruise.io/v1alpha1
 kind: ImagePullJob
@@ -172,12 +252,46 @@ spec:
   image: nginx:1.9.1
   imagePullPolicy: Always | IfNotPresent
 ```
+</TabItem>
+</Tabs>
 
 ## ImageListPullJob
 
 **FEATURE STATE:** Kruise v1.5.0
 
 ImagePullJob 仅仅能支持单个镜像的预热，为了满足多个镜像的预热需求，新增加 CRD ImageListPullJob 来满足多个镜像的预热，除了 images 它的大部分字段与 ImagePullJob 相同，如下：
+
+<Tabs>
+<TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: ImageListPullJob
+metadata:
+  name: job-with-always
+spec:
+  images:
+  - nginx:1.9.1   # [required] image to pull
+  - busybox:1.29.2
+  - ...
+  parallelism: 10      # [optional] the maximal number of Nodes that pull this image at the same time, defaults to 1
+  selector:            # [optional] the names or label selector to assign Nodes (only one of them can be set)
+    names:
+    - node-1
+    - node-2
+    matchLabels:
+      node-type: xxx
+  completionPolicy:
+    type: Always                  # [optional] defaults to Always
+    activeDeadlineSeconds: 1200   # [optional] no default, only work for Always type
+    ttlSecondsAfterFinished: 300  # [optional] no default, only work for Always type
+  pullPolicy:                     # [optional] defaults to backoffLimit=3, timeoutSeconds=600
+    backoffLimit: 3
+    timeoutSeconds: 300
+```
+
+</TabItem>
+<TabItem value="v1alpha1" label="v1alpha1">
 
 ```yaml
 apiVersion: apps.kruise.io/v1alpha1
@@ -204,12 +318,14 @@ spec:
     backoffLimit: 3
     timeoutSeconds: 300
 ```
+</TabItem>
+</Tabs>
 
 ## NodeImage (low-level)
 
 NodeImage 是一个 **cluster-scope** 的资源。
 
-API 定义: https://github.com/openkruise/kruise/blob/master/apis/apps/v1alpha1/nodeimage_types.go
+API 定义: https://github.com/openkruise/kruise/blob/master/apis/apps/v1beta1/nodeimage_types.go
 
 当 Kruise 被安装后，nodeimage-controller 会自动为每个 Node 创建一个同名的 NodeImage。
 并且当 Node 发生伸缩时，nodeimage-controller 也会对应的创建或删除 NodeImage。
@@ -276,7 +392,7 @@ job-with-always   4       0        0         4        9m49s   job has completed
 ```
 % kubectl get imagepulljob job-with-always -oyaml
 
-apiVersion: apps.kruise.io/v1alpha1
+apiVersion: apps.kruise.io/v1beta1
 kind: ImagePullJob
 status:
   active: 0
@@ -296,7 +412,7 @@ status:
 ```
 % kubectl get nodeimage cn-hangzhou.x.125 -oyaml
 
-apiVersion: apps.kruise.io/v1alpha1
+apiVersion: apps.kruise.io/v1beta1
 kind: NodeImage
 status:
   desired: 1
