@@ -167,7 +167,9 @@ spec:
     command: [ "/bin/sh", "-c", "sleep 5 && echo 'init container success'" ]
   updateStrategy:
     type: RollingUpdate
-  namespace: ns-1
+  namespaceSelector:
+    matchLabels:
+      kubernetes.io/metadata.name: ns-1
 ```
   </TabItem>
   <TabItem value="v1alpha1" label="v1alpha1">
