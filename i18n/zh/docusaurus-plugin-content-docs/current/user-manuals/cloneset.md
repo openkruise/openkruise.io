@@ -506,6 +506,119 @@ spec:
     paused: true
 ```
 
+### 进度期限机制
+
+**FEATURE STATE:** Kruise v1.9.0
+
+`.spec.progressDeadlineSeconds` 是一个可选配置项，用于定义 CloneSet 控制器在判定升级部署失败前的最大等待时间（秒）。当超过此期限仍未取得进展时，CloneSet 控制器将在资源状态中记录相应的状况条目：
+```yaml
+type: Progressing
+status: False
+reason: ProgressDeadlineExceeded
+```
+
+CloneSet 默认不会设置该值，因此在默认情况下 CloneSet 控制器不会在 `.status.conditions` 上记录相应的状况条目。
+
+一旦设置该值，CloneSet 控制器会在设定的时间内持续检查部署操作。上层编排系统可利用此状态来触发对应的动作，例如进行 CloneSet 的回滚操作（即使此状态判定为超时，也不会影响底层 CloneSet 控制器继续对 Pod 进行滚动升级）。
+
+> **注意：**
+> 
+> 如果指定，则此字段值需要大于 `.spec.minReadySeconds` 取值。
+
+因此，通过配置 `.spec.progressDeadlineSeconds`，会使得 CloneSet 在其生命周期中会经历多种状态：
+- Progressing（进行中）：部署过程正在进行。
+- Available（可用）：分组部署完成或者整体部署成功。
+- Failed（失败）：部署超时以至于无法继续进行。
+
+#### Progressing 状态原因说明
+
+以下为 Progressing 状况条目为 True 的情况：
+
+| Reason                             | Message                                         | Description |
+|------------------------------------|-------------------------------------------------|-------------|
+| CloneSetUpdated                    | CloneSet is progressing/CloneSet is resumed     | 发布升级过程中     |
+| CloneSetAvailable                  | CloneSet is available                           | 发布升级已完成     |
+| CloneSetProgressPaused             | CloneSet is paused                              | 发布升级暂停中     |
+| CloneSetProgressPartitionAvailable | CloneSet has been paused due to partition ready | 发布升级达到指定比例  |
+
+
+#### 进行中的 CloneSet
+当执行以下任一操作时，CloneSet 将被标记为 Progressing 状态：
+- 执行滚动升级操作。
+- 升级过程中为最新版本 Revision 进行扩容。
+- 升级过程中为旧版本 Revision 进行缩容。
+- 新创建的 Pod 已就绪或可用（满足 MinReadySeconds 条件）。
+
+此时，CloneSet控制器会在 `.status.conditions` 中添加以下状况条目：
+
+```yaml
+type: Progressing
+status: "True"
+reason: CloneSetUpdated
+```
+
+#### 可用的 CloneSet
+Complete 状态分为两种子状态：
+
+**分组暂停状态：**
+
+当满足以下条件时，CloneSet 进入分组暂停状态：
+
+- 指定 partition 比例的副本已更新至最新版本。
+- 指定 partition 比例的副本均处于可用状态。
+
+CloneSet 控制器会向 CloneSet 的 `.status.conditions` 中添加包含下面属性的状况条目：
+
+```yaml
+type: Progressing
+status: "True"
+reason: ProgressPartitionAvailable
+```
+
+**可用状态：**
+当以下条件发生时，Kruise 会将 CloneSet 变为可用状态：
+
+- 所有副本均已更新至最新版本。
+- 所有副本均处于可用状态。
+- 无旧版本副本运行。
+
+CloneSet 控制器会向 CloneSet 的 `.status.conditions` 中添加包含下面属性的状况条目：
+
+```yaml
+type: Progressing
+status: "True"
+reason: CloneSetAvailable
+```
+
+Progressing 的状况将会持续保持 "True"，直到触发新的升级部署操作。即使副本可用性发生变化，此状况值也不会改变。
+
+#### 失败的 CloneSet
+当 CloneSet 无法成功部署最新 Revision 时，将进入 Failed 状态。常见原因包括：
+
+- 资源配额不足
+- 就绪探针失败
+- 镜像拉取失败
+- 权限不足
+- LimitRanges 配置问题
+- 应用运行时配置错误
+
+通过配置 `.spec.progressDeadlineSeconds` 参数可检测此状况。超过截止时间后，CloneSet 控制器将向 `.status.conditions` 添加以下状况条目：
+
+```yaml
+type: Progressing
+status: "False"
+reason: ProgressDeadlineExceeded
+```
+
+> **说明：**
+>
+> 当用户暂停 CloneSet 部署时，控制器将停止进度检查。用户可在部署过程中安全地暂停和恢复操作，不会触发超时判定。
+
+#### 对失败 CloneSet 的操作
+对于处于 Failed 状态的 CloneSet，可执行与 Complete 状态相同的管理操作，包括：
+- 回滚到历史修订版本。
+- 暂停部署过程以进行 Pod 模板的多项调整。
+
 ### 原地升级支持修改资源
 
 **FEATURE STATE:** Kruise v1.8.0
