@@ -2,6 +2,10 @@
 title: SidecarSet
 ---
 
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+
 这个控制器支持通过 admission webhook 来自动为集群中创建的符合条件的 Pod 注入 sidecar 容器。
 这个注入过程和 [istio](https://istio.io/docs/setup/kubernetes/additional-setup/sidecar-injection/)
 的自动注入方式很类似。
@@ -15,6 +19,37 @@ title: SidecarSet
 ### 创建 SidecarSet
 
 如下的 sidecarset.yaml 定义了一个 SidecarSet，其中包括了一个名为 sidecar1 的 sidecar 容器：
+
+<Tabs>
+  <TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+# sidecarset.yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: SidecarSet
+metadata:
+  name: test-sidecarset
+spec:
+  selector:
+    matchLabels:
+      app: nginx
+  updateStrategy:
+    type: RollingUpdate
+    maxUnavailable: 1
+  containers:
+  - name: sidecar1
+    image: centos:6.7
+    command: ["sleep", "999d"] # do nothing at all
+    volumeMounts:
+    - name: log-volume
+      mountPath: /var/log
+  volumes: # this field will be merged into pod.spec.volumes
+  - name: log-volume
+    emptyDir: {}
+```
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
+
 ```yaml
 # sidecarset.yaml
 apiVersion: apps.kruise.io/v1alpha1
@@ -39,6 +74,8 @@ spec:
   - name: log-volume
     emptyDir: {}
 ```
+  </TabItem>
+</Tabs>
 创建这个 YAML:
 ```bash
 kubectl apply -f sidecarset.yaml
@@ -79,7 +116,7 @@ status:
 $ kubectl edit sidecarsets test-sidecarset
 
 # sidecarset.yaml
-apiVersion: apps.kruise.io/v1alpha1
+apiVersion: apps.kruise.io/v1beta1
 kind: SidecarSet
 metadata:
   name: test-sidecarset
@@ -109,6 +146,34 @@ Events:
 ## SidecarSet功能说明
 一个简单的 SidecarSet yaml 文件如下：
 
+<Tabs>
+  <TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: SidecarSet
+metadata:
+  name: sidecarset
+spec:
+  selector:
+    matchLabels:
+      app: sample
+  containers:
+  - name: nginx
+    image: nginx:alpine
+  initContainers:
+  - name: init-container
+    image: busybox:latest
+    command: [ "/bin/sh", "-c", "sleep 5 && echo 'init container success'" ]
+  updateStrategy:
+    type: RollingUpdate
+  namespaceSelector:
+    matchLabels:
+      kubernetes.io/metadata.name: ns-1
+```
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
+
 ```yaml
 apiVersion: apps.kruise.io/v1alpha1
 kind: SidecarSet
@@ -129,6 +194,8 @@ spec:
     type: RollingUpdate
   namespace: ns-1
 ```
+  </TabItem>
+</Tabs>
 - spec.selector 通过label的方式选择需要注入、更新的pod，支持matchLabels、MatchExpressions两种方式，详情请参考：https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
 - spec.containers 定义需要注入、更新的pod.spec.containers容器，支持完整的k8s container字段，详情请参考：https://kubernetes.io/docs/concepts/containers/
 - spec.initContainers 定义需要注入的pod.spec.initContainers容器，支持完整的k8s initContainer字段，详情请参考：https://kubernetes.io/docs/concepts/workloads/pods/init-containers/
@@ -145,10 +212,13 @@ spec:
 
 **FEATURE STATE:** Kruise v1.4.0
 
-spec.namespace 字段只能指定一个Namespace，并且不能排除的一些特定的Namespace。如果面对一些复杂的 namespace selector 场景，推荐使用 **namespaceSelector** 字段：
+如果面对一些复杂的 namespace selector 场景，可以使用 **namespaceSelector** 字段：
+
+<Tabs>
+  <TabItem value="v1beta1" label="v1beta1" default>
 
 ```yaml
-apiVersion: apps.kruise.io/v1alpha1
+apiVersion: apps.kruise.io/v1beta1
 kind: SidecarSet
 metadata:
   name: sidecarset
@@ -160,10 +230,72 @@ spec:
   # matchExpressions:
   # - {key: tier, operator: In, values: [frontend, middleware]}
 ```
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
+
+```yaml
+apiVersion: apps.kruise.io/v1alpha1
+kind: SidecarSet
+metadata:
+  name: sidecarset
+spec:
+  ...
+  namespace: ns1
+  namespaceSelector:
+    matchLabels:
+      environment: production
+  # matchExpressions:
+  # - {key: tier, operator: In, values: [frontend, middleware]}
+```
+  </TabItem>
+</Tabs>
+
+**注意：从 [kubernetes 1.21](https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG/CHANGELOG-1.21.md?plain=1#L1819) 版本开始，Namespace 会被默认打上`kubernetes.io/metadata.name` 标签，所以`spec.namespace`字段在SidecarSet v1beta1版本中被移除。如果您的版本符合要求，您可以只使用`spec.namespaceSelector`来对 Namespace 进行筛选。**
 
 ### sidecar container注入
 sidecar 的注入只会发生在 Pod 创建阶段，并且只有 Pod spec 会被更新，不会影响 Pod 所属的 workload template 模板。
 spec.containers除了默认的k8s container字段，还扩展了如下一些字段，来方便注入：
+
+<Tabs>
+  <TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: SidecarSet
+metadata:
+  name: sidecarset
+spec:
+  selector:
+    matchLabels:
+      app: sample
+  containers:
+    # default K8s Container fields
+  - name: nginx
+    image: nginx:alpine
+    volumeMounts:
+    - mountPath: /nginx/conf
+      name: nginx.conf
+    # extended sidecar container fields
+    podInjectPolicy: BeforeAppContainer
+    shareVolumePolicy:
+      type: disabled | enabled
+    transferEnv:
+    - sourceContainerName: main
+      envName: PROXY_IP
+    - sourceContainerNameFrom:
+        fieldRef:
+          apiVersion: "v1"
+          fieldPath: "metadata.labels['cName']"
+        # fieldPath: "metadata.annotations['cName']"
+      envName: TC
+  volumes:
+  - name: nginx.conf
+    hostPath:
+      path: /data/nginx/conf
+```
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
+
 ```yaml
 apiVersion: apps.kruise.io/v1alpha1
 kind: SidecarSet
@@ -208,6 +340,8 @@ spec:
     hostPath:
       path: /data/nginx/conf
 ```
+  </TabItem>
+</Tabs>
 - podInjectPolicy 定义container注入到pod.spec.containers中的位置
     - BeforeAppContainer(默认) 注入到pod原containers的前面
     - AfterAppContainer 注入到pod原containers的后面
@@ -224,6 +358,23 @@ spec:
 **FEATURE STATE:** Kruise v0.10.0
 
 对于已经创建的 SidecarSet，可通过设置 `spec.injectionStrategy.paused=true` 实现sidecar container的暂停注入：
+
+<Tabs>
+  <TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: SidecarSet
+metadata:
+  name: sidecarset
+spec:
+  ... ...
+  injectionStrategy:
+    paused: true
+```
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
+
 ```yaml
 apiVersion: apps.kruise.io/v1alpha1
 kind: SidecarSet
@@ -234,12 +385,31 @@ spec:
   injectionStrategy:
     paused: true
 ```
+  </TabItem>
+</Tabs>
 上述方法只作用于新创建的 Pod，对于已注入 Pod 的存量 sidecar container 不产生任何影响。
 
 #### imagePullSecrets
 **FEATURE STATE:** Kruise v0.10.0
 
 SidecarSet 可以通过配置 spec.imagePullSecrets，来配合 [Secret](https://kubernetes.io/zh/docs/concepts/configuration/secret/) 拉取私有 sidecar 镜像。其实现原理为: 当sidecar注入时，SidecarSet 会将其 spec.imagePullSecrets 注入到[ Pod 的 spec.imagePullSecrets](https://kubernetes.io/zh/docs/tasks/configure-pod-container/pull-image-private-registry/)。
+
+<Tabs>
+  <TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: SidecarSet
+metadata:
+  name: sidecarset
+spec:
+  ... ....
+  imagePullSecrets:
+  - name: my-secret
+```
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
+
 ```yaml
 apiVersion: apps.kruise.io/v1alpha1
 kind: SidecarSet
@@ -250,6 +420,8 @@ spec:
   imagePullSecrets:
   - name: my-secret
 ```
+  </TabItem>
+</Tabs>
 **特别注意**: 对于需要拉取私有 sidecar 镜像的 Pod，用户必需确保这些 Pod 所在的命名空间中已存在对应的 Secret，否则会导致拉取私有镜像失败。
 
 #### 动态资源注入
@@ -338,6 +510,24 @@ SidecarSet 通过 ControllerRevision 记录了关于 `containers`、`volumes`、
 **注：SidecarSet 相关 ControllerRevision 资源被放置在了与 Kruise-Manager 相同的命名空间中，用户可以使用 `kubectl get controllerrevisions -n kruise-system -l kruise.io/sidecarset-name=<your-sidecarset-name>` 来查看。此外，用户还可以通过 SidecarSet 的 `status.latestRevision` 字段看到当前版本对应的 ControllerRevision 名称，以方便自行记录。**
 
 #### 通过 ControllerRevision 名称指定注入的 Sidecar 版本
+
+<Tabs>
+  <TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: SidecarSet
+metadata:
+  name: sidecarset
+spec:
+  ...
+  injectionStrategy:
+    revision:
+      revisionName: <specific-controllerRevision-name>
+```
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
+
 ```yaml
 apiVersion: apps.kruise.io/v1alpha1
 kind: SidecarSet
@@ -349,11 +539,34 @@ spec:
     revision:
       revisionName: <specific-controllerRevision-name>
 ```
+  </TabItem>
+</Tabs>
 
 #### 通过自定义版本标识指定注入的 Sidecar 版本
 用户可以通过在发版时，同时给 SidecarSet 打上 `apps.kruise.io/sidecarset-custom-version=<your-version-id>` 来标记每一个历史版本，SidecarSet 会将这个 label 向下带入到对应的 ControllerRevision 对象，以便用户进行筛选，并且允许用户在选择注入历史版本时，使用该 `<your-version-id>` 来进行描述。
 
 假设用户只想灰度 `10%` 的 Pods 到 `version-2`，并且对于新创建的 Pod 希望都注入更加稳定的 `version-1` 版本来控制灰度风险：
+
+<Tabs>
+  <TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: SidecarSet
+metadata:
+  name: sidecarset
+spec:
+  ...
+  customVersion: version-2
+  updateStrategy:
+    partition: 90%
+  injectionStrategy:
+    revision:
+      customVersion: version-1
+```
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
+
 ```yaml
 apiVersion: apps.kruise.io/v1alpha1
 kind: SidecarSet
@@ -369,6 +582,8 @@ spec:
     revision:
       customVersion: version-1
 ```
+  </TabItem>
+</Tabs>
 以上两种版本选择方式，任选其一即可。
 
 #### 支持 Partial 注入策略
@@ -381,6 +596,26 @@ spec:
 
 例如，若设置 `.spec.updateStrategy.partition: 70%`，则 30% 的新 Pod 将注入最新版本，其余 70% 仍使用旧版本。
 这种方式可自动实现灰度流量的渐进式控制，无需手动管理具体 Pod 的版本选择。配置示例：
+
+<Tabs>
+  <TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: SidecarSet 
+metadata: 
+  name: sidecarset 
+spec:
+  #...
+  injectionStrategy:
+    revision:
+      policy: Partial 
+  updateStrategy:
+    partition: 70%
+```
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
+
 ```yaml
 apiVersion: apps.kruise.io/v1alpha1
 kind: SidecarSet 
@@ -394,6 +629,8 @@ spec:
   updateStrategy:
     partition: 70%
 ```
+  </TabItem>
+</Tabs>
 
 **注意**：该策略使用随机数来选择注入版本，因此可能会导致新 Pod 的注入版本与预期不完全一致。
 
@@ -405,7 +642,34 @@ Kubernetes从1.28版本通过 **initContainers[x].restartPolicy=Always** 的方�
 2. Job类型的Pod，主容器执行完成之后，Sidecar容器也会自行退出不会阻塞Job的完成（之前的模式Sidecar容器没办法自主推出的，会导致Job一直没法结束）。
 
 SidecarSet从 v1.7.0 版本开始也会支持注入Sidecar Containers，如下：
+
+<Tabs>
+  <TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: SidecarSet
+metadata:
+  name: test-sidecarset
+spec:
+  selector:
+    matchLabels:
+      app: sample
+  updateStrategy:
+    type: NotUpdate
+  initContainers:
+  - name: sidecar
+    image: nginx:alpine
+    restartPolicy: Always
+    lifecycle:
+      postStart:
+        exec:
+          command: ["/bin/sh", "-c", "sleep 10"]
 ```
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
+
+```yaml
 apiVersion: apps.kruise.io/v1alpha1
 kind: SidecarSet
 metadata:
@@ -425,6 +689,8 @@ spec:
         exec:
           command: ["/bin/sh", "-c", "sleep 10"]
 ```
+  </TabItem>
+</Tabs>
 
 **注意：**
 - k8s 1.28 feature-gate SidecarContainers 默认是关闭的需要主动打开，k8s 1.29 是默认开启的。
@@ -443,6 +709,23 @@ Partition 的语义是 **保留旧版本 Pod 的数量或百分比**，默认为
 - 如果是数字，控制器会将 `(replicas - partition)` 数量的 Pod 更新到最新版本。
 - 如果是百分比，控制器会将 `(replicas * (100% - partition))` 数量的 Pod 更新到最新版本。
 
+<Tabs>
+  <TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: SidecarSet
+metadata:
+  name: sidecarset
+spec:
+  # ...
+  updateStrategy:
+    type: RollingUpdate
+    partition: 90
+```
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
+
 ```yaml
 apiVersion: apps.kruise.io/v1alpha1
 kind: SidecarSet
@@ -454,10 +737,30 @@ spec:
     type: RollingUpdate
     partition: 90
 ```
+  </TabItem>
+</Tabs>
 假设该SidecarSet关联的pod数量是100个，则本次升级只会升级10个，保留90个。
 
 #### 最大不可用数量
 MaxUnavailable 是发布过程中保证的，同一时间下最大不可用的 Pod 数量，默认值为 1。用户可以将其设置为绝对值或百分比（百分比会被控制器按照selected pod做基数来计算出一个背后的绝对值）。
+
+<Tabs>
+  <TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: SidecarSet
+metadata:
+  name: sidecarset
+spec:
+  # ...
+  updateStrategy:
+    type: RollingUpdate
+    maxUnavailable: 20%
+```
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
+
 ```yaml
 apiVersion: apps.kruise.io/v1alpha1
 kind: SidecarSet
@@ -469,12 +772,32 @@ spec:
     type: RollingUpdate
     maxUnavailable: 20%
 ```
+  </TabItem>
+</Tabs>
 注意，maxUnavailable 和 partition 两个值是没有必然关联。举例：
 - 当 `{matched pod}=100,partition=50,maxUnavailable=10`，控制器会发布 50 个 Pod 到新版本，但是发布窗口为 10，即同一时间只会发布 10 个 Pod，每发布好一个 Pod 才会再找一个发布，直到 50 个发布完成。
 - 当 `{matched pod}=100,partition=80,maxUnavailable=30`，控制器会发布 20 个 Pod 到新版本，因为满足 maxUnavailable 数量，所以这 20 个 Pod 会同时发布。
 
 #### 更新暂停
 用户可以通过设置 paused 为 true 暂停发布，此时对于新创建的、扩容的pod依旧会实现注入能力，已经更新的pod会保持更新后的版本不动，还没有更新的pod会暂停更新。
+
+<Tabs>
+  <TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: SidecarSet
+metadata:
+  name: sidecarset
+spec:
+  # ...
+  updateStrategy:
+    type: RollingUpdate
+    paused: true
+```
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
+
 ```yaml
 apiVersion: apps.kruise.io/v1alpha1
 kind: SidecarSet
@@ -486,9 +809,31 @@ spec:
     type: RollingUpdate
     paused: true
 ```
+  </TabItem>
+</Tabs>
 
 #### 金丝雀发布
 对于有金丝雀发布需求的业务，可以通过strategy.selector来实现。方式：对于需要率先金丝雀灰度的pod打上固定的labels[canary.release] = true，再通过strategy.selector.matchLabels来选中该pod
+
+<Tabs>
+  <TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: SidecarSet
+metadata:
+  name: sidecarset
+spec:
+  # ...
+  updateStrategy:
+    type: RollingUpdate
+    selector:
+      matchLabels:
+        canary.release: "true"
+```
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
+
 ```yaml
 apiVersion: apps.kruise.io/v1alpha1
 kind: SidecarSet
@@ -502,6 +847,8 @@ spec:
       matchLabels:
         canary.release: "true"
 ```
+  </TabItem>
+</Tabs>
 
 ### 发布顺序控制
 - 默认对升级的pod排序，保证多次升级的顺序一致
@@ -515,6 +862,29 @@ spec:
 目前 `priority` 可以通过 weight(权重) 和 order(序号) 两种方式来指定。
 
 - `weight`: Pod 优先级是由所有 weights 列表中的 term 来计算 match selector 得出。如下：
+
+<Tabs>
+  <TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: SidecarSet
+spec:
+  # ...
+  updateStrategy:
+    priorityStrategy:
+      weightPriority:
+      - weight: 50
+        matchSelector:
+          matchLabels:
+            test-key: foo
+      - weight: 30
+        matchSelector:
+          matchLabels:
+            test-key: bar
+```
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
 
 ```yaml
 apiVersion: apps.kruise.io/v1alpha1
@@ -533,8 +903,26 @@ spec:
           matchLabels:
             test-key: bar
 ```
+  </TabItem>
+</Tabs>
 
 - `order`: Pod 优先级是由 orderKey 的 value 决定，这里要求对应的 value 的结尾能解析为 int 值。比如 value "5" 的优先级是 5，value "sts-10" 的优先级是 10。
+
+<Tabs>
+  <TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: SidecarSet
+spec:
+  # ...
+  updateStrategy:
+    priorityStrategy:
+      orderPriority:
+      - orderedKey: some-label-key
+```
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
 
 ```yaml
 apiVersion: apps.kruise.io/v1alpha1
@@ -546,9 +934,30 @@ spec:
       orderPriority:
       - orderedKey: some-label-key
 ```
+  </TabItem>
+</Tabs>
 
 #### scatter打散顺序
 打散策略允许用户定义将符合某些标签的 Pod 打散到整个发布过程中。比如，一个 SidecarSet所管理的pod为10，如果下面有 3 个 Pod 带有 foo=bar 标签，且用户在打散策略中设置了这个标签，那么这 3 个 Pod 会被放在第 1、6、10 个位置发布。
+
+<Tabs>
+  <TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: SidecarSet
+metadata:
+  name: sidecarset
+spec:
+  # ...
+  updateStrategy:
+    type: RollingUpdate
+    scatterStrategy:
+    - key: foo
+      value: bar
+```
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
 
 ```yaml
 apiVersion: apps.kruise.io/v1alpha1
@@ -563,6 +972,8 @@ spec:
     - key: foo
       value: bar
 ```
+  </TabItem>
+</Tabs>
 **注意：如果使用 scatter 策略，建议只设置一对 key-value 做打散，会比较好理解。**
 
 ### Sidecar热升级特性
@@ -571,6 +982,35 @@ spec:
 SidecarSet原地升级会先停止旧版本的容器，然后创建新版本的容器。这种方式更加适合不影响Pod服务可用性的sidecar容器，比如说：日志收集Agent。
 
 但是对于很多代理或运行时的sidecar容器，例如Istio Envoy，这种升级方法就有问题了。Envoy作为Pod中的一个代理容器，代理了所有的流量，如果直接重启，Pod服务的可用性会受到影响。如果需要单独升级envoy sidecar，就需要复杂的grace终止和协调机制。所以我们为这种sidecar容器的升级提供了一种新的解决方案。
+
+<Tabs>
+  <TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: SidecarSet
+metadata:
+  name: hotupgrade-sidecarset
+spec:
+  selector:
+    matchLabels:
+      app: hotupgrade
+  containers:
+  - name: sidecar
+    image: openkruise/hotupgrade-sample:sidecarv1
+    imagePullPolicy: Always
+    lifecycle:
+      postStart:
+        exec:
+          command:
+          - /bin/sh
+          - /migrate.sh
+    upgradeStrategy:
+      upgradeType: HotUpgrade
+      hotUpgradeEmptyImage: openkruise/hotupgrade-sample:empty
+```
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
 
 ```yaml
 apiVersion: apps.kruise.io/v1alpha1
@@ -595,6 +1035,8 @@ spec:
       upgradeType: HotUpgrade
       hotUpgradeEmptyImage: openkruise/hotupgrade-sample:empty
 ```
+  </TabItem>
+</Tabs>
 - upgradeType: HotUpgrade代表该sidecar容器的类型是hot upgrade，将执行热升级方案
 - hotUpgradeEmptyImage: 当热升级sidecar容器时，业务必须要提供一个empty容器用于热升级过程中的容器切换。empty容器同sidecar容器具有相同的配置（除了镜像地址），例如：command, lifecycle, probe等，但是它不做任何工作。
 - lifecycle.postStart: 状态迁移，该过程完成热升级过程中的状态迁移，该脚本需要由业务根据自身的特点自行实现，例如：nginx热升级需要完成Listen FD共享以及流量排水（reload）
@@ -635,6 +1077,28 @@ SidecarSet热升级机制不仅完成了mesh容器的切换，并且提供了新
 **FEATURE STATE:** Kruise v1.3.0
 
 SidecarSet支持注入Pod Annotations，如下：
+
+<Tabs>
+  <TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: SidecarSet
+spec:
+  containers:
+    ...
+  patchPodMetadata:
+  - annotations:
+      oom-score: '{"log-agent": 1}'
+      custom.example.com/sidecar-configuration: '{"command": "/home/admin/bin/start.sh", "log-level": "3"}'
+    patchPolicy: MergePatchJson
+  - annotations:
+      apps.kruise.io/container-launch-priority: Ordered
+    patchPolicy: Overwrite | Retain
+```
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
+
 ```yaml
 apiVersion: apps.kruise.io/v1alpha1
 kind: SidecarSet
@@ -650,6 +1114,8 @@ spec:
       apps.kruise.io/container-launch-priority: Ordered
     patchPolicy: Overwrite | Retain
 ```
+  </TabItem>
+</Tabs>
 patchPolicy为注入的策略，如下：
 - **Retain：** 默认策略，如果Pod中存在 annotation[key]=value ，则保留Pod原有的value。只有当 Pod中不存在 annotation[key] 时，才注入 annotations[key]=value。
 - **Overwrite：** 与 Retain 对应，当 Pod 中存在 annotation[key]=value，将被强制覆盖为 value2。
