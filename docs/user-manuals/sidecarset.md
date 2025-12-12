@@ -439,7 +439,7 @@ SidecarSet supports configuring sidecar container resources based on pod specifi
 For design documentation, please refer to: [proposals sidecarset dynamic resources when pod creating](https://github.com/openkruise/kruise/blob/master/docs/proposals/20250913-sidecarset-dynamic-resources-when-creating.md). Best practice: [Dynamic Resource Injection with SidecarSet](docs/best-practices/resource-policy-sidecarset.md)
 
 ```yaml
-apiVersion: apps.kruise.io/v1alpha1
+apiVersion: apps.kruise.io/v1beta1
 kind: SidecarSet
 spec:
   containers:
