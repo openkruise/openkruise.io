@@ -432,7 +432,7 @@ SidecarSet 支持在 Pod 创建时根据 Pod 规格配置 sidecar 容器资源�
 相关设计文档请参考: [proposals sidecarset dynamic resources when pod creating](https://github.com/openkruise/kruise/blob/master/docs/proposals/20250913-sidecarset-dynamic-resources-when-creating.md), 最佳实践请参考: [sidecarset 动态资源注入](i18n/zh/docusaurus-plugin-content-docs/current/best-practices/resource-policy-sidecarset.md)
 
 ```yaml
-apiVersion: apps.kruise.io/v1alpha1
+apiVersion: apps.kruise.io/v1beta1
 kind: SidecarSet
 spec:
   containers:
