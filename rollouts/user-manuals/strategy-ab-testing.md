@@ -31,6 +31,7 @@ spec:
     name: workload-demo
   strategy:
     canary:
+      enableExtraWorkloadForCanary: false
       steps:
       - replicas: 1
         matches:
