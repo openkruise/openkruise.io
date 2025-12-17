@@ -23,6 +23,7 @@ spec:
       enableExtraWorkloadForCanary: true
       steps:
       - traffic: 20%
+        replicas: 20%
       trafficRoutings:
       - service: service-demo
         ingress:
