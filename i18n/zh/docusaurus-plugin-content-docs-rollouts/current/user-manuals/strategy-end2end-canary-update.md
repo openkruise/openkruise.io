@@ -63,6 +63,7 @@ spec:
     name: spring-cloud-a
   strategy:
     canary:
+      enableExtraWorkloadForCanary: true
       steps:
       - pause: {}
         replicas: 1
@@ -84,6 +85,7 @@ spec:
     name: spring-cloud-b
   strategy:
     canary:
+      enableExtraWorkloadForCanary: true
       steps:
         - pause: {}
           replicas: 1

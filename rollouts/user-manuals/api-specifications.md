@@ -25,6 +25,7 @@ spec:
     name: echoserver
   strategy:
     canary:
+      enableExtraWorkloadForCanary: true
       steps:
       ### the 1-st batch ###
       # routing 5% traffics to the new version
