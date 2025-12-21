@@ -35,16 +35,16 @@ Kruise Rollouts 是一个 **Bypass(旁路)** 组件，提供 **高级渐进式�
 Kruise Rollouts 与 [Argo Rollout](https://argoproj.github.io/rollouts/) 和 [Flux Flagger](https://fluxcd.io/flagger/)
 的对比。
 
-| 组件      | **Kruise Rollouts**                                                     | Argo Rollouts                            | Flux Flagger                             |
-|---------|-------------------------------------------------------------------------|------------------------------------------|------------------------------------------|
-| 核心概念    | 增强现有的工作负载                                                               | 替换您的工作负载                                 | 管理您的工作负载                                 |
-| 架构      | Bypass                                                                  | 新的工作负载类型                                 | Bypass                                   |
-| 插拔和热切换  | 是                                                                       | 否                                        | 否                                        |
-| 发布类型    | 多批次、金丝雀、A/B测试、全链路灰度、蓝绿                                                      | 多批次、金丝雀、蓝绿、A/B测试                         | 金丝雀、蓝绿、A/B测试                             |
+| 组件      | **Kruise Rollouts**                                                               | Argo Rollouts                            | Flux Flagger                             |
+|---------|-----------------------------------------------------------------------------------|------------------------------------------|------------------------------------------|
+| 核心概念    | 增强现有的工作负载                                                                         | 替换您的工作负载                                 | 管理您的工作负载                                 |
+| 架构      | Bypass                                                                            | 新的工作负载类型                                 | Bypass                                   |
+| 插拔和热切换  | 是                                                                                 | 否                                        | 否                                        |
+| 发布类型    | 多批次、金丝雀、A/B测试、全链路灰度、蓝绿                                                            | 多批次、金丝雀、蓝绿、A/B测试                         | 金丝雀、蓝绿、A/B测试                             |
 | 工作负载类型  | Deployment、StatefulSet、CloneSet、DaemonSet、Advanced StatefulSet、Advanced DaemonSet | Argo-Rollout                             | Deployment、DaemonSet                     | 
-| 流量类型    | Ingress、GatewayAPI、CRD（需要 Lua 脚本）                                       | Ingress、GatewayAPI、APISIX、Traefik、SMI 等等 | Ingress、GatewayAPI、APISIX、Traefik、SMI 等等 |
-| 迁移成本    | 无需迁移工作负载和Pods                                                           | 必须迁移工作负载和Pods                            | 必须迁移Pods                                 | 
-| HPA 兼容性 | 是                                                                       | 是                                        | 否                                        |
+| 流量类型    | Ingress、GatewayAPI、CRD（需要 Lua 脚本）                                                 | Ingress、GatewayAPI、APISIX、Traefik、SMI 等等 | Ingress、GatewayAPI、APISIX、Traefik、SMI 等等 |
+| 迁移成本    | 无需迁移工作负载和Pods                                                                     | 必须迁移工作负载和Pods                            | 必须迁移Pods                                 | 
+| HPA 兼容性 | 是                                                                                 | 是                                        | 否                                        |
 
 ## 接下来的步骤
 

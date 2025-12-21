@@ -43,7 +43,7 @@ spec:
 Assume that you want to use multi-batch update strategy to upgrade your Deployment from "version-1" to "version-2":
 - In the 1-st batch: **Only 1** Pod should be upgraded;
 - In the 2-nd batch: **50%** Pods should be upgraded, i.e., **5 updated Pods**;
-- In the 3-rd batch: **100%** Pods should be upgradedm i.e., **10 updated Pods**.
+- In the 3-rd batch: **100%** Pods should be upgraded i.e., **10 updated Pods**.
 
 <Tabs>
   <TabItem value="v1beta1" label="v1beta1" default>
