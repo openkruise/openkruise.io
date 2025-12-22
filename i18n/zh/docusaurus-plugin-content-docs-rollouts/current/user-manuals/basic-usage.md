@@ -254,7 +254,7 @@ kubectl patch rollout rollouts-demo --type merge -p '{"spec":{"strategy":{"pause
 
 ### 禁止Rollout处理
 
-在Rollout发布完成后，一般而言，您不需要删除或者禁止Rollout，Rollout只会在发布过程中处理。然而， 你如果想要确保Rollout不再处理， 或则不再想使用渐进式发布， 可以使用`spec.disabled`字段来禁用Rollout。相对于之间删除Rollout对象， 禁用Rollout可以更容易做问题排查， 并且允许您更快速地重新启用渐进式发布。 
+在Rollout发布完成后，一般而言，您不需要删除或者禁止Rollout，Rollout只会在发布过程中处理。然而，你如果想要确保Rollout不再处理，或则不再想使用渐进式发布，可以使用`spec.disabled`字段来禁用Rollout。相对于之间删除Rollout对象，禁用Rollout可以更容易做问题排查，并且允许您更快速地重新启用渐进式发布。 
 
 要禁止Rollout的处理, 请patch`spec.disabled`字段为`true`。
 
