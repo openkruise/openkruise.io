@@ -60,25 +60,25 @@ https://docs.kubesphere.com.cn/v4.0/03-install-and-uninstall/01-install-ks-core
 
 After installing KubeSphere, access the console and click Extension Market:
 
-![](/img/kruisegame/user-manuals/dash-mainpage.png)
+![KubeSphere console main page showing Extension Market](/img/kruisegame/user-manuals/dash-mainpage.png)
 
 Select OKG Dashboard and click Subscribe. OKG Dashboard is completely free, just submit an order. After the payment is successful, return to the extended market. At this time, the subscription button has been transformed into a management button:
 
-![](/img/kruisegame/user-manuals/dash-okg.png)
+![OKG Dashboard extension showing management button](/img/kruisegame/user-manuals/dash-okg.png)
 
 Enter the OKG Dashboard management page and click Install:
 
-![](/img/kruisegame/user-manuals/dash-management.png)
+![OKG Dashboard management page with install button](/img/kruisegame/user-manuals/dash-management.png)
 
 According to the pop-up window, 1) Select the version and click Next; 2) Start the installation:
 
-![](/img/kruisegame/user-manuals/dash-version-select.png)
+![Version selection dialog for OKG Dashboard](/img/kruisegame/user-manuals/dash-version-select.png)
 
-![](/img/kruisegame/user-manuals/dash-begin-install.png)
+![Installation confirmation dialog](/img/kruisegame/user-manuals/dash-begin-install.png)
 
 After the installation is successful, you can see that the interface shows that it is installed and enabled:
 
-![](/img/kruisegame/user-manuals/dash-installed.png)
+![OKG Dashboard showing installed and enabled status](/img/kruisegame/user-manuals/dash-installed.png)
 
 ## Instructions for use
 
@@ -142,7 +142,7 @@ This dashboard serves as a comprehensive management tool, providing users with t
   - **Label Configuration**: Set and update the project label key to ensure proper organization of GameServerSets and GameServers.
   - **DeployUnit Management**: Add or remove clusters from the DeployUnits list to control where GameServerSets are deployed.
 
-![](/img/kruisegame/user-manuals/dash-config.png)
+![Global configuration page for project labels and DeployUnits](/img/kruisegame/user-manuals/dash-config.png)
 
 #### Project Page
 - **Purpose**: The Project Page within the OKG Dashboard serves as the central hub for organizing and managing the deployment of game servers across different logical groupings, referred to as projects. This page is designed to give users an in-depth view of all projects, allowing for efficient management and monitoring of resources across multiple DeployUnits.
@@ -163,7 +163,7 @@ This dashboard serves as a comprehensive management tool, providing users with t
     - **Rolling Out New Configurations**: Implement new configurations or update existing ones to optimize performance.
     - **Batch and Item Actions**: Users can perform bulk operations, such as updating resources, deleting GameServers or GameServerSets, updating network policies, and modifying replicas.
 
-![](/img/kruisegame/user-manuals/dash-project.png)
+![Project page showing list of projects with GameServerSets and GameServers](/img/kruisegame/user-manuals/dash-project.png)
 
 #### DeployUnits Page
 - **Purpose**: The DeployUnits page serves as a centralized interface for viewing and managing all DeployUnits (Kubernetes clusters) within the OKG Dashboard. It provides a comprehensive overview of the deployment environment, enabling users to monitor the health and performance of their clusters and efficiently manage game server deployments across multiple DeployUnits.
@@ -179,7 +179,7 @@ This dashboard serves as a comprehensive management tool, providing users with t
   - **Detailed DeployUnit Management**: By clicking on any DeployUnit, users can access a detailed overview of that specific cluster. This detailed view allows users to manage GameServers and GameServerSets within the selected DeployUnit, performing operations such as scaling, updating configurations, or troubleshooting issues.
   - **DeployUnit Configuration**: Users have the ability to add or remove DeployUnits from the OKG Dashboard’s management. This control allows users to define where game servers are deployed, enabling more precise management of their deployment environment.
 
-![](/img/kruisegame/user-manuals/dash-deployunit.png)
+![DeployUnits page displaying Kubernetes clusters with GameServerSets and projects](/img/kruisegame/user-manuals/dash-deployunit.png)
 
 #### Add Resource Page
 - **Purpose**: The Add Resource Page is designed to streamline the process of adding new Kubernetes resources within the OKG Dashboard. This page allows users to create and deploy resources like GameServerSets, GameServers, StatefulSets, or DaemonSets by either uploading an existing YAML file or creating a new one directly within the dashboard.
@@ -194,7 +194,7 @@ This dashboard serves as a comprehensive management tool, providing users with t
       - **Deploy**: Deploy the configured resource directly through the dashboard with a single click, making the process seamless and efficient.
 
 
-![](/img/kruisegame/user-manuals/dash-addresource.png)
+![Add resource page with YAML editor for creating new resources](/img/kruisegame/user-manuals/dash-addresource.png)
 
 #### GameServerSet Table in Project Page
 
@@ -211,7 +211,7 @@ This dashboard serves as a comprehensive management tool, providing users with t
 - **Batch Operations**: Execute batch operations across multiple GameServerSets to streamline updates and scaling.
 - **Search and Filter**: Use advanced search and filter options to quickly find and manage specific GameServerSets.
 
-![](/img/kruisegame/user-manuals/dash-gss-project.png)
+![GameServerSet table showing list of GameServerSets within a project](/img/kruisegame/user-manuals/dash-gss-project.png)
 
 #### GameServer Table Page in Project Page
 
@@ -240,20 +240,20 @@ This dashboard serves as a comprehensive management tool, providing users with t
   - **Delete Specific GameServer**: Remove a single GameServer that is no longer required or is problematic.
   - **Update Image**: Change the container image of a specific GameServer, applying new configurations or versions.
 
-![](/img/kruisegame/user-manuals/dash-gs-project.png)
+![GameServer table displaying individual GameServers within a project](/img/kruisegame/user-manuals/dash-gs-project.png)
 
 ### Single-Cluster Mode
 
 OKG Dashboard 0.1.0 is a cluster-level component(v2.0.0 is compatible with v0.1.0). 
 Select the cluster you want to operate. After entering, see the left navigation bar and click "Game Server Operation and Maintenance Management":
 
-![](/img/kruisegame/user-manuals/dash-ops.png)
+![Dashboard navigation showing Game Server Operations menu](/img/kruisegame/user-manuals/dash-ops.png)
 
 #### Overview page
 
 After clicking "Game Server Operation and Maintenance Management", you will enter the overview page by default. The overview page counts the number of game servers in different states in the current cluster.
 
-![](/img/kruisegame/user-manuals/dash-overview.jpg)
+![Overview page showing GameServer statistics and counts by state](/img/kruisegame/user-manuals/dash-overview.jpg)
 
 Field description
 
@@ -275,7 +275,7 @@ Field description
 
 Click "GameServerSets" to view all GameServerSets in the current cluster
 
-![](/img/kruisegame/user-manuals/dash-gss.png)
+![GameServerSets page listing all GameServerSets with template images and resources](/img/kruisegame/user-manuals/dash-gss.png)
 
 Field description
 - templateImages: Image set by GameServerTemplate. The format is: `{container name} -> {image name and version}`
@@ -283,16 +283,16 @@ Field description
 
 operate
 - Jump to the resource page to view details
-  ![](/img/kruisegame/user-manuals/dash-gss-jump.png)
+  ![GameServerSet detail page navigation link](/img/kruisegame/user-manuals/dash-gss-jump.png)
   On the GameServerSet details page, you can edit the corresponding Yaml or delete the corresponding object:
-  ![](/img/kruisegame/user-manuals/dash-gss-ops.png)
+  ![GameServerSet details page with edit and delete options](/img/kruisegame/user-manuals/dash-gss-ops.png)
 
 
 #### GameServers page
 
 Click "GameServer" to view all GameServers in the current cluster
 
-![](/img/kruisegame/user-manuals/dash-gs.png)
+![GameServers page showing all GameServers with images and conditions](/img/kruisegame/user-manuals/dash-gs.png)
 
 
 Field description
@@ -302,11 +302,11 @@ Field description
 
 operate
 - Jump to the resource page to view details
-  ![](/img/kruisegame/user-manuals/dash-gs-jump.png)
+  ![GameServer detail page navigation link](/img/kruisegame/user-manuals/dash-gs-jump.png)
   On the GameServer details page, you can edit the corresponding Yaml or delete the corresponding object:
-  ![](/img/kruisegame/user-manuals/dash-gs-ops.png)
+  ![GameServer details page with edit and delete options](/img/kruisegame/user-manuals/dash-gs-ops.png)
 - Update OpsState
-  ![](/img/kruisegame/user-manuals/dash-gs-update-opsState.png)
+  ![Update opsState dialog box](/img/kruisegame/user-manuals/dash-gs-update-opsState.png)
   After the pop-up window is displayed, enter the opsState you want to change and click OK to update:
-  ![](/img/kruisegame/user-manuals/dash-gs-opsState-updated.png)
+  ![GameServer with updated opsState confirmation](/img/kruisegame/user-manuals/dash-gs-opsState-updated.png)
 

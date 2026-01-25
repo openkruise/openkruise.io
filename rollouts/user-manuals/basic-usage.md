@@ -106,7 +106,7 @@ $ kubectl patch deployment workload-demo -p \
 '{"spec":{"template":{"spec":{"containers":[{"name":"busybox", "env":[{"name":"VERSION", "value":"version-2"}]}]}}}}'
 ```
 Wait a while, we will see the Deployment status show **Only 1 Pod** is upgraded.
-![](../../static/img/rollouts/basic-1st-batch.jpg)
+![Rollout status showing 1 out of 10 pods upgraded in first batch](../../static/img/rollouts/basic-1st-batch.jpg)
 
 ### Step 3: Continue to release the 2-nd batch
 **Approve** the next batch if everything looks good:
@@ -116,14 +116,14 @@ $ kubectl-kruise rollout approve rollout/rollouts-demo -n default
 Note: [kubectl-kruise](https://github.com/openkruise/kruise-tools) is also provided by OpenKruise community.
 
 Wait a while, we will see the Deployment status show **5 Pod** is upgraded.
-![](../../static/img/rollouts/basic-2nd-batch.jpg)
+![Rollout status showing 5 out of 10 pods upgraded in second batch](../../static/img/rollouts/basic-2nd-batch.jpg)
 
 ### Step 4: Continue to release the 3-rd batch
 ```bash
 $ kubectl-kruise rollout approve rollout/rollouts-demo -n default
 ```
 Wait a while, we will see the Deployment status show all **10 Pod** is upgraded.
-![](../../static/img/rollouts/basic-3rd-batch.jpg)
+![Rollout status showing all 10 pods upgraded in final batch](../../static/img/rollouts/basic-3rd-batch.jpg)
 
 ## How to continue the next step manually?
 Currently, there are two methods. For example, **if you have completed the first batch and want to send the second batch:**

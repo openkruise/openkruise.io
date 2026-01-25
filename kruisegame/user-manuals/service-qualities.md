@@ -337,6 +337,6 @@ demo-gs-2   Ready   None         0     0
 
 In this case, the game server controller sends the event "GameServer demo-gs-0 Warning". You can use the [kube-event project](https://github.com/AliyunContainerService/kube-eventer) to implement exception notification.
 
-![](../../static/img/kruisegame/user-manuals/warning-ding.png)
+![DingTalk notification showing GameServer warning event](../../static/img/kruisegame/user-manuals/warning-ding.png)
 
 In addition, OpenKruiseGame will integrate the tools that are used to automatically troubleshoot and recover game servers in the future to enhance automated O&M capabilities for game servers.
