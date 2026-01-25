@@ -1,0 +1,45 @@
+{
+  "version.label": {
+    "message": "v1.9",
+    "description": "The label for next version"
+  },
+  "sidebar.docs.category.Getting Started": {
+    "message": "快速开始"
+  },
+  "sidebar.docs.category.Core Concepts": {
+    "message": "核心概念"
+  },
+  "sidebar.docs.category.User Manuals": {
+    "message": "用户手册"
+  },
+  "sidebar.docs.category.Typical Workloads": {
+    "message": "通用工作负载"
+  },
+  "sidebar.docs.category.Job Workloads": {
+    "message": "任务工作负载"
+  },
+  "sidebar.docs.category.Sidecar container Management": {
+    "message": "Sidecar容器管理"
+  },
+  "sidebar.docs.category.Multi-domain Management": {
+    "message": "多区域管理"
+  },
+  "sidebar.docs.category.Enhanced Operations": {
+    "message": "增强运维能力"
+  },
+  "sidebar.docs.category.Application Protection": {
+    "message": "应用安全防护"
+  },
+  "sidebar.docs.category.Reference": {
+    "message": "参考"
+  },
+  "sidebar.docs.category.Best Practices": {
+    "message": "最佳实践"
+  },
+  "sidebar.docs.category.Developer Manuals": {
+    "message": "开发者手册"
+  },
+  "sidebar.docs.category.Operator Manuals": {
+    "message": "运维手册"
+  }
+}

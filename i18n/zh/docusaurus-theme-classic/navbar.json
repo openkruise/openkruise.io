@@ -1,18 +1,34 @@
 {
-    "title": {
-      "message": "OpenKruise",
-      "description": "The title in the navbar"
-    },
-    "item.label.Documentation": {
-      "message": "Kruise",
-      "description": "Navbar item with label Documentation"
-    },
-    "item.label.Blog": {
-      "message": "博客",
-      "description": "Navbar item with label Blog"
-    },
-    "item.label.Adopters": {
-      "message": "采用者",
-      "description": "Navbar item with label Adopters"
-    }
+  "title": {
+    "message": "OpenKruise",
+    "description": "The title in the navbar"
+  },
+  "item.label.Documentation": {
+    "message": "Kruise",
+    "description": "Navbar item with label Documentation"
+  },
+  "item.label.Blog": {
+    "message": "博客",
+    "description": "Navbar item with label Blog"
+  },
+  "item.label.Adopters": {
+    "message": "采用者",
+    "description": "Navbar item with label Adopters"
+  },
+  "logo.alt": {
+    "message": "OpenKruise",
+    "description": "The alt text of navbar logo"
+  },
+  "item.label.Kruise": {
+    "message": "Kruise",
+    "description": "Navbar item with label Kruise"
+  },
+  "item.label.Rollouts": {
+    "message": "Rollouts",
+    "description": "Navbar item with label Rollouts"
+  },
+  "item.label.Kruise-Game": {
+    "message": "Kruise-Game",
+    "description": "Navbar item with label Kruise-Game"
   }
+}

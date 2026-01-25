@@ -4,18 +4,23 @@
     "description": "The label for version current"
   },
   "sidebar.rollouts.category.Getting Started": {
-    "message": "快速开始"
+    "message": "快速开始",
+    "description": "The label for category 'Getting Started' in sidebar 'rollouts'"
   },
   "sidebar.rollouts.category.User Manuals": {
-    "message": "用户手册"
+    "message": "用户手册",
+    "description": "The label for category 'User Manuals' in sidebar 'rollouts'"
   },
   "sidebar.rollouts.category.Developer manuals": {
-    "message": "开发手册"
+    "message": "开发手册",
+    "description": "The label for category 'Developer manuals' in sidebar 'rollouts'"
   },
   "sidebar.rollouts.category.Best Practices": {
-    "message": "最佳实践"
+    "message": "最佳实践",
+    "description": "The label for category 'Best Practices' in sidebar 'rollouts'"
   },
   "sidebar.rollouts.category.Release Strategies": {
-    "message": "发布策略"
+    "message": "发布策略",
+    "description": "The label for category 'Release Strategies' in sidebar 'rollouts'"
   }
 }

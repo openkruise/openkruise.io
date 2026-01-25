@@ -13,21 +13,19 @@ OpenKruise 提供的绝大部分能力都是基于 CRD 扩展来定义，它们�
 
 ## 核心能力
 
-- **增强版本的 Workloads**
+- **高级工作负载**
 
-    OpenKruise 包含了一系列增强版本的 Workloads（工作负载），比如 CloneSet、Advanced StatefulSet、Advanced DaemonSet、BroadcastJob 等。
+    OpenKruise 包含了一系列增强版本的 Workloads（工作负载），比如 CloneSet、Advanced StatefulSet、Advanced DaemonSet、BroadcastJob、SidecarSet 等。
 
     它们不仅支持类似于 Kubernetes 原生 Workloads 的基础功能，还提供了如原地升级、可配置的扩缩容/发布策略、并发操作等。
 
     其中，原地升级是一种升级应用容器镜像甚至环境变量的全新方式。它只会用新的镜像重建 Pod 中的特定容器，整个 Pod 以及其中的其他容器都不会被影响。因此它带来了更快的发布速度，以及避免了对其他 Scheduler、CNI、CSI 等组件的负面影响。
 
-- **应用的旁路管理**
+- **高级应用运维操作**
 
-    OpenKruise 提供了多种通过旁路管理应用 sidecar 容器、多区域部署的方式，“旁路” 意味着你可以不需要修改应用的 Workloads 来实现它们。
+    OpenKruise 还提供了高级运维功能，帮助您更高效、更具弹性且更节省成本地管理应用程序。
 
-    比如，SidecarSet 能帮助你在所有匹配的 Pod 创建的时候都注入特定的 sidecar 容器，甚至可以原地升级已经注入的 sidecar 容器镜像、并且对 Pod 中其他容器不造成影响。
-
-    而 WorkloadSpread 可以约束无状态 Workload 扩容出来 Pod 的区域分布，赋予单一 workload 的多区域和弹性部署的能力。
+    您可以使用 ImagePullJob 在任意节点上预拉取镜像，甚至可以在不重建 Pod 的情况下，重启正在运行的 Pod 中的一个或多个容器。此外，您还可以约束无状态工作负载在不同域（例如可用区、节点池或 CPU 架构）中的分布，从而赋予单个工作负载跨多域部署和弹性伸缩的能力。
 
 - **高可用性防护**
 
@@ -36,12 +34,6 @@ OpenKruise 提供的绝大部分能力都是基于 CRD 扩展来定义，它们�
     目前它可以保护你的 Kubernetes 资源不受级联删除机制的干扰，包括 CRD、Namespace、以及几乎全部的 Workloads 类型资源。
 
     相比于 Kubernetes 原生的 PDB 只提供针对 Pod Eviction 的防护，PodUnavailableBudget 能够防护 Pod Deletion、Eviction、Update 等许多种 voluntary disruption 场景。
-
-- **高级的应用运维能力**
-
-    OpenKruise 也提供了很多高级的运维能力来帮助你更好地管理应用。
-
-    你可以通过 ImagePullJob 来在任意范围的节点上预先拉取某些镜像，或者指定某个 Pod 中的一个或多个容器被原地重启。
 
 ## 关系对比
 
@@ -56,9 +48,8 @@ OpenKruise 可以被很容易地安装到任意 Kubernetes 集群中，它弥补
 
 ### OpenKruise vs. Platform-as-a-Service (PaaS)
 
-OpenKruise **不是**一个 PaaS 平台，并且也**不会**提供任何 PaaS 层的能力。
+OpenKruise **不是**一个 PaaS，但它提供了 PaaS 所需的**核心构建模块**。
 
-它是一个 Kubernetes 的标准扩展套件，目前包括 `kruise-manager` 和 `kruise-daemon` 两个组件。
 PaaS 平台可以通过使用 OpenKruise 提供的这些扩展功能，来使得应用部署、管理流程更加强大与高效。
 
 ## What's Next

@@ -1,0 +1,1240 @@
+---
+title: SidecarSet
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+
+This controller leverages the admission webhook to automatically
+inject a sidecar container for every selected Pod when the Pod is created. The Sidecar
+injection process is similar to the automatic sidecar injection mechanism used in
+[istio](https://istio.io/docs/setup/kubernetes/additional-setup/sidecar-injection/).
+
+Besides injection during Pod creation, SidecarSet controller also provides
+additional capabilities such as in-place Sidecar container image upgrade, mounting Sidecar volumes, etc.
+Basically, SidecarSet decouples the Sidecar container lifecycle
+management from the main container lifecycle management.
+
+The SidecarSet is preferable for managing stateless sidecar containers such as
+monitoring tools or operation agents.
+
+## Example
+
+### Create SidecarSet
+
+The `sidecarset.yaml` file below describes a SidecarSet that contains a sidecar container named `sidecar1`:
+
+<Tabs>
+  <TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+# sidecarset.yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: SidecarSet
+metadata:
+  name: test-sidecarset
+spec:
+  selector:
+    matchLabels:
+      app: nginx
+  updateStrategy:
+    type: RollingUpdate
+    maxUnavailable: 1
+  containers:
+  - name: sidecar1
+    image: centos:6.7
+    command: ["sleep", "999d"] # do nothing at all
+    volumeMounts:
+    - name: log-volume
+      mountPath: /var/log
+  volumes: # this field will be merged into pod.spec.volumes
+  - name: log-volume
+    emptyDir: {}
+```
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
+
+```yaml
+# sidecarset.yaml
+apiVersion: apps.kruise.io/v1alpha1
+kind: SidecarSet
+metadata:
+  name: test-sidecarset
+spec:
+  selector:
+    matchLabels:
+      app: nginx
+  updateStrategy:
+    type: RollingUpdate
+    maxUnavailable: 1
+  containers:
+  - name: sidecar1
+    image: centos:6.7
+    command: ["sleep", "999d"] # do nothing at all
+    volumeMounts:
+    - name: log-volume
+      mountPath: /var/log
+  volumes: # this field will be merged into pod.spec.volumes
+  - name: log-volume
+    emptyDir: {}
+```
+  </TabItem>
+</Tabs>
+Create a SidecarSet based on the YAML file:
+```bash
+kubectl apply -f sidecarset.yaml
+```
+
+### Create a Pod
+Create a pod that matches the sidecarset's selector:
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    app: nginx # matches the SidecarSet's selector
+  name: test-pod
+spec:
+  containers:
+  - name: app
+    image: nginx:1.15.1
+```
+Create this pod and now you will find it's injected with `sidecar1`:
+```bash
+$ kubectl get pod
+NAME       READY   STATUS    RESTARTS   AGE
+test-pod   2/2     Running   0          118s
+```
+In the meantime, the SidecarSet status updated:
+```bash
+$ kubectl get sidecarset test-sidecarset -o yaml | grep -A4 status
+status:
+  matchedPods: 1
+  observedGeneration: 1
+  readyPods: 1
+  updatedPods: 1
+```
+### update sidecar container Image
+update sidecarSet's sidecar container image=centos:7
+```bash
+$ kubectl edit sidecarsets test-sidecarset
+
+# sidecarset.yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: SidecarSet
+metadata:
+  name: test-sidecarset
+spec:
+  containers:
+    - name: sidecar1
+      image: centos:7
+```
+The Sidecar container in the pod has been updated to centos:7, and the pod and other containers have not been restarted.
+```bash
+$ kubectl get pods | grep test-pod
+test-pod                            2/2     Running   1          7m34s
+
+$ kubectl get pods test-pod -o yaml | grep 'image: centos'
+    image: centos:7
+
+$ kubectl describe pods test-pod
+Events:
+  Type    Reason     Age                 From               Message
+  ----    ------     ----                ----               -------
+  Normal  Killing    5m47s               kubelet            Container sidecar1 definition changed, will be restarted
+  Normal  Pulling    5m17s               kubelet            Pulling image "centos:7"
+  Normal  Created    5m5s (x2 over 12m)  kubelet            Created container sidecar1
+  Normal  Started    5m5s (x2 over 12m)  kubelet            Started container sidecar1
+  Normal  Pulled     5m5s                kubelet            Successfully pulled image "centos:7"
+```
+## SidecarSet features
+A sample SidecarSet yaml looks like following:
+
+<Tabs>
+  <TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: SidecarSet
+metadata:
+  name: sidecarset
+spec:
+  selector:
+    matchLabels:
+      app: sample
+  containers:
+  - name: nginx
+    image: nginx:alpine
+  initContainers:
+  - name: init-container
+    image: busybox:latest
+    command: [ "/bin/sh", "-c", "sleep 5 && echo 'init container success'" ]
+  updateStrategy:
+    type: RollingUpdate
+  namespaceSelector:
+    matchLabels:
+      kubernetes.io/metadata.name: ns-1
+```
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
+
+```yaml
+apiVersion: apps.kruise.io/v1alpha1
+kind: SidecarSet
+metadata:
+  name: sidecarset
+spec:
+  selector:
+    matchLabels:
+      app: sample
+  containers:
+  - name: nginx
+    image: nginx:alpine
+  initContainers:
+  - name: init-container
+    image: busybox:latest
+    command: [ "/bin/sh", "-c", "sleep 5 && echo 'init container success'" ]
+  updateStrategy:
+    type: RollingUpdate
+  namespace: ns-1
+```
+  </TabItem>
+</Tabs>
+- spec.selector Select the POD that needs to be injected and updated by Label. MatchLabels and MatchExpressions are supported. Please refer to the details: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
+- spec.containers Define pod.spec.containers[x] that need to be injected and updated, supporting the full K8S Container field. Please refer to the details: https://kubernetes.io/docs/concepts/containers/
+- spec.initContainers Define the pod.spec.initContainers[x] you need to inject, supporting the full K8S InitContainer field. Please refer to the details：https://kubernetes.io/docs/concepts/workloads/pods/init-containers/
+    - We will inject those containers by their name in ascending order
+    - InitContainers only support injection and do not support POD in-place update
+- spec.updateStrategy sidecarSet update strategy, type indicates the upgrade method:
+    - NotUpdate No updates, in this type only inject sidecar containers in pod
+    - RollingUpdate Injection and rolling update, which contains a rich update strategy, will be described in more detail later
+- spec.namespace By default, sidecarset is cluster scope in k8s, that is, for all namespaces (except kube-system, kube-public). When spec.namespace field set, it only applies to pods of that namespace
+
+**Note:** Since Kruise v1.3.0, SidecarSet no longer excludes the namespace **kube-system, kube-public** by default.
+If you want to exclude some namespaces, please use the following namespace selector.
+
+#### namespace selector
+
+**FEATURE STATE:** Kruise v1.4.0
+
+The spec.namespace field can only specify one Namespace and cannot exclude specific Namespaces. If facing complex namespace selector scenarios,
+it is recommended to use the **namespaceSelector** field:
+
+<Tabs>
+  <TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: SidecarSet
+metadata:
+  name: sidecarset
+spec:
+  ...
+  namespaceSelector:
+    matchLabels:
+      environment: production
+  # matchExpressions:
+  # - {key: tier, operator: In, values: [frontend, middleware]}
+```
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
+
+```yaml
+apiVersion: apps.kruise.io/v1alpha1
+kind: SidecarSet
+metadata:
+  name: sidecarset
+spec:
+  ...
+  namespace: ns1
+  namespaceSelector:
+    matchLabels:
+      environment: production
+  # matchExpressions:
+  # - {key: tier, operator: In, values: [frontend, middleware]}
+```
+  </TabItem>
+</Tabs>
+
+**Note: Starting from [kubernetes 1.21](https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG/CHANGELOG-1.21.md?plain=1#L1819), Namespace will be labeled with `kubernetes.io/metadata.name` by default, so the `spec.namespace` field has been removed in SidecarSet v1beta1 version. If your version meets the requirements, you can use `spec.namespaceSelector` alone to filter Namespaces.**
+
+### sidecar container injection
+The injection of sidecar containers happens at Pod creation time and only Pod spec is updated. The workload template spec will not be updated.
+In addition to the default K8s Container field, the following fields have been extended to injection:
+
+<Tabs>
+  <TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: SidecarSet
+metadata:
+  name: sidecarset
+spec:
+  selector:
+    matchLabels:
+      app: sample
+  containers:
+    # default K8s Container fields
+  - name: nginx
+    image: nginx:alpine
+    volumeMounts:
+    - mountPath: /nginx/conf
+      name: nginx.conf
+    # extended sidecar container fields
+    podInjectPolicy: BeforeAppContainer
+    shareVolumePolicy:
+      type: disabled | enabled
+    transferEnv:
+    - sourceContainerName: main
+      envName: PROXY_IP
+    - sourceContainerNameFrom:
+        fieldRef:
+          apiVersion: "v1"
+          fieldPath: "metadata.labels['cName']"
+        # fieldPath: "metadata.annotations['cName']"
+      envName: TC
+  volumes:
+  - name: nginx.conf
+    hostPath:
+      path: /data/nginx/conf
+```
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
+
+```yaml
+apiVersion: apps.kruise.io/v1alpha1
+kind: SidecarSet
+metadata:
+  name: sidecarset
+spec:
+  selector:
+    matchLabels:
+      app: sample
+  containers:
+    # default K8s Container fields
+  - name: nginx
+    image: nginx:alpine
+    resourcesPolicy: # extended sidecar container fields
+      targetContainersMode: sum # sum | max, TargetContainersMode defines how to aggregate resources from target containers. Sum means sum up all target containers' resources, max means choose the max value of each resource
+      targetContainersNameRegex: ^nginx$ # only applies to container nginx
+      resourcesExpr:
+        limits:
+          cpu: max(cpu*50%, 100m)
+          memory: max(memory*50%, 200Mi)
+        requests:
+          cpu: max(cpu*40%, 50m)
+          memory: max(memory*40%, 100Mi)
+    volumeMounts:
+    - mountPath: /nginx/conf
+      name: nginx.conf
+    # extended sidecar container fields
+    podInjectPolicy: BeforeAppContainer
+    shareVolumePolicy:
+      type: disabled | enabled
+    transferEnv:
+    - sourceContainerName: main
+      envName: PROXY_IP
+    - sourceContainerNameFrom:
+        fieldRef:
+          apiVersion: "v1"
+          fieldPath: "metadata.labels['cName']"
+        # fieldPath: "metadata.annotations['cName']"
+      envName: TC
+  volumes:
+  - name: nginx.conf
+    hostPath:
+      path: /data/nginx/conf
+```
+  </TabItem>
+</Tabs>
+- podInjectPolicy Define where Containers are injected into pod.spec.containers
+    - BeforeAppContainer(default) Inject into the front of the original pod containers
+    - AfterAppContainer Inject into the backend of the original pod containers
+- data volume sharing
+    - Share specific volumes: Use spec.volumes to define the volumes needed by Sidecar itself. See details：https://kubernetes.io/docs/concepts/storage/volumes/
+    - Share pod containers volumes: If ShareVolumePolicy.type is enabled, the sidecar container will share the other container's VolumeMounts in the pod(don't contains the injected sidecar container)
+- Environment variable sharing
+    - Environment variables can be fetched from another container through spec.containers[x].transferenv, and the environment variable named envName from the container named sourceContainerName is copied to this container
+    - sourceContainerNameFrom support downwardAPI for container name, such as `metadata.labels['<KEY>']`, `metadata.annotations['<KEY>']`
+- Injection ResourcesPolicy
+    - User can configure the resource expression for sidecar container to dynamically adjust its resources based on the target container's resources by field `.spec.containers[i].resourcesPolicy` and `.spec.initContainers[i].resourcesPolicy`
+
+#### injection pause
+**FEATURE STATE:** Kruise v0.10.0
+
+For existing SidecarSets，users can pause sidecar injection by setting `spec.injectionStrategy.paused=true`：
+
+<Tabs>
+  <TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: SidecarSet
+metadata:
+  name: sidecarset
+spec:
+  ... ...
+  injectionStrategy:
+    paused: true
+```
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
+
+```yaml
+apiVersion: apps.kruise.io/v1alpha1
+kind: SidecarSet
+metadata:
+  name: sidecarset
+spec:
+  ... ...
+  injectionStrategy:
+    paused: true
+```
+  </TabItem>
+</Tabs>
+This feature only works on the newly-created Pods, and has no impact on the sidecar containers that have been injected.
+
+#### imagePullSecrets
+**FEATURE STATE:** Kruise v0.10.0
+
+The SidecarSet can be configured with spec.imagePullSecrets to pull private sidecar images with [Secret](https://kubernetes.io/zh/docs/concepts/configuration/secret/) . When sidecar is injected, SidecarSet injects its spec.imagePullSecrets into Pods [spec.imagePullSecrets](https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/).
+
+<Tabs>
+  <TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: SidecarSet
+metadata:
+  name: sidecarset
+spec:
+  ... ....
+  imagePullSecrets:
+  - name: my-secret
+```
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
+
+```yaml
+apiVersion: apps.kruise.io/v1alpha1
+kind: SidecarSet
+metadata:
+  name: sidecarset
+spec:
+  ... ....
+  imagePullSecrets:
+  - name: my-secret
+```
+  </TabItem>
+</Tabs>
+**Note**: Users must ensure that the corresponding Secrets have already existed in the namespaces where Pods need to pull the private images. Otherwise, pulling private images will not succeed.
+
+#### Injection ResourcesPolicy
+**FEATURE STATE:** Kruise v1.9.0
+
+SidecarSet supports configuring sidecar container resources based on pod specifications during pod creation.
+
+For design documentation, please refer to: [proposals sidecarset dynamic resources when pod creating](https://github.com/openkruise/kruise/blob/master/docs/proposals/20250913-sidecarset-dynamic-resources-when-creating.md). Best practice: [Dynamic Resource Injection with SidecarSet](docs/best-practices/resource-policy-sidecarset.md)
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: SidecarSet
+spec:
+  containers:
+  - name: sidecar1
+    image: centos:6.7
+    resourcesPolicy:
+      targetContainersMode: sum
+      targetContainersNameRegex: ^large-engine-v4$ # only applies to container large-engine-v4
+      resourcesExpr:
+        limits:
+          cpu: max(cpu*50%, 50m)
+          memory: 200Mi
+        requests:
+          cpu: max(cpu*50%, 50m)
+          memory: 100Mi
+---
+apiVersion: v1
+kind: Pod
+spec:
+  containers:
+  - name: large-engine-v4
+    image: nginx:1.14.2
+    resources:
+      limits:
+        cpu: 200m
+        memory: 200Mi
+      requests:
+        cpu: 50m
+        memory: 100Mi
+  - name: large-engine-v8
+    image: nginx:1.14.2
+    resources:
+      limits:
+        cpu: 200m
+        memory: 200Mi
+      requests:
+        cpu: 50m
+        memory: 100Mi
+```
+In this case, the sidecar container resources will be:
+```yaml
+limits:
+  cpu: max(sum(200m) * 50%, 50m ) = 100m
+  memory: 200Mi
+requests:
+  cpu: max(sum(50m) * 50%, 50m ) = 50m
+  memory: 100Mi
+```
+
+**Note**:
+- Supported expression operators:
+  - Basic arithmetic: `+`, `-`, `*`, `/`
+  - Parentheses: `(` and `)`
+  - Functions: `max()`, `min()`
+  - Percentages: e.g., `50%` (equals 0.5)
+  - Kubernetes resources: e.g., `40m` (40 millicores), `100Mi` (100 mebibytes)
+- Supported expression value types:
+  - Integers: e.g., `42`
+  - Floating-point numbers: e.g., `3.14`
+  - Percentages: e.g., `50%` (automatically converted to 0.5)
+  - Kubernetes resources: e.g., `200m`, `512Mi`, `1Gi`
+- If both `resourcesPolicy` and `resources` are configured, the Kruise validating webhook will reject the Pod creation request.
+- `targetContainersNameRegex` is a regular expression pattern for matching target container names. If no container names match this regex, the validating webhook will reject the Pod creation request. Target containers include native sidecar containers and regular containers, but exclude Kruise sidecar containers.
+- `resourcesPolicy` can be applied to both native sidecar containers (`sidecarset.spec.initContainers.resourcesPolicy`) and regular containers (`sidecarset.spec.containers.resourcesPolicy`).
+- Injection only happened when pod creating, and will not be updated when pod running.
+
+### version control for injection
+**FEATURE STATE:** Kruise v1.3.0
+
+SidecarSet will record historical revision of some fields such as `containers`, `volumes`, `initContainers`, `imagePullSecrets` and `patchPodMetadata` via ControllerRevision. You can easily select a specific historical revision to inject when creating Pods, rather than always inject the latest revision of sidecar.
+
+Based on this feature, users can address the risk of SidecarSet publishing due to scaling and rolling workload.
+
+**Note: SidecarSet records ControllerRevision in the same namespace as Kruise Manager. You can execute `kubectl get controllerrevisions -n kruise-system -l kruise.io/sidecarset-name=<your-sidecarset-name>` to list the ControllerRevisions of your SidecarSet. Moreover, the ControllerRevision name of current SidecarSet revision is shown in `status.latestRevision` field, so you can record it very easily.**
+
+#### select revision via ControllerRevision name
+
+<Tabs>
+  <TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: SidecarSet
+metadata:
+  name: sidecarset
+spec:
+  ...
+  injectionStrategy:
+    revision:
+      revisionName: <specific-controllerrevision-name>
+```
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
+
+```yaml
+apiVersion: apps.kruise.io/v1alpha1
+kind: SidecarSet
+metadata:
+  name: sidecarset
+spec:
+  ...
+  injectionStrategy:
+    revision:
+      revisionName: <specific-controllerrevision-name>
+```
+  </TabItem>
+</Tabs>
+
+#### select revision via custom version label
+You can add or update the label `apps.kruise.io/sidecarset-custom-version=<your-version-id>` to SidecarSet when creating or publishing SidecarSet, to mark each historical revision. SidecarSet will bring this label down to the corresponding ControllerRevision object, and you can easily use the `<your-version-id>` to describe which historical revision you want to inject.
+
+Assume that you are publishing `version-2` in canary way (you wish only 10% Pods will be upgraded), and you want to inject the stable `version-1` to newly-created Pods to reduce the risk of the canary publishing:
+
+<Tabs>
+  <TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: SidecarSet
+metadata:
+  name: sidecarset
+spec:
+  ...
+  customVersion: version-2
+  updateStrategy:
+    partition: 90%
+  injectionStrategy:
+    revision:
+      customVersion: version-1
+```
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
+
+```yaml
+apiVersion: apps.kruise.io/v1alpha1
+kind: SidecarSet
+metadata:
+  name: sidecarset
+  labels:
+    apps.kruise.io/sidecarset-custom-version: version-2
+spec:
+  ...
+  updateStrategy:
+    partition: 90%
+  injectionStrategy:
+    revision:
+      customVersion: version-1
+```
+  </TabItem>
+</Tabs>
+*Just choose one of the ways above.*
+
+#### Support for Partial Injection Strategy
+**FEATURE STATE:** Kruise v1.8.0
+
+Although previous version selection methods (specifying a specific revision or customVersion) can control the injection version for new Pods, during proportional canary releases,
+it may be necessary to inject sidecars of new version for some new pods for canary analysis.
+
+To address this, we have introduced the **Partial Injection Strategy**: By configuring `.spec.injectionStrategy.revision.policy: Partial`, 
+SidecarSet will dynamically inject the latest sidecars into new pods randomly, based on the percentage specified by spec.updateStrategy.partition
+
+For example, if you set `.spec.updateStrategy.partition: 70%`, then 30% of the new Pods will be injected with the latest version, while the remaining 70% will continue to use the old version. This approach automatically achieves progressive control of canary traffic without the need to manually manage version selection for specific Pods. Example configuration:
+
+<Tabs>
+  <TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: SidecarSet 
+metadata: 
+  name: sidecarset 
+spec:
+  #...
+  injectionStrategy:
+    revision:
+      policy: Partial 
+  updateStrategy:
+    partition: 70%
+```
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
+
+```yaml
+apiVersion: apps.kruise.io/v1alpha1
+kind: SidecarSet 
+metadata: 
+  name: sidecarset 
+spec:
+  #...
+  injectionStrategy:
+    revision:
+      policy: Partial 
+  updateStrategy:
+    partition: 70%
+```
+  </TabItem>
+</Tabs>
+
+**Note**: This strategy uses randomization to select the injection version, which means the injected version distribution may not be exactly as expected if the number of pods to be injected is small.
+
+
+
+### support k8s 1.28 Sidecar Containers
+**FEATURE STATE:** Kruise v1.7.0
+
+Kubernetes supports [Native Sidecar Containers](https://kubernetes.io/docs/concepts/workloads/pods/sidecar-containers/) from version 1.28 using initContainers with **initContainers[x].restartPolicy=Always**.
+The native sidecar container differ from sidecar containers in the form of normal containers in two ways:
+1. Sidecar containers ensure that the container is ready before the main application container starts. e.g. the log collection container is ready, and the logs of the main application container startup Crash can also be collected.
+2. For job pod that runs to completion, when the application containers exit, native sidecar containers will exit on their own even if restartPolicy is Always, without blocking the completion of the pod. Sidecar container in the form of normal containers, however, will restart if the restartPolicy is Always, which will prevent the pod from completed.
+
+SidecarSet will also support injecting Sidecar Containers starting from v1.7.0 version as follows:
+
+<Tabs>
+  <TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: SidecarSet
+metadata:
+  name: test-sidecarset
+spec:
+  selector:
+    matchLabels:
+      app: sample
+  updateStrategy:
+    type: NotUpdate
+  initContainers:
+  - name: sidecar
+    image: nginx:alpine
+    restartPolicy: Always
+    lifecycle:
+      postStart:
+        exec:
+          command: ["/bin/sh", "-c", "sleep 10"]
+```
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
+
+```yaml
+apiVersion: apps.kruise.io/v1alpha1
+kind: SidecarSet
+metadata:
+  name: test-sidecarset
+spec:
+  selector:
+    matchLabels:
+      app: sample
+  updateStrategy:
+    type: NotUpdate
+  initContainers:
+  - name: sidecar
+    image: nginx:alpine
+    restartPolicy: Always
+    lifecycle:
+      postStart:
+        exec:
+          command: ["/bin/sh", "-c", "sleep 10"]
+```
+  </TabItem>
+</Tabs>
+
+**Note:**
+- k8s 1.28 feature-gate SidecarContainers is off by default and needs to be actively turned on, k8s 1.29 is on by default.
+- If your kubernetes version < 1.28, you can use kruise [Job Sidecar Terminator](/docs/user-manuals/jobsidecarterminator)
+and [Container Launch Priority](/docs/user-manuals/containerlaunchpriority) to solve the above problem.
+
+**Additionally, the current version only supports automatic injection of Sidecar Containers, and does not yet support in-place update capability.**
+
+### sidecarset update strategy
+Sidecarset not only supports the in-place update of Sidecar container, but also provides a very rich upgrade strategy.
+#### partition
+Partition is the **desired number or percent of Pods in old revisions**, defaults to `0`.  This field does **NOT** imply any update order.
+
+When `partition` is set during update:
+
+- If it is a number: `(replicas - partition)` number of pods will be updated with the new version.
+- If it is a percent: `(replicas * (100% - partition))` number of pods will be updated with the new version.
+
+<Tabs>
+  <TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: SidecarSet
+metadata:
+  name: sidecarset
+spec:
+  # ...
+  updateStrategy:
+    type: RollingUpdate
+    partition: 90
+```
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
+
+```yaml
+apiVersion: apps.kruise.io/v1alpha1
+kind: SidecarSet
+metadata:
+  name: sidecarset
+spec:
+  # ...
+  updateStrategy:
+    type: RollingUpdate
+    partition: 90
+```
+  </TabItem>
+</Tabs>
+Assuming that the number of PODs associated with this Sidecarset is 100, this upgrade will only upgrade 10 pods to latest and keep 90 pods old versions.
+
+#### MaxUnavailable
+MaxUnavailable is the maximum number of PODs that are unavailable at the same time that is guaranteed during the Posting process. The default value is 1.
+
+The user can set it to either an absolute value or a percentage (the percentage is calculated by the controller as the cardinality of the selected pod to calculate the absolute value behind one).
+
+<Tabs>
+  <TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: SidecarSet
+metadata:
+  name: sidecarset
+spec:
+  # ...
+  updateStrategy:
+    type: RollingUpdate
+    maxUnavailable: 20%
+```
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
+
+```yaml
+apiVersion: apps.kruise.io/v1alpha1
+kind: SidecarSet
+metadata:
+  name: sidecarset
+spec:
+  # ...
+  updateStrategy:
+    type: RollingUpdate
+    maxUnavailable: 20%
+```
+  </TabItem>
+</Tabs>
+Note that maxUnavailable and partition are not necessarily related. For example:
+- When \{matched pod\}=100,partition=50,maxUnavailable=10, the controller will update 50 PODS to the new version, and only 10 PODS will be updated at the same time, until the 50 updated is completed.
+- When \{matched pod\}=100,partition=80,maxUnavailable=30, the controller will update 20 PODS to the new version, because the maxUnavailable number is 30, so the 20 PODS will be updated simultaneously.
+
+#### Pause
+A user can pause the release by setting pause to true, and the injection capability will remain for newly created, expanded PODS, while updated PODS will remain the updated version, and those that have not been updated will be paused.
+
+<Tabs>
+  <TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: SidecarSet
+metadata:
+  name: sidecarset
+spec:
+  # ...
+  updateStrategy:
+    type: RollingUpdate
+    paused: true
+```
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
+
+```yaml
+apiVersion: apps.kruise.io/v1alpha1
+kind: SidecarSet
+metadata:
+  name: sidecarset
+spec:
+  # ...
+  updateStrategy:
+    type: RollingUpdate
+    paused: true
+```
+  </TabItem>
+</Tabs>
+
+#### Selector
+For businesses that have Canary update requirements, this can be done through Strategy.selector filed. First: take the canary updated pods on fixed labels [canary. Release] = true, second fix the strategy.selector.MatchLabels to select the pod
+
+<Tabs>
+  <TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: SidecarSet
+metadata:
+  name: sidecarset
+spec:
+  # ...
+  updateStrategy:
+    type: RollingUpdate
+    selector:
+      matchLabels:
+        canary.release: "true"
+```
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
+
+```yaml
+apiVersion: apps.kruise.io/v1alpha1
+kind: SidecarSet
+metadata:
+  name: sidecarset
+spec:
+  # ...
+  updateStrategy:
+    type: RollingUpdate
+    selector:
+      matchLabels:
+        canary.release: "true"
+```
+  </TabItem>
+</Tabs>
+
+### sidecarset update order
+- The PODs of upgrade is sorted by default to ensure the same order of multiple upgrades
+- The default priority is (the smaller the higher the priority)： unscheduled < scheduled, pending < unknown < running, not-ready < ready, newer pods < older pods
+- scatter order
+
+#### scatter
+The scatter policy allows users to define the scatters of PODs that conform to certain tags throughout the publishing process.
+For example, if a SidecarSet manages 10 PODS, if there are 3 PODS below with the tag foo=bar, and the user sets this tag in the shatter policy, then these 3 PODS will be published in the 1st, 6th, and 10th positions.
+
+<Tabs>
+  <TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: SidecarSet
+metadata:
+  name: sidecarset
+spec:
+  # ...
+  updateStrategy:
+    type: RollingUpdate
+    scatterStrategy:
+    - key: foo
+      value: bar
+```
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
+
+```yaml
+apiVersion: apps.kruise.io/v1alpha1
+kind: SidecarSet
+metadata:
+  name: sidecarset
+spec:
+  # ...
+  updateStrategy:
+    type: RollingUpdate
+    scatterStrategy:
+    - key: foo
+      value: bar
+```
+  </TabItem>
+</Tabs>
+**Note: If you use Scatter, it is recommended to set only a pair of key-values for scatter. It will be easier to understand.**
+
+#### priority
+**FEATURE STATE:** Kruise v1.5.0
+
+This strategy defines rules for calculating the priority of updating pods. All update candidates will be applied with the priority terms.
+`priority` can be calculated either by weight or by order.
+
+- `weight`: Priority is determined by the sum of weights for terms that match selector. For example,
+
+<Tabs>
+  <TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: SidecarSet
+spec:
+  # ...
+  updateStrategy:
+    priorityStrategy:
+      weightPriority:
+      - weight: 50
+        matchSelector:
+          matchLabels:
+            test-key: foo
+      - weight: 30
+        matchSelector:
+          matchLabels:
+            test-key: bar
+```
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
+
+```yaml
+apiVersion: apps.kruise.io/v1alpha1
+kind: SidecarSet
+spec:
+  # ...
+  updateStrategy:
+    priorityStrategy:
+      weightPriority:
+      - weight: 50
+        matchSelector:
+          matchLabels:
+            test-key: foo
+      - weight: 30
+        matchSelector:
+          matchLabels:
+            test-key: bar
+```
+  </TabItem>
+</Tabs>
+
+- `order`: Priority will be determined by the value of the orderKey. The update candidates are sorted based on the "int" part of the value string. For example, 5 in string "5" and 10 in string "sts-10".
+
+<Tabs>
+  <TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: SidecarSet
+spec:
+  # ...
+  updateStrategy:
+    priorityStrategy:
+      orderPriority:
+      - orderedKey: some-label-key
+```
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
+
+```yaml
+apiVersion: apps.kruise.io/v1alpha1
+kind: SidecarSet
+spec:
+  # ...
+  updateStrategy:
+    priorityStrategy:
+      orderPriority:
+      - orderedKey: some-label-key
+```
+  </TabItem>
+</Tabs>
+
+### Hot Upgrade Sidecar
+**FEATURE STATE:** Kruise v0.9.0
+
+SidecarSet's in-place upgrade will stop the container of old version first and then create the container of new version. Such method is more suitable for sidecar containers that cannot affects service availability, e.g. logging collector.
+
+But for many proxy or runtime sidecar containers, e.g. Istio Envoy, this upgrade method is problematic. Envoy, as a proxy container in the Pod, proxies all the traffic, and if restarted directly, the availability of service is affected. Complex grace termination and coordination is required if one need to upgrade envoy sidecar independently of the application container. So we provide a new solution for such sidecar container upgrade.
+
+<Tabs>
+  <TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: SidecarSet
+metadata:
+  name: hotupgrade-sidecarset
+spec:
+  selector:
+    matchLabels:
+      app: hotupgrade
+  containers:
+  - name: sidecar
+    image: openkruise/hotupgrade-sample:sidecarv1
+    imagePullPolicy: Always
+    lifecycle:
+      postStart:
+        exec:
+          command:
+          - /bin/sh
+          - /migrate.sh
+    upgradeStrategy:
+      upgradeType: HotUpgrade
+      hotUpgradeEmptyImage: openkruise/hotupgrade-sample:empty
+```
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
+
+```yaml
+apiVersion: apps.kruise.io/v1alpha1
+kind: SidecarSet
+metadata:
+  name: hotupgrade-sidecarset
+spec:
+  selector:
+    matchLabels:
+      app: hotupgrade
+  containers:
+  - name: sidecar
+    image: openkruise/hotupgrade-sample:sidecarv1
+    imagePullPolicy: Always
+    lifecycle:
+      postStart:
+        exec:
+          command:
+          - /bin/sh
+          - /migrate.sh
+    upgradeStrategy:
+      upgradeType: HotUpgrade
+      hotUpgradeEmptyImage: openkruise/hotupgrade-sample:empty
+```
+  </TabItem>
+</Tabs>
+- upgradeType: HotUpgrade indicates hot upgrade for stateful sidecar container.
+- hotUpgradeEmptyImage: when upgradeType=HotUpgrade, user needs to provide an empty container for hot upgrades. hotUpgradeEmptyImage has the same configuration as the sidecar container, for example: command, lifecycle, probe, etc, but it doesn't do anything.
+- lifecycle.postStart: State Migration, the process completes the state migration of stateful container, which needs to be provided by the sidecar image developer.
+
+Hot upgrade consists of the following two processes:
+- inject hot upgrade sidecar containers
+- in-place hot upgrade sidecar container
+
+#### Inject Containers
+
+When the sidecar container upgradeStrategy=HotUpgrade, the SidecarSet Webhook will inject two containers into the Pod:
+1. \{sidecarContainer.name\}-1: as shown in the figure below: envoy-1, the container run the actual working sidecar container, such as envoy:1.16.0
+2. \{sidecarContainer.name\}-2: as shown in the figure below: envoy-2, the container run the hot upgrade empty container, and it doesn't have to deal with any real logic, as long as it stays in place, such as empty:1.0
+
+![sidecarset hotupgrade_injection](/img/docs/user-manuals/sidecarset_hotupgrade_injection.png)
+
+#### Hot Upgrade
+
+The SidecarSet Controller breaks down the hot upgrade process of the sidecar container into three steps:
+1. Upgrade: upgrade the empty container to the new version of the sidecar container, such as envoy-2.Image = envoy:1.17.0
+2. Migration: the process completes the state migration of stateful container, which needs to be provided by the sidecar image developer. PostStartHook completes the migration of the above process.
+(**Note: PostStartHook must block during the migration, and exit when migration complete.**)
+3. Reset: the step resets the old version sidecar container into empty container, such as envoy-1.Image = empty:1.0
+
+The above is the complete hot upgrade process. If a Pod needs to be hot upgraded several times, the above three steps can be repeated.
+
+![sidecarset hotupgrade](/img/docs/user-manuals/sidecarset_hotupgrade.png)
+
+#### Migration Demo
+The SidecarSet hot upgrade mechanism not only completes the switching between mesh containers，but also provides a coordination mechanism for old and new versions. Yet this is only the first step of a long journey. The mesh container also needs to provide a PostStartHook script to complete the hot migration of the mesh service itself (the above Migration process), such as Envoy hot restart and Mosn lossless restart.
+To facilitate a better understanding of the Migration process, a migration demo is provided below the kruise repository: [Migration Demo](https://github.com/openkruise/samples/tree/master/hotupgrade)
+
+For design documentation, please refer to: [proposals sidecarset hot upgrade](https://github.com/openkruise/kruise/blob/master/docs/proposals/20210305-sidecarset-hotupgrade.md)
+
+Currently known cases that utilize the SidecarSet hot upgrade mechanism:
+- [ALIYUN ASM](https://help.aliyun.com/document_detail/193804.html) implements lossless upgrade of Data Plane in Service Mesh.
+
+### Inject Pod Metadata (Annotations)
+**FEATURE STATE:** Kruise v1.3.0
+
+SidecarSet support inject pod annotations, as follows:
+
+<Tabs>
+  <TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: SidecarSet
+spec:
+  containers:
+    ...
+  patchPodMetadata:
+  - annotations:
+      oom-score: '{"log-agent": 1}'
+      custom.example.com/sidecar-configuration: '{"command": "/home/admin/bin/start.sh", "log-level": "3"}'
+    patchPolicy: MergePatchJson
+  - annotations:
+      apps.kruise.io/container-launch-priority: Ordered
+    patchPolicy: Overwrite | Retain
+```
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
+
+```yaml
+apiVersion: apps.kruise.io/v1alpha1
+kind: SidecarSet
+spec:
+  containers:
+    ...
+  patchPodMetadata:
+  - annotations:
+      oom-score: '{"log-agent": 1}'
+      custom.example.com/sidecar-configuration: '{"command": "/home/admin/bin/start.sh", "log-level": "3"}'
+    patchPolicy: MergePatchJson
+  - annotations:
+      apps.kruise.io/container-launch-priority: Ordered
+    patchPolicy: Overwrite | Retain
+```
+  </TabItem>
+</Tabs>
+patchPolicy is the injected policy, as follows:
+  - **Retain:** By default, if annotation[key]=value exists in the Pod, the original value of the Pod will be retained. Inject annotations[key]=value2 only if annotation[key] does not exist in the Pod.
+  - **Overwrite:** Corresponding to Retain, when annotation[key]=value exists in the Pod, it will be overwritten value2.
+  - **MergePatchJson:** Corresponding to Overwrite, the annotations value is a json string. If the annotations[key] does not exist in the Pod, it will be injected directly. If it exists, do a json value merge.
+For example: `annotations[oom-score]='{"main": 2}'` exists in the Pod, after injection, the value json is merged into `annotations[oom-score]='{"log-agent": 1, "main": 2}'`.
+
+**Note:** When the patchPolicy is Overwrite and MergePatchJson, the annotations can be updated synchronously when the SidecarSet in-place update the Sidecar Container.
+However, if only the annotations are modified, it will not take effect. It must be in-place update together with the sidecar container image.
+When patchPolicy is Retain, the annotations will not be updated when the SidecarSet in-place update the Sidecar Container.
+
+According to the above configuration, when the sidecarSet is injected into the sidecar container, it will inject Pod annotations synchronously, as follows:
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  annotations:
+    apps.kruise.io/container-launch-priority: Ordered
+    oom-score: '{"log-agent": 1, "main": 2}'
+    custom.example.com/sidecar-configuration: '{"command": "/home/admin/bin/start.sh", "log-level": "3"}'
+name: test-pod
+spec:
+  containers:
+    ...
+```
+
+#### Metadata WhiteList
+SidecarSet should not modify any configuration outside the sidecar container for security consideration. Metadata, as an important configuration of Pod, should not be modified by sidecarSet by default.
+So if you want to use this capability, you need to first configure SidecarSet_PatchPodMetadata_WhiteList whitelist, as follows:
+
+```yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kruise-configuration
+  namespace: kruise-system
+data:
+  "SidecarSet_PatchPodMetadata_WhiteList": |
+    {
+      "rules": [
+        {
+          "selector":{
+            "matchLabels":{
+              "sidecar":"log-agent"
+            }
+          },
+          "allowedAnnotationKeyExprs": [
+            "^apps.kruise.io/container-launch-priority$",
+            "^oom-score$",
+            "^custom.example.com/sidecar-configuration$"
+          ]
+        }
+      ]
+    }
+```
+- **selector:** Select matching SidecarSets based on Labels, both MatchLabels and MatchExpressions are supported.
+If not configured, it will take effect for all SidecarSets in the cluster.
+- **allowedAnnotationKeyExprs:** Whitelist of Pod annotation keys allowed to be modified, must be a regular expression.
+
+#### Feature-gate
+SidecarSet_PatchPodMetadata_WhiteList is mainly for security reasons. If the user's business cluster scenario is relatively simple,
+you can turn off the verification of the whitelist through feature-gate.
+```shell
+$ helm install kruise https://... --set featureGates="SidecarSetPatchPodMetadataDefaultsAllowed=true"
+```
+
+### SidecarSet Status
+When upgrading sidecar containers with a SidecarSet, you can observe the process of upgrading through SidecarSet.Status
+```yaml
+# kubectl describe sidecarsets sidecarset-example
+Name:         sidecarset-example
+Kind:         SidecarSet
+Status:
+  Matched Pods:         10  # The number of PODs injected and managed by the Sidecarset
+  Updated Pods:         5   # 5 PODs have been updated to the container version in the latest SidecarSet
+  Ready Pods:           8   # Matched Pods pod.status.condition.Ready = true number
+  Updated Ready Pods:   3   # Updated Pods && Ready Pods number
+```
+
+## How to troubleshoot SidecarSet in-place upgrade blocking
+
+The community kubernetes only allows patch pod.spec image fields, so SidecarSet upgrading sidecar containers independently can only support **image fields**.
+SidecarSet will not trigger in-place upgrades if non-Image fields are changed, e.g. Env, Resources, etc.
+
+To make it easier for you to locate similar issues, **since v1.5.0** kruise will report information to **pod condition** and **sidecarSet event** as follows:
+
+```
+# kubectl describe sidecarsets test-sidecarset
+  Status:
+    Collision Count:      0
+    Latest Revision:      test-sidecarset-5f6d95f777
+    Matched Pods:         1
+    Observed Generation:  2
+    Ready Pods:           1
+    Updated Pods:         0
+  Events:
+    Type    Reason             Age   From                   Message
+    ----    ------             ----  ----                   -------
+    Normal  NotUpgradablePods  63s   sidecarset-controller  SidecarSet in-place update detected 1 not upgradable pod(s) in this round, will skip them
+
+# kubectl get pods test-pod -oyaml
+status:
+  conditions:
+  - lastProbeTime: null
+    lastTransitionTime: "2023-09-09T11:10:17Z"
+    message: '{"test-sidecarset":false}'
+    reason: UpdateImmutableField
+    status: "False"
+    type: SidecarSetUpgradable
+```

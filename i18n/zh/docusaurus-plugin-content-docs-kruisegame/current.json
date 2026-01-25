@@ -4,18 +4,23 @@
     "description": "The label for version current"
   },
   "sidebar.kruisegame.category.Getting Started": {
-    "message": "快速开始"
+    "message": "快速开始",
+    "description": "The label for category 'Getting Started' in sidebar 'kruisegame'"
   },
   "sidebar.kruisegame.category.User Manuals": {
-    "message": "用户手册"
+    "message": "用户手册",
+    "description": "The label for category 'User Manuals' in sidebar 'kruisegame'"
   },
   "sidebar.kruisegame.category.Best Practices": {
-    "message": "最佳实践"
+    "message": "最佳实践",
+    "description": "The label for category 'Best Practices' in sidebar 'kruisegame'"
   },
   "sidebar.kruisegame.category.Developer Manuals": {
-    "message": "开发者手册"
+    "message": "开发者手册",
+    "description": "The label for category 'Developer Manuals' in sidebar 'kruisegame'"
   },
   "sidebar.kruisegame.category.Blog & Video": {
-    "message": "博客与视频"
+    "message": "博客与视频",
+    "description": "The label for category 'Blog & Video' in sidebar 'kruisegame'"
   }
 }

@@ -29,15 +29,8 @@
             "user-manuals/advancedstatefulset",
             "user-manuals/advanceddaemonset",
             "user-manuals/broadcastjob",
-            "user-manuals/advancedcronjob"
-          ],
-          "Sidecar container Management": [
+            "user-manuals/advancedcronjob",
             "user-manuals/sidecarset",
-            "user-manuals/jobsidecarterminator",
-            "user-manuals/containerlaunchpriority"
-          ],
-          "Multi-domain Management": [
-            "user-manuals/workloadspread",
             "user-manuals/uniteddeployment"
           ],
           "Enhanced Operations": [
@@ -45,7 +38,10 @@
             "user-manuals/imagepulljob",
             "user-manuals/resourcedistribution",
             "user-manuals/persistentpodstate",
-            "user-manuals/podprobemarker"
+            "user-manuals/podprobemarker",
+            "user-manuals/workloadspread",
+            "user-manuals/jobsidecarterminator",
+            "user-manuals/containerlaunchpriority"
           ],
           "Application Protection": [
             "user-manuals/deletionprotection",

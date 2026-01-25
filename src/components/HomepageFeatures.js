@@ -9,9 +9,8 @@ const features = [
       <>
         <p>
           <Translate>
-            OpenKruise contains a set of advanced workloads, such as CloneSet, Advanced StatefulSet, Advanced DaemonSet, BroadcastJob.
-            They all support not only the basic features which are similar to the original Workloads in Kubernetes,
-            but also more advanced abilities like in-place update, configurable scale/upgrade strategies, parallel operations.
+            OpenKruise contains a set of advanced workloads, such as CloneSet, Advanced StatefulSet, Advanced DaemonSet, BroadcastJob, SidecarSet and UnitedDeployment.
+            They brings more advanced abilities like in-place update, configurable scale/upgrade strategies, parallel operations.
           </Translate>
             <br />
           <Translate>
@@ -24,20 +23,17 @@ const features = [
     ),
   },
   {
-    title: <><Translate>Decoupled Application Management</Translate></>,
+    title: <><Translate>Advanced Day-2 Operations</Translate></>,
     imgUrl: 'img/feature2.png',
     description: (
       <>
         <p>
           <Translate>
-            OpenKruise provides several decoupled ways to manage sidecar container, multi-domain deployment for applications,
-            which means you can manage these things without modifying the Workloads of applications.
+            OpenKruise also provides high-level operation features to help you manage your applications for better efficiency, better resilience and cost-saving.
           </Translate>
           <br />
           <Translate>
-            For example, SidecarSet can help you inject sidecar containers into all matching Pods during creation and
-            even update them in-place with no effect on other containers in Pod.
-            WorkloadSpread constrains the spread of stateless workload, which empowers single workload the abilities for multi-domain and elastic deployment.
+            These operations includes image prewarming, container inplace restarts, workload distribution, pod probe & markering and many more
           </Translate>
         </p>
       </>
@@ -45,17 +41,25 @@ const features = [
     reverse: true,
   },
   {
-    title: <><Translate>High-availability Protection</Translate></>,
+    title: <><Translate>Battery Included Best Practices</Translate></>,
     imgUrl: 'img/feature3.png',
     description: (
       <>
         <p>
           <Translate>
-            OpenKruise works hard on protecting high-availability for applications.
-            Now it can prevent your Kubernetes resources from the cascading deletion mechanism,
-            including CRD, Namespace and almost all kinds of Workloads.
-            In voluntary disruption scenarios, PodUnavailableBudget can achieve the effect of preventing application disruption or SLA degradation,
-            which is not only compatible with Kubernetes PDB protection for Eviction API, but also able to support the protection ability of above scenarios.
+            OpenKruise provides best practices for essential application domains. 
+          </Translate>
+          <br />
+          <Translate>
+            1. OpenKruise Rollouts brings non-invasive progressive delivery for microservices to *native workloads* and OpenKruise workloads 
+          </Translate>
+          <br />
+          <Translate>
+           2. OpenKruise Games brings cloud native game server management such hot-update, and connects game servers to cloud service providers, matchmaking services, and O&M platforms. 
+          </Translate>
+          <br />
+          <Translate>
+           3. OpenKruise Agents brings agent sandbox lifecycle management and provides advanced state persistent capabilities. 
           </Translate>
         </p>
       </>
