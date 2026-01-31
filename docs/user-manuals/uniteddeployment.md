@@ -220,7 +220,7 @@ UnitedDeployment supports configuring two different scheduling strategies throug
 - **Use Cases**: Scenarios requiring precise control over workload distribution, such as environments with specific node resource isolation or high compliance requirements.
 
 ### Adaptive Strategy
-- **Behavior**: When the target Subset cannot schedule a Pod, it automatically schedules the Pod to other Subsets with available resources. The scheduling priority follows the order of the Subset list.
+- **Behavior**: When the target Subset cannot schedule a Pod, it automatically schedules the Pod to other Subsets *permanently* with available resources. The scheduling priority follows the order of the Subset list.
 - **Features**:
   - **Dynamic Resource Reschedule**: When a Subset has insufficient resources, pods are automatically rescheduled to other subsets.
   - **Configurable Rescheduling Timeout**: The rescheduling determination time window can be set using the `rescheduleCriticalSeconds` parameter (default is 30 seconds).
@@ -254,6 +254,49 @@ spec:
 - **Peak Period**: When subset-a's node resources are insufficient, Pods exceeding `maxReplicas` are automatically scheduled to the elastic node pool (subset-b).
 - **Failure Recovery**: When all nodes in subset-a become unavailable, all new Pods will automatically migrate to subset-b.
 
+
+### Reservation Strategy
+
+**FEATURE STATE:** Kruise v1.9.0
+
+- **Behavior**: When the target Subset is unschedulable, *temporarily* reschedule the Pod to another Subset with available resources, and when the target Subset becomes available, the replica will be moved back to the original target Subset. Scheduling priority still follows the Subset list order.
+- **Features**:
+  - Pod Reservation: Pods that are in Pending state due to scheduling failure will be reserved, and the scheduler will continue trying to schedule them in the target Subset.
+  - Temporary Replica: Before the reserved Pod is successfully scheduled, a temporary replica will be created in the next Subset to ensure the total number of replicas meets expectations. The temporary replica will be deleted after the reserved Pod is successfully scheduled and ready.
+  - Recursive Behavior: The temporary replica creation is recursive: when the Subset where a temporary replica resides still unschedulable, the replica will also be reserved and a new temporary replica will be created recursively in the next-of-the-next Subset until the last Subset is tried or the replica count is satisfied.
+- **Applicable Scenarios**:
+  - In elastic scenarios with strict topology structure requirements, ensure the overall replica count meets expectations through short-term topology imbalance (e.g., temporarily dealing with insufficient resources in a specific region when distributing by geographic location).
+  - Expect to use certain types of resources as much as possible without losing replica count (such as self-built IDC rooms, cheap spot instances, etc.).
+
+#### Example: Make maximum use of owned node resources
+
+```yaml
+# adaptive-ud.yaml
+apiVersion: apps.kruise.io/v1alpha1
+kind: UnitedDeployment
+metadata:
+  name: sample-ud
+spec:
+  # ...
+  topology:
+    scheduleStrategy:
+      type: Adaptive
+      adaptive:
+        # create a temp pods after 30 seconds after schedule failed
+        reserveUnschedulablePods: true
+        rescheduleCriticalSeconds: 30
+    subsets:
+      - name: ecs
+        nodeSelectorTerm: # select ECS nodes
+      - name: vk
+        nodeSelectorTerm: # select virtual nodes
+```
+
+#### Scenario Description
+
+- Prioritize scheduling Pods on owned cloud server node pools to fully utilize fixed resources
+- When the cloud server node pool has insufficient resources due to node failures, expansion of other applications, etc., temporarily create elastic instances through virtual nodes
+- After resources are restored due to node scaling or contraction of other applications, delete the elastic instances and migrate the replicas back to the owned cloud server node pools.
 
 ## Pod Distribution Management
 

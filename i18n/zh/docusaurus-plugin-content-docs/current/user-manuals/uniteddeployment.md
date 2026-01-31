@@ -244,9 +244,57 @@ spec:
 ```
 
 #### 场景说明
+
 - **低峰期**：优先在常规节点池（subset-a）调度 Pod，充分利用固定资源
 - **高峰期**：当 subset-a 的节点资源不足时，自动将超出 `maxReplicas` 的 Pod 调度到弹性节点池（subset-b）
 - **故障恢复**：当 subset-a 节点全部不可用时，所有新 Pod 将自动迁移到 subset-b
+
+### Reservation 自适应策略
+
+**FEATURE STATE:** Kruise v1.9.0
+
+- **行为**：在目标 Subset 无法调度时，*临时*将 Pod 调度到其他具有可用资源的 Subset，并在目标 Subset 恢复可用时，将该副本重新调度回目标
+  Subset。调度优先级同样遵循 Subset 列表顺序。
+- **特性**：
+    - Pod 保留：由于无法调度而处于 Pending 状态的 Pod 会被保留，调度器会持续尝试在目标 Subset 中调度该 Pod。
+    - 临时副本：在保留的 Pod 调度成功前，会在下一个 Subset 中创建一个临时副本以保证副本总数符合期望。临时副本会在保留 Pod
+      成功调度并就绪后被删除。
+    - 递归行为：临时副本支持递归地创建：当临时副本所处的 Subset 同样无法调度时，该副本同样会被保留并递归地在下一个 Subset
+      创建新的临时副本，直到尝试完最后一个 Subset 或副本数满足要求。
+- **适用场景**：
+    - 在对于拓扑结构要求较为严格的弹性场景下，通过短期的拓扑不平衡，来保证总体的副本数符合期望（如按照地域打散时，临时应对某地域资源不足）。
+    - 期望在不损失副本数的前提下尽可能地使用某一类资源（比如自建 IDC 机房、廉价 spot 实例等）。
+
+#### 示例：尽可能使用自持节点资源
+
+```yaml
+# adaptive-ud.yaml
+apiVersion: apps.kruise.io/v1alpha1
+kind: UnitedDeployment
+metadata:
+  name: sample-ud
+spec:
+  # ...
+  topology:
+    scheduleStrategy:
+      type: Adaptive
+      adaptive:
+        # create a temp pods after 30 seconds after schedule failed
+        reserveUnschedulablePods: true
+        rescheduleCriticalSeconds: 30
+    subsets:
+      - name: ecs
+        nodeSelectorTerm: # select ECS nodes
+      - name: vk
+        nodeSelectorTerm: # select virtual nodes
+```
+
+#### 场景说明
+
+- 优先在自持的云服务器节点池调度 Pod，充分利用固定资源
+- 当云服务器节点池由于节点故障、其他应用扩容等原因导致节点池资源不足时，临时通过虚拟节点创建弹性实例
+- 由于节点扩容、其他应用缩容等原因恢复资源后，删除弹性实例，并将副本迁回自持的云服务器节点池。
+
 
 ## Pod 分发管理
 
