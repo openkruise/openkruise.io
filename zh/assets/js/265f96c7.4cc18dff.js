@@ -1,1 +1,0 @@
-"use strict";(self.webpackChunkopenkruise_io=self.webpackChunkopenkruise_io||[]).push([[457],{46599:e=>{e.exports=JSON.parse('{"metadata":{"permalink":"/zh/blog","page":1,"postsPerPage":10,"totalPages":2,"totalCount":14,"nextPage":"/zh/blog/page/2","blogDescription":"Blog","blogTitle":"Blog"}}')}}]);
