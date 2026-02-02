@@ -2,10 +2,43 @@
 title: CloneSet
 ---
 
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 CloneSet 控制器提供了高效管理无状态应用的能力，它可以对标原生的 `Deployment`，但 `CloneSet` 提供了很多增强功能。
+
+**注意: v1beta1 从 Kruise v1.9.0 版本开始可用。**
 
 按照 Kruise 的[命名规范](/blog/workload-classification-guidance)，CloneSet 是一个直接管理 Pod 的 **Set** 类型 workload。
 一个简单的 CloneSet yaml 文件如下：
+
+<Tabs>
+  <TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: CloneSet
+metadata:
+  labels:
+    app: sample
+  name: sample
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      app: sample
+  template:
+    metadata:
+      labels:
+        app: sample
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:alpine
+```
+
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
 
 ```yaml
 apiVersion: apps.kruise.io/v1alpha1
@@ -29,6 +62,9 @@ spec:
         image: nginx:alpine
 ```
 
+  </TabItem>
+</Tabs>
+
 ## 扩缩容功能
 
 ### 支持 PVC 模板
@@ -46,6 +82,45 @@ CloneSet 允许用户配置 PVC 模板 `volumeClaimTemplates`，用来给每个 
 - 当 Pod 被**原地升级**时，关联的 PVC 会持续使用。
 
 以下是一个带有 PVC 模板的例子：
+
+<Tabs>
+  <TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: CloneSet
+metadata:
+  labels:
+    app: sample
+  name: sample-data
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      app: sample
+  template:
+    metadata:
+      labels:
+        app: sample
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:alpine
+        volumeMounts:
+        - name: data-vol
+          mountPath: /usr/share/nginx/html
+  volumeClaimTemplates:
+    - metadata:
+        name: data-vol
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        resources:
+          requests:
+            storage: 20Gi
+```
+
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
 
 ```yaml
 apiVersion: apps.kruise.io/v1alpha1
@@ -80,11 +155,43 @@ spec:
             storage: 20Gi
 ```
 
+  </TabItem>
+</Tabs>
+
 **FEATURE STATE:** Kruise v1.4.0
 
-如果一个 Pod 被外部直接调用删除或驱逐时，这个 Pod 关联的 PVCs 还都存在；并且 CloneSet controller 发现数量不足重新扩容时，新扩出来的 Pod 会复用原 Pod 的 **instance-id** 并关联原来的 PVCs。
+#### PVC 复用行为
 
-然而，如果 Pod 所在的 Node 出现异常，复用可能会导致新 Pod 启动失败，详情参考 [issue 1099](https://github.com/openkruise/kruise/issues/1099)。为了解决这个问题，您可以设置字段 **DisablePVCReuse=true**。在这种情况下，与 Pod 相关的 PVCs 将被自动删除，不再被复用。
+当 Pod 被外部直接删除或驱逐时，其关联的 PVC 会被保留。CloneSet controller 检测到 Pod 数量不足并重新扩容时，对于 PVC 的处理方式在不同版本中有所差异：
+
+- **v1alpha1**：默认**启用 PVC 复用**，新创建的 Pod 会复用原 Pod 的 **instance-id** 并关联原有的 PVC
+- **v1beta1**：默认**禁用 PVC 复用**，新创建的 Pod 不会复用 PVC
+
+
+PVC 复用在某些场景下可能导致问题。例如，当 Pod 所在的 Node 出现异常时，复用 PVC 可能会导致新 Pod 无法正常启动（详见 [issue 1099](https://github.com/openkruise/kruise/issues/1099)）。因此提供了以下配置选项：
+
+- **v1alpha1**：通过设置 `scaleStrategy.disablePVCReuse: true` 来禁用 PVC 复用
+- **v1beta1**：通过字段 `scaleStrategy.enablePVCReuse` 控制，默认值为 `false`（禁用复用）。如需启用 PVC 复用，可显式设置为 `true`
+
+禁用 PVC 复用后，Pod 删除时其关联的 PVC 也会被自动删除。
+
+<Tabs>
+  <TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: CloneSet
+spec:
+  ...
+  replicas: 4
+  scaleStrategy:
+    # enablePVCReuse 默认为 false，无需显式设置
+    # 如需启用 PVC 复用，设置为 true
+    enablePVCReuse: false
+```
+
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
 
 ```yaml
 apiVersion: apps.kruise.io/v1alpha1
@@ -96,12 +203,44 @@ spec:
     disablePVCReuse: true
 ```
 
+  </TabItem>
+</Tabs>
+
 #### 当 volumeClaimTemplates 改变时，将会重建升级 Pod 和关联的 volume
 **FEATURE STATE:** Kruise v1.7.0
 
 默认情况下，如果 image 和 volumeClaimTemplates 同时改变，CloneSet 将会原地升级 Pod，并且不会重建 volume，导致 volumeClaimTemplates 配置不生效。
 1. 初始情况下，image=nginx:v1, volumeClaimTemplates=20G
+
+<Tabs>
+  <TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: CloneSet
+spec:
+  template:
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:v1
+        volumeMounts:
+        - name: data-vol
+          mountPath: /usr/share/nginx/html
+  volumeClaimTemplates:
+    - metadata:
+        name: data-vol
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        resources:
+          requests:
+            storage: 20Gi
 ```
+
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
+
+```yaml
 apiVersion: apps.kruise.io/v1alpha1
 kind: CloneSet
 spec:
@@ -113,15 +252,18 @@ spec:
         volumeMounts:
         - name: data-vol
           mountPath: /usr/share/nginx/html
-      volumeClaimTemplates:
-      - metadata:
-          name: data-vol
-        spec:
-          accessModes: [ "ReadWriteOnce" ]
-          resources:
-            requests:
-              storage: 20Gi
+  volumeClaimTemplates:
+    - metadata:
+        name: data-vol
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        resources:
+          requests:
+            storage: 20Gi
 ```
+
+  </TabItem>
+</Tabs>
 2. 将 image变更为nginx:v2，volumeClaimTemplates=40G
 3. CloneSet 会原地升级Pod，并不会重建 volume，因此新 Pod 对应的 volume 大小还是 20G，并没有生效最新的。
 
@@ -136,6 +278,23 @@ spec:
 
 CloneSet 允许用户在缩小 `replicas` 数量的同时，指定想要删除的 Pod 名字。参考下面这个例子：
 
+<Tabs>
+  <TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: CloneSet
+spec:
+  # ...
+  replicas: 4
+  scaleStrategy:
+    podsToDelete:
+    - sample-9m4hp
+```
+
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
+
 ```yaml
 apiVersion: apps.kruise.io/v1alpha1
 kind: CloneSet
@@ -146,6 +305,9 @@ spec:
     podsToDelete:
     - sample-9m4hp
 ```
+
+  </TabItem>
+</Tabs>
 
 当控制器收到上面这个 CloneSet 更新之后，会确保 replicas 数量为 4。如果 `podsToDelete` 列表里写了一些 Pod 名字，控制器会优先删除这些 Pod。
 对于已经被删除的 Pod，控制器会自动从 `podsToDelete` 列表中清理掉。
@@ -224,6 +386,22 @@ CloneSet **扩容**时可以指定 `ScaleStrategy.MaxUnavailable` 来限制扩�
 
 该字段可以配合 `Spec.MinReadySeconds` 字段使用, 例如：
 
+<Tabs>
+  <TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: CloneSet
+spec:
+  # ...
+  minReadySeconds: 60
+  scaleStrategy:
+    maxUnavailable: 1
+```
+
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
+
 ```yaml
 apiVersion: apps.kruise.io/v1alpha1
 kind: CloneSet
@@ -233,6 +411,9 @@ spec:
   scaleStrategy:
     maxUnavailable: 1
 ```
+
+  </TabItem>
+</Tabs>
 
 上述配置能达到的效果是：在扩容时，只有当上一个扩容出的 Pod 已经 Ready 超过一分钟后，CloneSet 才会执行创建下一个 Pod 的操作。
 
@@ -251,6 +432,25 @@ CloneSet 提供了 3 种升级方式，默认为 `ReCreate`：
 我们还在原地升级中提供了 **graceful period** 选项，作为优雅原地升级的策略。用户如果配置了 `gracePeriodSeconds` 这个字段，控制器在原地升级的过程中会先把 Pod status 改为 not-ready，然后等一段时间（`gracePeriodSeconds`），最后再去修改 Pod spec 中的镜像版本。
 这样，就为 endpoints-controller 这些控制器留出了充足的时间来将 Pod 从 endpoints 端点列表中去除。
 
+<Tabs>
+  <TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: CloneSet
+spec:
+  # ...
+  updateStrategy:
+    type: RollingUpdate
+    rollingUpdate:
+      podUpdatePolicy: InPlaceIfPossible
+      inPlaceUpdateStrategy:
+        gracePeriodSeconds: 10
+```
+
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
+
 ```yaml
 apiVersion: apps.kruise.io/v1alpha1
 kind: CloneSet
@@ -262,11 +462,40 @@ spec:
       gracePeriodSeconds: 10
 ```
 
+  </TabItem>
+</Tabs>
+
 ### Template 和 revision
 
 `spec.template` 中定义了当前 CloneSet 中最新的 Pod 模板。
 控制器会为每次更新过的 `spec.template` 计算一个 revision hash 值，比如针对开头的 CloneSet 例子，
 控制器会为 template 计算出 revision hash 为 `sample-744d4796cc` 并上报到 CloneSet status 中。
+
+<Tabs>
+  <TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: CloneSet
+metadata:
+  generation: 1
+  # ...
+spec:
+  replicas: 5
+  # ...
+status:
+  observedGeneration: 1
+  readyReplicas: 5
+  replicas: 5
+  currentRevision: sample-d4d4fb5bd
+  updateRevision: sample-d4d4fb5bd
+  updatedReadyReplicas: 5
+  updatedReplicas: 5
+  # ...
+```
+
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
 
 ```yaml
 apiVersion: apps.kruise.io/v1alpha1
@@ -287,6 +516,9 @@ status:
   updatedReplicas: 5
   # ...
 ```
+
+  </TabItem>
+</Tabs>
 
 这里是对 CloneSet status 中的字段说明：
 
@@ -314,6 +546,44 @@ Partition 的语义是 **保留旧版本 Pod 的数量或百分比**，默认为
 - 用户可以使用 `.status.updatedReplicas >= .status.ExpectedUpdatedReplicas` 条件，来判断在当前 `partition` 字段的限制下，CloneSet 是否已经完成了预期数量 Pod 的版本升级。
 
 比如，我们将 CloneSet 例子的 image 更新为 `nginx:mainline` 并且设置 `partition=3`。过了一会，查到的 CloneSet 如下：
+
+<Tabs>
+  <TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: CloneSet
+metadata:
+  # ...
+  generation: 2
+spec:
+  replicas: 5
+  template:
+    metadata:
+      labels:
+        app: sample
+    spec:
+      containers:
+      - image: nginx:mainline
+        imagePullPolicy: Always
+        name: nginx
+  updateStrategy:
+    type: RollingUpdate
+    rollingUpdate:
+      partition: 3
+  # ...
+status:
+  observedGeneration: 2
+  readyReplicas: 5
+  replicas: 5
+  currentRevision: sample-d4d4fb5bd
+  updateRevision: sample-56dfb978d4
+  updatedReadyReplicas: 2
+  updatedReplicas: 2
+```
+
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
 
 ```yaml
 apiVersion: apps.kruise.io/v1alpha1
@@ -345,6 +615,9 @@ status:
   updatedReplicas: 2
 ```
 
+  </TabItem>
+</Tabs>
+
 注意 `status.updateRevision` 已经更新为 `sample-56dfb978d4` 新的值。
 由于我们设置了 `partition=3`，控制器只升级了 2 个 Pod。
 
@@ -374,6 +647,23 @@ sample-qqglp   1/1     Running   0          18s     sample-56dfb978d4
 MaxUnavailable 是 CloneSet 限制下属最多不可用的 Pod 数量。
 它可以设置为一个**绝对值**或者**百分比**，如果不填 Kruise 会设置为默认值 `20%`。
 
+<Tabs>
+  <TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: CloneSet
+spec:
+  # ...
+  updateStrategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 20%
+```
+
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
+
 ```yaml
 apiVersion: apps.kruise.io/v1alpha1
 kind: CloneSet
@@ -382,6 +672,9 @@ spec:
   updateStrategy:
     maxUnavailable: 20%
 ```
+
+  </TabItem>
+</Tabs>
 
 从 Kruise `v0.9.0` 版本开始，`maxUnavailable` 不仅会保护发布，也会对 Pod 指定删除生效。
 
@@ -399,6 +692,23 @@ MaxSurge 是 CloneSet 控制最多能扩出来超过 `replicas` 的 Pod 数量�
 要说明的是，maxSurge 不允许配合 `InPlaceOnly` 更新模式使用。
 另外，如果是与 `InPlaceIfPossible` 策略配合使用，控制器会先扩出来 `maxSurge` 数量的 Pod，再对存量 Pod 做原地升级。
 
+<Tabs>
+  <TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: CloneSet
+spec:
+  # ...
+  updateStrategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 3
+```
+
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
+
 ```yaml
 apiVersion: apps.kruise.io/v1alpha1
 kind: CloneSet
@@ -407,6 +717,9 @@ spec:
   updateStrategy:
     maxSurge: 3
 ```
+
+  </TabItem>
+</Tabs>
 
 从 Kruise `v0.9.0` 版本开始，`maxSurge` 不仅会保护发布，也会对 Pod 指定删除生效。
 
@@ -439,6 +752,32 @@ CloneSet 有可能会先创建一个新 Pod、等待它 ready 之后、再删除
 
 - `weight`: Pod 优先级是由所有 weights 列表中的 term 来计算 match selector 得出。如下：
 
+<Tabs>
+  <TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: CloneSet
+spec:
+  # ...
+  updateStrategy:
+    type: RollingUpdate
+    rollingUpdate:
+      priorityStrategy:
+        weightPriority:
+        - weight: 50
+          matchSelector:
+            matchLabels:
+              test-key: foo
+        - weight: 30
+          matchSelector:
+            matchLabels:
+              test-key: bar
+```
+
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
+
 ```yaml
 apiVersion: apps.kruise.io/v1alpha1
 kind: CloneSet
@@ -457,7 +796,29 @@ spec:
             test-key: bar
 ```
 
+  </TabItem>
+</Tabs>
+
 - `order`: Pod 优先级是由 orderKey 的 value 决定，这里要求对应的 value 的结尾能解析为 int 值。比如 value "5" 的优先级是 5，value "sts-10" 的优先级是 10。
+
+<Tabs>
+  <TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: CloneSet
+spec:
+  # ...
+  updateStrategy:
+    type: RollingUpdate
+    rollingUpdate:
+      priorityStrategy:
+        orderPriority:
+          - orderedKey: some-label-key
+```
+
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
 
 ```yaml
 apiVersion: apps.kruise.io/v1alpha1
@@ -470,10 +831,32 @@ spec:
         - orderedKey: some-label-key
 ```
 
+  </TabItem>
+</Tabs>
+
 #### 打散策略
 
 这个策略定义了如何将一类 Pod 打散到整个发布过程中。
 比如，针对一个 `replica=10` 的 CloneSet，我们在 3 个 Pod 中添加了 `foo=bar` 标签、并设置对应的 scatter 策略，那么在发布的时候这 3 个 Pod 会排在第 1、6、10 个发布。
+
+<Tabs>
+  <TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: CloneSet
+spec:
+  # ...
+  updateStrategy:
+    type: RollingUpdate
+    rollingUpdate:
+      scatterStrategy:
+      - key: foo
+        value: bar
+```
+
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
 
 ```yaml
 apiVersion: apps.kruise.io/v1alpha1
@@ -486,6 +869,9 @@ spec:
       value: bar
 ```
 
+  </TabItem>
+</Tabs>
+
 注意：
 
 - 尽管 `priority` 和 `scatter` 策略可以一起设置，但我们强烈推荐同时只用其中一个。
@@ -497,6 +883,23 @@ spec:
 
 用户可以通过设置 paused 为 true 暂停发布，不过控制器还是会做 replicas 数量管理：
 
+<Tabs>
+  <TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: CloneSet
+spec:
+  # ...
+  updateStrategy:
+    type: RollingUpdate
+    rollingUpdate:
+      paused: true
+```
+
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
+
 ```yaml
 apiVersion: apps.kruise.io/v1alpha1
 kind: CloneSet
@@ -505,6 +908,9 @@ spec:
   updateStrategy:
     paused: true
 ```
+
+  </TabItem>
+</Tabs>
 
 ### 进度期限机制
 
@@ -619,12 +1025,37 @@ reason: ProgressDeadlineExceeded
 - 回滚到历史修订版本。
 - 暂停部署过程以进行 Pod 模板的多项调整。
 
+
 ### 原地升级支持修改资源
 
 **FEATURE STATE:** Kruise v1.8.0
 
 如果你在[安装或升级 Kruise](../installation##optional-feature-gate) 的时候启用了 `InPlaceWorkloadVerticalScaling`，
 CloneSet 支持在原地升级过程中修改容器资源（CPU/Memory）。该功能允许用户直接更新以下字段而不触发 Pod 重建：
+
+<Tabs>
+  <TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: CloneSet
+spec:
+  #...
+  template:
+    spec:
+      containers:
+      - name: <container-name>
+        resources:
+          requests:
+            cpu: "2"       # 可修改
+            memory: "2Gi"  # 可修改
+          limits:
+            cpu: "4"       # 可修改
+            memory: "4Gi"  # 可修改
+```
+
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
 
 ```yaml
 apiVersion: apps.kruise.io/v1alpha1
@@ -643,6 +1074,9 @@ spec:
             cpu: "4"       # 可修改
             memory: "4Gi"  # 可修改
 ```
+
+  </TabItem>
+</Tabs>
 
 #### 注意事项
 
@@ -667,10 +1101,34 @@ spec:
 如果你在[安装或升级 Kruise](../installation##optional-feature-gate) 的时候启用了 `PreDownloadImageForInPlaceUpdate` feature-gate，
 CloneSet 控制器会自动在所有旧版本 pod 所在 node 节点上预热你正在灰度发布的新版本镜像。 这对于应用发布加速很有帮助。
 
-默认情况下 CloneSet 每个新镜像预热时的并发度都是 `1`，也就是一个个节点拉镜像。
-如果需要调整，你可以通过 `apps.kruise.io/image-predownload-parallelism` annotation 来设置并发度。
+默认情况下 CloneSet 每个新镜像预热时的并发度都是 `1`，也就是一个个节点拉镜像。如果需要调整并发度或控制预热时机，不同版本的配置方式有所差异：
 
-另外从 Kruise v1.1.0 开始，你可以使用 `apps.kruise.io/image-predownload-min-updated-ready-pods` 来控制在少量新版本 Pod 已经升级成功之后再执行镜像预热。它的值可能是绝对值数字或是百分比。
+- **v1alpha1**：通过 annotations 来控制
+  - `apps.kruise.io/image-predownload-parallelism`：设置镜像预热的并发度
+  - `apps.kruise.io/image-predownload-min-updated-ready-pods`（Kruise v1.1.0+）：控制在少量新版本 Pod 已经升级成功之后再执行镜像预热，值可以是绝对值数字或百分比
+  
+- **v1beta1**：通过 `updateStrategy.rollingUpdate.inPlaceUpdateStrategy` 字段来控制
+  - `imagePreDownloadParallelism`：设置镜像预热的并发度
+  - `imagePreDownloadMinUpdatedReadyPods`：控制在少量新版本 Pod 已经升级成功之后再执行镜像预热，值可以是绝对值数字或百分比
+
+<Tabs>
+  <TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: CloneSet
+spec:
+  # ...
+  updateStrategy:
+    type: RollingUpdate
+    rollingUpdate:
+      inPlaceUpdateStrategy:
+        imagePreDownloadParallelism: 10
+        imagePreDownloadMinUpdatedReadyPods: 3
+```
+
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
 
 ```yaml
 apiVersion: apps.kruise.io/v1alpha1
@@ -679,7 +1137,12 @@ metadata:
   annotations:
     apps.kruise.io/image-predownload-parallelism: "10"
     apps.kruise.io/image-predownload-min-updated-ready-pods: "3"
+spec:
+  # ...
 ```
+
+  </TabItem>
+</Tabs>
 
 注意，为了避免大部分不必要的镜像拉取，目前只针对 replicas > 3 的 CloneSet 做自动预热。
 
@@ -724,6 +1187,36 @@ type LifecycleHook struct {
 
 示例：
 
+<Tabs>
+  <TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: CloneSet
+spec:
+
+  # 通过 finalizer 定义 hook
+  lifecycle:
+    preNormal:
+      finalizersHandler:
+      - example.io/unready-blocker
+    preDelete:
+      finalizersHandler:
+      - example.io/unready-blocker
+    inPlaceUpdate:
+      finalizersHandler:
+      - example.io/unready-blocker
+
+  # 或者也可以通过 label 定义
+  # lifecycle:
+  #   inPlaceUpdate:
+  #     labelsHandler:
+  #       example.io/block-unready: "true"
+```
+
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
+
 ```yaml
 apiVersion: apps.kruise.io/v1alpha1
 kind: CloneSet
@@ -747,6 +1240,9 @@ spec:
   #     labelsHandler:
   #       example.io/block-unready: "true"
 ```
+
+  </TabItem>
+</Tabs>
 
 ### 升级/删除 Pod 前将其置为 NotReady
 **FEATURE STATE:** Kruise v1.2.0
@@ -798,6 +1294,30 @@ spec:
 
 在 CloneSet template 模板里带上这个字段：
 
+<Tabs>
+  <TabItem value="v1beta1" label="v1beta1" default>
+
+```yaml
+apiVersion: apps.kruise.io/v1beta1
+kind: CloneSet
+spec:
+  lifecycle:
+    preNormal:
+      finalizersHandler:
+      - example.io/unready-blocker
+    preDelete:
+      finalizersHandler:
+      - example.io/unready-blocker
+    inPlaceUpdate:
+      finalizersHandler:
+      - example.io/unready-blocker
+  template:
+  # ...
+```
+
+  </TabItem>
+  <TabItem value="v1alpha1" label="v1alpha1">
+
 ```yaml
 apiVersion: apps.kruise.io/v1alpha1
 kind: CloneSet
@@ -815,6 +1335,9 @@ spec:
   template:
   # ...
 ```
+
+  </TabItem>
+</Tabs>
 
 而后用户 controller 的逻辑如下：
 
