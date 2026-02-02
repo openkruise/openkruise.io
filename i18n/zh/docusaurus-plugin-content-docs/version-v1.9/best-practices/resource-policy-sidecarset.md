@@ -18,7 +18,9 @@ cd kruise
 # 生成表达式，该命令会返回 min(max(max(max(0.5,0.5*cpu),cpu-1.0),cpu-1.0),3.0)
 python3 hack/calculator-helper/generator/generate_expression.py "[[0,0.5], [1,0.5], [2,1], [3,2], [4,3], [5,3]]" -v cpu
 
-# 为进一步确认表达式的正确性，用户可以通过 validator 工具来绘制图片结果，该工具所使用的计算器实现与ResourcePolicy实现一致，能够确保最终结果的一致性
+# 为进一步确认表达式的正确性，用户可以通过 validator 工具来绘制图片结果，
+# 该工具所使用的计算器实现与ResourcePolicy实现一致，能够确保最终结果的一致性
+
 ## 构建 validator 工具
 cd hack/calculator-helper/validator && go build -o validator
 

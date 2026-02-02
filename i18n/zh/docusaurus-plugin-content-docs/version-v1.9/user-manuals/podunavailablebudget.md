@@ -102,13 +102,36 @@ spec:
   ...
 ```
 
-## Implementation
+### 精细化控制保护的Pod操作类型
+
+**FEATURE STATE:** Kruise v1.9.0
+
+```yaml
+apiVersion: policy.kruise.io/v1alpha1
+kind: PodUnavailableBudget
+metadata:
+  name: crd-demo
+  annotations:
+    # 默认DELETE,EVICT,UPDATE操作会被保护
+    # 支持的操作类别如下：
+    # DELETE: pod 删除
+    # EVICT: pod 驱逐
+    # UPDATE: pod 原地更新
+    # RESIZE: pod 原地变配
+    kruise.io/pub-protect-operations: "EVICT, UPDATE"
+spec:
+  ...
+```
+
+注意： 如果功能开关：InPlacePodVerticalScaling已关闭， 原地变配操作会被当做是原地更新操作
+
+## 实现原理
 PUB实现原理如下，详细设计请参考：[Pub Proposal](https://github.com/openkruise/kruise/blob/master/docs/proposals/20210614-podunavailablebudget.md)
 
 ![PodUnavailableBudget](/img/docs/user-manuals/podunavailablebudget.png)
 
 ## Comparison with Kubernetes native PDB
-Kubernetes PDB是通过Eviction API接口来实现Pod安全防护，而Kruise PDB则是拦截了Pod Validating Request来实现诸多Voluntary Disruption场景的防护能力。
+Kubernetes PDB是通过Eviction API接口来实现Pod安全防护，而Kruise PDB则是拦截了Pod Validating Request来实现诸多pod操作的安全防护。
 **Kruise PUB包含了PDB的所有能力（防护Pod Eviction），业务可以根据需要两者同时使用，也可以单独使用Kruise PUB（推荐方式）。**
 
 ## feature-gates

@@ -33,7 +33,7 @@ const features = [
           </Translate>
           <br />
           <Translate>
-            These operations includes image prewarming, container inplace restarts, workload distribution, pod probe & markering and many more
+            These operations includes image prewarming, container inplace restarts, workload distribution, pod probe & marking and many more
           </Translate>
         </p>
       </>

@@ -61,7 +61,8 @@
         "best-practices/log-container-sidecarset",
         "best-practices/cloneset-lifecycle",
         "best-practices/elastic-deployment",
-        "best-practices/acronjob+broadcastjob"
+        "best-practices/acronjob+broadcastjob",
+        "best-practices/resource-policy-sidecarset"
       ]
     },
     {
@@ -80,7 +81,8 @@
       "collapsed": true,
       "items": [
         "operator-manuals/availability",
-        "operator-manuals/troubleshooting"
+        "operator-manuals/troubleshooting",
+        "operator-manuals/upgrade"
       ]
     },
     {

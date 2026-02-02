@@ -24,7 +24,7 @@ Most features provided by OpenKruise are built primarily based on CRD extensions
     
     OpenKruise also provides high-level operation features to help you manage your applications for better efficiency, better resilience and cost-saving.
 
-    These operations includes image prewarming, container inplace restarts, workload distribution, pod probe & markering and many more. For example, you can use ImagePullJob to download any images on any nodes you want. Or you can even requires one or more containers in an running Pod to be restarted.
+    These operations include image prewarming, container inplace restarts, workload distribution, pod probe & marking and many more. For example, you can use ImagePullJob to download any images on any nodes you want. Or you can even requires one or more containers in an running Pod to be restarted.
 
 - **High-availability Protection**
 
@@ -48,7 +48,7 @@ It makes up for defects of Kubernetes, including but not limited to application 
 
 ### OpenKruise vs. Platform-as-a-Service (PaaS)
 
-OpenKruise is **not** a PaaS but it provides the **essential building blocks** of PaaS.
+OpenKruise is **not** a PaaS, but it provides the **essential building blocks** of PaaS.
 
 PaaS can use the features provided by OpenKruise to make applications deployment and management easier and more powerful. 
 

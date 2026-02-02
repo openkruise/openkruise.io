@@ -84,8 +84,9 @@ spec:
 
 您可以为每个subset规划副本数量的上下限，从而帮助你更加精细化地管理您的资源使用。
 
-### MaxReplicas 限制 subset 最多副本
-例如，一个应用在常规节点池上最多运行4个副本，如果副本数量超过4个，超出的Pod将自动调度到弹性节点。
+### MaxReplicas 
+
+MaxReplicas限制 subset 最多副本。例如，一个应用在常规节点池上最多运行4个副本，如果副本数量超过4个，超出的Pod将自动调度到弹性节点。
 类似场景下，您可以参考以下配置方式：
 
 ```yaml
@@ -121,10 +122,64 @@ UnitedDeployment 控制器遵循以下规则来对各个 Subset 做扩缩容，�
 2. `MaxReplicas`为空表示该 Subset 没有副本数量限制。
 3. 为了避免所有 Subset 的 `MaxReplicas` 要求都得到满足后，导致无法扩容任何 Subset，您需要保证**至少有一个 Subset** 的 `MaxReplicas` 值为空。
 
-### MinReplicas 保障 subset 最少副本
-例如，按照地域打散时，可以使用 minReplicas 保证每个地域至少有一个副本，其余副本按照自适应调度策略弹性部署。
+### MinReplicas 
+MinReplicas保障 subset 最少副本。例如，按照地域打散时，可以使用 minReplicas 保证每个地域至少有一个副本，其余副本按照自适应调度策略弹性部署。
 
-## 支持 Customize 不同 subset 的 Pod Template
+
+## 不同subset 的 Pod定制
+
+### Pod调度规则的定制
+
+`spec.topology` 中可以定义 Pod调度规则的定制：
+
+```go
+// Topology defines the spread detail of each subset under UnitedDeployment.
+// A UnitedDeployment manages multiple homogeneous workloads which are called subset.
+// Each of subsets under the UnitedDeployment is described in Topology.
+type Topology struct {
+    // Contains the details of each subset. Each element in this array represents one subset
+    // which will be provisioned and managed by UnitedDeployment.
+    // +optional
+    Subsets []Subset `json:"subsets,omitempty"`
+}
+
+// Subset defines the detail of a subset.
+type Subset struct {
+    // Indicates subset name as a DNS_LABEL, which will be used to generate
+    // subset workload name prefix in the format '<deployment-name>-<subset-name>-'.
+    // Name should be unique between all of the subsets under one UnitedDeployment.
+    Name string `json:"name"`
+
+    // Indicates the node selector to form the subset. Depending on the node selector,
+    // pods provisioned could be distributed across multiple groups of nodes.
+    // A subset's nodeSelectorTerm is not allowed to be updated.
+    // +optional
+    NodeSelectorTerm corev1.NodeSelectorTerm `json:"nodeSelectorTerm,omitempty"`
+
+    // Indicates the tolerations the pods under this subset have.
+    // A subset's tolerations is not allowed to be updated.
+    // +optional
+    Tolerations []corev1.Toleration `json:"tolerations,omitempty"`
+
+    // Indicates the number of the pod to be created under this subset. Replicas could also be
+    // percentage like '10%', which means 10% of UnitedDeployment replicas of pods will be distributed
+    // under this subset. If nil, the number of replicas in this subset is determined by controller.
+    // Controller will try to keep all the subsets with nil replicas have average pods.
+    // +optional
+    Replicas *intstr.IntOrString `json:"replicas,omitempty"`
+}
+```
+
+在 `topology.subsets` 里面我们指定了多个 `subset` 组，每个 subset 其实对应了一个下属的 workload。
+当一个 subset 从这个列表里增加或去除时，UnitedDeployment 控制器会创建或删除相应的 subset workload。
+
+- 每个 subset workload 有一个独立的名字，前缀是 `<UnitedDeployment-name>-<Subset-name>-`。
+- subset workload 是根据 UnitedDeployment 的 `spec.template` 做基础来创建，同时将 `subset` 中定义的一些特殊配置（如 `nodeSelector`, `replicas`）合并进去成为一个完整的 workload。
+
+  - `subset.replicas` 可以设置**绝对值**或**百分比**。其中，百分比会根据 UnitedDeployment 的 `replicas` 总数计算出来 subset 需要的数量；而如果不设置这个 `subset.replicas`，控制器会根据总数划分给每个 subset 对应的数量。
+  - `subset.nodeSelector` 会合并到 subset workload 的 `spec.template` 下面，因此这个 workload 创建出来的 Pod 都带有对应的调度规则。
+
+### 任意Pod字段的定制
 **FEATURE STATE:** Kruise v1.5.0
 
 从 kruise v1.5.0版本开始，你可以 customize 任意 pod.spec 字段，比如：env、resources。
@@ -178,32 +233,6 @@ spec:
               value: subset-b
 ```
 
-## HPA UnitedDeployment
-**FEATURE STATE:** Kruise v1.5.0
-
-Horizontal Pod Autoscaler 能够支持包含 [scale subresource](https://kubernetes.io/docs/tasks/extend-kubernetes/custom-resources/custom-resource-definitions/#scale-subresource) 的自定义工作负载.
-从 kruise v1.5.0版本开始，你可以直接 HPA UnitedDeployment，如下：
-
-```yaml
-apiVersion: autoscaling/v2beta1
-kind: HorizontalPodAutoscaler
-metadata:
-  name: example-hpa
-  namespace: default
-spec:
-  minReplicas: 1
-  maxReplicas: 3
-  metrics:
-  - resource:
-      name: cpu
-      targetAverageUtilization: 2
-    type: Resource
-  scaleTargetRef:
-    apiVersion: apps.kruise.io/v1alpha1
-    kind: UnitedDeployment
-    name: sample-ud
-```
-
 ## 自适应调度策略
 
 **FEATURE STATE:** Kruise v1.8.0
@@ -243,61 +272,56 @@ spec:
         rescheduleCriticalSeconds: 30
 ```
 
+### Reservation 自适应策略
+
+**FEATURE STATE:** Kruise v1.9.0
+
+- **行为**：在目标 Subset 无法调度时，*临时*将 Pod 调度到其他具有可用资源的 Subset，并在目标 Subset 恢复可用时，将该副本重新调度回目标
+  Subset。调度优先级同样遵循 Subset 列表顺序。
+- **特性**：
+    - Pod 保留：由于无法调度而处于 Pending 状态的 Pod 会被保留，调度器会持续尝试在目标 Subset 中调度该 Pod。
+    - 临时副本：在保留的 Pod 调度成功前，会在下一个 Subset 中创建一个临时副本以保证副本总数符合期望。临时副本会在保留 Pod
+      成功调度并就绪后被删除。
+    - 递归行为：临时副本支持递归地创建：当临时副本所处的 Subset 同样无法调度时，该副本同样会被保留并递归地在下一个 Subset
+      创建新的临时副本，直到尝试完最后一个 Subset 或副本数满足要求。
+- **适用场景**：
+    - 在对于拓扑结构要求较为严格的弹性场景下，通过短期的拓扑不平衡，来保证总体的副本数符合期望（如按照地域打散时，临时应对某地域资源不足）。
+    - 期望在不损失副本数的前提下尽可能地使用某一类资源（比如自建 IDC 机房、廉价 spot 实例等）。
+
+#### 示例：尽可能使用自持节点资源
+
+```yaml
+# adaptive-ud.yaml
+apiVersion: apps.kruise.io/v1alpha1
+kind: UnitedDeployment
+metadata:
+  name: sample-ud
+spec:
+  # ...
+  topology:
+    scheduleStrategy:
+      type: Adaptive
+      adaptive:
+        # create a temp pods after 30 seconds after schedule failed
+        reserveUnschedulablePods: true
+        rescheduleCriticalSeconds: 30
+    subsets:
+      - name: ecs
+        nodeSelectorTerm: # select ECS nodes
+      - name: vk
+        nodeSelectorTerm: # select virtual nodes
+```
+
+#### 场景说明
+
+- 优先在自持的云服务器节点池调度 Pod，充分利用固定资源
+- 当云服务器节点池由于节点故障、其他应用扩容等原因导致节点池资源不足时，临时通过虚拟节点创建弹性实例
+- 由于节点扩容、其他应用缩容等原因恢复资源后，删除弹性实例，并将副本迁回自持的云服务器节点池。
+
 #### 场景说明
 - **低峰期**：优先在常规节点池（subset-a）调度 Pod，充分利用固定资源
 - **高峰期**：当 subset-a 的节点资源不足时，自动将超出 `maxReplicas` 的 Pod 调度到弹性节点池（subset-b）
 - **故障恢复**：当 subset-a 节点全部不可用时，所有新 Pod 将自动迁移到 subset-b
-
-## Pod 分发管理
-
-上述例子中可以看到，`spec.topology` 中可以定义 Pod 分发的规则：
-
-```go
-// Topology defines the spread detail of each subset under UnitedDeployment.
-// A UnitedDeployment manages multiple homogeneous workloads which are called subset.
-// Each of subsets under the UnitedDeployment is described in Topology.
-type Topology struct {
-    // Contains the details of each subset. Each element in this array represents one subset
-    // which will be provisioned and managed by UnitedDeployment.
-    // +optional
-    Subsets []Subset `json:"subsets,omitempty"`
-}
-
-// Subset defines the detail of a subset.
-type Subset struct {
-    // Indicates subset name as a DNS_LABEL, which will be used to generate
-    // subset workload name prefix in the format '<deployment-name>-<subset-name>-'.
-    // Name should be unique between all of the subsets under one UnitedDeployment.
-    Name string `json:"name"`
-
-    // Indicates the node selector to form the subset. Depending on the node selector,
-    // pods provisioned could be distributed across multiple groups of nodes.
-    // A subset's nodeSelectorTerm is not allowed to be updated.
-    // +optional
-    NodeSelectorTerm corev1.NodeSelectorTerm `json:"nodeSelectorTerm,omitempty"`
-
-    // Indicates the tolerations the pods under this subset have.
-    // A subset's tolerations is not allowed to be updated.
-    // +optional
-    Tolerations []corev1.Toleration `json:"tolerations,omitempty"`
-
-    // Indicates the number of the pod to be created under this subset. Replicas could also be
-    // percentage like '10%', which means 10% of UnitedDeployment replicas of pods will be distributed
-    // under this subset. If nil, the number of replicas in this subset is determined by controller.
-    // Controller will try to keep all the subsets with nil replicas have average pods.
-    // +optional
-    Replicas *intstr.IntOrString `json:"replicas,omitempty"`
-}
-```
-
-在 `topology.subsets` 里面我们指定了多个 `subset` 组，每个 subset 其实对应了一个下属的 workload。
-当一个 subset 从这个列表里增加或去除时，UnitedDeployment 控制器会创建或删除相应的 subset workload。
-
-- 每个 subset workload 有一个独立的名字，前缀是 `<UnitedDeployment-name>-<Subset-name>-`。
-- subset workload 是根据 UnitedDeployment 的 `spec.template` 做基础来创建，同时将 `subset` 中定义的一些特殊配置（如 `nodeSelector`, `replicas`）合并进去成为一个完整的 workload。
-
-  - `subset.replicas` 可以设置**绝对值**或**百分比**。其中，百分比会根据 UnitedDeployment 的 `replicas` 总数计算出来 subset 需要的数量；而如果不设置这个 `subset.replicas`，控制器会根据总数划分给每个 subset 对应的数量。
-  - `subset.nodeSelector` 会合并到 subset workload 的 `spec.template` 下面，因此这个 workload 创建出来的 Pod 都带有对应的调度规则。
 
 ## Pod 更新管理
 
@@ -327,5 +351,32 @@ type ManualUpdate struct {
     Partitions map[string]int32 `json:"partitions,omitempty"`
 }
 ```
+
+## 水平弹性设置(HPA)
+**FEATURE STATE:** Kruise v1.5.0
+
+Horizontal Pod Autoscaler 能够支持包含 [scale subresource](https://kubernetes.io/docs/tasks/extend-kubernetes/custom-resources/custom-resource-definitions/#scale-subresource) 的自定义工作负载.
+从 kruise v1.5.0版本开始，你可以直接 HPA UnitedDeployment，如下：
+
+```yaml
+apiVersion: autoscaling/v2beta1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: example-hpa
+  namespace: default
+spec:
+  minReplicas: 1
+  maxReplicas: 3
+  metrics:
+  - resource:
+      name: cpu
+      targetAverageUtilization: 2
+    type: Resource
+  scaleTargetRef:
+    apiVersion: apps.kruise.io/v1alpha1
+    kind: UnitedDeployment
+    name: sample-ud
+```
+
 
 通过 `manual` 升级策略，用户可以指定 UnitedDeployment 下面每个 subset workload 的灰度升级数量，控制器会把不同的 `partition` 数值同步给对应的 subset workload 里面。

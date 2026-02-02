@@ -11,7 +11,7 @@ title: Installation
 | 1.6.x          | +    | +    | +    | +    | ✓    | ?    | ?    | ?    |
 | 1.7.x          | +    | +    | +    | +    | +    | ✓    | ?    | ?    |
 | 1.8.x          | +    | +    | +    | +    | +    | +    | ✓    | ?    |
-| HEAD           | ?    | ?    | ?    | +    | +    | +    | +    | ✓    |
+| 1.9.x          | ?    | ?    | ?    | +    | +    | +    | +    | ✓    |
 
 
 Key:
@@ -54,7 +54,7 @@ $ helm repo add openkruise https://openkruise.github.io/charts/
 $ helm repo update
 
 # Install the latest version.
-$ helm install kruise openkruise/kruise --version 1.8.0
+$ helm install kruise openkruise/kruise --version 1.9.0
 ```
 
 **Note:** [Changelog](https://github.com/openkruise/kruise/blob/master/CHANGELOG.md).
@@ -69,7 +69,7 @@ $ helm repo add openkruise https://openkruise.github.io/charts/
 $ helm repo update
 
 # Upgrade to the latest version.
-$ helm upgrade kruise openkruise/kruise --version 1.8.0 [--force]
+$ helm upgrade kruise openkruise/kruise --version 1.9.0 [--force]
 ```
 
 Note that:
@@ -205,6 +205,7 @@ Feature-gate controls some influential features in Kruise:
 | `ForceDeleteTimeoutExpectationFeatureGate`  | Forces cleanup of expectations that remain inconsistent after a certain period                                                           | `false` | Will keep waiting until cache and expectation are consistent                                                      |
 | `InPlaceWorkloadVerticalScaling`            | Enables in-place resource scaling support for workloads, allowing resource changes without pod recreation                                | `false` | Modifying resources in the workload will trigger pod recreation                                                   |
 | `EnablePodProbeMarkerOnServerless`          | Enables PodProbeMarker support for serverless pods                                                                                       | `false` | Does not support PodProbeMarker for serverless pods                                                               |
+| `InPlacePodVerticalScaling`                 | Indicate the kubernetes InPlacePodVerticalScaling feature gate is enabled                                                                | `false` | PodUnavailableBudget will treat inplace pod resizing as inplace pod update operation                              |
 
 If you want to configure the feature-gate, just set the parameter when install or upgrade. Such as:
 
@@ -330,24 +331,6 @@ Or, if `helm install ... --set manager.loggingFormat=json`, it will result in th
   "updateReadyPods": 0
 }
 ```
-## Versioning and Compatibility
-
-| Kruise Version | 1.18 | 1.20 | 1.22 | 1.24 | 1.26 | 1.28 | 1.30 | 1.32 |
-|----------------|------|------|------|------|------|------|------|------|
-| 1.4.x          | +    | +    | ✓    | -    | ?    | ?    | ?    | ?    |
-| 1.5.x          | +    | +    | +    | ✓    | -    | ?    | ?    | ?    |
-| 1.6.x          | +    | +    | +    | +    | ✓    | ?    | ?    | ?    |
-| 1.7.x          | +    | +    | +    | +    | +    | ✓    | ?    | ?    |
-| 1.8.x          | +    | +    | +    | +    | +    | +    | ✓    | ?    |
-| HEAD           | ?    | ?    | ?    | +    | +    | +    | +    | ✓    |
-
-
-Key:
-* ✓: Exactly the same API objects/fields in both Kruise and the Kubernetes version.
-* +: Kruise has api objects/fields that may not be present in the Kubernetes cluster, but everything they have in common will work.
-* -: The Kubernetes cluster has features the Kruise can't use (additional API objects and fields, etc).
-* ?: It is not tested against the Kubernetes cluster.
-
 
 ## Uninstall
 
@@ -364,4 +347,21 @@ To uninstall kruise if it is installed with helm charts:
 ```bash
 $ helm uninstall kruise
 release "kruise" uninstalled
+```
+
+## Kruise State Metrics
+
+[kruise-state-metrics](https://github.com/openkruise/kruise-state-metrics) watch Kubernetes API and generate metrics for objects related to OpenKruise.
+It does not reveal the health status of OpenKruise components, but provides statistics of related objects, such as：clonesets, advanced
+statefulsets and sidecarsets。
+
+```bash
+# Firstly add openkruise charts repository if you haven't do this.
+$ helm repo add openkruise https://openkruise.github.io/charts/
+
+# [Optional]
+$ helm repo update
+
+# Install the latest version.
+$ helm install kruise openkruise/kruise-state-metrics --version 0.1.0
 ```

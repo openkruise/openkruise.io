@@ -306,7 +306,7 @@
   "OpenKruise also provides high-level operation features to help you manage your applications for better efficiency, better resilience and cost-saving.": {
     "message": "OpenKruise 还提供了高级运维功能，帮助您更高效、更稳定地、更节省成本地管理应用程序。"
   },
-  "These operations includes image prewarming, container inplace restarts, workload distribution, pod probe & markering and many more": {
+  "These operations includes image prewarming, container inplace restarts, workload distribution, pod probe & marking and many more": {
     "message": "这些运维操作包括镜像预热、容器原地重启、工作负载分布、Pod 探测与标记等其众多功能。"
   },
   "Battery Included Best Practices": {
