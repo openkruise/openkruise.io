@@ -11,7 +11,7 @@ title: 安装
 | 1.6.x          | +    | +    | +    | +    | ✓    | ?    | ?    | ?    |
 | 1.7.x          | +    | +    | +    | +    | +    | ✓    | ?    | ?    |
 | 1.8.x          | +    | +    | +    | +    | +    | +    | ✓    | ?    |
-| HEAD           | ?    | ?    | ?    | +    | +    | +    | +    | ✓    |
+| 1.9.x          | ?    | ?    | ?    | +    | +    | +    | +    | ✓    |
 
 
 标记:
@@ -48,7 +48,7 @@ $ helm repo add openkruise https://openkruise.github.io/charts/
 $ helm repo update
 
 # Install the latest version.
-$ helm install kruise openkruise/kruise --version 1.8.0
+$ helm install kruise openkruise/kruise --version 1.9.0
 ```
 
 **注意:** [Changelog](https://github.com/openkruise/kruise/blob/master/CHANGELOG.md)。
@@ -63,7 +63,7 @@ $ helm repo add openkruise https://openkruise.github.io/charts/
 $ helm repo update
 
 # Upgrade to the latest version.
-$ helm upgrade kruise openkruise/kruise --version 1.8.0 [--force]
+$ helm upgrade kruise openkruise/kruise --version 1.9.0 [--force]
 ```
 
 注意：
@@ -189,6 +189,7 @@ Feature-gate 控制了 Kruise 中一些有影响性的功能：
 | `ForceDeleteTimeoutExpectationFeatureGate`  | 强制清理超过一段时间仍然不一致的 expectation                                          | `false` | 会一直等待缓存和 expectation 一致                                             | 
 | `InPlaceWorkloadVerticalScaling`            | 启用 workload 原地资源变配的支持，即允许原地升级资源变更                                     | `false` | 修改 workload 中资源会重建 pod                                              | 
 | `EnablePodProbeMarkerOnServerless`          | 启用 PodProbeMarker serverless pod 支持协议                                 | `false` | 不支持对 serverless pod 进行 PodProbeMarker                               |
+| `InPlacePodVerticalScaling`                 | 说明Kubernetes的InPlacePodVerticalScaling功能开关                            | `false` | PodUnavailableBudget 会把原地变配操作视作原地更新操作                               |
 
 如果你要配置 feature-gate，只要在安装或升级时配置参数即可，比如：
 
@@ -326,7 +327,7 @@ release "kruise" uninstalled
 ## Kruise State Metrics
 
 [kruise-state-metrics](https://github.com/openkruise/kruise-state-metrics) 监听 Kubernetes API 并生成 OpenKruise
-有关对象状态的度量指标。它不关注单个 OpenKruise 组件的健康状况，而是关注内部各种对象的健康状况，例如：clonesets，advanced
+有关对象状态的度量指标。它不关注单个 OpenKruise 组件的健康状况，而是关注内部各种对象的健康状况，例如：clonesets, advanced
 statefulsets and sidecarsets。
 
 ```bash

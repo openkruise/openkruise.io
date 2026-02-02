@@ -287,7 +287,7 @@ release "kruise" uninstalled
 
 ## Kruise State Metrics
 
-[kruise-state-metrics](https://github.com/openkruise/kruise-state-metrics) 监听 Kubernetes API 并生成 OpenKruise 有关对象状态的度量指标。它不关注单个 OpenKruise 组件的健康状况，而是关注内部各种对象的健康状况，例如：clonesets，advanced statefulsets and sidecarsets。
+[kruise-state-metrics](https://github.com/openkruise/kruise-state-metrics) 监听 Kubernetes API 并生成 OpenKruise 有关对象状态的度量指标。它不关注单个 OpenKruise 组件的健康状况，而是关注内部各种对象的健康状况，例如：clonesets, advanced statefulsets and sidecarsets。
 
 ```bash
 # Firstly add openkruise charts repository if you haven't do this.

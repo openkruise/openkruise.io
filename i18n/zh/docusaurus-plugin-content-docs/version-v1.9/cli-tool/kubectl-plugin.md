@@ -68,19 +68,39 @@ $ kubectl kruise scale --replicas=3 cloneset nginx
 
 ### rollout
 
-可用的子命令: `history`, `pause`, `restart`, `resume`, `status`, `undo`, `approve`。
+管理 rollout 资源。此命令提供对 Kruise Rollout 对象的深入检查和控制。
+
+**可用命令：**
+
+* **`approve`**: 手动将 Rollout 推进到下一步。当 rollout 因手动验证而暂停时，此命令表示金丝雀版本已通过验证，可以进行全面 rollout。
+* **`undo`**: 将工作负载回滚到其先前版本。这是一个关键命令，可在发现新版本不稳定或有错误时快速恢复部署。
+* **`history`**: 查看工作负载的修订历史。
+* **`pause`**: 暂停一个 Rollout。
+* **`resume`**: 恢复暂停的 Rollout。
+* **`restart`**: 重启一个 Rollout。
+* **`status`**: 显示 Rollout 的状态。
+
+**使用示例：**
 
 ```bash
 $ kubectl kruise rollout undo cloneset/nginx
 
-# built-in statefulsets
+# 内建 statefulsets
 $ kubectl kruise rollout status statefulsets/sts1
 
 # kruise statefulsets
 $ kubectl kruise rollout status statefulsets.apps.kruise.io/sts2
 
-# approve a kruise rollout resource named "rollout-demo" in "ns-demo" namespace
+# 批准在 "ns-demo" 命名空间中名为 "rollout-demo" 的 kruise rollout 资源
 $ kubectl-kruise rollout approve rollout-demo -n ns-demo
+```
+### describe
+
+对 Rollout 资源进行深入检查，包括其步骤状态、历史记录、条件和最近事件。
+
+```bash
+# 检查 default 命名空间中的 "rollouts-demo" Rollout:
+kubectl kruise describe rollout rollouts-demo -n default
 ```
 
 ### set

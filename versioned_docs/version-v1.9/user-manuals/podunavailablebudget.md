@@ -117,6 +117,28 @@ spec:
   ...
 ```
 
+### Control Protected Operations
+
+**FEATURE STATE:** Kruise v1.9.0
+
+```yaml
+apiVersion: policy.kruise.io/v1alpha1
+kind: PodUnavailableBudget
+metadata:
+  name: crd-demo
+  annotations:
+    # By default,  DELETE,EVICT,UPDATE are protected
+    # supported operations:
+    # DELETE: pod deletion
+    # EVICT: pod eviction
+    # UPDATE: pod inplace-update
+    # RESIZE: pod inplace-resizing
+    kruise.io/pub-protect-operations: "EVICT, UPDATE"
+spec:
+  ...
+```
+Note: if featureGate InPlacePodVerticalScaling is disabled, inplace-resizing operation will be treated as inplace-update
+
 ## Implementation
 
 This program customizes the PodUnavailableBudget (later referred to as PUB) CRD resource to describe the desired state

@@ -89,9 +89,9 @@ spec:
 
 UnitedDeployment offer the option to define the `MaxReplicas` for each subset, allowing you to effectively manage your resource allocation.
 
-### MaxReplicas Limits the Maximum Number of Replicas for a Subset
+### MaxReplicas 
 
-For example, assuming there is an application that typically runs with a maximum of 4 replicas on regular nodes. However, if the number of replicas exceeds 4, the exceeded Pods will automatically scale them to elastic nodes.
+MaxReplicas limits the maximum number of replicas for a subset. For example, assuming there is an application that typically runs with a maximum of 4 replicas on regular nodes. However, if the number of replicas exceeds 4, the exceeded Pods will automatically scale them to elastic nodes.
 
 ```yaml
 apiVersion: apps.kruise.io/v1alpha1
@@ -126,138 +126,15 @@ Please **Note** the following:
 2. If `MaxReplicas` is left empty (null), there are no limitations imposed on the number of replicas for that particular subset.
 3. To prevent situations where all `MaxReplicas` requirements are met and no subsets can be scaled up, it is crucial to have **at least one** subset with an empty(null) `MaxReplicas` value.
 
-### MinReplicas Ensures the Minimum Number of Replicas for a Subset
-For example, when scattering by region, you can use `minReplicas` to ensure that each region has at least one replica, while the remaining replicas are elastically deployed according to an adaptive scheduling strategy.
+### MinReplicas 
 
-## Customize pod configuration of subset
-**FEATURE STATE:** Kruise v1.5.0
+MinReplicas ensures the minimum number of replicas for a subset. For example, when scattering by region, you can use `minReplicas` to ensure that each region has at least one replica, while the remaining replicas are elastically deployed according to an adaptive scheduling strategy.
 
-Since v1.5.0, one can customize pod spec field other than nodeSelectorTerm and tolerations, e.g. env, resources.
+## Pod Customization for SubSets
 
-**Note:** it is not recommended to customize subset image since it may cause chaos into update function.
+### Scheduling Customization
 
-```yaml
-apiVersion: apps.kruise.io/v1alpha1
-kind: UnitedDeployment
-metadata:
-  name: sample-ud
-spec:
-  replicas: 6
-  revisionHistoryLimit: 10
-  selector:
-    matchLabels:
-      app: sample
-  template:
-    # statefulSetTemplate or advancedStatefulSetTemplate or cloneSetTemplate or deploymentTemplate
-    statefulSetTemplate:
-      ...
-  topology:
-    subsets:
-    - name: subset-a
-      ...
-      # patch container resources, env:
-      patch:
-        spec:
-          containers:
-          - name: main
-            resources:
-              limits:
-                cpu: "2"
-                memory: 800Mi
-            env:
-            - name: subset
-              value: subset-a
-    - name: subset-b
-      ...
-      # patch container resources, env:
-      patch:
-        spec:
-          containers:
-          - name: main
-            resources:
-              limits:
-                cpu: "2"
-                memory: 800Mi
-            env:
-            - name: subset
-              value: subset-b
-```
-
-## HPA UnitedDeployment
-**FEATURE STATE:** Kruise v1.5.0
-
-Horizontal Pod Autoscaler can support Custom Resource workload which has [scale subresource](https://kubernetes.io/docs/tasks/extend-kubernetes/custom-resources/custom-resource-definitions/#scale-subresource).
-Since v1.5.0 you can HPA UnitedDeployment directly, as follows:
-
-```yaml
-apiVersion: autoscaling/v2beta1
-kind: HorizontalPodAutoscaler
-metadata:
-  name: example-hpa
-  namespace: default
-spec:
-  minReplicas: 1
-  maxReplicas: 3
-  metrics:
-  - resource:
-      name: cpu
-      targetAverageUtilization: 2
-    type: Resource
-  scaleTargetRef:
-    apiVersion: apps.kruise.io/v1alpha1
-    kind: UnitedDeployment
-    name: sample-ud
-```
-
-
-## Adaptive Scheduling Strategy
-**FEATURE STATE:** Kruise v1.8.0
-
-UnitedDeployment supports configuring two different scheduling strategies through the `scheduleStrategy` field: **Fixed** and **Adaptive**. The behaviors of these two strategies are as follows:
-
-### Fixed Strategy
-- **Behavior**: Strictly follows the predefined Subset distribution rules to schedule Pods. Even if Pod scheduling fails due to insufficient node resources or scheduling conflicts, it will continue attempting to schedule within the original Subset.
-- **Use Cases**: Scenarios requiring precise control over workload distribution, such as environments with specific node resource isolation or high compliance requirements.
-
-### Adaptive Strategy
-- **Behavior**: When the target Subset cannot schedule a Pod, it automatically schedules the Pod to other Subsets with available resources. The scheduling priority follows the order of the Subset list.
-- **Features**:
-  - **Dynamic Resource Reschedule**: When a Subset has insufficient resources, pods are automatically rescheduled to other subsets.
-  - **Configurable Rescheduling Timeout**: The rescheduling determination time window can be set using the `rescheduleCriticalSeconds` parameter (default is 30 seconds).
-- **Use Cases**: Scenarios requiring highly elastic resource scheduling, such as hybrid usage of regular node pools and elastic node pools.
-
-#### Example: Hybrid Node Pool Scheduling Strategy
-
-```yaml
-apiVersion: apps.kruise.io/v1alpha1
-kind: UnitedDeployment
-metadata:
-  name: ud-demo
-spec:
-  #...
-  topology:
-    subsets:
-    - name: subset-a
-      maxReplicas: 3
-      #...
-    - name: subset-b
-      #...
-    scheduleStrategy:
-      # Scheduling strategy. Adaptive mode will reschedule failed Pods to other
-      type: Adaptive
-      adaptive:
-        rescheduleCriticalSeconds: 30
-```
-
-#### Scenario Description
-- **Off-Peak Period**: Prioritizes scheduling Pods in the regular node pool (subset-a) to fully utilize fixed resources.
-- **Peak Period**: When subset-a's node resources are insufficient, Pods exceeding `maxReplicas` are automatically scheduled to the elastic node pool (subset-b).
-- **Failure Recovery**: When all nodes in subset-a become unavailable, all new Pods will automatically migrate to subset-b.
-
-
-## Pod Distribution Management
-
-This controller provides `spec.topology` to describe the pod distribution specification.
+This controller provides `spec.topology` to describe the pod scheduling specification.
 
 ```go
 // Topology defines the spread detail of each subset under UnitedDeployment.
@@ -325,6 +202,148 @@ In this case, the indicated `subset.replicas` is ineffective and the controller
 will automatically scale each subset's replicas to match the total replicas number.
 The controller will try its best to apply this adjustment smoothly.
 
+### Arbitrary Pod Customization of
+**FEATURE STATE:** Kruise v1.5.0
+
+Since v1.5.0, one can customize pod spec field other than nodeSelectorTerm and tolerations, e.g. env, resources.
+
+**Note:** it is not recommended to customize subset image since it may cause chaos into update function.
+
+```yaml
+apiVersion: apps.kruise.io/v1alpha1
+kind: UnitedDeployment
+metadata:
+  name: sample-ud
+spec:
+  replicas: 6
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: sample
+  template:
+    # statefulSetTemplate or advancedStatefulSetTemplate or cloneSetTemplate or deploymentTemplate
+    statefulSetTemplate:
+      ...
+  topology:
+    subsets:
+    - name: subset-a
+      ...
+      # patch container resources, env:
+      patch:
+        spec:
+          containers:
+          - name: main
+            resources:
+              limits:
+                cpu: "2"
+                memory: 800Mi
+            env:
+            - name: subset
+              value: subset-a
+    - name: subset-b
+      ...
+      # patch container resources, env:
+      patch:
+        spec:
+          containers:
+          - name: main
+            resources:
+              limits:
+                cpu: "2"
+                memory: 800Mi
+            env:
+            - name: subset
+              value: subset-b
+```
+
+## Adaptive Scheduling Strategy
+**FEATURE STATE:** Kruise v1.8.0
+
+UnitedDeployment supports configuring two different scheduling strategies through the `scheduleStrategy` field: **Fixed** and **Adaptive**. The behaviors of these two strategies are as follows:
+
+### Fixed Strategy
+- **Behavior**: Strictly follows the predefined Subset distribution rules to schedule Pods. Even if Pod scheduling fails due to insufficient node resources or scheduling conflicts, it will continue attempting to schedule within the original Subset.
+- **Use Cases**: Scenarios requiring precise control over workload distribution, such as environments with specific node resource isolation or high compliance requirements.
+
+### Adaptive Strategy
+- **Behavior**: When the target Subset cannot schedule a Pod, it automatically schedules the Pod to other Subsets *permanently* with available resources. The scheduling priority follows the order of the Subset list.
+- **Features**:
+  - **Dynamic Resource Reschedule**: When a Subset has insufficient resources, pods are automatically rescheduled to other subsets.
+  - **Configurable Rescheduling Timeout**: The rescheduling determination time window can be set using the `rescheduleCriticalSeconds` parameter (default is 30 seconds).
+- **Use Cases**: Scenarios requiring highly elastic resource scheduling, such as hybrid usage of regular node pools and elastic node pools.
+
+#### Example: Hybrid Node Pool Scheduling Strategy
+
+```yaml
+apiVersion: apps.kruise.io/v1alpha1
+kind: UnitedDeployment
+metadata:
+  name: ud-demo
+spec:
+  #...
+  topology:
+    subsets:
+    - name: subset-a
+      maxReplicas: 3
+      #...
+    - name: subset-b
+      #...
+    scheduleStrategy:
+      # Scheduling strategy. Adaptive mode will reschedule failed Pods to other
+      type: Adaptive
+      adaptive:
+        rescheduleCriticalSeconds: 30
+```
+
+#### Scenario Description
+- **Off-Peak Period**: Prioritizes scheduling Pods in the regular node pool (subset-a) to fully utilize fixed resources.
+- **Peak Period**: When subset-a's node resources are insufficient, Pods exceeding `maxReplicas` are automatically scheduled to the elastic node pool (subset-b).
+- **Failure Recovery**: When all nodes in subset-a become unavailable, all new Pods will automatically migrate to subset-b.
+
+
+### Reservation Strategy
+
+**FEATURE STATE:** Kruise v1.9.0
+
+- **Behavior**: When the target subset is unschedulable, *temporarily* reschedule the Pod to another Subset with available resources, and when the target Subset becomes available, the replica will be moved back to the original target Subset. Scheduling priority still follows the Subset list order.
+- **Features**:
+  - Pod Reservation: Pods that are in Pending state due to scheduling failure will be reserved, and the scheduler will continue trying to schedule them in the target Subset.
+  - Temporary Replica: Before the reserved Pod is successfully scheduled, a temporary replica will be created in the next Subset to ensure the total number of replicas meets expectations. The temporary replica will be deleted after the reserved Pod is successfully scheduled and ready.
+  - Recursive Behavior: The temporary replica creation is recursive: when the Subset where a temporary replica resides still unschedulable, the replica will also be reserved and a new temporary replica will be created recursively in the next-of-the-next Subset until the last Subset is tried or the replica count is satisfied.
+- **Applicable Scenarios**:
+  - In elastic scenarios with strict topology structure requirements, ensure the overall replica count meets expectations through short-term topology imbalance (e.g., temporarily dealing with insufficient resources in a specific region when distributing by geographic location).
+  - Expect to use certain types of resources as much as possible without losing replica count (such as self-built IDC rooms, cheap spot instances, etc.).
+
+#### Example: Make maximum use of owned node resources
+
+```yaml
+# adaptive-ud.yaml
+apiVersion: apps.kruise.io/v1alpha1
+kind: UnitedDeployment
+metadata:
+  name: sample-ud
+spec:
+  # ...
+  topology:
+    scheduleStrategy:
+      type: Adaptive
+      adaptive:
+        # create a temp pods after 30 seconds after schedule failed
+        reserveUnschedulablePods: true
+        rescheduleCriticalSeconds: 30
+    subsets:
+      - name: ecs
+        nodeSelectorTerm: # select ECS nodes
+      - name: vk
+        nodeSelectorTerm: # select virtual nodes
+```
+
+#### Scenario Description
+
+- Prioritize scheduling Pods on owned cloud server node pools to fully utilize fixed resources
+- When the cloud server node pool has insufficient resources due to node failures, expansion of other applications, etc., temporarily create elastic instances through virtual nodes
+- After resources are restored due to node scaling or contraction of other applications, delete the elastic instances and migrate the replicas back to the owned cloud server node pools.
+
 ## Pod Update Management
 
 When `spec.template` is updated, a upgrade progress will be triggered.
@@ -357,3 +376,30 @@ type ManualUpdate struct {
 
 `Manual` update strategy allows users to control the update progress by indicating
 the `partition` of each subset. The controller will pass the `partition` to each subset.
+
+
+## HPA UnitedDeployment
+**FEATURE STATE:** Kruise v1.5.0
+
+Horizontal Pod Autoscaler can support Custom Resource workload which has [scale subresource](https://kubernetes.io/docs/tasks/extend-kubernetes/custom-resources/custom-resource-definitions/#scale-subresource).
+Since v1.5.0 you can HPA UnitedDeployment directly, as follows:
+
+```yaml
+apiVersion: autoscaling/v2beta1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: example-hpa
+  namespace: default
+spec:
+  minReplicas: 1
+  maxReplicas: 3
+  metrics:
+  - resource:
+      name: cpu
+      targetAverageUtilization: 2
+    type: Resource
+  scaleTargetRef:
+    apiVersion: apps.kruise.io/v1alpha1
+    kind: UnitedDeployment
+    name: sample-ud
+```

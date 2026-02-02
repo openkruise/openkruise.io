@@ -48,7 +48,7 @@ function getNextVersionName() {
           includeCurrentVersion: true,
           lastVersion: undefined,
           onlyIncludeVersions: (() => {
-            return ['current', ...versions.slice(0, 2)];
+            return ['current', ...versions.slice(0, 3)];
           })(),
           versions: {
             current: {

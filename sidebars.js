@@ -35,28 +35,24 @@ module.exports = {
       collapsed: true,
       items: [
         {
-          'Advanced Workloads': [
-            'user-manuals/cloneset',
-            'user-manuals/advancedstatefulset',
-            'user-manuals/advanceddaemonset',
-            'user-manuals/broadcastjob',
-            'user-manuals/advancedcronjob',
+          "Advanced Workloads": [
+            "user-manuals/cloneset",
+            "user-manuals/advancedstatefulset",
+            "user-manuals/advanceddaemonset",
+            "user-manuals/broadcastjob",
+            "user-manuals/advancedcronjob",
+            "user-manuals/sidecarset",
+            "user-manuals/uniteddeployment"
           ],
-          'Sidecar container Management': [
-            'user-manuals/sidecarset',
-            "user-manuals/jobsidecarterminator",
-            'user-manuals/containerlaunchpriority',
-          ],
-          'Multi-domain Management': [
-            'user-manuals/workloadspread',
-            'user-manuals/uniteddeployment',
-          ],
-          'Enhanced Operations': [
-            'user-manuals/containerrecreaterequest',
-            'user-manuals/imagepulljob',
+          "Enhanced Operations": [
+            "user-manuals/containerrecreaterequest",
+            "user-manuals/imagepulljob",
             "user-manuals/resourcedistribution",
             "user-manuals/persistentpodstate",
             "user-manuals/podprobemarker",
+            "user-manuals/workloadspread",
+            "user-manuals/jobsidecarterminator",
+            "user-manuals/containerlaunchpriority"
           ],
           "Application Protection": [
             'user-manuals/deletionprotection',
@@ -97,6 +93,7 @@ module.exports = {
       items: [
         'operator-manuals/availability',
         'operator-manuals/troubleshooting',
+        'operator-manuals/upgrade',
       ],
     },
     {

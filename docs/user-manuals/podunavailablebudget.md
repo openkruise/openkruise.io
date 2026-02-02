@@ -7,7 +7,7 @@ import TabItem from '@theme/TabItem';
 
 **FEATURE STATE:** Kruise v0.10.0
 
-**Note: v1beta1 is available from Kruise v1.9.0.**
+**Note: v1beta1 is available from Kruise v2.0.0.**
 
 Kubernetes offers [Pod Disruption Budget](https://kubernetes.io/docs/tasks/run-application/configure-pdb/) to help you
 run highly available applications even when you introduce
@@ -214,14 +214,35 @@ kind: PodUnavailableBudget
 metadata:
   name: crd-demo
   annotations:
-    # Specify the total number of replicas to be protected via annotation (string type)
+    # Specify the target workload replicas
     pub.kruise.io/protect-total-replicas: "5"
 spec:
   ...
 ```
-
   </TabItem>
 </Tabs>
+
+### Control Protected Operations
+
+**FEATURE STATE:** Kruise v1.9.0
+
+```yaml
+apiVersion: policy.kruise.io/v1alpha1
+kind: PodUnavailableBudget
+metadata:
+  name: crd-demo
+  annotations:
+    # By default,  DELETE,EVICT,UPDATE are protected
+    # supported operations:
+    # DELETE: pod deletion
+    # EVICT: pod eviction
+    # UPDATE: pod inplace-update
+    # RESIZE: pod inplace-resizing
+    kruise.io/pub-protect-operations: "EVICT, UPDATE"
+spec:
+  ...
+```
+Note: if featureGate InPlacePodVerticalScaling is disabled, inplace-resizing operation will be treated as inplace-update
 
 ## Implementation
 

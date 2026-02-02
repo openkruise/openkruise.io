@@ -7,7 +7,7 @@ import TabItem from '@theme/TabItem';
 
 **FEATURE STATE:** Kruise v0.10.0
 
-**注意: v1beta1 从 Kruise v1.9.0 版本开始可用。**
+**注意: v1beta1 从 Kruise v2.0.0 版本开始可用。**
 
 在诸多[Voluntary Disruption](https://kubernetes.io/docs/concepts/workloads/pods/disruptions/) 场景中 Kubernetes [Pod Disruption Budget](https://kubernetes.io/docs/tasks/run-application/configure-pdb/)
 通过限制同时中断的Pod数量，来保证应用的高可用性。然而，PDB只能防控通过 [Eviction API](https://kubernetes.io/docs/tasks/administer-cluster/safely-drain-node/#eviction-api) 来触发的Pod Disruption，例如：kubectl drain驱逐node上面的所有Pod。
@@ -205,17 +205,40 @@ metadata:
 spec:
   ...
 ```
-
   </TabItem>
 </Tabs>
 
-## Implementation
+### 精细化控制保护的Pod操作类型
+
+**FEATURE STATE:** Kruise v1.9.0
+
+```yaml
+apiVersion: policy.kruise.io/v1alpha1
+kind: PodUnavailableBudget
+metadata:
+  name: crd-demo
+  annotations:
+    # By default,  DELETE,EVICT,UPDATE are protected
+    # supported operations:
+    # DELETE: pod deletion
+    # EVICT: pod eviction
+    # UPDATE: pod inplace-update
+    # RESIZE: pod inplace-resizing
+    kruise.io/pub-protect-operations: "EVICT, UPDATE"
+spec:
+  ...
+```
+Note: if featureGate InPlacePodVerticalScaling is disabled, inplace-resizing operation will be treated as inplace-update
+
+
+## 实现原理
+>>>>>>> fe63b9281 (add documents for 1.9 release)
 PUB实现原理如下，详细设计请参考：[Pub Proposal](https://github.com/openkruise/kruise/blob/master/docs/proposals/20210614-podunavailablebudget.md)
 
 ![PodUnavailableBudget](/img/docs/user-manuals/podunavailablebudget.png)
 
-## Comparison with Kubernetes native PDB
-Kubernetes PDB是通过Eviction API接口来实现Pod安全防护，而Kruise PDB则是拦截了Pod Validating Request来实现诸多Voluntary Disruption场景的防护能力。
+## 和Kubernetes PDB的关系
+Kubernetes PDB是通过Eviction API接口来实现Pod安全防护，而Kruise PDB则是拦截了Pod Validating Request来实现诸多Pod操作的可用性保护。
 **Kruise PUB包含了PDB的所有能力（防护Pod Eviction），业务可以根据需要两者同时使用，也可以单独使用Kruise PUB（推荐方式）。**
 
 ## feature-gates
@@ -225,7 +248,7 @@ PodUnavailableBudget Pod安全防护默认是关闭的，如果要开启请通�
 $ helm install kruise https://... --set featureGates="PodUnavailableBudgetDeleteGate=true\,PodUnavailableBudgetUpdateGate=true"
 ```
 
-## PodUnavailableBudget Status
+## PodUnavailableBudget状态
 ```yaml
 # kubectl describe podunavailablebudgets web-server-pub
 Name:         web-server-pub

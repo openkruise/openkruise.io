@@ -7,7 +7,7 @@ import TabItem from '@theme/TabItem';
 
 CloneSet 控制器提供了高效管理无状态应用的能力，它可以对标原生的 `Deployment`，但 `CloneSet` 提供了很多增强功能。
 
-**注意: v1beta1 从 Kruise v1.9.0 版本开始可用。**
+**注意: v1beta1 从 Kruise v2.0.0 版本开始可用。**
 
 按照 Kruise 的[命名规范](/blog/workload-classification-guidance)，CloneSet 是一个直接管理 Pod 的 **Set** 类型 workload。
 一个简单的 CloneSet yaml 文件如下：

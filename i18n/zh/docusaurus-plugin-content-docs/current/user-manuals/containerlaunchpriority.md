@@ -22,6 +22,7 @@ Container Launch Priority 提供了**控制一个 Pod 中容器启动顺序**的
 ```yaml
 apiVersion: v1
 kind: Pod
+metadata:
   annotations:
     apps.kruise.io/container-launch-priority: Ordered
 spec:
@@ -55,6 +56,46 @@ spec:
 1. 值的范围在 `[-2147483647, 2147483647]`，不写默认是 `0`。
 2. 权重高的容器，会保证在权重低的容器之前启动。
 3. 相同权重的容器不保证启动顺序。
+
+## 高级示例：多个具有混合优先级的容器
+
+以下是一个包含三个容器的 Pod 示例，每个容器分配了不同的启动优先级：
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: multi-priority-pod
+  annotations:
+    apps.kruise.io/container-launch-priority: Ordered
+spec:
+  containers:
+    - name: init
+      image: busybox
+      command: ["sh", "-c", "echo Init"]
+      env:
+        - name: KRUISE_CONTAINER_PRIORITY
+          value: "10"
+    - name: main
+      image: nginx
+      env:
+        - name: KRUISE_CONTAINER_PRIORITY
+          value: "5"
+    - name: sidecar
+      image: busybox
+      command: ["sh", "-c", "echo Sidecar"]
+      env:
+        - name: KRUISE_CONTAINER_PRIORITY
+          value: "1"
+```
+
+
+**预期行为：**
+- `init` 容器（优先级 10）将首先启动。
+- `main` 容器（优先级 5）将在 `init` 运行并就绪后启动。
+- `sidecar` 容器（优先级 1）将在 `init` 和 `main` 都运行并就绪后最后启动。
+
+这允许您控制 Pod 中容器之间的复杂启动依赖关系。
 
 ## 使用要求
 
