@@ -155,6 +155,12 @@ function getNextVersionName() {
             label: 'Kruise-Game',
             activeBasePath: 'kruisegame',
           },
+          {
+            to: 'kruiseagents/introduction',
+            position: 'left',
+            label: 'Kruise-Agents',
+            activeBasePath: 'kruiseagents',
+          },
           {to: '/blog', label: 'Blog', position: 'left'},
           {to: '/adopters', label: 'Adopters', position: 'left'},
           {
