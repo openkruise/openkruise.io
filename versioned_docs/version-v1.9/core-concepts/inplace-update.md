@@ -140,7 +140,7 @@ At this moment, we can find the `apps.kruise.io/inplace-update-state` annotation
   // "nextContainerRefMetadata": {...},                            // the next containers that should update env from annotations/labels
   "preCheckBeforeNext": {"containersRequiredReady": ["sidecar"]},  // the pre-check must be satisfied before the next containers can update
   "containerBatchesRecord":[
-    {"timestamp":"2022-03-22T09:06:55Z","containers":["sidecar"]}  // the first batch of containers that have updated (it just means the spec of containers has updated, such as images in pod.spec.container or annotaions/labels, but dosn't mean the real containers on node have been updated completely)
+    {"timestamp":"2022-03-22T09:06:55Z","containers":["sidecar"]}  // the first batch of containers that have updated (it just means the spec of containers has updated, such as images in pod.spec.container or annotations/labels, but doesn't mean the real containers on node have been updated completely)
   ]
 }
 ```

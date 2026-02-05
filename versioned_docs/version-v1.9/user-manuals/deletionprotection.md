@@ -15,9 +15,9 @@ Then, users can add the label named `policy.kruise.io/delete-protection` to some
 - `Always`: this object will always be forbidden to be deleted, unless the label is removed
 - `Cascading`: this object will be forbidden to be deleted, if it has active resources owned
 
-The resources supported and the cascading judgement relationship:
+The resources supported and the cascading judgment relationship:
 
-| Kind                        | Group                  | Version            | **Cascading** judgement                            |
+| Kind                        | Group                  | Version            | **Cascading** judgment                            |
 | --------------------------- | ---------------------- | ------------------ | ----------------------------------------------------
 | `Namespace`                 | core                   | v1                 | whether there is active Pods in this namespace     |
 | `CustomResourceDefinition`  | apiextensions.k8s.io   | v1beta1, v1        | whether there is existing CRs of this CRD          |
