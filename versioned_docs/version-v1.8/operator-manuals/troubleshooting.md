@@ -4,7 +4,7 @@ title: Troubleshooting
 
 ## Investigate log
 
-OpenKruise uses klog for logging, the kruise chart comes with a default log level of 4, which is verbose enough for most daily trouble shooting. One can further increase the log level to 5 and above to get all the debug informations.
+OpenKruise uses klog for logging, the kruise chart comes with a default log level of 4, which is verbose enough for most daily troubleshooting. You can further increase the log level to 5 and above to get all the debug information.
 
 From OpenKruise 1.7, we are adding support for structured logs, which natively support (key, value) pairs and object references. And logs can also be outputted in JSON format using `helm install ... --set manager.loggingFormat=json.`
 

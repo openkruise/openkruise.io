@@ -346,8 +346,8 @@ spec:
 
 ## Pod Update Management
 
-When `spec.template` is updated, a upgrade progress will be triggered.
-New template will be patch to each subset workload, which triggers subset controller
+When `spec.template` is updated, an upgrade process will be triggered.
+New template will be patched to each subset workload, which triggers subset controller
 to update their pods.
 Furthermore, if subset workload supports `partition`, like StatefulSet, AdvancedStatefulSet
 is also able to provide `Manual` update strategy.

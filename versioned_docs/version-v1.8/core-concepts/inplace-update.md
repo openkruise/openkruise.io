@@ -11,7 +11,7 @@ Workloads that support in-place update:
 - [Advanced DaemonSet](/docs/user-manuals/advanceddaemonset)
 - [SidecarSet](/docs/user-manuals/sidecarset)
 
-Currently `CloneSet`, `Advanced StatefulSet` and `Advanced DaemonSet` re-use the same code package [`./pkg/util/inplaceupdate`](https://github.com/openkruise/kruise/tree/master/pkg/util/inplaceupdate) and have similar behaviours of in-place update. In this article, we would like to introduce the usage and workflow of them.
+Currently `CloneSet`, `Advanced StatefulSet` and `Advanced DaemonSet` reuse the same code package [`./pkg/util/inplaceupdate`](https://github.com/openkruise/kruise/tree/master/pkg/util/inplaceupdate) and have similar behaviors of in-place update. In this article, we would like to introduce the usage and workflow of them.
 
 Note that the in-place update workflow of `SidecarSet` is a little different from the other workloads, such as it will not set Pod to not-ready before update. So the things we talk below do not totally go for `SidecarSet`.
 
@@ -140,7 +140,7 @@ At this moment, we can find the `apps.kruise.io/inplace-update-state` annotation
   // "nextContainerRefMetadata": {...},                            // the next containers that should update env from annotations/labels
   "preCheckBeforeNext": {"containersRequiredReady": ["sidecar"]},  // the pre-check must be satisfied before the next containers can update
   "containerBatchesRecord":[
-    {"timestamp":"2022-03-22T09:06:55Z","containers":["sidecar"]}  // the first batch of containers that have updated (it just means the spec of containers has updated, such as images in pod.spec.container or annotaions/labels, but dosn't mean the real containers on node have been updated completely)
+    {"timestamp":"2022-03-22T09:06:55Z","containers":["sidecar"]}  // the first batch of containers that have updated (it just means the spec of containers has updated, such as images in pod.spec.container or annotations/labels, but doesn't mean the real containers on node have been updated completely)
   ]
 }
 ```
