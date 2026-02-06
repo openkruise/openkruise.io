@@ -47,10 +47,10 @@ module.exports = {
             collapsed: false,
             items: [
                 'developer-manuals/contribution',
-                'developer-manuals/faq',
                 'developer-manuals/e2b-client',
                 'developer-manuals/go-client',
                 'developer-manuals/python-client',
+                'developer-manuals/faq',
             ],
         },
   ],

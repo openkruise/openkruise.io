@@ -56,8 +56,8 @@ If you need to access sandbox-manager via HTTPS, you need to install a TLS certi
 trusted certificate. If you don't have a trusted certificate, you can use a self-signed one, refer to the following
 docs:
 
-- [use-self-signed-cert.md](./use-self-signed-cert.md)
-- [cert-manager.md](./cert-manager.md)
+- [use-self-signed-cert.md](../best-practices/use-self-signed-cert.md)
+- [cert-manager.md](../best-practices/cert-manager.md)
 
 You can install your certificate with the following command:
 

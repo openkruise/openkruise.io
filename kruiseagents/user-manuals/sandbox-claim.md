@@ -1,3 +1,11 @@
+---
+id: sandbox-claim
+title: Claiming Sandboxes
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 # Claiming Sandboxes
 
 Agent applications can obtain a sandbox from OpenKruise Agents in the following ways.
