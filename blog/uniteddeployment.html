@@ -10,8 +10,8 @@
 
 
 <link rel="search" type="application/opensearchdescription+xml" title="OpenKruise" href="/opensearch.xml"><link rel="stylesheet" href="/assets/css/styles.7a881dd0.css">
-<script src="/assets/js/runtime~main.60062ab7.js" defer="defer"></script>
-<script src="/assets/js/main.1b7d805f.js" defer="defer"></script>
+<script src="/assets/js/runtime~main.3f033749.js" defer="defer"></script>
+<script src="/assets/js/main.53915e94.js" defer="defer"></script>
 </head>
 <body class="navigation-with-keyboard">
 <svg style="display: none;"><defs>
@@ -62,7 +62,7 @@ new version of subset workload template.
 Note that UnitedDeployment does not control
 the entire rollout process of all subset workloads, which is typically done by another rollout
 controller built on top of it. Since the replica number in each <code>Subset</code> can be different,
-it will be much more convenient to allow user to specify the individual rollout <code>Partition</code> of each
+it will be much more convenient to allow users to specify the individual rollout <code>Partition</code> of each
 subset workload instead of using one <code>Partition</code> to rule all, so that they can be upgraded in the same pace.
 UnitedDeployment provides <code>ManualUpdate</code> strategy to customize per subset rollout <code>Partition</code>.</p>
 <div class="language-text codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-text codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token plain">type UnitedDeploymentUpdateStrategy struct {</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">	// Type of UnitedDeployment update.</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">	Type UpdateStrategyType</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">	// Indicates the partition of each subset.</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">	ManualUpdate *ManualUpdate</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">}</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain" style="display:inline-block"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">type ManualUpdate struct {</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">	// Indicates number of subset partition.</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">	Partitions map[string]int32</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">}</span><br></span></code></pre></div></div>

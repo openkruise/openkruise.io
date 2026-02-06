@@ -10,8 +10,8 @@
 
 
 <link rel="search" type="application/opensearchdescription+xml" title="OpenKruise" href="/opensearch.xml"><link rel="stylesheet" href="/assets/css/styles.7a881dd0.css">
-<script src="/assets/js/runtime~main.60062ab7.js" defer="defer"></script>
-<script src="/assets/js/main.1b7d805f.js" defer="defer"></script>
+<script src="/assets/js/runtime~main.3f033749.js" defer="defer"></script>
+<script src="/assets/js/main.53915e94.js" defer="defer"></script>
 </head>
 <body class="navigation-with-keyboard">
 <svg style="display: none;"><defs>
@@ -204,11 +204,11 @@ For examples, these are some cases:</p>
 <ul>
 <li class="">People deploy an applications preferentially to their own resource pool, and then deployed to elastic resource pool, such as ECI on Aliyun and Fragate on AWS, when own resources are insufficient. When shrinking, the elastic node is preferred to shrink to save cost.</li>
 </ul>
-<p>In the most of the cases, people always split their application into multiple workloads (such as several <code>Deployment</code>) to deploy. However，this solution often requires manual management by SRE team, or a deeply customized PAAS to support the careful management of multiple workloads for this one application.</p>
+<p>In most cases, people always split their application into multiple workloads (such as several <code>Deployment</code>) to deploy. However，this solution often requires manual management by SRE team, or a deeply customized PAAS to support the careful management of multiple workloads for this one application.</p>
 <p>In order to solve this problem, WorkloadSpread feature has been proposed in version v0.10.0 OpenKruise. It can support multi-kind of workloads, such as <code>Deployment</code>, <code>Replicaset</code>, <code>Job</code>, and <code>Cloneset</code>, to manage the partition deployment or elastic scaling. The application scenario and implementation principle of WorkloadSpread will be introduced in detail below to help users better understand this feature.</p>
 <hr>
 <h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="introduction">Introduction<a href="#introduction" class="hash-link" aria-label="Direct link to Introduction" title="Direct link to Introduction" translate="no">​</a></h2>
-<p>More details about WorkloadSpread can be found in <a href="https://openkruise.io/docs/user-manuals/workloadspread" target="_blank" rel="noopener noreferrer" class="">Offical Document</a>.</p>
+<p>More details about WorkloadSpread can be found in <a href="https://openkruise.io/docs/user-manuals/workloadspread" target="_blank" rel="noopener noreferrer" class="">Official Document</a>.</p>
 <p>In short, WorkloadSpread can distribute pods of a workload to different types of nodes according to certain rules, so as to meet the above fragmentation and elasticity scenarios. WorkloadSpread is non-invasive, &quot;plug and play&quot;, and can be effective for stock workloads.</p>
 <hr>
 <h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="comparison-with-related-works">Comparison with related works<a href="#comparison-with-related-works" class="hash-link" aria-label="Direct link to Comparison with related works" title="Direct link to Comparison with related works" translate="no">​</a></h2>
@@ -321,7 +321,7 @@ As we all know, optimistic lock is not suitable for too many conflicts, because 
 <p>From the above analysis, it is likely that there is a delay for the controller to obtain the pod from the informer, so we also added the <code>creatingPods</code> map in the status. When the pod is injected at webhook, the key will be recorded as pod name and value are timestamp to the map, and the controller maintains the real <code>missingReplicas</code> in combination with the map. Similarly, there is also a <code>deleteingPods</code> map to record the delete/eviction event of the pod.</p>
 </li>
 </ul>
-<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="4how-to-do-if-pod-schedule-failed">「4」How to do if pod schedule failed?<a href="#4how-to-do-if-pod-schedule-failed" class="hash-link" aria-label="Direct link to 「4」How to do if pod schedule failed?" title="Direct link to 「4」How to do if pod schedule failed?" translate="no">​</a></h3>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="4what-to-do-if-pod-schedule-fails">「4」What to do if pod schedule fails?<a href="#4what-to-do-if-pod-schedule-fails" class="hash-link" aria-label="Direct link to 「4」What to do if pod schedule fails?" title="Direct link to 「4」What to do if pod schedule fails?" translate="no">​</a></h3>
 <p>The configuration of reschedule strategy is supported in WorkloadSpread. By default, the type is fixed, that is, the pod is scheduled to the corresponding subset according to the sequence of each subset and the <code>maxReplicas</code> limit.</p>
 <p>However, in real scenarios, many times, the resources of subset may not fully meet the number of maxReplicas due to some reasons, such as insufficient resources. Users need a more flexible reschedule strategy.</p>
 <p>The adaptive capabilities provided by WorkloadSpread are logically divided into two types:</p>
@@ -440,7 +440,7 @@ Use the Unix Domain Socket to migrate ListenFD between containers. This step is 
 <p>Use transferEnv to obtain environment variables from other containers, which copies the environment variable named envName in the sourceContainerName container to the current Sidecar container. In the above example, the Sidecar container of logs shares the time zone of the main container, which is especially common in overseas environments.</p>
 <p><strong>Note:</strong> The number of containers for the created Pods cannot be changed in the Kubernetes community. Therefore, the injection capability described above can only occur during the Pod creation phase. For the created Pods, Pod reconstruction is required for injection.</p>
 <h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="in-place-upgrade">In-place Upgrade<a href="#in-place-upgrade" class="hash-link" aria-label="Direct link to In-place Upgrade" title="Direct link to In-place Upgrade" translate="no">​</a></h2>
-<p>SidecarSet not only allows to inject the Sidecar containers, but also reuses the in-place update feature of OpenKruise. This realizes the upgrade of the Sidecar containers without restarting the Pod and the main container. Since this upgrade method does not affect the business, upgrading the Sidecar containers is no longer a pain point. Thus, it brings a lot of conveniences to Sidecar owners and speeds up the Sidecar version iteration.</p>
+<p>SidecarSet not only allows users to inject the Sidecar containers, but also reuses the in-place update feature of OpenKruise. This realizes the upgrade of the Sidecar containers without restarting the Pod and the main container. Since this upgrade method does not affect the business, upgrading the Sidecar containers is no longer a pain point. Thus, it brings a lot of conveniences to Sidecar owners and speeds up the Sidecar version iteration.</p>
 <p><img decoding="async" loading="lazy" alt="inplace sidecar" src="/assets/images/inplace_sidecar-f00ef87888dab2a820b7401f01ced12c.png" width="597" height="448" class="img_ev3q"></p>
 <p><strong>Note:</strong> Only the modification on the container.image fields for the created Pods is allowed by the Kubernetes community. Therefore, the modification on other fields of Sidecar containers requires the reconstruction of Pod, and the in-place upgrade is not supported.</p>
 <p>To meet the requirements in some complex Sidecar upgrade scenarios, SidecarSet provides the in-place upgrade and a wide range of gray release strategies.</p>
@@ -520,7 +520,7 @@ new version of subset workload template.
 Note that UnitedDeployment does not control
 the entire rollout process of all subset workloads, which is typically done by another rollout
 controller built on top of it. Since the replica number in each <code>Subset</code> can be different,
-it will be much more convenient to allow user to specify the individual rollout <code>Partition</code> of each
+it will be much more convenient to allow users to specify the individual rollout <code>Partition</code> of each
 subset workload instead of using one <code>Partition</code> to rule all, so that they can be upgraded in the same pace.
 UnitedDeployment provides <code>ManualUpdate</code> strategy to customize per subset rollout <code>Partition</code>.</p>
 <div class="language-text codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-text codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token plain">type UnitedDeploymentUpdateStrategy struct {</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">	// Type of UnitedDeployment update.</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">	Type UpdateStrategyType</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">	// Indicates the partition of each subset.</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">	ManualUpdate *ManualUpdate</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">}</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain" style="display:inline-block"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">type ManualUpdate struct {</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">	// Indicates number of subset partition.</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">	Partitions map[string]int32</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">}</span><br></span></code></pre></div></div>

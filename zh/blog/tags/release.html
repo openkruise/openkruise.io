@@ -10,8 +10,8 @@
 
 
 <link rel="search" type="application/opensearchdescription+xml" title="OpenKruise" href="/zh/opensearch.xml"><link rel="stylesheet" href="/zh/assets/css/styles.7a881dd0.css">
-<script src="/zh/assets/js/runtime~main.b863eb4a.js" defer="defer"></script>
-<script src="/zh/assets/js/main.76a4c20b.js" defer="defer"></script>
+<script src="/zh/assets/js/runtime~main.9df8cf9b.js" defer="defer"></script>
+<script src="/zh/assets/js/main.ec373ac3.js" defer="defer"></script>
 </head>
 <body class="navigation-with-keyboard">
 <svg style="display: none;"><defs>
@@ -565,7 +565,7 @@ Advanced DaemonSet 目前只支持 PreDelete hook。</p>
 <li class="">Cascading：这个对象如果还有可用的下属资源，则禁止被删除</li>
 </ul>
 <p>目前支持的资源类型、以及 cascading 级联关系如下：</p>
-<table><thead><tr><th>Kind</th><th>Group</th><th>Version</th><th><strong>Cascading</strong> judgement</th></tr></thead><tbody><tr><td><code>Namespace</code></td><td>core</td><td>v1</td><td>whether there is active Pods in this namespace</td></tr><tr><td><code>CustomResourceDefinition</code></td><td>apiextensions.k8s.io</td><td>v1beta1, v1</td><td>whether there is existing CRs of this CRD</td></tr><tr><td><code>Deployment</code></td><td>apps</td><td>v1</td><td>whether the replicas is 0</td></tr><tr><td><code>StatefulSet</code></td><td>apps</td><td>v1</td><td>whether the replicas is 0</td></tr><tr><td><code>ReplicaSet</code></td><td>apps</td><td>v1</td><td>whether the replicas is 0</td></tr><tr><td><code>CloneSet</code></td><td>apps.kruise.io</td><td>v1alpha1</td><td>whether the replicas is 0</td></tr><tr><td><code>StatefulSet</code></td><td>apps.kruise.io</td><td>v1alpha1, v1beta1</td><td>whether the replicas is 0</td></tr><tr><td><code>UnitedDeployment</code></td><td>apps.kruise.io</td><td>v1alpha1</td><td>whether the replicas is 0</td></tr></tbody></table>
+<table><thead><tr><th>Kind</th><th>Group</th><th>Version</th><th><strong>Cascading</strong> judgment</th></tr></thead><tbody><tr><td><code>Namespace</code></td><td>core</td><td>v1</td><td>whether there is active Pods in this namespace</td></tr><tr><td><code>CustomResourceDefinition</code></td><td>apiextensions.k8s.io</td><td>v1beta1, v1</td><td>whether there is existing CRs of this CRD</td></tr><tr><td><code>Deployment</code></td><td>apps</td><td>v1</td><td>whether the replicas is 0</td></tr><tr><td><code>StatefulSet</code></td><td>apps</td><td>v1</td><td>whether the replicas is 0</td></tr><tr><td><code>ReplicaSet</code></td><td>apps</td><td>v1</td><td>whether the replicas is 0</td></tr><tr><td><code>CloneSet</code></td><td>apps.kruise.io</td><td>v1alpha1</td><td>whether the replicas is 0</td></tr><tr><td><code>StatefulSet</code></td><td>apps.kruise.io</td><td>v1alpha1, v1beta1</td><td>whether the replicas is 0</td></tr><tr><td><code>UnitedDeployment</code></td><td>apps.kruise.io</td><td>v1alpha1</td><td>whether the replicas is 0</td></tr></tbody></table>
 <h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="cloneset-新增功能">CloneSet 新增功能<a href="#cloneset-新增功能" class="hash-link" aria-label="Direct link to heading" title="Direct link to heading" translate="no">​</a></h2>
 <h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="删除优先级">删除优先级<a href="#删除优先级" class="hash-link" aria-label="Direct link to heading" title="Direct link to heading" translate="no">​</a></h3>
 <p><code>controller.kubernetes.io/pod-deletion-cost</code> 是从 Kubernetes 1.21 版本后加入的 annotation，ReplicaSet 在缩容时会参考这个 cost 数值来排序。 CloneSet 从 Kruise v0.9.0 版本后也同样支持了这个功能。</p>

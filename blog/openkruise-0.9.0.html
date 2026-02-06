@@ -10,8 +10,8 @@
 
 
 <link rel="search" type="application/opensearchdescription+xml" title="OpenKruise" href="/opensearch.xml"><link rel="stylesheet" href="/assets/css/styles.7a881dd0.css">
-<script src="/assets/js/runtime~main.60062ab7.js" defer="defer"></script>
-<script src="/assets/js/main.1b7d805f.js" defer="defer"></script>
+<script src="/assets/js/runtime~main.3f033749.js" defer="defer"></script>
+<script src="/assets/js/main.53915e94.js" defer="defer"></script>
 </head>
 <body class="navigation-with-keyboard">
 <svg style="display: none;"><defs>
@@ -64,7 +64,7 @@
 <li class=""><strong>Cascading</strong>: The object cannot be deleted if any subordinate resources are available.</li>
 </ul>
 <p>The following table lists the supported resource types and cascading relationships:</p>
-<table><thead><tr><th>Kind</th><th>Group</th><th>Version</th><th><strong>Cascading</strong> judgement</th></tr></thead><tbody><tr><td><code>Namespace</code></td><td>core</td><td>v1</td><td>whether there is active Pods in this namespace</td></tr><tr><td><code>CustomResourceDefinition</code></td><td>apiextensions.k8s.io</td><td>v1beta1, v1</td><td>whether there is existing CRs of this CRD</td></tr><tr><td><code>Deployment</code></td><td>apps</td><td>v1</td><td>whether the replicas is 0</td></tr><tr><td><code>StatefulSet</code></td><td>apps</td><td>v1</td><td>whether the replicas is 0</td></tr><tr><td><code>ReplicaSet</code></td><td>apps</td><td>v1</td><td>whether the replicas is 0</td></tr><tr><td><code>CloneSet</code></td><td>apps.kruise.io</td><td>v1alpha1</td><td>whether the replicas is 0</td></tr><tr><td><code>StatefulSet</code></td><td>apps.kruise.io</td><td>v1alpha1, v1beta1</td><td>whether the replicas is 0</td></tr><tr><td><code>UnitedDeployment</code></td><td>apps.kruise.io</td><td>v1alpha1</td><td>whether the replicas is 0</td></tr></tbody></table>
+<table><thead><tr><th>Kind</th><th>Group</th><th>Version</th><th><strong>Cascading</strong> judgment</th></tr></thead><tbody><tr><td><code>Namespace</code></td><td>core</td><td>v1</td><td>whether there is active Pods in this namespace</td></tr><tr><td><code>CustomResourceDefinition</code></td><td>apiextensions.k8s.io</td><td>v1beta1, v1</td><td>whether there is existing CRs of this CRD</td></tr><tr><td><code>Deployment</code></td><td>apps</td><td>v1</td><td>whether the replicas is 0</td></tr><tr><td><code>StatefulSet</code></td><td>apps</td><td>v1</td><td>whether the replicas is 0</td></tr><tr><td><code>ReplicaSet</code></td><td>apps</td><td>v1</td><td>whether the replicas is 0</td></tr><tr><td><code>CloneSet</code></td><td>apps.kruise.io</td><td>v1alpha1</td><td>whether the replicas is 0</td></tr><tr><td><code>StatefulSet</code></td><td>apps.kruise.io</td><td>v1alpha1, v1beta1</td><td>whether the replicas is 0</td></tr><tr><td><code>UnitedDeployment</code></td><td>apps.kruise.io</td><td>v1alpha1</td><td>whether the replicas is 0</td></tr></tbody></table>
 <h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="new-features-of-cloneset">New Features of CloneSet<a href="#new-features-of-cloneset" class="hash-link" aria-label="Direct link to New Features of CloneSet" title="Direct link to New Features of CloneSet" translate="no">​</a></h2>
 <h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="deletion-priority">Deletion Priority<a href="#deletion-priority" class="hash-link" aria-label="Direct link to Deletion Priority" title="Direct link to Deletion Priority" translate="no">​</a></h3>
 <p>The <code>controller.kubernetes.io/pod-deletion-cost</code> annotation was added to Kubernetes after version 1.21. <code>ReplicaSet</code> will sort the Kubernetes resources according to this cost value during scale in. CloneSet has supported the same feature since OpenKruise v0.9.0.</p>

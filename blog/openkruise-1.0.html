@@ -10,8 +10,8 @@
 
 
 <link rel="search" type="application/opensearchdescription+xml" title="OpenKruise" href="/opensearch.xml"><link rel="stylesheet" href="/assets/css/styles.7a881dd0.css">
-<script src="/assets/js/runtime~main.60062ab7.js" defer="defer"></script>
-<script src="/assets/js/main.1b7d805f.js" defer="defer"></script>
+<script src="/assets/js/runtime~main.3f033749.js" defer="defer"></script>
+<script src="/assets/js/main.53915e94.js" defer="defer"></script>
 </head>
 <body class="navigation-with-keyboard">
 <svg style="display: none;"><defs>
@@ -35,7 +35,7 @@
 <p>As the picture shows above, we only modify the <code>image</code> field in Pod during in-place update. So that:</p>
 <ul>
 <li class="">Avoid additional cost of <em>scheduling</em>, <em>allocating IP</em>, <em>allocating and mounting volumes</em>.</li>
-<li class="">Faster image pulling, because of we can re-use most of image layers pulled by the old image and only to pull several new layers.</li>
+<li class="">Faster image pulling, because we can reuse most of image layers pulled by the old image and only to pull several new layers.</li>
 <li class="">When a container is in-place updating, the other containers in Pod will not be affected and remain running.</li>
 </ul>
 <p>However, OpenKruise only supports to in-place update <code>image</code> field in Pod and has to recreate Pods if other fields need to update. All the way through, more and more users hope OpenKruise could support in-place update more fields such as <code>env</code> -- which is hard to implement, for it is limited by kube-apiserver.</p>
@@ -62,7 +62,7 @@
 <p>For more details please read <a class="" href="/docs/user-manuals/resourcedistribution">documentation</a>.</p>
 <h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="3-container-launch-priority">3. Container launch priority<a href="#3-container-launch-priority" class="hash-link" aria-label="Direct link to 3. Container launch priority" title="Direct link to 3. Container launch priority" translate="no">​</a></h3>
 <p><em>Author: <a href="https://github.com/Concurrensee" target="_blank" rel="noopener noreferrer" class="">@Concurrensee</a></em></p>
-<p>Containers in a same Pod in it might have dependence, which means the application in one container runs depending on another container. For example:</p>
+<p>Containers in the same Pod might have dependencies, which means the application in one container runs depending on another container. For example:</p>
 <ol>
 <li class="">Container A has to start first. Container B can start only if A is already running.</li>
 <li class="">Container B has to exit first. Container A can stop only if B has already exited.</li>

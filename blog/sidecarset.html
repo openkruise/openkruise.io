@@ -10,8 +10,8 @@
 
 
 <link rel="search" type="application/opensearchdescription+xml" title="OpenKruise" href="/opensearch.xml"><link rel="stylesheet" href="/assets/css/styles.7a881dd0.css">
-<script src="/assets/js/runtime~main.60062ab7.js" defer="defer"></script>
-<script src="/assets/js/main.1b7d805f.js" defer="defer"></script>
+<script src="/assets/js/runtime~main.3f033749.js" defer="defer"></script>
+<script src="/assets/js/main.53915e94.js" defer="defer"></script>
 </head>
 <body class="navigation-with-keyboard">
 <svg style="display: none;"><defs>
@@ -61,7 +61,7 @@
 <p>Use transferEnv to obtain environment variables from other containers, which copies the environment variable named envName in the sourceContainerName container to the current Sidecar container. In the above example, the Sidecar container of logs shares the time zone of the main container, which is especially common in overseas environments.</p>
 <p><strong>Note:</strong> The number of containers for the created Pods cannot be changed in the Kubernetes community. Therefore, the injection capability described above can only occur during the Pod creation phase. For the created Pods, Pod reconstruction is required for injection.</p>
 <h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="in-place-upgrade">In-place Upgrade<a href="#in-place-upgrade" class="hash-link" aria-label="Direct link to In-place Upgrade" title="Direct link to In-place Upgrade" translate="no">​</a></h2>
-<p>SidecarSet not only allows to inject the Sidecar containers, but also reuses the in-place update feature of OpenKruise. This realizes the upgrade of the Sidecar containers without restarting the Pod and the main container. Since this upgrade method does not affect the business, upgrading the Sidecar containers is no longer a pain point. Thus, it brings a lot of conveniences to Sidecar owners and speeds up the Sidecar version iteration.</p>
+<p>SidecarSet not only allows users to inject the Sidecar containers, but also reuses the in-place update feature of OpenKruise. This realizes the upgrade of the Sidecar containers without restarting the Pod and the main container. Since this upgrade method does not affect the business, upgrading the Sidecar containers is no longer a pain point. Thus, it brings a lot of conveniences to Sidecar owners and speeds up the Sidecar version iteration.</p>
 <p><img decoding="async" loading="lazy" alt="inplace sidecar" src="/assets/images/inplace_sidecar-f00ef87888dab2a820b7401f01ced12c.png" width="597" height="448" class="img_ev3q"></p>
 <p><strong>Note:</strong> Only the modification on the container.image fields for the created Pods is allowed by the Kubernetes community. Therefore, the modification on other fields of Sidecar containers requires the reconstruction of Pod, and the in-place upgrade is not supported.</p>
 <p>To meet the requirements in some complex Sidecar upgrade scenarios, SidecarSet provides the in-place upgrade and a wide range of gray release strategies.</p>

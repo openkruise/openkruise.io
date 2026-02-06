@@ -10,8 +10,8 @@
 
 
 <link rel="search" type="application/opensearchdescription+xml" title="OpenKruise" href="/opensearch.xml"><link rel="stylesheet" href="/assets/css/styles.7a881dd0.css">
-<script src="/assets/js/runtime~main.60062ab7.js" defer="defer"></script>
-<script src="/assets/js/main.1b7d805f.js" defer="defer"></script>
+<script src="/assets/js/runtime~main.3f033749.js" defer="defer"></script>
+<script src="/assets/js/main.53915e94.js" defer="defer"></script>
 </head>
 <body class="navigation-with-keyboard">
 <svg style="display: none;"><defs>
@@ -204,11 +204,11 @@ For examples, these are some cases:</p>
 <ul>
 <li class="">People deploy an applications preferentially to their own resource pool, and then deployed to elastic resource pool, such as ECI on Aliyun and Fragate on AWS, when own resources are insufficient. When shrinking, the elastic node is preferred to shrink to save cost.</li>
 </ul>
-<p>In the most of the cases, people always split their application into multiple workloads (such as several <code>Deployment</code>) to deploy. However，this solution often requires manual management by SRE team, or a deeply customized PAAS to support the careful management of multiple workloads for this one application.</p>
+<p>In most cases, people always split their application into multiple workloads (such as several <code>Deployment</code>) to deploy. However，this solution often requires manual management by SRE team, or a deeply customized PAAS to support the careful management of multiple workloads for this one application.</p>
 <p>In order to solve this problem, WorkloadSpread feature has been proposed in version v0.10.0 OpenKruise. It can support multi-kind of workloads, such as <code>Deployment</code>, <code>Replicaset</code>, <code>Job</code>, and <code>Cloneset</code>, to manage the partition deployment or elastic scaling. The application scenario and implementation principle of WorkloadSpread will be introduced in detail below to help users better understand this feature.</p>
 <hr>
 <h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="introduction">Introduction<a href="#introduction" class="hash-link" aria-label="Direct link to Introduction" title="Direct link to Introduction" translate="no">​</a></h2>
-<p>More details about WorkloadSpread can be found in <a href="https://openkruise.io/docs/user-manuals/workloadspread" target="_blank" rel="noopener noreferrer" class="">Offical Document</a>.</p>
+<p>More details about WorkloadSpread can be found in <a href="https://openkruise.io/docs/user-manuals/workloadspread" target="_blank" rel="noopener noreferrer" class="">Official Document</a>.</p>
 <p>In short, WorkloadSpread can distribute pods of a workload to different types of nodes according to certain rules, so as to meet the above fragmentation and elasticity scenarios. WorkloadSpread is non-invasive, &quot;plug and play&quot;, and can be effective for stock workloads.</p>
 <hr>
 <h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="comparison-with-related-works">Comparison with related works<a href="#comparison-with-related-works" class="hash-link" aria-label="Direct link to Comparison with related works" title="Direct link to Comparison with related works" translate="no">​</a></h2>
@@ -321,7 +321,7 @@ As we all know, optimistic lock is not suitable for too many conflicts, because 
 <p>From the above analysis, it is likely that there is a delay for the controller to obtain the pod from the informer, so we also added the <code>creatingPods</code> map in the status. When the pod is injected at webhook, the key will be recorded as pod name and value are timestamp to the map, and the controller maintains the real <code>missingReplicas</code> in combination with the map. Similarly, there is also a <code>deleteingPods</code> map to record the delete/eviction event of the pod.</p>
 </li>
 </ul>
-<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="4how-to-do-if-pod-schedule-failed">「4」How to do if pod schedule failed?<a href="#4how-to-do-if-pod-schedule-failed" class="hash-link" aria-label="Direct link to 「4」How to do if pod schedule failed?" title="Direct link to 「4」How to do if pod schedule failed?" translate="no">​</a></h3>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="4what-to-do-if-pod-schedule-fails">「4」What to do if pod schedule fails?<a href="#4what-to-do-if-pod-schedule-fails" class="hash-link" aria-label="Direct link to 「4」What to do if pod schedule fails?" title="Direct link to 「4」What to do if pod schedule fails?" translate="no">​</a></h3>
 <p>The configuration of reschedule strategy is supported in WorkloadSpread. By default, the type is fixed, that is, the pod is scheduled to the corresponding subset according to the sequence of each subset and the <code>maxReplicas</code> limit.</p>
 <p>However, in real scenarios, many times, the resources of subset may not fully meet the number of maxReplicas due to some reasons, such as insufficient resources. Users need a more flexible reschedule strategy.</p>
 <p>The adaptive capabilities provided by WorkloadSpread are logically divided into two types:</p>
