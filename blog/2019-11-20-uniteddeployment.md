@@ -77,7 +77,7 @@ new version of subset workload template.
 Note that UnitedDeployment does not control
 the entire rollout process of all subset workloads, which is typically done by another rollout
 controller built on top of it. Since the replica number in each `Subset` can be different,
-it will be much more convenient to allow user to specify the individual rollout `Partition` of each
+it will be much more convenient to allow users to specify the individual rollout `Partition` of each
 subset workload instead of using one `Partition` to rule all, so that they can be upgraded in the same pace.
 UnitedDeployment provides `ManualUpdate` strategy to customize per subset rollout `Partition`.
 

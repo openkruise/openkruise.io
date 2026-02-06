@@ -84,7 +84,7 @@ spec:
       rescheduleCriticalSeconds: 30
 ```
 
-`targetRef`: specify the target workload. Can not be mutated，and one workload can only correspond to one WorkloadSpread.
+`targetRef`: specify the target workload. Cannot be mutated，and one workload can only correspond to one WorkloadSpread.
 
 ## subsets
 

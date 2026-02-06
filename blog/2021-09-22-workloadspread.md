@@ -16,7 +16,7 @@ For examples, these are some cases:
 2. Cases about cost control:
   - People deploy an applications preferentially to their own resource pool, and then deployed to elastic resource pool, such as ECI on Aliyun and Fragate on AWS, when own resources are insufficient. When shrinking, the elastic node is preferred to shrink to save cost.
 
-In the most of the cases, people always split their application into multiple workloads (such as several `Deployment`) to deploy. However，this solution often requires manual management by SRE team, or a deeply customized PAAS to support the careful management of multiple workloads for this one application.
+In most cases, people always split their application into multiple workloads (such as several `Deployment`) to deploy. However，this solution often requires manual management by SRE team, or a deeply customized PAAS to support the careful management of multiple workloads for this one application.
 
 In order to solve this problem, WorkloadSpread feature has been proposed in version v0.10.0 OpenKruise. It can support multi-kind of workloads, such as `Deployment`, `Replicaset`, `Job`, and `Cloneset`, to manage the partition deployment or elastic scaling. The application scenario and implementation principle of WorkloadSpread will be introduced in detail below to help users better understand this feature.
 
@@ -24,7 +24,7 @@ In order to solve this problem, WorkloadSpread feature has been proposed in vers
 
 ## Introduction
 
-More details about WorkloadSpread can be found in [Offical Document](https://openkruise.io/docs/user-manuals/workloadspread). 
+More details about WorkloadSpread can be found in [Official Document](https://openkruise.io/docs/user-manuals/workloadspread). 
 
 In short, WorkloadSpread can distribute pods of a workload to different types of nodes according to certain rules, so as to meet the above fragmentation and elasticity scenarios. WorkloadSpread is non-invasive, "plug and play", and can be effective for stock workloads.
 
@@ -292,7 +292,7 @@ Therefore, the WorkloadSpread status is controlled by webhook in collaboration w
 
 - From the above analysis, it is likely that there is a delay for the controller to obtain the pod from the informer, so we also added the `creatingPods` map in the status. When the pod is injected at webhook, the key will be recorded as pod name and value are timestamp to the map, and the controller maintains the real `missingReplicas` in combination with the map. Similarly, there is also a `deleteingPods` map to record the delete/eviction event of the pod.
 
-### 「4」How to do if pod schedule failed?
+### 「4」What to do if pod schedule fails?
 The configuration of reschedule strategy is supported in WorkloadSpread. By default, the type is fixed, that is, the pod is scheduled to the corresponding subset according to the sequence of each subset and the `maxReplicas` limit.
 
 However, in real scenarios, many times, the resources of subset may not fully meet the number of maxReplicas due to some reasons, such as insufficient resources. Users need a more flexible reschedule strategy.

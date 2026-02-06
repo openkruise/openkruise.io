@@ -6,9 +6,9 @@ import TabItem from '@theme/TabItem';
 ## End to End Canary Release Process
 ![ab](../../static/img/rollouts/e2e.png)
 
-End to end canary release is a special kind of canary release. In such canary release, multiple applications in a micro-service system share a common traffic gateway, and the canary replicas of upstream application will pass the traffic to the downstream applications, so that the request will remain in the canary enviroment if available. The end to end canary enviroment is often called traffic swimlane. In such traffic swimlane, requests will go to the replicas of stable version if no canary replicas is available, and go back to canary environment if canary replicas are available again. End to end canary release is often utilized to conduct business evaluation that requires the cooperation of multiple applications.  
+End to end canary release is a special kind of canary release. In such canary release, multiple applications in a micro-service system share a common traffic gateway, and the canary replicas of upstream application will pass the traffic to the downstream applications, so that the request will remain in the canary environment if available. The end to end canary environment is often called traffic swimlane. In such traffic swimlane, requests will go to the replicas of stable version if no canary replicas is available, and go back to canary environment if canary replicas are available again. End to end canary release is often utilized to conduct business evaluation that requires the cooperation of multiple applications.  
 
-The usage of end to end canary release can be illustrated using a simple sample system (gateway -> spring-cloud-a -> spring-cloud-b), that is, the requests will be admited by the gateway, and the gateway will pass the traffic first to `spring-cloud-a`, and `spring-cloud-a` will invoke the downstream `spring-cloud-b`. 
+The usage of end to end canary release can be illustrated using a simple sample system (gateway -> spring-cloud-a -> spring-cloud-b), that is, the requests will be admitted by the gateway, and the gateway will pass the traffic first to `spring-cloud-a`, and `spring-cloud-a` will invoke the downstream `spring-cloud-b`. 
 
 ## Common gateway Configuration
 Since gateway configuration is shared by multiple applications. The gateway is configured outside of the rollout. 

@@ -429,7 +429,7 @@ spec:
 </Tabs>
 
 Note:
-- `steps[x].replicas` can not be nil.
+- `steps[x].replicas` cannot be nil.
 - `steps[x].matches[i] and steps[x].matches[j]` have **Or**-relationship.
 - `steps[x].matches[y].headers[i] and steps[x].matches[y].header[j]` have **And**-relationship. 
 - `patchPodTemplateMetadata` can be set only if enableExtraWorkloadForCanary=true

@@ -101,7 +101,7 @@ Currently it supports migrate from Deployment to CloneSet.
 # Create an empty CloneSet from an existing Deployment.
 $ kubectl kruise migrate CloneSet --from Deployment -n default --dst-name deployment-name --create
 
-# Create a same replicas CloneSet from an existing Deployment.
+# Create a CloneSet with the same replicas from an existing Deployment.
 $ kubectl kruise migrate CloneSet --from Deployment -n default --dst-name deployment-name --create --copy
 
 # Migrate replicas from an existing Deployment to an existing CloneSet.

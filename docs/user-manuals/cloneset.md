@@ -71,7 +71,7 @@ spec:
 
 ### Support PVCs
 
-CloneSet allows user to define PVC templates `volumeClaimTemplates` in `CloneSetSpec`, which can support PVCs per Pod.
+CloneSet allows users to define PVC templates `volumeClaimTemplates` in `CloneSetSpec`, which can support PVCs per Pod.
 This cannot be done with `Deployment`. If not specified, CloneSet will only create Pods without PVCs.
 
 A few reminders:
@@ -283,7 +283,7 @@ When a CloneSet is scaled down, sometimes user has preference to deleting specif
 This cannot be done using `StatefulSet` or `Deployment`, because `StatefulSet` always delete Pod
 in order and `Deployment`/`ReplicaSet` only delete Pod by its own sorted sequence.
 
-CloneSet allows user to specify to-be-deleted Pod names when scaling down `replicas`. Take the following
+CloneSet allows users to specify to-be-deleted Pod names when scaling down `replicas`. Take the following
 sample as an example,
 
 <Tabs>
@@ -378,7 +378,7 @@ metadata:
 ```
 
 It is joined by the name of CloneSet and the hash of the ControllerRevision.
-Length of the hash is usually 8~10 characters, and the label value in Kubernetes can not be more than 63 characters.
+Length of the hash is usually 8~10 characters, and the label value in Kubernetes cannot be more than 63 characters.
 So the name of CloneSet should be less than 52 characters.
 
 A new feature-gate named `CloneSetShortHash` has been introduced.
@@ -558,7 +558,7 @@ When `partition` is set during update:
 
 **FEATURE STATE:** Kruise v1.2.0
 - If `partition` is a percent, and `partition < 100% && replicas > 1` , CloneSet will ensure **at least one pod** will be updated with the new version.
-- One can use the condition `.status.updatedReplicas >= .status.expectedUpdatedReplicas` to decide whether workload had finish rolling out new revision under partition restriction.
+- One can use the condition `.status.updatedReplicas >= .status.expectedUpdatedReplicas` to decide whether workload has finished rolling out new revision under partition restriction.
 
 For example, when we update sample CloneSet's container image to `nginx:mainline` and set `partition=3`, after a while, the sample CloneSet yaml looks like the following:
 
@@ -1292,7 +1292,7 @@ spec:
 
 - When CloneSet create a Pod (including scaling up and recreate update):
   - The Pod will be regarded as `Available` only after PreNormal hook is satisfied.
-  - `PreNormal` hook can be used for post-checks after pod creation. For example, one can check if the pod have been added as the SLB backends successfully. Without preNormal hook, one may encounter traffic loss during rolling upgrades if Operator(e.g., CCM) fails to add new pods to the SLB backends.
+  - `PreNormal` hook can be used for post-checks after pod creation. For example, one can check if the pod has been added as the SLB backends successfully. Without preNormal hook, one may encounter traffic loss during rolling upgrades if Operator(e.g., CCM) fails to add new pods to the SLB backends.
 - When CloneSet delete a Pod (including scale in and recreate update):
   - Delete it directly if no lifecycle hook definition or Pod not matched preDelete hook
   - Otherwise, CloneSet will firstly update Pod to `PreparingDelete` state and wait for user controller to remove the label/finalizer and Pod not matched preDelete hook

@@ -4,7 +4,7 @@
 
 Kruise Rollout utilizes a Lua-script-based customization approach for **Gateway resources (Istio VirtualService, Apisix ApisixRoute, Kuma TrafficRoute and etc.)**. Kruise Rollout involves invoking Lua scripts to retrieve and update the desired configurations of gateway resources based on **release strategies and the original configurations of gateway resources (including spec, labels, and annotations)**. It enables users to easily adapt and integrate various types of Gateway resources without modifying existing code and configurations.
 
-Since Kruise Rollout also support using Gateway API to configure traffic routing, one can also use corresponding Gateway API implementation for specific gateway resource. However, it is hard to implement a full blown Gateway API implementation, and many gateway providers who provides k8s CRD API still lack the offical support for Gateway API. Using Lua script, one can manipulate arbitary gateway resources for traffic routing
+Since Kruise Rollout also support using Gateway API to configure traffic routing, one can also use corresponding Gateway API implementation for specific gateway resource. However, it is hard to implement a full blown Gateway API implementation, and many gateway providers who provides k8s CRD API still lack the official support for Gateway API. Using Lua script, one can manipulate arbitrary gateway resources for traffic routing
 only and avoid the complexity of introducing Gateway API. 
 
 ## How it Works
@@ -284,7 +284,7 @@ data:
     return obj.data
 ```
 
-**Then if the expected Lua script is not existed locally, Kruise Rollout will get the script from ConfigMap.**
+**Then if the expected Lua script does not exist locally, Kruise Rollout will get the script from ConfigMap.**
 
 ## Write Your Custom Traffic Routing Lua Script
 

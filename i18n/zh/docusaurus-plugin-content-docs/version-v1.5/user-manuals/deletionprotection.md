@@ -16,7 +16,7 @@ title: Deletion Protection
 
 目前支持的资源类型、以及 cascading 级联关系如下：
 
-| Kind                        | Group                  | Version            | **Cascading** judgement           |
+| Kind                        | Group                  | Version            | **Cascading** judgment           |
 | --------------------------- | ---------------------- | ------------------ | -----------------------------------
 | `Namespace`                 | core                   | v1                 | namespace 下是否还有正常的 Pod       |
 | `CustomResourceDefinition`  | apiextensions.k8s.io   | v1beta1, v1        | CRD 下是否还有存量的 CR              |

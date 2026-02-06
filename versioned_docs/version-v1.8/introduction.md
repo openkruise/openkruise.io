@@ -40,7 +40,7 @@ Most features provided by OpenKruise are built primarily based on CRD extensions
 
 Briefly speaking, OpenKruise plays a subsidiary role of Kubernetes.
 
-Kubernetes itself has already provides some features for application deployment and management, such as some [basic Workloads](https://kubernetes.io/docs/concepts/workloads/).
+Kubernetes itself already provides some features for application deployment and management, such as some [basic Workloads](https://kubernetes.io/docs/concepts/workloads/).
 But it is far from enough to deploy and manage lots of applications in large-scale production clusters.
 
 OpenKruise can be easily installed in any Kubernetes clusters.

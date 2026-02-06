@@ -40,7 +40,7 @@ Most features provided by OpenKruise are built primarily based on CRD extensions
 
     OpenKruise also provides high-level operation features to help you manage your applications better.
 
-    You can use ImagePullJob to download any images on any nodes you want. Or you can even requires one or more containers in an running Pod to be restarted.
+    You can use ImagePullJob to download any images on any nodes you want. Or you can even require one or more containers in a running Pod to be restarted.
 
 ## Relationship
 
@@ -48,7 +48,7 @@ Most features provided by OpenKruise are built primarily based on CRD extensions
 
 Briefly speaking, OpenKruise plays a subsidiary role of Kubernetes.
 
-Kubernetes itself has already provides some features for application deployment and management, such as some [basic Workloads](https://kubernetes.io/docs/concepts/workloads/).
+Kubernetes itself already provides some features for application deployment and management, such as some [basic Workloads](https://kubernetes.io/docs/concepts/workloads/).
 But it is far from enough to deploy and manage lots of applications in large-scale production clusters.
 
 OpenKruise can be easily installed in any Kubernetes clusters.

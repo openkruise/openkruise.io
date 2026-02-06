@@ -92,7 +92,7 @@ Use transferEnv to obtain environment variables from other containers, which cop
 **Note:** The number of containers for the created Pods cannot be changed in the Kubernetes community. Therefore, the injection capability described above can only occur during the Pod creation phase. For the created Pods, Pod reconstruction is required for injection.
 
 ## In-place Upgrade
-SidecarSet not only allows to inject the Sidecar containers, but also reuses the in-place update feature of OpenKruise. This realizes the upgrade of the Sidecar containers without restarting the Pod and the main container. Since this upgrade method does not affect the business, upgrading the Sidecar containers is no longer a pain point. Thus, it brings a lot of conveniences to Sidecar owners and speeds up the Sidecar version iteration.
+SidecarSet not only allows users to inject the Sidecar containers, but also reuses the in-place update feature of OpenKruise. This realizes the upgrade of the Sidecar containers without restarting the Pod and the main container. Since this upgrade method does not affect the business, upgrading the Sidecar containers is no longer a pain point. Thus, it brings a lot of conveniences to Sidecar owners and speeds up the Sidecar version iteration.
 
 ![inplace sidecar](../static/img/blog/2021-03-15-sidecarset/inplace_sidecar.png)
 

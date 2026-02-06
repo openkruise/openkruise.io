@@ -5,7 +5,7 @@ title: PersistentPodState
 **FEATURE STATE:** Kruise v1.2.0
 
 With the development of cloud native, more and more companies start to deploy stateful services (e.g., Etcd, MQ) using Kubernetes. K8S StatefulSet is a workload for managing stateful services, and it considers the deployment characteristics of stateful services in many aspects.
-However, StatefulSet persistent only limited pod state, such as Pod Name is ordered and unchanging, PVC persistence, and can not cover other states, e.g. Pod IP retention, priority scheduling to previously deployed Nodes, etc. Typical Cases:
+However, StatefulSet persists only limited pod state, such as Pod Name is ordered and unchanging, PVC persistence, and cannot cover other states, e.g. Pod IP retention, priority scheduling to previously deployed Nodes, etc. Typical Cases:
 
 - **Service Discovery Middleware services are exceptionally sensitive to the Pod IP after deployment, requiring that the IP cannot be changed.**
 

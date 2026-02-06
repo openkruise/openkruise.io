@@ -15,9 +15,9 @@ Then, users can add the label named `policy.kruise.io/delete-protection` to some
 - `Always`: this object will always be forbidden to be deleted, unless the label is removed
 - `Cascading`: this object will be forbidden to be deleted, if it has active resources owned
 
-The resources supported and the cascading judgement relationship:
+The resources supported and the cascading judgment relationship:
 
-| Kind                        | Group                  | Version            | **Cascading** judgement                            |
+| Kind                        | Group                  | Version            | **Cascading** judgment                            |
 | --------------------------- | ---------------------- | ------------------ | ----------------------------------------------------
 | `Namespace`                 | core                   | v1                 | whether there is active Pods in this namespace     |
 | `CustomResourceDefinition`  | apiextensions.k8s.io   | v1beta1, v1        | whether there is existing CRs of this CRD          |
@@ -34,4 +34,4 @@ Using `objectSelector` in [webhook configuration](https://kubernetes.io/docs/ref
 Kruise webhook will only handle those `Namespace/CustomResourceDefinition/Deployment/StatefulSet/ReplicaSet` resources with `policy.kruise.io/delete-protection` label.
 
 So, if all kruise-manager Pods are crashed or in other abnormal states, kube-apiserver fails to call the deletion webhook,
-only the resources with `policy.kruise.io/delete-protection` label can not be deleted temporarily.
+only the resources with `policy.kruise.io/delete-protection` label cannot be deleted temporarily.
