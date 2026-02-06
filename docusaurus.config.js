@@ -96,6 +96,18 @@ function getNextVersionName() {
         showLastUpdateTime: true,
       },
     ],
+    [
+      '@docusaurus/plugin-content-docs',
+      {
+        id: 'kruiseagents',
+        path: 'kruiseagents',
+        routeBasePath: 'kruiseagents',
+        include: ['**/*.md'],
+        sidebarPath: require.resolve('./sidebars-kruiseagents.js'),
+        showLastUpdateAuthor: true,
+        showLastUpdateTime: true,
+      },
+    ],
   ],
 
 

@@ -36,7 +36,9 @@ module.exports = {
             collapsed: false,
             items: [
                 'best-practices/running-e2b-for-code-interpreter',
-                'best-practices/running-e2b-for-desktop'
+                'best-practices/running-e2b-for-desktop',
+                'best-practices/use-self-signed-cert',
+                'best-practices/cert-manager',
             ],
         },
         {
@@ -45,11 +47,11 @@ module.exports = {
             collapsed: false,
             items: [
                 'developer-manuals/contribution',
-                'developer-manuals/faq',
                 'developer-manuals/e2b-client',
                 'developer-manuals/go-client',
                 'developer-manuals/python-client',
+                'developer-manuals/faq',
             ],
-        ,
+        },
   ],
 };
