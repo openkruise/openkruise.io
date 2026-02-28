@@ -99,13 +99,6 @@ spec:
 
 > Don't support percentage type in current version.
 
-- `minReplicas`: The minimum number of replicas expected to be scheduled for this subset, which must be an integer >= 0.
-  If left empty, it indicates no limit on the number of replicas for the subset. For example, when scattering by region,
-  you can use `minReplicas` to ensure that each region has at least one replica, while the remaining replicas are
-  elastically deployed according to an adaptive scheduling strategy.
-
-> The percentage type is not supported in the current version.
-
 - `requiredNodeSelectorTerm`: match zone hardly。
 
 - `preferredNodeSelectorTerms`: match zone softly。
