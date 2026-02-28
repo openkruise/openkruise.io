@@ -425,8 +425,7 @@ CloneSet 提供了 3 种升级方式，默认为 `ReCreate`：
 
 - `ReCreate`: 控制器会删除旧 Pod 和它的 PVC，然后用新版本重新创建出来。
 - `InPlaceIfPossible`: 控制器会优先尝试原地升级 Pod，如果不行再采用重建升级。当前， 仅支持容器镜像等字段的原地升级。
-- `InPlaceOnly`: 控制器只允许采用原地升级。因此，用户只能修改容器镜像等字段，如果尝试修改其他字段会被 Kruise 拒绝。
-
+- `InPlaceOnly`: 控制器只允许采用原地升级。因此，用户只能修改支持原地升级的字段，如果尝试修改其他字段会被 Kruise 拒绝。
 **请阅读[原地升级概念](../core-concepts/inplace-update)了解更多原地升级的细节。**
 
 我们还在原地升级中提供了 **graceful period** 选项，作为优雅原地升级的策略。用户如果配置了 `gracePeriodSeconds` 这个字段，控制器在原地升级的过程中会先把 Pod status 改为 not-ready，然后等一段时间（`gracePeriodSeconds`），最后再去修改 Pod spec 中的镜像版本。
