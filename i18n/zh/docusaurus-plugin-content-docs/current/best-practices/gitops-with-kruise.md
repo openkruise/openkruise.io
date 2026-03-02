@@ -33,7 +33,7 @@ $ helm install kruise openkruise/kruise --set featureGates="TemplateNoDefaults=t
 $ helm upgrade kruise openkruise/kruise --set featureGates="TemplateNoDefaults=true"
 ```
 ### CloneSet部署无状态应用
-**CloneSet是OpenKruise提供的高效管理无状态应用的能力，它可以对标原生的 Deployment，但 CloneSet 提供了很多增强功能，例如：原地升级、分批发布，**请参考文档：[CloneSet](https://openkruise.io/zh/docs/user-manuals/cloneset)。
+**CloneSet是OpenKruise提供的高效管理无状态应用的能力，它可以对标原生的 Deployment，但 CloneSet 提供了很多增强功能，例如：原地升级、分批发布**，请参考文档：[CloneSet](https://openkruise.io/zh/docs/user-manuals/cloneset)。
 本篇文章提供了一个hello world服务 [Demo](https://github.com/zmberg/samples/tree/hello_world/helloworld)，它包含Helm charts，其中CloneSet配置如下：
 ```yaml
 apiVersion: apps.kruise.io/v1alpha1
@@ -64,7 +64,7 @@ spec:
 
 ### Argo-cd CloneSet Health Check
 配置CloneSet Argo-cd [Custom CRD Health Checks](https://argo-cd.readthedocs.io/en/stable/operator-manual/health/#custom-health-checks)，
-**Argo-cd根据该配置能够实现CloneSet自定义资源的检查，如CloneSet是否发布完成，以及Pod是否ready等，**如下：
+**Argo-cd根据该配置能够实现CloneSet自定义资源的检查，如CloneSet是否发布完成，以及Pod是否ready等**，如下：
 
 ```yaml
 apiVersion: v1
@@ -252,5 +252,5 @@ spec:
 
 ## 总结
 OpenKruise更多是Kubernetes层面扩展的能力，如 原地升级、镜像预热等，所以很多社区的用户在生产环境使用OpenKruise还有一些额外的成本，需要集成或自研容器PaaS方案。
-本文的主要目的是想将社区的一些优秀的Paas方案与OpenKruise结合起来，尽量让更多的人能够更小的成本享受云原生带来的红利。Argo-cd是目前社区非常优秀的一款产品，
+本文的主要目的是想将社区的一些优秀的PaaS方案与OpenKruise结合起来，尽量让更多的人能够更小的成本享受云原生带来的红利。Argo-cd是目前社区非常优秀的一款产品，
 并且它对于OpenKruise众多的自定义CRD资源也能够非常便捷的对接，对使用者而言很友好。本文也算是一个抛砖引玉，希望社区的众多小伙伴能够提供更多的思路，后面也会尝试与一些其它CI/CD流水线结合，争取能够更好的践行devops理念。

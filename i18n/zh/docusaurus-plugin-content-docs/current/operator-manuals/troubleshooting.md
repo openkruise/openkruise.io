@@ -73,7 +73,7 @@ OpenKruise 以 Prometheus 格式暴露指标，这对于监控控制器和受管
 | `controller_runtime_webhook_requests_total`  | Counter   | 各个webhook的请求总数        | `webhook`,`code` |
 | `controller_runtime_webhook_latency_seconds` | Histogram | 各个webhook的请求延时        | `webhook`        |
 
-**用途:** 可用于识别过载的控制器（如高 `workqueue_depth`、长 `reconcile_time_seconds`）或持续出错的控制器（如`reconcile_errors_total` 持续上升）。
+**用途**：可用于识别过载的控制器（如高 `workqueue_depth`、长 `reconcile_time_seconds`）或持续出错的控制器（如`reconcile_errors_total` 持续上升）。
 
 2. OpenKruise 特有指标
 
@@ -86,7 +86,7 @@ OpenKruise 以 Prometheus 格式暴露指标，这对于监控控制器和受管
 | `crd_deletion_protection`            | Counter | 自定义资源定义（CRD）删除保护数量	              | `name`, `username`                |
 | `workload_deletion_protection`       | Counter | 工作负载删除保护数量                       | `kind_namespace_name`, `username` |
 
-**用途 ** 用于识别控制平面问题，以及特性功能性能问题（如 PUB 保护机制）
+**用途**：用于识别控制平面问题，以及特性功能性能问题（如 PUB 保护机制）
 
 3. Go 运行时与进程指标
 
