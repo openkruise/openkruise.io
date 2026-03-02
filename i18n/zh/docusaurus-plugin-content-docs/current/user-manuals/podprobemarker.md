@@ -10,8 +10,7 @@ Kubernetes提供了三种默认的Pod生命周期管理：
 - **Liveness Probe** 用来判断容器的健康状态，如果检查失败，kubelet将会重启该容器。
 - **Startup Probe** 用来判断容器是否启动完成，如果定义了该Probe，那么Readiness Probe与Liveness Probe将会在它成功之后再执行。
 
-所以Kubernetes中提供的Probe能力都已经限定了特定的语义以及相关的行为。**除此之外，其实还是存在自定义Probe语义以及相关行为的需求
-**，例如：
+所以Kubernetes中提供的Probe能力都已经限定了特定的语义以及相关的行为。**除此之外，其实还是存在自定义Probe语义以及相关行为的需求**，例如：
 
 - **GameServer定义 Idle Probe 用来判断该Pod当前是否存在游戏对局**，如果没有，从成本优化的角度，可以将该Pod缩容掉。
 - **K8S Operator定义 main-secondary Probe 来判断当前Pod的角色（main or secondary）**，升级的时候，可以优先升级
