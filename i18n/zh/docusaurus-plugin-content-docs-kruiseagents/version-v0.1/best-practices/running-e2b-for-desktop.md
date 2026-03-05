@@ -4,6 +4,8 @@
 
 关于基础概念，请参考 [运行 E2B 代码执行沙箱](../code_interpreter)
 
+> 如果您在云平台上配置了安全组，请确保 6080 端口已打开，以便访问远程桌面。
+
 ## 1. 定义模板
 
 类似 code-interpreter 模板，我们可以通过 `SandboxSet` 定义一个使用官方 E2B Desktop 镜像的模板并创建预热池。
@@ -12,10 +14,7 @@
 apiVersion: agents.kruise.io/v1alpha1
 kind: SandboxSet
 metadata:
-  annotations:
-    # 启用 SandboxManager 的 Envd 初始化能力
-    e2b.agents.kruise.io/should-init-envd: "true"
-  name: code-interpreter
+  name: desktop
   namespace: default
 spec:
   # 预热池的大小，建议比预估的请求突发量略大

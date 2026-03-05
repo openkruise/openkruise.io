@@ -1,8 +1,3 @@
----
-id: sandbox-claim
-title: 获取沙箱
----
-
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
@@ -11,6 +6,10 @@ import TabItem from '@theme/TabItem';
 Agent 应用可以通过以下方式从 OpenKruise Agents 中获取一个沙箱。
 
 > 如果预热池中存在 available 状态的沙箱，交付速度为压秒级。否则，将会等待沙箱补充与就绪，交付效率受集群性能影响。
+
+> ⚠️ 注意：OpenKruise Agents 的高级功能依赖于 `agent-runtime` 组件，`sandbox-manager` 或 `sandbox-controller` 通过 `49983` 
+> 端口与该组件进行通信。如果您的集群中存在防火墙、安全组等防护机制，请确保对于所有 Sandbox Pod，该端口是开放的。如果您确认不需要注入
+> `agent-runtime` 也不需要使用任何高级功能，请参考 [跳过 agent-runtime 初始化](#跳过-agent-runtime-初始化)
 
 ## 通过 E2B SDK 获取沙箱
 
@@ -95,7 +94,7 @@ spec:
 参数说明：
 
 - **replicas**：指定获取的沙箱数量。
-- **claimTimeout**：指定 claim 的超时时间。最多尝试工作的时间。
+- **claimTimeout**：指定 claim 的超时时间。最多尝试任务的时间。
 - **ttlAfterCompleted**：指定 claim 完成后的 TTL 时间。claim 任务完成后，经过 TTL 时间，SandboxClaim
   资源会被删除（获取到的沙箱不会被删除）。
 
@@ -103,6 +102,53 @@ spec:
 
 - 受预热池库存、集群资源等因素影响，最终可能无法获取到指定数量的沙箱。
 - 任务完成（或超时）前，已经获取到的沙箱会逐渐交付。通过 `agents.kruise.io/claim-name=<sbc-name>` 标签可以实时过滤已交付的所有沙箱。
+
+> 在 E2B 中，通过添加 `e2b.agents.kruise.io/claim-timeout-seconds` 元数据来指定单次 claim 的服务端超时时间，
+> 通过 request_timeout 参数指定客户端超时时间。
+
+```python
+from e2b_code_interpreter import Sandbox
+
+Sandbox.create(template="demo", request_timeout=60.0, metadata={
+    "e2b.agents.kruise.io/claim-timeout-seconds": "60"
+})
+```
+
+## 基于模板直接创建沙箱
+
+默认情况下，`OpenKruise Agents` 总是会从模板的预热池中获取沙箱。如果预热池中没有可用的沙箱，将会等待沙箱补充与就绪。
+对于一些特殊场景（比如不希望进行沙箱预热、不希望进行原地升级等），用户可以选择基于模板直接创建沙箱，而不需要等待预热池补充。
+基于模板直接创建时，sandbox-manager / SandboxClaim controller 将会通过传入的 templateID 检索到 SandboxSet，
+并根据其配置创建新的沙箱。
+
+<Tabs>
+  <TabItem value="E2B" label="E2B">
+
+```python
+from e2b_code_interpreter import Sandbox
+
+Sandbox.create(template="demo", metadata={
+    "e2b.agents.kruise.io/create-on-no-stock": "true"
+})
+```
+
+  </TabItem>
+  <TabItem value="SandboxClaim" label="SandboxClaim">
+
+```yaml
+apiVersion: agents.kruise.io/v1alpha1
+kind: SandboxClaim
+metadata:
+  name: demo-sandbox-claim
+  namespace: default
+spec:
+  templateName: demo
+  createOnNoStock: true
+```
+
+  </TabItem>
+
+</Tabs>
 
 ## 高级功能
 
@@ -198,12 +244,14 @@ spec:
   </TabItem>
 </Tabs>
 
-### 原地升级
+### 替换镜像
 
-你可以在获取沙箱的同时，指定一个镜像对沙箱的主容器进行原地升级，将预热的容器镜像替换为指定的镜像。这在一些强化学习场景非常有用。使用原地升级会影响
-create 接口的交付速度，可能无法在亚秒级完成交付。
+你可以在获取沙箱的同时，指定一个镜像替换为沙箱的主容器镜像，这在一些强化学习场景非常有用。该功能的具体行为是：
 
-> 目前只支持通过 E2B 使用原地升级功能。
+- 如果从 SandboxSet 预热池中获取，将会执行一次原地升级（inplace update），将运行中的容器镜像替换为指定的镜像。
+- 如果基于 SandboxSet 创建，将会直接以指定的镜像创建新的 Sandbox。
+
+使用原地升级会影响 create 接口的交付速度，可能无法在亚秒级完成交付。
 
 <Tabs>
   <TabItem value="E2B" label="E2B">
@@ -216,6 +264,21 @@ from e2b_code_interpreter import Sandbox
 sbx = Sandbox.create(template="some-template", metadata={
     "e2b.agents.kruise.io/image": "new-image:latest"
 })
+```
+
+  </TabItem>
+  <TabItem value="SandboxClaim" label="SandboxClaim">
+
+```yaml
+apiVersion: agents.kruise.io/v1alpha1
+kind: SandboxClaim
+metadata:
+  name: demo-sandbox-claim
+  namespace: default
+spec:
+  templateName: demo
+  inplaceUpdate:
+    image: "new-image:latest"
 ```
 
   </TabItem>
@@ -241,6 +304,66 @@ sbx = Sandbox.create(template="some-template", timeout=300, metadata={
     "e2b.agents.kruise.io/csi-volume-name": "oss-pv-test",
     "e2b.agents.kruise.io/csi-mount-point": "/data"
 })
+```
+
+  </TabItem>
+</Tabs>
+
+### 跳过 agent-runtime 初始化
+
+一般情况下，沙箱中都应当注入 `agent-runtime` 以提供代码执行、远程操作、存储挂载等一系列功能。`OpenKruise Agents` 在获取沙箱的过程中，
+会对 `agent-runtime` 进行初始化。如果用户需要高度自定义而不使用 `agent-runtime`，可以在获取沙箱时跳过 `agent-runtime` 的初始化流程。
+
+> 目前只支持通过 E2B 跳过 agent-runtime 初始化。
+
+<Tabs>
+  <TabItem value="E2B" label="E2B">
+
+```python
+from e2b_code_interpreter import Sandbox
+
+Sandbox.create(template="demo", metadata={
+    "e2b.agents.kruise.io/skip-init-runtime": "true"
+})
+```
+
+  </TabItem>
+
+</Tabs>
+
+
+### 问题排查
+
+由于各种原因，在获取沙箱的过程中，可能会发生错误导致获取失败。默认情况下，Sandbox Manager 与 SandboxClaim Controller
+会删除发生错误的沙箱，
+并重试获取一个新的沙箱。如果你需要保留发生错误的 Sandbox 实例及其对应的 Pod 用于问题排查，可以在获取沙箱时添加以下参数以跳过沙箱的删除：
+
+<Tabs>
+  <TabItem value="E2B" label="E2B">
+
+> `e2b.agents.kruise.io/csi-volume-name` 与 `e2b.agents.kruise.io/csi-mount-point` 为 OpenKruise Agents 扩展字段，
+> 不会作为元数据添加到Sandbox 资源上。
+
+```python
+from e2b_code_interpreter import Sandbox
+
+sbx = Sandbox.create(template="some-template", timeout=300, metadata={
+    "e2b.agents.kruise.io/reserve-failed-sandbox": "true"
+})
+```
+
+  </TabItem>
+  <TabItem value="SandboxClaim" label="SandboxClaim">
+
+```yaml
+apiVersion: agents.kruise.io/v1alpha1
+kind: SandboxClaim
+metadata:
+  name: demo-sandbox-claim
+  namespace: default
+spec:
+  templateName: demo
+  reserveFailedSandbox: true
 ```
 
   </TabItem>

@@ -1,7 +1,12 @@
 # Using OpenKruise Agents Sandbox via E2B SDK
 
-The sandbox-manager component of OpenKruise Agents supports two integration methods: native E2B protocol and private
-protocol.
+The sandbox-manager component of OpenKruise Agents supports two E2B integration protocols: native E2B protocol and
+private protocol.
+
+> The daily E2E regression tests for sandbox-manager are conducted with e2b-code-interpreter == 2.4.1 / e2b == 2.8.1,
+> while compatibility is tested with the latest version.
+> New features in updated versions will be adapted gradually. If you have feature requests, please submit an issue via
+> GitHub.
 
 Comparison between private protocol and native protocol:
 
@@ -40,15 +45,16 @@ export E2B_DOMAIN=your.domain.com
 #### 1. Domain with Port
 
 For scenarios where the Ingress gateway does not use default HTTP ports (80 or 443). For example, if the domain is
-`your.domain.com:8080`
+`your.domain.com:8080`:
 
 - Client-side: Set environment variable `E2B_DOMAIN=your.domain.com:8080`
-- Server-side
-    - In [configuration_patch.yaml](../../config/sandbox-manager/configuration_patch.yaml), **keep the port**, set E2B
-      Domain to
-      `your.domain.com:8080`
-    - In [ingress_patch.yaml](../../config/sandbox-manager/ingress_patch.yaml), **do not keep the port**, replace
-      `replace.with.your.domain` with `your.domain.com`
+- Server-side:
+  -
+  In [configuration_patch.yaml](https://github.com/openkruise/agents/blob/master/config/sandbox-manager/configuration_patch.yaml)
+  **keep the port**, set E2B Domain to `your.domain.com:8080`
+    -
+  In [ingress_patch.yaml](https://github.com/openkruise/agents/blob/master/config/sandbox-manager/ingress_patch.yaml)
+  **do not keep the port**, replace `replace.with.your.domain` with `your.domain.com`
 
 ## How to install a certificate
 
@@ -143,7 +149,7 @@ kubectl create secret tls sandbox-manager-tls \
 
 | API Category         | API                                                   | Compatibility Level  | Notes                                                                                              |
 |----------------------|-------------------------------------------------------|----------------------|----------------------------------------------------------------------------------------------------|
-| Lifecycle Management | create                                                | Partially Compatible | Network access control implementation pending                                                      |
+| Lifecycle Management | create                                                | Partially Compatible | Network access control and resource management implementation pending                              |
 |                      | get\_info                                             | Fully Compatible     |                                                                                                    |
 |                      | list                                                  | Fully Compatible     |                                                                                                    |
 |                      | kill                                                  | Fully Compatible     |                                                                                                    |

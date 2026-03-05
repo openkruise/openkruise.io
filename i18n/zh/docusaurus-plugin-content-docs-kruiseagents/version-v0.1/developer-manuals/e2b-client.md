@@ -2,6 +2,9 @@
 
 OpenKruise Agents 的 sandbox-manager 组件支持两种 E2B 接入协议：原生 E2B 协议和私有协议。
 
+> sandbox-manager 的日常 E2E 回归测试通过 e2b-code-interpreter == 2.4.1 / e2b == 2.8.1 进行，同时通过 latest 版本测试兼容性。
+> 更新版本的新功能会逐步适配，如果有功能需求，请通过 GitHub 提交 issue。
+
 私有协议与原生协议的对比：
 
 > 假设您配置的 E2B_DOMAIN 是 `your.domain.com`
@@ -137,7 +140,7 @@ kubectl create secret tls sandbox-manager-tls \
 
 | API分类  | API                                                   | 参数兼容程度 | 说明                             |
 |--------|-------------------------------------------------------|--------|--------------------------------|
-| 生命周期管理 | create                                                | 部分兼容   | 网络访问控制待实现                      |
+| 生命周期管理 | create                                                | 部分兼容   | 网络访问控制、原地变配待实现                 |
 |        | get\_info                                             | 完全兼容   |                                |
 |        | list                                                  | 完全兼容   |                                |
 |        | kill                                                  | 完全兼容   |                                |

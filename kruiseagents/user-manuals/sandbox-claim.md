@@ -11,6 +11,7 @@ import TabItem from '@theme/TabItem';
 Agent applications can obtain a sandbox from OpenKruise Agents in the following ways.
 
 > If there are sandboxes with available status in the warm pool, the delivery speed is sub-second. Otherwise, it will wait for sandbox replenishment and readiness, and the delivery efficiency is affected by cluster performance.
+> ⚠️ Note: The advanced features of OpenKruise Agents depend on the `agent-runtime` component. `sandbox-manager` or `sandbox-controller` communicates with this component through port `49983`. If you have firewalls, security groups, or other protection mechanisms in your cluster, please ensure that this port is open for all Sandbox Pods. If you confirm that you do not need to inject `agent-runtime` and do not need to use any advanced features, please refer to [Skip agent-runtime Initialization](#skip-agent-runtime-initialization)
 
 ## Claiming Sandboxes via E2B SDK
 
@@ -103,6 +104,51 @@ Batch claiming is a best-effort, gradual delivery feature. That means:
 
 - Due to factors such as warm pool inventory and cluster resources, it may not be possible to claim the specified number of sandboxes eventually.
 - Before the task completes (or times out), sandboxes that have been claimed will be delivered gradually. The `agents.kruise.io/claim-name=<sbc-name>` label can be used to filter all delivered sandboxes in real-time.
+
+> In E2B, you can specify the server-side timeout for a single claim by adding the `e2b.agents.kruise.io/claim-timeout-seconds` metadata, and specify the client-side timeout through the `request_timeout` parameter.
+
+```python
+from e2b_code_interpreter import Sandbox
+
+Sandbox.create(template="demo", request_timeout=60.0, metadata={
+    "e2b.agents.kruise.io/claim-timeout-seconds": "60"
+})
+```
+
+## Creating Sandbox Directly from Template
+
+By default, `OpenKruise Agents` always claims sandboxes from the template's warm pool. If there are no available sandboxes in the warm pool, it will wait for sandbox replenishment and readiness.
+For some special scenarios (such as not wanting to pre-warm sandboxes, not wanting in-place upgrades, etc.), users can choose to create sandboxes directly from the template without waiting for the warm pool to replenish.
+When creating directly from a template, the sandbox-manager / SandboxClaim controller will retrieve the SandboxSet through the passed templateID and create a new sandbox based on its configuration.
+
+<Tabs>
+  <TabItem value="E2B" label="E2B">
+
+```python
+from e2b_code_interpreter import Sandbox
+
+Sandbox.create(template="demo", metadata={
+    "e2b.agents.kruise.io/create-on-no-stock": "true"
+})
+```
+
+  </TabItem>
+  <TabItem value="SandboxClaim" label="SandboxClaim">
+
+```yaml
+apiVersion: agents.kruise.io/v1alpha1
+kind: SandboxClaim
+metadata:
+  name: demo-sandbox-claim
+  namespace: default
+spec:
+  templateName: demo
+  createOnNoStock: true
+```
+
+  </TabItem>
+
+</Tabs>
 
 ## Advanced Features
 
@@ -198,12 +244,14 @@ spec:
   </TabItem>
 </Tabs>
 
-### In-Place Upgrade
+### Image Replacement
 
-You can specify an image to perform an in-place upgrade of the sandbox's main container when claiming a sandbox, replacing the prewarmed container image with the specified image. This is very useful in some reinforcement learning scenarios. Using in-place upgrade will affect
-the delivery speed of the create interface and may not be able to complete delivery at sub-second level.
+You can specify an image to replace the sandbox's main container image when claiming a sandbox. This is very useful in some reinforcement learning scenarios. The specific behavior of this feature is:
 
-> Currently, in-place upgrade functionality is only supported through E2B.
+- If claiming from the SandboxSet warm pool, an in-place upgrade will be performed to replace the running container image with the specified image.
+- If creating based on the SandboxSet, a new Sandbox will be created directly with the specified image.
+
+Using in-place upgrade will affect the delivery speed of the create interface and may not be able to complete delivery at sub-second level.
 
 <Tabs>
   <TabItem value="E2B" label="E2B">
@@ -216,6 +264,21 @@ from e2b_code_interpreter import Sandbox
 sbx = Sandbox.create(template="some-template", metadata={
     "e2b.agents.kruise.io/image": "new-image:latest"
 })
+```
+
+  </TabItem>
+  <TabItem value="SandboxClaim" label="SandboxClaim">
+
+```yaml
+apiVersion: agents.kruise.io/v1alpha1
+kind: SandboxClaim
+metadata:
+  name: demo-sandbox-claim
+  namespace: default
+spec:
+  templateName: demo
+  inplaceUpdate:
+    image: "new-image:latest"
 ```
 
   </TabItem>
@@ -241,6 +304,63 @@ sbx = Sandbox.create(template="some-template", timeout=300, metadata={
     "e2b.agents.kruise.io/csi-volume-name": "oss-pv-test",
     "e2b.agents.kruise.io/csi-mount-point": "/data"
 })
+```
+
+  </TabItem>
+</Tabs>
+
+### Skip agent-runtime Initialization
+
+Generally, `agent-runtime` should be injected into the sandbox to provide code execution, remote operations, storage mounting, and other functions. During the sandbox claiming process, `OpenKruise Agents` will initialize the `agent-runtime`. If users need high customization and do not use `agent-runtime`, they can skip the `agent-runtime` initialization process when claiming sandboxes.
+
+> Currently, skipping agent-runtime initialization is only supported through E2B.
+
+<Tabs>
+  <TabItem value="E2B" label="E2B">
+
+```python
+from e2b_code_interpreter import Sandbox
+
+Sandbox.create(template="demo", metadata={
+    "e2b.agents.kruise.io/skip-init-runtime": "true"
+})
+```
+
+  </TabItem>
+
+</Tabs>
+
+
+### Troubleshooting
+
+Due to various reasons, errors may occur during the sandbox claiming process, causing the claim to fail. By default, the Sandbox Manager and SandboxClaim Controller will delete sandboxes that encounter errors and retry to claim a new sandbox. If you need to retain the Sandbox instances and their corresponding Pods that encountered errors for troubleshooting purposes, you can add the following parameters when claiming sandboxes to skip sandbox deletion:
+
+<Tabs>
+  <TabItem value="E2B" label="E2B">
+
+> `e2b.agents.kruise.io/csi-volume-name` and `e2b.agents.kruise.io/csi-mount-point` are OpenKruise Agents extension fields and
+> will not be added to the Sandbox resource as metadata.
+
+```python
+from e2b_code_interpreter import Sandbox
+
+sbx = Sandbox.create(template="some-template", timeout=300, metadata={
+    "e2b.agents.kruise.io/reserve-failed-sandbox": "true"
+})
+```
+
+  </TabItem>
+  <TabItem value="SandboxClaim" label="SandboxClaim">
+
+```yaml
+apiVersion: agents.kruise.io/v1alpha1
+kind: SandboxClaim
+metadata:
+  name: demo-sandbox-claim
+  namespace: default
+spec:
+  templateName: demo
+  reserveFailedSandbox: true
 ```
 
   </TabItem>

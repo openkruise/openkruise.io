@@ -5,6 +5,8 @@ it via the E2B SDK.
 
 For basic concepts, please refer to [Running E2B Code Interpreter Sandbox](../code_interpreter)
 
+> If you have configured a security group on your cloud platform, please ensure that port 6080 is open to access the remote desktop.
+
 ## 1. Defining Templates
 
 Similar to the code-interpreter template, we can define a template using the official E2B Desktop image and create a
@@ -14,10 +16,7 @@ pre-warming pool via `SandboxSet`.
 apiVersion: agents.kruise.io/v1alpha1
 kind: SandboxSet
 metadata:
-  annotations:
-    # Enable SandboxManager's Envd initialization capability
-    e2b.agents.kruise.io/should-init-envd: "true"
-  name: code-interpreter
+  name: desktop
   namespace: default
 spec:
   # Pre-warming pool size, recommended to be slightly larger than the estimated request burst volume
