@@ -26,8 +26,8 @@ OpenKruise Agents offers high-level APIs for sandbox management, enabling effici
 ## Usage
 To interact with the OpenKruise Agents programmatically, you can use the E2B SDK, which provides a high-level interface for creating and managing sandboxes.
 
-- [Running E2B Code Interpreter Sandbox](examples/code_interpreter/README.md)
-- [Running E2B Desktop Sandbox](examples/desktop/README.md)
+- [Running E2B Code Interpreter Sandbox](best-practices/running-e2b-for-desktop.md)
+- [Running E2B Desktop Sandbox](best-practices/running-e2b-for-desktop.md)
 
 ## Contributing
 

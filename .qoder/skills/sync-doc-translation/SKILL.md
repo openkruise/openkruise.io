@@ -72,6 +72,11 @@ Translation principles:
 - Keep all link URLs unchanged; only translate the link text
 - Keep proper nouns untranslated (e.g. CloneSet, SidecarSet, OpenKruise)
 
+Hyperlink handling (CRITICAL):
+- **Relative paths**: Must maintain the same relative path structure. For example, if source file `foo/doc.md` contains a link `[text](example/test.md)`, the target file `bar/doc.md` must also use `[text](example/test.md)` to point to `bar/example/test.md`
+- **Absolute URLs**: Must be preserved exactly as-is (e.g., `https://github.com/example/test.md` remains unchanged)
+- After translation, verify that all relative links in the target document point to existing files. If a target file does not exist for a relative link, report it to the user as a warning
+
 ### Step 5: Report Results
 
 After processing all changed files, summarize:
