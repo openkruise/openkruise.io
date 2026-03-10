@@ -50,6 +50,7 @@ module.exports = {
                 'developer-manuals/e2b-client',
                 'developer-manuals/go-client',
                 'developer-manuals/python-client',
+                'developer-manuals/java-client',
                 'developer-manuals/faq',
             ],
         },
