@@ -107,7 +107,7 @@ The following table shows all configurable parameters for the Sandbox Controller
 | Parameter                    | Description                                | Default                                                                                                                 |
 |------------------------------|--------------------------------------------|-------------------------------------------------------------------------------------------------------------------------|
 | `replicaCount`               | Controller replica count                   | `2`                                                                                                                     |
-| `image.repository`           | Controller image repository                | `openkruise-registry.cn-shanghai.cr.aliyuncs.com/openkruise/agent-sandbox-controller`                                   |
+| `image.repository`           | Controller image repository                | `openkruise/agent-sandbox-controller`                                                                                   |
 | `image.tag`                  | Controller image version                   | `v0.1.0`                                                                                                                |
 | `image.pullPolicy`           | Image pull policy                          | `IfNotPresent`                                                                                                          |
 | `webhook.port`               | Webhook service port                       | `9443`                                                                                                                  |
@@ -140,30 +140,30 @@ The following table shows all configurable parameters for the Sandbox Manager ch
 
 #### Controller Parameters
 
-| Parameter                          | Description                        | Default                                                                      |
-|------------------------------------|------------------------------------|------------------------------------------------------------------------------|
-| `replicaCount`                     | Manager replica count              | `2`                                                                          |
-| `controller.repository`            | Controller image repository        | `openkruise-registry.cn-shanghai.cr.aliyuncs.com/openkruise/sandbox-manager` |
-| `controller.tag`                   | Controller image version           | `v0.1.0`                                                                     |
-| `controller.pullPolicy`            | Image pull policy                  | `IfNotPresent`                                                               |
-| `controller.logLevel`              | Log level                          | `3`                                                                          |
-| `controller.infra`                 | Sandbox infrastructure type        | `sandbox-cr`                                                                 |
-| `controller.hostNetwork`           | Whether to use Host Network        | `false`                                                                      |
-| `controller.maxClaimWorkers`       | Maximum Claim worker threads       | `100`                                                                        |
-| `controller.maxCreateQPS`          | Maximum QPS for creating Sandbox   | `200`                                                                        |
-| `controller.extProcMaxConcurrency` | External processor max concurrency | `3000`                                                                       |
-| `controller.resources.cpu`         | Controller CPU resource limit      | `2`                                                                          |
-| `controller.resources.memory`      | Controller memory resource limit   | `4Gi`                                                                        |
+| Parameter                          | Description                        | Default                      |
+|------------------------------------|------------------------------------|------------------------------|
+| `replicaCount`                     | Manager replica count              | `2`                          |
+| `controller.repository`            | Controller image repository        | `openkruise/sandbox-manager` |
+| `controller.tag`                   | Controller image version           | `v0.1.0`                     |
+| `controller.pullPolicy`            | Image pull policy                  | `IfNotPresent`               |
+| `controller.logLevel`              | Log level                          | `3`                          |
+| `controller.infra`                 | Sandbox infrastructure type        | `sandbox-cr`                 |
+| `controller.hostNetwork`           | Whether to use Host Network        | `false`                      |
+| `controller.maxClaimWorkers`       | Maximum Claim worker threads       | `100`                        |
+| `controller.maxCreateQPS`          | Maximum QPS for creating Sandbox   | `200`                        |
+| `controller.extProcMaxConcurrency` | External processor max concurrency | `3000`                       |
+| `controller.resources.cpu`         | Controller CPU resource limit      | `2`                          |
+| `controller.resources.memory`      | Controller memory resource limit   | `4Gi`                        |
 
 #### Proxy (Envoy) Parameters
 
-| Parameter                | Description                  | Default                                           |
-|--------------------------|------------------------------|---------------------------------------------------|
-| `proxy.repository`       | Envoy proxy image repository | `registry-cn-hangzhou.ack.aliyuncs.com/acs/envoy` |
-| `proxy.tag`              | Envoy proxy image version    | `v1.4.0-gf4e7213-apsara`                          |
-| `proxy.pullPolicy`       | Image pull policy            | `IfNotPresent`                                    |
-| `proxy.resources.cpu`    | Envoy CPU resources          | `2`                                               |
-| `proxy.resources.memory` | Envoy memory resources       | `4Gi`                                             |
+| Parameter                | Description                  | Default            |
+|--------------------------|------------------------------|--------------------|
+| `proxy.repository`       | Envoy proxy image repository | `envoyproxy/envoy` |
+| `proxy.tag`              | Envoy proxy image version    | `v1.33-latest`     |
+| `proxy.pullPolicy`       | Image pull policy            | `IfNotPresent`     |
+| `proxy.resources.cpu`    | Envoy CPU resources          | `2`                |
+| `proxy.resources.memory` | Envoy memory resources       | `4Gi`              |
 
 #### E2B Protocol Parameters
 
