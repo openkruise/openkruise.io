@@ -5,7 +5,7 @@ import TabItem from '@theme/TabItem';
 
 Agent 应用可以通过以下方式从 OpenKruise Agents 中获取一个沙箱。
 
-> 如果预热池中存在 available 状态的沙箱，交付速度为压秒级。否则，将会等待沙箱补充与就绪，交付效率受集群性能影响。
+> 如果预热池中存在 available 状态的沙箱，交付速度为亚秒级。否则，将会等待沙箱补充与就绪，交付效率受集群性能影响。
 
 > ⚠️ 注意：OpenKruise Agents 的高级功能依赖于 `agent-runtime` 组件，`sandbox-manager` 或 `sandbox-controller` 通过 `49983` 
 > 端口与该组件进行通信。如果您的集群中存在防火墙、安全组等防护机制，请确保对于所有 Sandbox Pod，该端口是开放的。如果您确认不需要注入
@@ -167,6 +167,18 @@ from e2b_code_interpreter import Sandbox
 Sandbox.create(template="demo", timeout=600)  # timeout in seconds
 ```
 
+默认情况下，沙箱在达到超时时间后会被自动删除。如果你希望沙箱永不超时、持续运行，可以使用永不超时扩展。
+> `e2b.agents.kruise.io/never-timeout` 为 OpenKruise Agents 扩展字段，
+> 不会作为元数据添加到 Sandbox 资源上。
+
+```python
+from e2b_code_interpreter import Sandbox
+
+sbx = Sandbox.create(template="demo", metadata={
+    "e2b.agents.kruise.io/never-timeout": "true"
+})
+```
+
   </TabItem>
   <TabItem value="SandboxClaim" label="SandboxClaim">
 
@@ -192,8 +204,6 @@ spec:
 
 自动休眠与沙箱超时类似，在沙箱达到指定时间后，会自动进入休眠状态（paused）。
 
-> 目前只支持通过 E2B 使用自动休眠功能。如果你的 E2B 客户端没有 `auto_pause` 参数，请升级到最新版本。
-
 <Tabs>
   <TabItem value="E2B" label="E2B">
 
@@ -201,6 +211,23 @@ spec:
 from e2b_code_interpreter import Sandbox
 
 Sandbox.beta_create(template="demo", timeout=600, auto_pause=True)  # auto pause in seconds
+```
+
+  </TabItem>
+  <TabItem value="SandboxClaim" label="SandboxClaim">
+
+```yaml
+apiVersion: agents.kruise.io/v1alpha1
+kind: SandboxClaim
+metadata:
+  name: demo-sandbox-claim
+  namespace: default
+spec:
+  templateName: demo
+  # RFC 3339 格式的绝对时间，用于将获取的沙箱自动暂停。
+  # 建议通过编程方式设置此字段，例如：
+  # sbc.Spec.PauseTime = metav1.NewTime(time.Now().Add(5 * time.Minute))
+  pauseTime: 2026-02-06T07:33:30Z
 ```
 
   </TabItem>
@@ -287,24 +314,83 @@ spec:
 ### 动态挂载持久化卷
 
 你可以在获取沙箱时动态挂载一个 PV，为每个沙箱指定单独的挂载卷。这个能力依赖注入到 Sandbox 中的 `agent-runtime`
-，并且也会一定程度下影响交付效率。
+，并且也会一定程度上影响交付效率。
 
-> 目前只支持通过 E2B 使用动态挂载持久化卷功能。
+> ⚠️ 要使用动态持久化卷挂载功能，你必须在 SandboxSet 的 `runtimes` 字段中配置 `csi`。详情请参考[运行时注入](./runtime-injection.md)文档。
 
 <Tabs>
   <TabItem value="E2B" label="E2B">
 
-> `e2b.agents.kruise.io/csi-volume-name` 与 `e2b.agents.kruise.io/csi-mount-point` 为 OpenKruise Agents 扩展字段，
-> 不会作为元数据添加到Sandbox 资源上。
+> 以下扩展字段为 OpenKruise Agents 扩展字段，不会作为元数据添加到 Sandbox 资源上。
+
+**单卷挂载：**
 
 ```python
 from e2b_code_interpreter import Sandbox
 
 sbx = Sandbox.create(template="some-template", timeout=300, metadata={
     "e2b.agents.kruise.io/csi-volume-name": "oss-pv-test",
-    "e2b.agents.kruise.io/csi-mount-point": "/data"
+    "e2b.agents.kruise.io/csi-mount-point": "/data",
+    # 可选：指定持久化卷中的子路径
+    "e2b.agents.kruise.io/csi-subpath": "sub/dir"
 })
 ```
+
+**多卷挂载：**
+
+如果需要同时挂载多个卷，可以使用 `e2b.agents.kruise.io/csi-volume-config` 扩展字段，传入 JSON 数组：
+
+```python
+import json
+from e2b_code_interpreter import Sandbox
+
+csi_config = json.dumps([
+    {"pvName": "oss-pv-1", "mountPath": "/data1"},
+    {"pvName": "oss-pv-2", "mountPath": "/data2", "subPath": "sub/dir", "readOnly": True}
+])
+
+sbx = Sandbox.create(template="some-template", timeout=300, metadata={
+    "e2b.agents.kruise.io/csi-volume-config": csi_config
+})
+```
+
+参数说明：
+
+| 扩展字段                                     | 说明                   | 是否必填    |
+|------------------------------------------|----------------------|---------|
+| `e2b.agents.kruise.io/csi-volume-name`   | 持久化卷名称               | 是（单卷挂载） |
+| `e2b.agents.kruise.io/csi-mount-point`   | 容器内挂载目标路径            | 是（单卷挂载） |
+| `e2b.agents.kruise.io/csi-subpath`       | 持久化卷中的子路径            | 否       |
+| `e2b.agents.kruise.io/csi-volume-config` | JSON 数组格式的挂载配置（多卷挂载） | 是（多卷挂载） |
+
+  </TabItem>
+  <TabItem value="SandboxClaim" label="SandboxClaim">
+
+```yaml
+apiVersion: agents.kruise.io/v1alpha1
+kind: SandboxClaim
+metadata:
+  name: demo-sandbox-claim
+  namespace: default
+spec:
+  templateName: demo
+  dynamicVolumesMount:
+    - pvName: "oss-pv-1"
+      mountPath: "/data1"
+    - pvName: "oss-pv-2"
+      mountPath: "/data2"
+      subPath: "sub/dir"
+      readOnly: true
+```
+
+字段说明：
+
+| 字段          | 说明        | 是否必填 |
+|-------------|-----------|------|
+| `pvName`    | 持久化卷名称    | 是    |
+| `mountPath` | 容器内挂载目标路径 | 是    |
+| `subPath`   | 持久化卷中的子路径 | 否    |
+| `readOnly`  | 是否以只读方式挂载 | 否    |
 
   </TabItem>
 </Tabs>
@@ -314,10 +400,11 @@ sbx = Sandbox.create(template="some-template", timeout=300, metadata={
 一般情况下，沙箱中都应当注入 `agent-runtime` 以提供代码执行、远程操作、存储挂载等一系列功能。`OpenKruise Agents` 在获取沙箱的过程中，
 会对 `agent-runtime` 进行初始化。如果用户需要高度自定义而不使用 `agent-runtime`，可以在获取沙箱时跳过 `agent-runtime` 的初始化流程。
 
-> 目前只支持通过 E2B 跳过 agent-runtime 初始化。
-
 <Tabs>
   <TabItem value="E2B" label="E2B">
+
+> `e2b.agents.kruise.io/skip-init-runtime` 为 OpenKruise Agents 扩展字段，
+> 不会作为元数据添加到 Sandbox 资源上。
 
 ```python
 from e2b_code_interpreter import Sandbox
@@ -325,6 +412,20 @@ from e2b_code_interpreter import Sandbox
 Sandbox.create(template="demo", metadata={
     "e2b.agents.kruise.io/skip-init-runtime": "true"
 })
+```
+
+  </TabItem>
+  <TabItem value="SandboxClaim" label="SandboxClaim">
+
+```yaml
+apiVersion: agents.kruise.io/v1alpha1
+kind: SandboxClaim
+metadata:
+  name: demo-sandbox-claim
+  namespace: default
+spec:
+  templateName: demo
+  skipInitRuntime: true
 ```
 
   </TabItem>
@@ -341,8 +442,8 @@ Sandbox.create(template="demo", metadata={
 <Tabs>
   <TabItem value="E2B" label="E2B">
 
-> `e2b.agents.kruise.io/csi-volume-name` 与 `e2b.agents.kruise.io/csi-mount-point` 为 OpenKruise Agents 扩展字段，
-> 不会作为元数据添加到Sandbox 资源上。
+> `e2b.agents.kruise.io/reserve-failed-sandbox` 为 OpenKruise Agents 扩展字段，
+> 不会作为元数据添加到 Sandbox 资源上。
 
 ```python
 from e2b_code_interpreter import Sandbox
@@ -364,6 +465,79 @@ metadata:
 spec:
   templateName: demo
   reserveFailedSandbox: true
+```
+
+  </TabItem>
+</Tabs>
+
+### 环境变量注入
+
+你可以在获取沙箱时注入环境变量。这些环境变量将传递给 `agent-runtime` 用于初始化。该功能需要启用 `agent-runtime`。
+
+> ⚠️ 注意：目前通过该功能注入的环境变量仅对 E2B 的 `commands.run` 接口生效，不会作为沙箱主容器的进程级环境变量生效。
+
+<Tabs>
+  <TabItem value="E2B" label="E2B">
+
+```python
+from e2b_code_interpreter import Sandbox
+
+sbx = Sandbox.create(template="demo", envs={
+    "MY_ENV": "value",
+    "API_KEY": "sk-xxx"
+})
+```
+
+  </TabItem>
+  <TabItem value="SandboxClaim" label="SandboxClaim">
+
+```yaml
+apiVersion: agents.kruise.io/v1alpha1
+kind: SandboxClaim
+metadata:
+  name: demo-sandbox-claim
+  namespace: default
+spec:
+  templateName: demo
+  envVars:
+    MY_ENV: "value"
+    API_KEY: "sk-xxx"
+```
+
+  </TabItem>
+</Tabs>
+
+### 等待就绪超时
+
+在获取沙箱的过程中，如果执行了某些操作（如原地升级镜像、创建新沙箱等），沙箱可能需要一段时间才能就绪。你可以指定等待就绪超时时间，控制等待沙箱就绪的最大时长。
+
+<Tabs>
+  <TabItem value="E2B" label="E2B">
+
+> `e2b.agents.kruise.io/wait-ready-timeout-seconds` 为 OpenKruise Agents 扩展字段，
+> 不会作为元数据添加到 Sandbox 资源上。
+
+```python
+from e2b_code_interpreter import Sandbox
+
+sbx = Sandbox.create(template="demo", metadata={
+    "e2b.agents.kruise.io/wait-ready-timeout-seconds": "60"  # 最多等待 60 秒
+})
+```
+
+  </TabItem>
+  <TabItem value="SandboxClaim" label="SandboxClaim">
+
+```yaml
+apiVersion: agents.kruise.io/v1alpha1
+kind: SandboxClaim
+metadata:
+  name: demo-sandbox-claim
+  namespace: default
+spec:
+  templateName: demo
+  # 默认值：30s。格式：duration 字符串（如 "3h"、"200s"、"15m"）
+  waitReadyTimeout: 60s
 ```
 
   </TabItem>

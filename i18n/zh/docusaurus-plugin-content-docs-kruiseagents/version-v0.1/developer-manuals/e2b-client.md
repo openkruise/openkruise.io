@@ -44,19 +44,18 @@ export E2B_DOMAIN=your.domain.com
 
 - 客户端：设置环境变量 `E2B_DOMAIN=your.domain.com:8080`
 - 服务端：
-  -
-  在 [configuration_patch.yaml](https://github.com/openkruise/agents/blob/master/config/sandbox-manager/configuration_patch.yaml)
-  中，**保留端口**，将 E2B Domain 设置为 `your.domain.com:8080`
-    -
-  在 [ingress_patch.yaml](https://github.com/openkruise/agents/blob/master/config/sandbox-manager/ingress_patch.yaml)
-  中，**不要保留端口**，将 `replace.with.your.domain` 替换为 `your.domain.com`
-
+    - 在
+      [configuration_patch.yaml](https://github.com/openkruise/agents/blob/master/config/sandbox-manager/configuration_patch.yaml)
+      中，**保留端口**，将 E2B Domain 设置为 `your.domain.com:8080`
+    - 在
+      [ingress_patch.yaml](https://github.com/openkruise/agents/blob/master/config/sandbox-manager/ingress_patch.yaml)
+      中，**不要保留端口**，将 `replace.with.your.domain` 替换为 `your.domain.com`
 ## 如何安装证书
 
 如果您需要通过 HTTPS 访问 sandbox-manager，需要安装 TLS 证书。建议使用可信证书。如果您没有可信证书，可以使用自签名证书，请参考以下文档：
 
-- [use-self-signed-cert.md](../best-practices/use-self-signed-cert.md)
-- [cert-manager.md](../best-practices/cert-manager.md)
+- [使用自签名证书](../best-practices/use-self-signed-cert.md)
+- [使用 cert-manager](../best-practices/cert-manager.md)
 
 您可以使用以下命令安装证书：
 
@@ -138,6 +137,8 @@ kubectl create secret tls sandbox-manager-tls \
 
 ## E2B 兼容性说明
 
+> ⚠️ **重要**：`commands.run`（命令执行）和文件系统 `read/write` API 需要在 Sandbox 中注入 `agent-runtime` 组件。请确保你的 SandboxSet 已配置 `runtimes: [{name: agent-runtime}]`。详情请参考[运行时注入](../user-manuals/runtime-injection.md)文档。
+
 | API分类  | API                                                   | 参数兼容程度 | 说明                             |
 |--------|-------------------------------------------------------|--------|--------------------------------|
 | 生命周期管理 | create                                                | 部分兼容   | 网络访问控制、原地变配待实现                 |
@@ -147,8 +148,9 @@ kubectl create secret tls sandbox-manager-tls \
 |        | pause                                                 | 完全兼容   | 考虑到容器生态的效率问题，当前 pause 的实现为异步接口 |
 |        | connect                                               | 完全兼容   |                                |
 | 代码运行   | run\_code                                             | 完全兼容   | 主容器内需要运行e2b-code-interpreter   |
-| 命令执行   | commands.run                                          | 完全兼容   | 需要通过运行时注入envd组件                |
-| 文件系统   | read/write                                            | 完全兼容   | 需要通过运行时注入envd组件                |
+| 命令执行   | commands.run                                          | 完全兼容   | 需要通过运行时注入agent-runtime组件       |
+| 文件系统   | read/write                                            | 完全兼容   | 需要通过运行时注入agent-runtime组件       |
 |        | upload\_url/download\_url                             | 不支持    | 通过预签名url上传下载待实现                |
 | 生命周期事件 | https://api.e2b.app/events/sandboxes/{sbx.sandbox_id} | 不支持    | 生命周期事件待实现                      |
+| 快照管理   | snapshots                                             | 完全兼容   | 具体快照效果依赖于 Checkpoint 实现        |
 | 模板管理   |                                                       | 不支持    | 模板管理待实现，推荐使用容器镜像来替代模板的功能       |

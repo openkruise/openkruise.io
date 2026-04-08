@@ -27,8 +27,8 @@ You can edit the deployment with `kubectl edit deploy -n sandbox-system sandbox-
 You can configure the server-side E2B_DOMAIN by editing the following files before running
 `make deploy-sandbox-manager`:
 
-- [configuration_patch.yaml](../../config/sandbox-manager/configuration_patch.yaml)
-- [ingress_patch.yaml](../../config/sandbox-manager/ingress_patch.yaml)
+- [configuration_patch.yaml](https://github.com/openkruise/agents/blob/master/config/sandbox-manager/configuration_patch.yaml)
+- [ingress_patch.yaml](https://github.com/openkruise/agents/blob/master/config/sandbox-manager/ingress_patch.yaml)
 
 [//]: # (TODO: Add new deployment methods like Helm here when available)
 
@@ -143,6 +143,8 @@ kubectl create secret tls sandbox-manager-tls \
 
 ## E2B Compatibility
 
+> ⚠️ **Important**: The `commands.run` (command execution) and file system `read/write` APIs require the `agent-runtime` component to be injected into the Sandbox. Please ensure that your SandboxSet has configured `runtimes: [{name: agent-runtime}]`. For details, refer to the [Runtime Injection](../user-manuals/runtime-injection.md) documentation.
+
 | API Category         | API                                                   | Compatibility Level  | Notes                                                                                              |
 |----------------------|-------------------------------------------------------|----------------------|----------------------------------------------------------------------------------------------------|
 | Lifecycle Management | create                                                | Partially Compatible | Network access control and resource management implementation pending                              |
@@ -152,8 +154,9 @@ kubectl create secret tls sandbox-manager-tls \
 |                      | pause                                                 | Fully Compatible     | Due to container ecosystem efficiency considerations, current pause implementation is asynchronous |
 |                      | connect                                               | Fully Compatible     |                                                                                                    |
 | Code Execution       | run\_code                                             | Fully Compatible     | Requires e2b-code-interpreter running in main container                                            |
-| Command Execution    | commands.run                                          | Fully Compatible     | Requires runtime injection of envd component                                                       |
-| File System          | read/write                                            | Fully Compatible     | Requires runtime injection of envd component                                                       |
+| Command Execution    | commands.run                                          | Fully Compatible     | Requires runtime injection of agent-runtime component                                              |
+| File System          | read/write                                            | Fully Compatible     | Requires runtime injection of agent-runtime component                                              |
 |                      | upload\_url/download\_url                             | Not Supported        | Upload/download via pre-signed URL implementation pending                                          |
 | Lifecycle Events     | https://api.e2b.app/events/sandboxes/{sbx.sandbox_id} | Not Supported        | Lifecycle events implementation pending                                                            |
+| Snapshot Management  | snapshots                                             | Fully Compatible     | Specific snapshot behavior depends on Checkpoint implementation                                    |
 | Template Management  |                                                       | Not Supported        | Template management implementation pending, recommend using container images as alternative        |

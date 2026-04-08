@@ -28,7 +28,8 @@ module.exports = {
             collapsed: false,
             items: [
                 'user-manuals/warmpool-management',
-                'user-manuals/sandbox-claim'
+                'user-manuals/sandbox-claim',
+                'user-manuals/runtime-injection'
             ],
         },
         {
