@@ -10,10 +10,10 @@ the schema definitions for Agents as well as tools like clientset.
 
 ## Usage
 
-First, add the `agents-api` dependency in your `go.mod`:
+首先，在你的 `go.mod` 中引入 `agents-api` 依赖：[View Versions](https://github.com/openkruise/agents-api/releases)
 
 ```
-require github.com/openkruise/agents-api v0.1.0
+require github.com/openkruise/agents-api <tag>
 ```
 
 Then, you can directly use the clientset provided by `agents-api` to operate on Agents resources.
