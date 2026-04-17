@@ -45,20 +45,20 @@ helm repo update
 **Manually Create Namespace**
 
 ```bash
-kubectl create ns <namespace>
+kubectl create ns sandbox-system
 ```
 
 **Installation Order**: Sandbox Controller must be installed before Sandbox Manager, as it provides the CRD resources
 required by Sandbox Manager.
 
 ```bash 
-helm install agents-sandbox-controller openkruise/kruise-agents-sandbox-controller -n <namespace> --version 0.1.0
+helm install agents-sandbox-controller openkruise/kruise-agents-sandbox-controller -n sandbox-system --version 0.1.0
 ```
 
 ### 3. Install Sandbox Manager
 
 ```bash
-helm install agents-sandbox-manager openkruise/kruise-agents-sandbox-manager -n <namespace> --version 0.1.0
+helm install agents-sandbox-manager openkruise/kruise-agents-sandbox-manager -n sandbox-system --version 0.1.0
 ```
 
 ---
@@ -68,13 +68,13 @@ helm install agents-sandbox-manager openkruise/kruise-agents-sandbox-manager -n 
 ### Upgrade Sandbox Controller
 
 ```bash
-helm upgrade agents-sandbox-controller openkruise/kruise-agents-sandbox-controller -n <namespace> --version 0.1.0
+helm upgrade agents-sandbox-controller openkruise/kruise-agents-sandbox-controller -n sandbox-system --version 0.1.0
 ```
 
 ### Upgrade Sandbox Manager
 
 ```bash
-helm upgrade agents-sandbox-manager openkruise/kruise-agents-sandbox-manager -n <namespace> --version 0.1.0
+helm upgrade agents-sandbox-manager openkruise/kruise-agents-sandbox-manager -n sandbox-system --version 0.1.0
 ```
 
 **Note:**
@@ -93,7 +93,7 @@ download the chart package from [GitHub Releases](https://github.com/openkruise/
 upgrade it to your cluster.
 
 ```bash
-helm install/upgrade agents-sandbox-controller /PATH/TO/CONTROLLER/CHART -n <namespace> helm install/upgrade agents-sandbox-manager /PATH/TO/MANAGER/CHART -n <namespace>
+helm install/upgrade agents-sandbox-controller /PATH/TO/CONTROLLER/CHART -n sandbox-system helm install/upgrade agents-sandbox-manager /PATH/TO/MANAGER/CHART -n sandbox-system
 ```
 
 ---
