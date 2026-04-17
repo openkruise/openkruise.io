@@ -10,10 +10,10 @@ clientset 等工具。
 
 ## 使用方式
 
-首先，在你的 `go.mod` 中引入 `agents-api` 依赖：
+首先，在你的 `go.mod` 中引入 `agents-api` 依赖：[版本查看](https://github.com/openkruise/agents-api/releases)
 
 ```
-require github.com/openkruise/agents-api v0.1.0
+require github.com/openkruise/agents-api <tag>
 ```
 
 然后，你可以直接使用 `agents-api` 提供的 clientset 来操作 Agents 资源。

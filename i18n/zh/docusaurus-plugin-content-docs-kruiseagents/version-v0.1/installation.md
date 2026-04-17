@@ -47,19 +47,19 @@ helm repo update
 **手动创建 Namespace**
 
 ```bash
-kubectl create ns <namespace>
+kubectl create ns sandbox-system
 ```
 
 **安装顺序**：Sandbox Controller 必须先于 Sandbox Manager 安装，因为它提供了 Sandbox Manager 所需的 CRD 资源。
 
 ```bash
-helm install agents-sandbox-controller openkruise/kruise-agents-sandbox-controller -n <namespace> --version 0.1.0
+helm install agents-sandbox-controller openkruise/kruise-agents-sandbox-controller -n sandbox-system --version 0.1.0
 ```
 
 ### 3. 安装 Sandbox Manager
 
 ```bash
-$ helm install agents-sandbox-manager openkruise/kruise-agents-sandbox-manager -n <namespace> --version 0.1.0
+$ helm install agents-sandbox-manager openkruise/kruise-agents-sandbox-manager -n sandbox-system --version 0.1.0
 ```
 
 ---
@@ -81,14 +81,14 @@ $ helm install agents-sandbox-manager openkruise/kruise-agents-sandbox-manager -
 **安装 Sandbox Controller（使用国内镜像）**
 
 ```bash 
-helm install agents-sandbox-controller openkruise/kruise-agents-sandbox-controller -n <namespace> --version 0.1.0 \
+helm install agents-sandbox-controller openkruise/kruise-agents-sandbox-controller -n sandbox-system --version 0.1.0 \
 --set image.repository=openkruise-registry.cn-shanghai.cr.aliyuncs.com/openkruise/agent-sandbox-controller
 ```
 
 **安装 Sandbox Manager（使用国内镜像）**
 
 ```bash 
-helm install agents-sandbox-manager openkruise/kruise-agents-sandbox-manager -n <namespace> --version 0.1.0 \
+helm install agents-sandbox-manager openkruise/kruise-agents-sandbox-manager -n sandbox-system --version 0.1.0 \
 --set controller.repository=openkruise-registry.cn-shanghai.cr.aliyuncs.com/openkruise/sandbox-manager \
 --set proxy.repository=registry-cn-hangzhou.ack.aliyuncs.com/acs/envoy \
 --set proxy.tag=v1.4.0-gf4e7213-apsara
@@ -101,13 +101,13 @@ helm install agents-sandbox-manager openkruise/kruise-agents-sandbox-manager -n 
 ### 升级 Sandbox Controller
 
 ```bash 
-helm upgrade agents-sandbox-controller openkruise/kruise-agents-sandbox-controller -n <namespace> --version 0.1.0
+helm upgrade agents-sandbox-controller openkruise/kruise-agents-sandbox-controller -n sandbox-system --version 0.1.0
 ```
 
 ### 升级 Sandbox Manager
 
 ```bash 
-helm upgrade agents-sandbox-manager openkruise/kruise-agents-sandbox-manager -n <namespace> --version 0.1.0
+helm upgrade agents-sandbox-manager openkruise/kruise-agents-sandbox-manager -n sandbox-system --version 0.1.0
 ```
 
 **注意：**
@@ -124,8 +124,8 @@ helm upgrade agents-sandbox-manager openkruise/kruise-agents-sandbox-manager -n 
 手工下载 chart 包，再用它安装或更新到集群中。
 
 ```bash 
-helm install/upgrade agents-sandbox-controller /PATH/TO/CONTROLLER/CHART -n <namespace>
-helm install/upgrade agents-sandbox-manager /PATH/TO/MANAGER/CHART -n <namespace>
+helm install/upgrade agents-sandbox-controller /PATH/TO/CONTROLLER/CHART -n sandbox-system
+helm install/upgrade agents-sandbox-manager /PATH/TO/MANAGER/CHART -n sandbox-system
 ```
 
 ---
