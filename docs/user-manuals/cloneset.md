@@ -358,7 +358,7 @@ The implicit value for this annotation for pods that don't set it is 0; negative
 
 The original proposal(design doc) is [here](https://github.com/openkruise/kruise/blob/master/docs/proposals/20210624-cloneset-scaledown-topology-spread.md).
 
-Currently, it supports **deletion by same node spread** and **deletion by [pod topolocy spread constraints](https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/)**.
+Currently, it supports **deletion by same node spread** and **deletion by [pod topology spread constraints](https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/)**.
 
 If there are Pod Topology Spread Constraints defined in CloneSet template, controller will choose pods according to spread constraints when the cloneset needs to scale down.
 Otherwise, controller will choose pods by same node spread by default when scaling down.
@@ -744,7 +744,7 @@ spec:
 Since Kruise `v0.9.0`, `maxSurge` not only controls Pods update, but also affect Pods specified deletion.
 
 Which means if you declare to delete a Pod via `podsToDelete` or `apps.kruise.io/specified-delete: true`,
-CloneSet may create new a Pod, wait it to be ready, and them delete the old one.
+CloneSet may create a new Pod, wait it to be ready, and then delete the old one.
 It depends on `maxUnavailable` and the current number of unavailable Pods.
 
 For example:
@@ -904,7 +904,7 @@ Last but not the least, the above advanced update strategies require independent
 
 ### Paused update
 
-`paused` indicates that Pods updating is paused, controller will not update Pods but just maintain the number of replicas.
+`paused` indicates that Pod updates are paused, controller will not update Pods but just maintain the number of replicas.
 
 <Tabs>
   <TabItem value="v1beta1" label="v1beta1" default>
@@ -956,7 +956,7 @@ Once this value is set, the CloneSet controller will continuously check the roll
 Therefore, by configuring `.spec.progressDeadlineSeconds`, a CloneSet will traverse multiple states during its lifecycle:
 - Progressing: the rollout is ongoing.
 - Available: the partition update is successful or the rollout is successful.
-- Failed: the rollout is timeout.
+- Failed: the rollout has timed out.
 
 #### Progressing State Reason
 
