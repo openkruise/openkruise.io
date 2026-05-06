@@ -13,11 +13,13 @@ handler = {}
 result = False
 pre_dict = set()
 pre_dict_increment = set()
-try:
-    en_tool = language_tool_python.LanguageTool('en-US', remote_server='https://api.languagetool.org')
-except Exception as e:
-    print(f"Warning: LanguageTool initialization failed: {e}")
-    en_tool = None
+en_tool = language_tool_python.LanguageTool(
+    'en-US',
+    config={
+        'cacheSize': 100000,
+        'pipelineCaching': True,
+    }
+)
 #  https://github.com/jxmorris12/language_tool_python
 try:
     with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'pre_dict.json'), 'r', encoding='utf8') as f:
@@ -121,19 +123,12 @@ def inline_count(e_path, z_path):
 
 # Check the word for correctness
 def lexical_analysis(e_path, _):
-    if en_tool is None:
-        return
-    try:
-        with open(e_path, 'r', encoding='utf8') as f:
-            for item in list(filter(lambda x: x.category == 'TYPOS', en_tool.check(f.read()))):
-                if item.matched_text not in pre_dict:
-                    pre_dict.add(item.matched_text)
-                    pre_dict_increment.add(item.matched_text)
-                    log(item.matched_text)
-    except Exception as e:
-        # Skip spell checking if API fails
-        print(f"Warning: Spell check failed ({type(e).__name__}), skipping...")
-        return
+    with open(e_path, 'r', encoding='utf8') as f:
+        for item in list(filter(lambda x: x.category == 'TYPOS', en_tool.check(f.read()))):
+            if item.matched_text not in pre_dict:
+                pre_dict.add(item.matched_text)
+                pre_dict_increment.add(item.matched_text)
+                log(item.matched_text)
 
 
 handler['title_count'] = title_count
@@ -156,11 +151,7 @@ if __name__ == '__main__':
                 for name, func in handler.items():
                     func(en_path, zn_path)
 
-    if en_tool is not None:
-        try:
-            en_tool.close()
-        except Exception:
-            pass
+    en_tool.close()
     if result:
         print("Please add these abnormal words to pre_dict.json :",json.dumps(sorted(list(pre_dict_increment))))
         sys.exit(1)
