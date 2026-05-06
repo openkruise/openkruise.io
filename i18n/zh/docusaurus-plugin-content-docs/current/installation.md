@@ -108,7 +108,7 @@ feature-gates。
 | `manager.log.level`                 | kruise-manager 日志输出级别                             | `4`                         |
 | `manager.replicas`                  | kruise-manager 的期望副本数                             | `2`                         |
 | `manager.image.repository`          | kruise-manager/kruise-daemon 镜像仓库                 | `openkruise/kruise-manager` |
-| `manager.image.tag`                 | kruise-manager/kruise-daemon 镜像版本                 | `1.7.2`                     |
+| `manager.image.tag`                 | kruise-manager/kruise-daemon 镜像版本                 | `v1.8.0`                    |
 | `manager.resources.limits.cpu`      | kruise-manager 的 limit CPU 资源                     | `200m`                      |
 | `manager.resources.limits.memory`   | kruise-manager 的 limit memory 资源                  | `512Mi`                     |
 | `manager.resources.requests.cpu`    | kruise-manager 的 request CPU 资源                   | `100m`                      |
@@ -274,7 +274,7 @@ helm install kruise https://... --set featureGates="EnableExternalCerts=true" --
 
 日志是可观察性的一个重要方面，也是调试的重要工具。 但是 OpenKruise 日志传统上是非结构化的字符串，因此很难进行自动解析，以及任何可靠的后续处理、分析或查询。
 
-从 OpenKruise 1.17 版本开始，我们增加了结构化日志的支持，该日志本身支持（键，值）对和对象引用。为了保持向后兼容性，结构化日志仍将作为字符串输出，其中该字符串包含这些“键”
+从 OpenKruise 1.7 版本开始，我们增加了结构化日志的支持，该日志本身支持（键，值）对和对象引用。为了保持向后兼容性，结构化日志仍将作为字符串输出，其中该字符串包含这些“键”
 =“值”对的表示。
 也可以通过设置 `helm install ... --set manager.loggingFormat=json` 以 json 格式输出。
 
