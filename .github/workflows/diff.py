@@ -123,12 +123,17 @@ def inline_count(e_path, z_path):
 def lexical_analysis(e_path, _):
     if en_tool is None:
         return
-    with open(e_path, 'r', encoding='utf8') as f:
-        for item in list(filter(lambda x: x.category == 'TYPOS', en_tool.check(f.read()))):
-            if item.matched_text not in pre_dict:
-                pre_dict.add(item.matched_text)
-                pre_dict_increment.add(item.matched_text)
-                log(item.matched_text)
+    try:
+        with open(e_path, 'r', encoding='utf8') as f:
+            for item in list(filter(lambda x: x.category == 'TYPOS', en_tool.check(f.read()))):
+                if item.matched_text not in pre_dict:
+                    pre_dict.add(item.matched_text)
+                    pre_dict_increment.add(item.matched_text)
+                    log(item.matched_text)
+    except Exception as e:
+        # Skip spell checking if API fails
+        print(f"Warning: Spell check failed ({type(e).__name__}), skipping...")
+        return
 
 
 handler['title_count'] = title_count
