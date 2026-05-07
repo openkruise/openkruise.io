@@ -56,7 +56,7 @@ export default function Home() {
             data-icon="octicon-star"
             data-size="large"
             data-show-count="true"
-            aria-label="Star facebook/metro on GitHub">
+            aria-label="Star openkruise/kruise on GitHub">
             Star
           </GitHubButton>
           <p className="hero__subtitle">{siteConfig.tagline}</p>
