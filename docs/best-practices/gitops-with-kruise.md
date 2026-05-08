@@ -45,12 +45,11 @@ metadata:
   labels:
     app: helloworld-server
 spec:
+  replicas: 2
+  partition: 1  # Batch release, currently updating only one Pod
   updateStrategy:
     # CloneSet will try to in-place update Pod instead of recreating them if possible
     type: InPlaceIfPossible
-    # Batch release, currently updating only one Pod
-    partition: 1
-  replicas: 2
   selector:
     matchLabels:
       app: helloworld-server
