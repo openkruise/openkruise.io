@@ -41,6 +41,7 @@ module.exports = {
                 'best-practices/running-e2b-for-desktop',
                 'best-practices/use-self-signed-cert',
                 'best-practices/cert-manager',
+                'best-practices/running-openclaw-sandbox',
             ],
         },
         {
