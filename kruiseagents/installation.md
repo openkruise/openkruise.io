@@ -28,8 +28,7 @@ Sandbox Controller, Sandbox Manager, and Sandbox Gateway are three core componen
 
 1. Kubernetes cluster version >= 1.24
 2. Helm v3.5+ installed
-3. [OpenKruise](https://openkruise.io/docs/installation) installed (Sandbox Controller depends on some features of Kruise)
-4. Namespace created manually (see installation steps below)
+3. Namespace created manually (see installation steps below)
 
 ---
 

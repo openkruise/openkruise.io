@@ -58,6 +58,8 @@ metadata:
   namespace: default
 spec:
   replicas: 3
+  runtimes:
+    - name: agent-runtime
   template:
     metadata:
       labels:
@@ -82,16 +84,6 @@ spec:
           volumeMounts:
             - name: tini-volume
               mountPath: /mnt/tini
-        # 注入 Runtime（envd）
-        - name: init
-          image: openkruise/agent-runtime:preview-v0.0.2
-          volumeMounts:
-            - name: envd-volume
-              mountPath: /mnt/envd
-          env:
-            - name: ENVD_DIR
-              value: /mnt/envd
-          restartPolicy: Always
       containers:
         - name: gateway
           image: ghcr.io/openclaw/openclaw:2026.3.28
@@ -110,8 +102,6 @@ spec:
               containerPort: 18789
               protocol: TCP
           env:
-            - name: ENVD_DIR
-              value: /mnt/envd
             - name: OPENCLAW_CONFIG_DIR
               value: /home/node/.openclaw
             - name: KUBERNETES_SERVICE_PORT_HTTPS
@@ -131,8 +121,6 @@ spec:
             - name: KUBERNETES_PORT_443_TCP_PORT
               value: ""
           volumeMounts:
-            - name: envd-volume
-              mountPath: /mnt/envd
             - name: tini-volume
               mountPath: /mnt/tini
             - name: openclaw-dir
@@ -144,12 +132,6 @@ spec:
             limits:
               cpu: 2
               memory: 4Gi
-          lifecycle:
-            postStart:
-              exec:
-                command:
-                  - bash
-                  - /mnt/envd/envd-run.sh
           startupProbe:
             exec:
               command:
@@ -160,20 +142,18 @@ spec:
             periodSeconds: 2
             failureThreshold: 150
       volumes:
-        - name: envd-volume
-          emptyDir: { }
         - name: tini-volume
           emptyDir: { }
   # 为每个 Sandbox 自动创建 PVC
   volumeClaimTemplates:
-  - metadata:
-      name: openclaw-dir
-    spec:
-      accessModes: ["ReadWriteOnce"]
-      storageClassName: "openclaw-disk-sc"
-      resources:
-        requests:
-          storage: 20Gi
+    - metadata:
+        name: openclaw-dir
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: "openclaw-disk-sc"
+        resources:
+          requests:
+            storage: 20Gi
 ```
 
 ### 2.2 验证部署
