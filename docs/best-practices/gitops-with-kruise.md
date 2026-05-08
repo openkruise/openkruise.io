@@ -46,7 +46,6 @@ metadata:
     app: helloworld-server
 spec:
   replicas: 2
-  partition: 1  # Batch release, currently updating only one Pod
   updateStrategy:
     # CloneSet will try to in-place update Pod instead of recreating them if possible
     type: InPlaceIfPossible
