@@ -1,4 +1,5 @@
 # 介绍
+⭐ ***如果您觉得OpenKruiseAgents不错, 请给他点个Star<a target="_blank" rel="noopener noreferrer" href="https://github.com/openkruise/agents">GitHub</a>!***
 
 ## 概述
 
@@ -25,13 +26,6 @@ OpenKruise Agents 提供厂商中立的沙箱，具备以下核心特性：
 
 OpenKruise Agents 提供高层次的沙箱管理 API，实现高效的资源供给、用户管理和流量路由。在底层，OpenKruise Agents 内置了沙箱 API
 和实现，同时在 Sig Agent-Sandbox 可用时保持与其的兼容性。
-
-## 使用方式
-
-如需通过编程方式与 OpenKruise Agents 交互，可以使用 E2B SDK，它为创建和管理沙箱提供了高层次的接口。
-
-- [运行 E2B 代码执行沙箱](best-practices/running-e2b-for-code-interpreter.md)
-- [运行 E2B Desktop 沙箱](best-practices/running-e2b-for-desktop.md)
 
 ## 贡献
 
