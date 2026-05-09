@@ -25,3 +25,10 @@ yarn-error.log*
 .github/workflows/game/go.*
 .github/workflows/kruise/go.*
 .github/workflows/rollouts/go.*
+ 
+ # Python
+ .venv/
+ venv/
+ __pycache__/
+ *.py[cod]
+ *$py.class
