@@ -418,7 +418,7 @@ spec:
                     value: SERVERLESS
 ---
 # Combine with HPA for automatic scaling
-apiVersion: autoscaling/v2beta1
+apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: elastic-app-hpa
@@ -426,10 +426,12 @@ spec:
   minReplicas: 1
   maxReplicas: 100
   metrics:
-    - resource:
+    - type: Resource
+      resource:
         name: cpu
-        targetAverageUtilization: 2
-      type: Resource
+        target:
+          type: Utilization
+          averageUtilization: 2
   scaleTargetRef:
     apiVersion: apps.kruise.io/v1alpha1
     kind: UnitedDeployment
