@@ -1046,7 +1046,7 @@ All operations applicable to a Complete CloneSet can also be applied to a Failed
 
 **FEATURE STATE:** Kruise v1.8.0
 
-If you have enabled `InPlaceWorkloadVerticalScaling` during [Kruise installation or upgrade](../installation##optional-feature-gate),
+If you have enabled `InPlaceWorkloadVerticalScaling` during [Kruise installation or upgrade](../installation#optional-feature-gate),
 CloneSet supports modifying container resources (CPU/Memory) during in-place updates.
 This feature allows users to directly update the following fields without triggering Pod recreation:
 

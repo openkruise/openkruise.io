@@ -8,7 +8,7 @@ title: Deletion Protection
 
 ## 使用方式
 
-首先，需要在[安装或升级 Kruise](../installation##optional-feature-gate) 的时候启用 `ResourcesDeletionProtection` feature-gate。
+首先，需要在[安装或升级 Kruise](../installation#optional-feature-gate) 的时候启用 `ResourcesDeletionProtection` feature-gate。
 
 然后，用户可以给一些特定资源对象加上 `policy.kruise.io/delete-protection` 标签，值可以是：
 - `Always`: 这个对象禁止被删除，除非上述 label 被去掉

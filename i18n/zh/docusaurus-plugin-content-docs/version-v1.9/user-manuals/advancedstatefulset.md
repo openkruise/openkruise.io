@@ -120,7 +120,7 @@ ordinals.start: 0				    ordinals.start: 3
 
 **FEATURE STATE:** Kruise v1.1.0
 
-如果你在[安装或升级 Kruise](../installation##optional-feature-gate) 的时候启用了 `StatefulSetAutoDeletePVC` feature-gate，
+如果你在[安装或升级 Kruise](../installation#optional-feature-gate) 的时候启用了 `StatefulSetAutoDeletePVC` feature-gate，
 你可以使用 `.spec.persistentVolumeClaimRetentionPolicy` 字段来控制在StatefulSet生命周期中是否以及何时删除它所创建的PVC。
 
 这个功能与上游 StatefulSet (K8s >= 1.23 [alpha]) 提供的相同，可以参考[上游文档](https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#persistentvolumeclaim-retention)。
@@ -285,7 +285,7 @@ spec:
 
 **FEATURE STATE:** Kruise v1.8.0
 
-如果你在[安装或升级 Kruise](../installation##optional-feature-gate) 的时候启用了 `InPlaceWorkloadVerticalScaling`，
+如果你在[安装或升级 Kruise](../installation#optional-feature-gate) 的时候启用了 `InPlaceWorkloadVerticalScaling`，
 Advanced StatefulSet 支持在原地升级过程中修改容器资源（CPU/Memory）。该功能允许用户直接更新以下字段而不触发 Pod 重建：
 
 ```yaml
@@ -325,7 +325,7 @@ spec:
 
 **FEATURE STATE:** Kruise v0.10.0
 
-如果你在[安装或升级 Kruise](../installation##optional-feature-gate) 的时候启用了 `PreDownloadImageForInPlaceUpdate`
+如果你在[安装或升级 Kruise](../installation#optional-feature-gate) 的时候启用了 `PreDownloadImageForInPlaceUpdate`
 feature-gate，
 Advanced StatefulSet 控制器会自动在所有旧版本 pod 所在 node 节点上预热你正在灰度发布的新版本镜像。 这对于应用发布加速很有帮助。
 
