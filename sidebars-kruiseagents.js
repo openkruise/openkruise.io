@@ -61,5 +61,15 @@ module.exports = {
                 'developer-manuals/faq',
             ],
         },
+        {
+            type: 'category',
+            label: 'User Cases',
+            collapsed: false,
+            items: [
+                'user-cases/ack-kimi',
+                'user-cases/ack-lixiang',
+                'user-cases/ack-minimax',
+            ],
+        }
   ],
 };
