@@ -10,8 +10,8 @@ DevOps是CI/CD思想的延伸，CI/CD是DevOps的基础核心，如果没有CI/C
 
 ## 持续集成（CI）+ OpenKruise镜像预热
 ### 核心概念
-- **持续集成（CI）**是一个将集成提前至开发周期的早期阶段的实践方式，让构建、测试和集成代码更经常反复地发生。
-- **[镜像预热](https://openkruise.io/zh/docs/user-manuals/imagepulljob/)**是OpenKruise提供的在应用部署之前提前将应用镜像拉取到具体的Node节点上面，进而达到镜像预热的目的，能够极大的提升应用的部署效率。
+- **持续集成**（CI）是一个将集成提前至开发周期的早期阶段的实践方式，让构建、测试和集成代码更经常反复地发生。
+- [**镜像预热**](https://openkruise.io/zh/docs/user-manuals/imagepulljob/)是OpenKruise提供的在应用部署之前提前将应用镜像拉取到具体的Node节点上面，进而达到镜像预热的目的，能够极大的提升应用的部署效率。
 
 ### 整体架构
 ![ci+image pre-download](/img/docs/best-practices/imagepulljob.png)

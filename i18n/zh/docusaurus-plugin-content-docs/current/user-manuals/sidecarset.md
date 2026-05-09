@@ -639,7 +639,7 @@ spec:
 
 Kubernetes从1.28版本通过 **initContainers[x].restartPolicy=Always** 的方式支持[Sidecar Containers](https://kubernetes.io/docs/concepts/workloads/pods/sidecar-containers/). 该方式对比之前有如下优势：
 1. Sidecar容器保证在业务主容器启动之前Ready，比如：日志采集容器已经准备就绪，业务主容器启动Crash的日志也能够及时采集上来。
-2. Job类型的Pod，主容器执行完成之后，Sidecar容器也会自行退出不会阻塞Job的完成（之前的模式Sidecar容器没办法自主推出的，会导致Job一直没法结束）。
+2. Job类型的Pod，主容器执行完成之后，Sidecar容器也会自行退出不会阻塞Job的完成（之前的模式Sidecar容器没办法自主退出的，会导致Job一直没法结束）。
 
 SidecarSet从 v1.7.0 版本开始也会支持注入Sidecar Containers，如下：
 

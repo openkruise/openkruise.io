@@ -35,7 +35,7 @@ spec:
     emptyDir: {}
 ```
 
-**Pod Sidecar模式：**通过在Pod里定义专门容器，来执行主业务容器需要的辅助工作（比如：日志采集容器，流量代理容器）。优势：将辅助能力同业务容器解耦，实现独立发布和能力重用。**但是也有一些弊端，如下：**
+**Pod Sidecar模式**：通过在Pod里定义专门容器，来执行主业务容器需要的辅助工作（比如：日志采集容器，流量代理容器）。优势：将辅助能力同业务容器解耦，实现独立发布和能力重用。**但是也有一些弊端，如下：**
 - **业务Pod耦合（运维、代理）多种sidecar容器，增加配置的复杂性以及业务开发人员的学习成本**
 - **Sidecar容器升级将导致业务Pod重建，由于Sidecar容器一般是独立的中间件团队负责，如果升级会存在极大的业务方阻力**
 
@@ -181,7 +181,7 @@ spec:
       - name: log
         emptyDir: {}
 ```
-**将nginx deployment apply到k8s集群后，发现创建的Pod都被注入了 filebeat sidecar 容器，**如下：
+**将nginx deployment apply到k8s集群后，发现创建的Pod都被注入了 filebeat sidecar 容器**，如下：
 ```shell
 helm-charts% kubectl get pods nginx-5674976569-zdr7l -o yaml
 status:
@@ -202,7 +202,7 @@ status:
 
 ### 独立升级FileBeat Sidecar容器（Version 7.16.2 -> 7.16.3）
 下面是两个窗口，右边是访问nginx服务的client请求。**此时将filebeat sidecarSet中的镜像地址从7.16.2变更为7.16.3后，发现Pod并没有重建，
-且filebeat sidecar容器镜像升级7.16.3完成过程中，nginx服务并没有中断（该nginx服务只有一个Pod实例），**如下：
+且filebeat sidecar容器镜像升级7.16.3完成过程中，nginx服务并没有中断（该nginx服务只有一个Pod实例）**，如下：
 
 ![k8s log sidecar](/img/docs/best-practices/update-sidecarset.gif)
 
@@ -229,7 +229,7 @@ spec:
         # or any other labels where a small number of pods can be selected
         deploy-env: canary
 ```
-**另外，如果是类似于ServiceMesh Envoy Mesh类容器则需要借助于SidecarSet热升级特性，**详情请参考：[SidecarSet热升级](https://openkruise.io/zh/docs/next/user-manuals/sidecarset#sidecar%E7%83%AD%E5%8D%87%E7%BA%A7%E7%89%B9%E6%80%A7)。
+**另外，如果是类似于ServiceMesh Envoy Mesh类容器则需要借助于SidecarSet热升级特性**，详情请参考：[SidecarSet热升级](https://openkruise.io/zh/docs/next/user-manuals/sidecarset#sidecar%E7%83%AD%E5%8D%87%E7%BA%A7%E7%89%B9%E6%80%A7)。
 
 ### Argo-cd部署SidecarSet（Optional）
 如果使用Argo-cd发布Kruise SidecarSet，则需要配置 [SidecarSet Custom CRD Health Checks](https://argo-cd.readthedocs.io/en/stable/operator-manual/health/#custom-health-checks)。
