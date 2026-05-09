@@ -27,3 +27,10 @@ yarn-error.log*
 .github/workflows/rollouts/go.*
 
 yarn.lock
+
+# Python
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*$py.class
