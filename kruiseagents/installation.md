@@ -16,9 +16,9 @@ Sandbox Controller, Sandbox Manager, and Sandbox Gateway are three core componen
 
 | Component          | Chart Version | Image Version | Kubernetes Compatibility |
 |--------------------|---------------|---------------|--------------------------|
-| Sandbox Controller | 0.2.0         | v0.2.0        | `>= 1.24`               |
-| Sandbox Manager    | 0.2.0         | v0.2.0        | `>= 1.24`               |
-| Sandbox Gateway    | —             | v0.2.1        | `>= 1.24`               |
+| Sandbox Controller | 0.2.0         | v0.2.0        | `>= 1.28`                |
+| Sandbox Manager    | 0.2.0         | v0.2.0        | `>= 1.28`                |
+| Sandbox Gateway    | —             | v0.2.1        | `>= 1.28`                |
 
 > **Note**: Sandbox Gateway is deployed together with the Sandbox Manager chart and does not require separate installation.
 
@@ -26,7 +26,7 @@ Sandbox Controller, Sandbox Manager, and Sandbox Gateway are three core componen
 
 ## Prerequisites
 
-1. Kubernetes cluster version >= 1.24
+1. Kubernetes cluster version >= 1.28
 2. Helm v3.5+ installed
 3. Namespace created manually (see installation steps below)
 

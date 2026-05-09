@@ -1,4 +1,5 @@
 # Introduction
+⭐ ***If you like OpenKruiseAgents, give it a star on <a target="_blank" rel="noopener noreferrer" href="https://github.com/openkruise/agents">GitHub</a>!***
 
 ## Overview
 
@@ -22,12 +23,6 @@ OpenKruise Agents delivers vendor-neutral sandboxes with the following key chara
 ## Relationship with Sig Agent-Sandbox
 
 OpenKruise Agents offers high-level APIs for sandbox management, enabling efficient resource provisioning, user management, and traffic routing. Under the hood, OpenKruise Agents includes built-in sandbox APIs and implementations, while maintaining compatibility with Sig Agent-Sandbox when available.
-
-## Usage
-To interact with the OpenKruise Agents programmatically, you can use the E2B SDK, which provides a high-level interface for creating and managing sandboxes.
-
-- [Running E2B Code Interpreter Sandbox](best-practices/running-e2b-for-desktop.md)
-- [Running E2B Desktop Sandbox](best-practices/running-e2b-for-desktop.md)
 
 ## Contributing
 
