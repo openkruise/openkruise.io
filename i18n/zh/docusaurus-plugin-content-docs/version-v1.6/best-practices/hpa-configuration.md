@@ -10,7 +10,7 @@ Kruise 中的 Workload，比如 CloneSet、Advanced StatefulSet、UnitedDeployme
 只需要将 CloneSet 的类型、名字写入 `scaleTargetRef` 即可：
 
 ```yaml
-apiVersion: autoscaling/v2beta2
+apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 # ...
 spec:

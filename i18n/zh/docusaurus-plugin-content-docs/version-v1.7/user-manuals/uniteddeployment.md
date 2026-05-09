@@ -180,7 +180,7 @@ Horizontal Pod Autoscaler 能够支持包含 [scale subresource](https://kuberne
 从 kruise v1.5.0版本开始，你可以直接 HPA UnitedDeployment，如下：
 
 ```yaml
-apiVersion: autoscaling/v2beta1
+apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: example-hpa
@@ -189,10 +189,12 @@ spec:
   minReplicas: 1
   maxReplicas: 3
   metrics:
-  - resource:
+  - type: Resource
+    resource:
       name: cpu
-      targetAverageUtilization: 2
-    type: Resource
+      target:
+        type: Utilization
+        averageUtilization: 2
   scaleTargetRef:
     apiVersion: apps.kruise.io/v1alpha1
     kind: UnitedDeployment

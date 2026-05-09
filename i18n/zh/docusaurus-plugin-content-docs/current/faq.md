@@ -290,7 +290,7 @@ curl localhost:8080/metrics
 有关综合自动扩缩策略，请参阅[自动扩缩最佳实践](https://openkruise.io/docs/best-practices/elastic-deployment)。
 
 ```yaml
-apiVersion: autoscaling/v2beta2
+apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: cloneset-hpa
@@ -305,7 +305,9 @@ spec:
   - type: Resource
     resource:
       name: cpu
-      targetAverageUtilization: 70
+      target:
+        type: Utilization
+        averageUtilization: 70
 ```
 
 
