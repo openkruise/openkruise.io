@@ -10,6 +10,97 @@
   background-color: var(--ifm-background-color);
 }
 
+.searchContainer {
+  margin-bottom: 2rem;
+}
+
+.searchInput {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  border: 2px solid var(--ifm-color-emphasis-300);
+  border-radius: var(--ifm-button-border-radius);
+  font-family: var(--ifm-font-family-base);
+  transition: border-color 0.2s ease-in-out;
+}
+
+.searchInput:focus {
+  outline: none;
+  border-color: var(--ifm-color-primary);
+  box-shadow: 0 0 0 3px rgba(var(--ifm-color-primary-rgb), 0.1);
+}
+
+.searchInput::placeholder {
+  color: var(--ifm-color-emphasis-600);
+}
+
+.filterSection {
+  margin-bottom: 2rem;
+}
+
+.filterTitle {
+  margin: 0 0 1rem 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--ifm-color-emphasis-800);
+}
+
+.filterChips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.filterChip {
+  padding: 0.5rem 1rem;
+  border: 2px solid var(--ifm-color-emphasis-300);
+  background-color: transparent;
+  border-radius: 20px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--ifm-color-emphasis-700);
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  font-family: var(--ifm-font-family-base);
+}
+
+.filterChip:hover {
+  border-color: var(--ifm-color-primary);
+  color: var(--ifm-color-primary);
+}
+
+.filterChipActive {
+  background-color: transparent;
+  border-color: var(--ifm-color-primary);
+  color: var(--ifm-color-primary);
+  border-width: 2px;
+}
+
+.clearButton {
+  padding: 0.5rem 1rem;
+  background-color: var(--ifm-color-emphasis-200);
+  border: none;
+  border-radius: var(--ifm-button-border-radius);
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--ifm-color-emphasis-700);
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+  font-family: var(--ifm-font-family-base);
+}
+
+.clearButton:hover {
+  background-color: var(--ifm-color-emphasis-300);
+}
+
+.adopterCount {
+  margin-bottom: 1.5rem;
+  font-size: 0.975rem;
+  font-weight: 500;
+  color: var(--ifm-color-emphasis-700);
+}
+
 .becomeAdopterSection {
   padding: 4rem 0;
   background-color: var(--ifm-color-emphasis-100);
@@ -71,6 +162,36 @@
   font-size: 0.875rem;
   line-height: 1.5;
   color: var(--ifm-color-emphasis-700);
+}
+
+.features {
+  margin-top: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.featureTag {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  background-color: transparent;
+  color: var(--ifm-color-primary);
+  border: 2px solid var(--ifm-color-primary);
+  border-radius: 20px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  font-family: var(--ifm-font-family-base);
+}
+
+.emptyState {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: var(--ifm-color-emphasis-700);
+}
+
+.emptyState p {
+  font-size: 1.1rem;
+  margin: 0;
 }
 
 .becomeAdopterTitle {
