@@ -123,7 +123,7 @@ export const adopters = [
   {
     name: "FUTU",
     location: "Shenzhen, China",
-    contact: "chrisdeng@futunn.com.com",
+    contact: "chrisdeng@futunn.com",
     purpose: "Using Kruise for managing large-scale applications and sidecars."
   },
   {
