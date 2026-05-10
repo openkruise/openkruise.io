@@ -21,11 +21,11 @@
   },
   "link.item.label.DingTalk (GroupID: 23330762 )": {
     "message": "DingTalk (GroupID: 23330762 )",
-    "description": "The label of footer link with label=DingTalk (GroupID: 23330762 ) linking to ."
+    "description": "The label of footer text for DingTalk (GroupID: 23330762 )"
   },
   "link.item.label.WeChat (User: openkruise )": {
     "message": "WeChat (User: openkruise )",
-    "description": "The label of footer link with label=WeChat (User: openkruise ) linking to ."
+    "description": "The label of footer text for WeChat (User: openkruise )"
   },
   "link.item.label.Bi-week Meeting (APAC, Chinese)": {
     "message": "Bi-week Meeting (APAC, Chinese)",
@@ -40,7 +40,7 @@
     "description": "The label of footer link with label=Community Membership linking to https://github.com/openkruise/community/blob/master/community-membership.md"
   },
   "copyright": {
-    "message": "\n        <br />\n        <strong>© 2025 The OpenKruise Authors. All rights reserved. The Linux Foundation has registered trademarks and uses trademarks. For a list of trademarks of The Linux Foundation, please see our <a href=\"https://www.linuxfoundation.org/trademark-usage/\"> Trademark Usage</a> page.</strong\n        ",
+    "message": "\n        <br />\n        <strong>© 2026 The OpenKruise Authors. All rights reserved. The Linux Foundation has registered trademarks and uses trademarks. For a list of trademarks of The Linux Foundation, please see our <a href=\"https://www.linuxfoundation.org/trademark-usage/\"> Trademark Usage</a> page.</strong>\n        ",
     "description": "The footer copyright"
   }
 }

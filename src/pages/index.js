@@ -112,8 +112,8 @@ const WhatIs = () => (
               <br />
               <br />
               <Translate>
-                Mostly features provided by OpenKruise are built primarily based on CRD extensions.
-                They can work in pure Kubernetes clusters without any other dependences.
+                Most features provided by OpenKruise are built primarily based on CRD extensions.
+                They can work in pure Kubernetes clusters without any other dependencies.
               </Translate>
             </small>
           </p>

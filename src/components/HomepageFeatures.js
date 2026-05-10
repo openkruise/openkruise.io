@@ -3,14 +3,14 @@ import Translate, { translate } from '@docusaurus/Translate';
 
 const features = [
   {
-    title: <><Translate>Advanced Workloads</Translate></>,
+    title: translate({message: 'Advanced Workloads'}),
     imgUrl: 'img/feature1.png',
     description: (
       <>
         <p>
           <Translate>
             OpenKruise contains a set of advanced workloads, such as CloneSet, Advanced StatefulSet, Advanced DaemonSet, BroadcastJob, SidecarSet and UnitedDeployment.
-            They brings more advanced abilities like in-place update, configurable scale/upgrade strategies, parallel operations.
+            They bring more advanced abilities like in-place update, configurable scale/upgrade strategies, parallel operations.
           </Translate>
             <br />
           <Translate>
@@ -23,7 +23,7 @@ const features = [
     ),
   },
   {
-    title: <><Translate>Advanced Day-2 Operations</Translate></>,
+    title: translate({message: 'Advanced Day-2 Operations'}),
     imgUrl: 'img/feature2.png',
     description: (
       <>
@@ -33,7 +33,7 @@ const features = [
           </Translate>
           <br />
           <Translate>
-            These operations includes image prewarming, container inplace restarts, workload distribution, pod probe & marking and many more
+            These operations include image prewarming, container inplace restarts, workload distribution, pod probe & marking and many more
           </Translate>
         </p>
       </>
@@ -41,7 +41,7 @@ const features = [
     reverse: true,
   },
   {
-    title: <><Translate>Battery Included Best Practices</Translate></>,
+    title: translate({message: 'Battery Included Best Practices'}),
     imgUrl: 'img/feature3.png',
     description: (
       <>
@@ -55,7 +55,7 @@ const features = [
           </Translate>
           <br />
           <Translate>
-           2. OpenKruise Games brings cloud native game server management such hot-update, and connects game servers to cloud service providers, matchmaking services, and O&M platforms. 
+           2. OpenKruise Games brings cloud native game server management such as hot-update, and connects game servers to cloud service providers, matchmaking services, and O&M platforms. 
           </Translate>
           <br />
           <Translate>
