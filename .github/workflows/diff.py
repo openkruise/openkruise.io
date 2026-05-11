@@ -133,6 +133,8 @@ def lexical_analysis(e_path, _):
 
 handler['title_count'] = title_count
 handler['lexical_analysis'] = lexical_analysis
+# handler['highlight'] = highlight
+# handler['link'] = link
 # handler['inline_count'] = inline_count  # Presence of false positives
 
 if __name__ == '__main__':

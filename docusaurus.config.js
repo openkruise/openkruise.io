@@ -41,6 +41,9 @@ function getNextVersionName() {
             locale,
             docPath,
           }) {
+            if (locale !== 'en') {
+              return `https://github.com/openkruise/openkruise.io/edit/master/i18n/${locale}/docusaurus-plugin-content-docs/current/${docPath}`;
+            }
             return `https://github.com/openkruise/openkruise.io/edit/master/docs/${docPath}`;
           },
           showLastUpdateAuthor: true,
@@ -80,6 +83,12 @@ function getNextVersionName() {
         routeBasePath: 'rollouts',
         include: ['**/*.md'],
         sidebarPath: require.resolve('./sidebars-rollouts.js'),
+        editUrl: ({locale, docPath}) => {
+          if (locale !== 'en') {
+            return `https://github.com/openkruise/openkruise.io/edit/master/i18n/${locale}/docusaurus-plugin-content-docs-rollouts/current/${docPath}`;
+          }
+          return `https://github.com/openkruise/openkruise.io/edit/master/rollouts/${docPath}`;
+        },
         showLastUpdateAuthor: true,
         showLastUpdateTime: true,
       },
@@ -92,6 +101,12 @@ function getNextVersionName() {
         routeBasePath: 'kruisegame',
         include: ['**/*.md'],
         sidebarPath: require.resolve('./sidebars-kruisegame.js'),
+        editUrl: ({locale, docPath}) => {
+          if (locale !== 'en') {
+            return `https://github.com/openkruise/openkruise.io/edit/master/i18n/${locale}/docusaurus-plugin-content-docs-kruisegame/current/${docPath}`;
+          }
+          return `https://github.com/openkruise/openkruise.io/edit/master/kruisegame/${docPath}`;
+        },
         showLastUpdateAuthor: true,
         showLastUpdateTime: true,
       },
@@ -104,6 +119,12 @@ function getNextVersionName() {
         routeBasePath: 'kruiseagents',
         include: ['**/*.md'],
         sidebarPath: require.resolve('./sidebars-kruiseagents.js'),
+        editUrl: ({locale, docPath}) => {
+          if (locale !== 'en') {
+            return `https://github.com/openkruise/openkruise.io/edit/master/i18n/${locale}/docusaurus-plugin-content-docs-kruiseagents/current/${docPath}`;
+          }
+          return `https://github.com/openkruise/openkruise.io/edit/master/kruiseagents/${docPath}`;
+        },
         showLastUpdateAuthor: true,
         showLastUpdateTime: true,
       },

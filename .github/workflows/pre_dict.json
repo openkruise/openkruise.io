@@ -993,5 +993,9 @@
     "vk",
     "featureGate",
     "inplace-resizing",
-    "nginx$"
+    "nginx$",
+    "enablePVCReuse",
+    "imagePreDownloadMinUpdatedReadyPods",
+    "imagePreDownloadParallelism",
+    "protectTotalReplicas"
 ]
