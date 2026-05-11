@@ -24,7 +24,7 @@ Most features provided by OpenKruise are built primarily based on CRD extensions
     
     OpenKruise also provides high-level operation features to help you manage your applications for better efficiency, better resilience and cost-saving.
 
-    These operations include image prewarming, container inplace restarts, workload distribution, pod probe & marking and many more. For example, you can use ImagePullJob to download any images on any nodes you want. Or you can even requires one or more containers in an running Pod to be restarted.
+    These operations include image prewarming, container inplace restarts, workload distribution, pod probe & marking and many more. For example, you can use ImagePullJob to download any images on any nodes you want. Or you can even require one or more containers in a running Pod to be restarted.
 
 - **High-availability Protection**
 
