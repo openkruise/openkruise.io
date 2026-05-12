@@ -34,14 +34,14 @@ Pause/Resume is one-to-one: the sandbox ID stays the same across the pause → r
    reconnect after resume.
 2. **Resume** brings the Pod back to the running state. The sandbox ID is preserved.
 3. The exact capture scope (memory / filesystem) depends on the runtime platform and the configuration on the
-   backing `SandboxTemplate`.
+   backing `SandboxSpec`.
 
 ## Pausing a Sandbox
 
 <Tabs>
 <TabItem value="E2B" label="E2B SDK">
 
-The E2B SDK exposes a `beta_pause()` method on a sandbox handle. It calls the `POST /sandboxes/{sandboxID}/pause`
+The E2B SDK exposes a `pause()` method on a sandbox handle. It calls the `POST /sandboxes/{sandboxID}/pause`
 endpoint under the hood.
 
 ```python
@@ -49,7 +49,7 @@ from e2b_code_interpreter import Sandbox
 
 with Sandbox.create(template="code-interpreter", timeout=300) as sbx:
     sbx.run_code("a = 1")
-    sbx.beta_pause()  # sandbox is now paused; sandboxID is retained
+    sbx.pause()  # sandbox is now paused; sandboxID is retained
 ```
 
 ```ts

@@ -9,6 +9,10 @@ import TabItem from '@theme/TabItem';
 
 # User Management
 
+:::info Version
+All features described in this document are available since **v0.3.0**.
+:::
+
 `sandbox-manager` exposes a set of E2B-compatible HTTP endpoints for managing **API Keys** and **Teams**. These
 endpoints allow cluster administrators and tenant users to provision API keys programmatically, enumerate the teams
 they belong to, and revoke keys that are no longer needed.

@@ -9,10 +9,14 @@ import TabItem from '@theme/TabItem';
 
 # 用户管理
 
+:::info 版本支持
+本文档描述的所有功能从 **v0.3.0** 版本开始支持。
+:::
+
 `sandbox-manager` 提供了一组兼容 E2B 协议的 HTTP 接口，用于管理 **API Keys** 与 **Teams**。通过这些接口，集群管理员与租户可以
 以编程方式颁发 API Key、查询自己所属的 Teams，并吊销不再使用的 Key。
 
-> 这些接口**没有**配套的 E2B SDK，也没有对应的 Kubernetes CRD，必须直接通过 HTTP 协议调用。本文档为每个接口提供了
+> 这些接口 **没有** 配套的 E2B SDK，也没有对应的 Kubernetes CRD，必须直接通过 HTTP 协议调用。本文档为每个接口提供了
 > `curl` 和 Python `requests` 两种请求示例。
 
 ## 概述
@@ -23,10 +27,10 @@ import TabItem from '@theme/TabItem';
 **Team Name 会直接映射到一个 Kubernetes Namespace**：
 
 - 内置的 `admin` Team 是集群级的，由管理员掌控，它所持有的 admin API Key 会随 `sandbox-manager` 启动一同初始化。
-- 其他任何 Team Name 都必须对应一个**已经存在**的 Kubernetes Namespace。当租户为 Team `foo` 创建 API Key 时，Namespace
+- 其他任何 Team Name 都必须对应一个 **已经存在** 的 Kubernetes Namespace。当租户为 Team `foo` 创建 API Key 时，Namespace
   `foo` 必须预先存在，否则请求会被拒绝。
 
-由于 Namespace 的唯一性已经提供了足够的隔离边界，因此 Team 的 UUID 仅作为展示用元数据保留，**不**参与鉴权和资源查找。
+由于 Namespace 的唯一性已经提供了足够的隔离边界，因此 Team 的 UUID 仅作为展示用元数据保留，**不** 参与鉴权和资源查找。
 
 ### API Keys
 
@@ -64,7 +68,7 @@ API Key 决定了：
 
 > 关于域名、证书等更多信息，请参考 [E2B SDK 接入文档](./e2b-client.md)。
 
-下面所有示例默认使用**原生协议**的 URL。如果你使用私有协议，把 Base URL 替换即可，例如
+下面所有示例默认使用 **原生协议** 的 URL。如果你使用私有协议，把 Base URL 替换即可，例如
 `GET /api-keys` 对应为 `GET https://your.domain.com/kruise/api/api-keys`。
 
 ## 接口列表
@@ -125,7 +129,7 @@ print(resp.json())
 
 ### List API Keys
 
-返回当前调用方所属 Team 下的所有 API Key。响应中**不会**返回 Key 的原文，只会返回脱敏后的元数据（如
+返回当前调用方所属 Team 下的所有 API Key。响应中 **不会** 返回 Key 的原文，只会返回脱敏后的元数据（如
 `mask.maskedValuePrefix`、`mask.maskedValueSuffix` 等）。
 
 <Tabs>
@@ -159,7 +163,7 @@ for key in resp.json():
 
 ### Create API Key
 
-创建新的 API Key。响应体里的 `key` 字段为刚刚生成的**明文 Key**，且**只返回这一次**，请务必保存——后续无法再通过接口取回。
+创建新的 API Key。响应体里的 `key` 字段为刚刚生成的 **明文 Key**，且 **只返回这一次**，请务必保存——后续无法再通过接口取回。
 
 请求体：
 
@@ -335,4 +339,4 @@ Kubernetes 对 `Secret` 有单对象 **1 MiB 的硬性上限**，`metadata`、`m
 | **500 – 1000**   | 尚能运行，但应开始规划向 `mysql` 迁移。                                    |
 | **> 1000**       | 必须切换到 `mysql`，否则趋近 1 MiB 硬性上限后写入会直接失败。                                 |
 
-> 经验法则：单集群预计 API Key 总数**超过几百条**时，建议从一开始就选 `mysql`，避免后续做破坏性迁移。
+> 经验法则：单集群预计 API Key 总数 **超过几百条** 时，建议从一开始就选 `mysql`，避免后续做破坏性迁移。

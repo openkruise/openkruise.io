@@ -26,31 +26,9 @@ underlying `Checkpoint` CR:
 > `Checkpoint` CR — `snapshotId` returned by the E2B API is exactly the `Checkpoint` name. This page documents the
 > Checkpoint features and shows both access styles side-by-side.
 
-## How It Works
-
-1. **Capture** — The sandbox-manager / Checkpoint controller freezes the target Pod, writes the requested
-   `persistentContents` (memory and/or filesystem) into the backing Checkpoint storage, and then resumes the Pod
-   according to `spec.keepRunning`.
-2. **Phase** — The Checkpoint goes through `Pending → Creating → Succeeded` on success (or `Failed`). Only
-   `Succeeded` Checkpoints can be used to clone new sandboxes.
-3. **Paired SandboxTemplate** — Alongside the `Checkpoint`, a matching `SandboxTemplate` is generated (or reused) to
-   describe the Pod spec at capture time. `Checkpoint.name == SandboxTemplate.name` by convention.
-4. **Clone / Fork** — Creating a Sandbox with `templateName = <checkpoint-name>` goes through the clone path and
-   produces a new Pod starting from the captured state, with a brand-new sandbox ID. Each clone is an independent fork
-   of the captured state.
-5. **Connection drop** — The source Pod is briefly paused during capture. All active WebSocket / PTY / command-stream
-   connections are dropped; clients must reconnect.
-6. **GC** — `spec.ttlAfterFinished` triggers automatic deletion of the Checkpoint CR (and its backing resources) after
-   the configured duration. When it is unset, users manage the lifecycle manually (`kubectl delete cp ...` or the E2B
-   delete API).
-
-> The exact semantics of what a Checkpoint preserves (speed, size, storage location) depend on the Checkpoint driver
-> configured in your cluster. See the compatibility note in the
-> [E2B SDK Integration Documentation](./e2b-client.md).
-
 ## Checkpoint vs. Pause / Resume
 
-Checkpoints and [Pause / Resume](./sandbox-claim.md) share the underlying capture machinery, but they answer different
+Checkpoints and [Pause / Resume](./pause-resume.md) share the underlying capture machinery, but they answer different
 questions:
 
 |                              | Pause / Resume                                | Checkpoint (Snapshot)                                 |
