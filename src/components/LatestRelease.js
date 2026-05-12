@@ -4,7 +4,10 @@ import Translate from '@docusaurus/Translate';
 import Link from '@docusaurus/Link';
 import styles from './LatestRelease.module.css';
 
-// Parse highlights from release body - filters out technical details
+// Extract first 3 meaningful highlights from release notes
+// - Filters out technical lines (Full Changelog, pure URLs, comparisons)
+// - Removes PR refs, URLs, and markdown formatting
+// - Preserves author mentions (@author)
 function parseReleaseHighlights(body) {
   if (!body) return [];
   
@@ -14,52 +17,35 @@ function parseReleaseHighlights(body) {
   for (const line of lines) {
     const trimmed = line.trim();
     
-    // Match markdown bullet points
     if ((trimmed.startsWith('-') || trimmed.startsWith('*') || trimmed.startsWith('•')) 
         && trimmed.length > 2) {
       
       let highlight = trimmed.substring(1).trim();
       
-      // Skip pure technical lines first:
-      // 1. "Full Changelog" links
       if (highlight.toLowerCase().includes('full changelog')) continue;
-      
-      // 2. Pure GitHub comparison links "https://github.com/...compare"
       if (highlight.startsWith('https://github.com/') && highlight.includes('compare')) continue;
-      
-      // 3. Lines that are ONLY URLs
       if (highlight.startsWith('http') && highlight.length < 100) continue;
       
-      // Now clean up the highlight by removing PR refs and URLs
-      // "feature (#1234) by @author in https://..." → "feature by @author"
       highlight = highlight
-        .replace(/\s*\(#\d+\)\s*/g, ' ')           // Remove (#PR_NUMBER) but keep spacing
-        .replace(/\s+in\s+https?:\/\/.*$/g, '')    // Remove "in https://..."
-        .replace(/\s+https?:\/\/.*$/g, '');        // Remove any remaining URLs at end
+        .replace(/\s*\(#\d+\)\s*/g, ' ')
+        .replace(/\s+in\s+https?:\/\/.*$/g, '')
+        .replace(/\s+https?:\/\/.*$/g, '')
+        .replace(/[*_`]/g, '')
+        .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+        .trim();
       
-      // Clean up markdown formatting
-      highlight = highlight.replace(/[*_`]/g, '');
-      
-      // Remove markdown links [text](url) → text
-      highlight = highlight.replace(/\[([^\]]+)\]\([^)]+\)/g, '$1');
-      
-      // Trim whitespace
-      highlight = highlight.trim();
-      
-      // Only add if it's a meaningful summary (not just numbers/symbols/empty)
       if (highlight.length > 5 && !/^[#\d\s@-]*$/.test(highlight)) {
         highlights.push(highlight);
       }
     }
     
-    // Stop after 3 highlights
     if (highlights.length >= 3) break;
   }
   
   return highlights;
 }
 
-// Cache management
+// Cache management (1-hour TTL)
 function getCachedRelease() {
   try {
     const cached = localStorage.getItem('openkruise_latest_release');
@@ -68,12 +54,10 @@ function getCachedRelease() {
     const { data, timestamp } = JSON.parse(cached);
     const ONE_HOUR = 60 * 60 * 1000;
     
-    // Check if cache is still valid
     if (Date.now() - timestamp < ONE_HOUR) {
       return data;
     }
     
-    // Clear expired cache
     localStorage.removeItem('openkruise_latest_release');
     return null;
   } catch (err) {
@@ -105,7 +89,6 @@ function SkeletonLoader() {
   );
 }
 
-// Error state
 function ErrorFallback() {
   return (
     <div className={styles.errorContainer}>
@@ -122,7 +105,6 @@ function ErrorFallback() {
   );
 }
 
-// Main component
 export default function LatestRelease() {
   const [release, setRelease] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -131,7 +113,6 @@ export default function LatestRelease() {
   useEffect(() => {
     const fetchLatestRelease = async () => {
       try {
-        // Check cache first
         const cached = getCachedRelease();
         if (cached) {
           setRelease(cached);
@@ -139,7 +120,6 @@ export default function LatestRelease() {
           return;
         }
 
-        // Fetch from GitHub API
         const response = await fetch(
           'https://api.github.com/repos/openkruise/kruise/releases/latest',
           {
@@ -154,8 +134,6 @@ export default function LatestRelease() {
         }
 
         const data = await response.json();
-        
-        // Cache the result
         cacheRelease(data);
         setRelease(data);
         setError(null);
@@ -186,7 +164,6 @@ export default function LatestRelease() {
     day: 'numeric',
   });
 
-  // Parse highlights
   const highlights = parseReleaseHighlights(release.body);
 
   return (
@@ -198,7 +175,6 @@ export default function LatestRelease() {
         <div className="row">
           <div className="col col--8 col--offset-2">
             <article className={styles.releaseCard}>
-              
               <header className={styles.releaseHeader}>
                 <h3 
                   id="whats-new-title"
