@@ -29,8 +29,11 @@ module.exports = {
             items: [
                 'user-manuals/warmpool-management',
                 'user-manuals/sandbox-claim',
+                'user-manuals/pause-resume',
                 'user-manuals/runtime-injection',
-                'user-manuals/api-keys-and-teams'
+                'user-manuals/checkpoint',
+                'user-manuals/api-keys-and-teams',
+                'user-manuals/e2b-client'
             ],
         },
         {
@@ -51,7 +54,6 @@ module.exports = {
             collapsed: true,
             items: [
                 'developer-manuals/contribution',
-                'developer-manuals/e2b-client',
                 {
                    'K8S SDK': [
                      "developer-manuals/go-client",

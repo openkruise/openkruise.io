@@ -127,7 +127,7 @@ spec:
 
 > 大多数依赖 E2B SDK 的使用场景都需要注入 `agent-runtime`。如果不确定是否需要，建议启用。
 
-更多详情请参考 [E2B SDK 接入文档](../developer-manuals/e2b-client.md)。
+更多详情请参考 [E2B SDK 接入文档](./e2b-client.md)。
 
 ### csi
 

@@ -21,7 +21,7 @@ Agent applications can obtain a sandbox from OpenKruise Agents in the following 
 ## Claiming Sandboxes via E2B SDK
 
 > ⚠️ Note: Before using the E2B SDK, please refer to
-> the [E2B SDK Integration Documentation](../developer-manuals/e2b-client.md) and choose the appropriate
+> the [E2B SDK Integration Documentation](./e2b-client.md) and choose the appropriate
 > E2B integration method based on your domain name, certificate, and other conditions, and correctly configure the
 `E2B_DOMAIN` for both client and server.
 
@@ -225,40 +225,8 @@ spec:
 
 </Tabs>
 
-### Auto Pause
-
-Auto pause is similar to sandbox timeout. When the sandbox reaches the specified time, it will automatically enter a
-paused state.
-
-<Tabs>
-  <TabItem value="E2B" label="E2B">
-
-```python
-from e2b_code_interpreter import Sandbox
-
-Sandbox.beta_create(template="demo", timeout=600, auto_pause=True)  # auto pause in seconds
-```
-
-  </TabItem>
-  <TabItem value="SandboxClaim" label="SandboxClaim">
-
-```yaml
-apiVersion: agents.kruise.io/v1alpha1
-kind: SandboxClaim
-metadata:
-  name: demo-sandbox-claim
-  namespace: default
-spec:
-  templateName: demo
-  # RFC 3339 format absolute time to pause the sandboxes claimed.
-  # It is recommended to set this field programmatically, for example: 
-  # sbc.Spec.PauseTime = metav1.NewTime(time.Now().Add(5 * time.Minute))
-  pauseTime: 2026-02-06T07:33:30Z
-```
-
-  </TabItem>
-
-</Tabs>
+> **Auto Pause** (transitioning automatically into `paused` on expiry) has been moved to
+> [Pausing and Resuming](./pause-resume.md#auto-pause).
 
 ### Adding Metadata
 

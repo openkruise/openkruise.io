@@ -1,4 +1,4 @@
-# E2B SDK
+# Using the E2B SDK
 
 The sandbox-manager component of OpenKruise Agents supports two E2B integration protocols: native E2B protocol and
 private protocol.
@@ -155,7 +155,7 @@ kubectl create secret tls sandbox-manager-tls \
 
 ## E2B Compatibility
 
-> ⚠️ **Important**: The `commands.run` (command execution) and file system `read/write` APIs require the `agent-runtime` component to be injected into the Sandbox. Please ensure that your SandboxSet has configured `runtimes: [{name: agent-runtime}]`. For details, refer to the [Runtime Injection](../user-manuals/runtime-injection.md) documentation.
+> ⚠️ **Important**: The `commands.run` (command execution) and file system `read/write` APIs require the `agent-runtime` component to be injected into the Sandbox. Please ensure that your SandboxSet has configured `runtimes: [{name: agent-runtime}]`. For details, refer to the [Runtime Injection](./runtime-injection.md) documentation.
 
 | API Category         | API                                                   | Compatibility Level  | Notes                                                                                              |
 |----------------------|-------------------------------------------------------|----------------------|----------------------------------------------------------------------------------------------------|

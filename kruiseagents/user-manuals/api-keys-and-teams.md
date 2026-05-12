@@ -7,7 +7,7 @@ sidebar_label: User Management
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-# API Keys and Teams
+# User Management
 
 `sandbox-manager` exposes a set of E2B-compatible HTTP endpoints for managing **API Keys** and **Teams**. These
 endpoints allow cluster administrators and tenant users to provision API keys programmatically, enumerate the teams
@@ -68,7 +68,7 @@ The examples below assume your configured `E2B_DOMAIN` is `your.domain.com`.
 | Private (OpenKruise)      | `https://your.domain.com/kruise/api`    |
 
 > For more details on domain and certificate configuration, see the
-> [E2B SDK integration documentation](../developer-manuals/e2b-client.md).
+> [E2B SDK integration documentation](./e2b-client.md).
 
 All examples below use the **native** URL form. If you are using the private protocol, just replace the base URL
 accordingly. For example `GET /api-keys` becomes `GET https://your.domain.com/kruise/api/api-keys`.

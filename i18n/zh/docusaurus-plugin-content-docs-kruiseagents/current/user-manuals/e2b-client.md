@@ -1,4 +1,4 @@
-# 通过 E2B SDK 使用 OpenKruise Agents Sandbox
+# 使用 E2B SDK
 
 OpenKruise Agents 的 sandbox-manager 组件支持两种 E2B 接入协议：原生 E2B 协议和私有协议。
 
@@ -148,7 +148,7 @@ kubectl create secret tls sandbox-manager-tls \
 ## E2B 兼容性说明
 
 > ⚠️ **重要**：`commands.run`（命令执行）和文件系统 `read/write` API 需要在 Sandbox 中注入 `agent-runtime` 组件。请确保你的
-> SandboxSet 已配置 `runtimes: [{name: agent-runtime}]`。详情请参考[运行时注入](../user-manuals/runtime-injection.md)文档。
+> SandboxSet 已配置 `runtimes: [{name: agent-runtime}]`。详情请参考[运行时注入](./runtime-injection.md)文档。
 
 | API分类  | API                                                   | 参数兼容程度 | 说明                             |
 |--------|-------------------------------------------------------|--------|--------------------------------|

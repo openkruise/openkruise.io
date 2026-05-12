@@ -7,7 +7,7 @@ sidebar_label: 用户管理
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-# API Keys 与 Teams
+# 用户管理
 
 `sandbox-manager` 提供了一组兼容 E2B 协议的 HTTP 接口，用于管理 **API Keys** 与 **Teams**。通过这些接口，集群管理员与租户可以
 以编程方式颁发 API Key、查询自己所属的 Teams，并吊销不再使用的 Key。
@@ -62,7 +62,7 @@ API Key 决定了：
 | 原生 E2B 协议            | `https://api.your.domain.com`           |
 | 私有协议（OpenKruise）    | `https://your.domain.com/kruise/api`    |
 
-> 关于域名、证书等更多信息，请参考 [E2B SDK 接入文档](../developer-manuals/e2b-client.md)。
+> 关于域名、证书等更多信息，请参考 [E2B SDK 接入文档](./e2b-client.md)。
 
 下面所有示例默认使用**原生协议**的 URL。如果你使用私有协议，把 Base URL 替换即可，例如
 `GET /api-keys` 对应为 `GET https://your.domain.com/kruise/api/api-keys`。
