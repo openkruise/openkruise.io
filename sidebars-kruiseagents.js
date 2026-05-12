@@ -29,7 +29,8 @@ module.exports = {
             items: [
                 'user-manuals/warmpool-management',
                 'user-manuals/sandbox-claim',
-                'user-manuals/runtime-injection'
+                'user-manuals/runtime-injection',
+                'user-manuals/api-keys-and-teams'
             ],
         },
         {
