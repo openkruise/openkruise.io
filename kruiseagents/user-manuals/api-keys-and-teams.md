@@ -1,6 +1,7 @@
 ---
 id: api-keys-and-teams
 title: API Keys and Teams
+sidebar_label: User Management
 ---
 
 import Tabs from '@theme/Tabs';
@@ -329,3 +330,21 @@ Notes:
 | Local development, evaluation, single tenant          | `secret`            |
 | Production, multi-tenant, multiple `sandbox-manager` replicas with shared storage | `mysql`             |
 | Schema is managed by an external migration tool       | `mysql` with `--e2b-key-storage-disable-schema-auto-update=true` |
+
+#### Capacity Threshold Between `secret` and `mysql`
+
+Kubernetes enforces a hard limit of **1 MiB per object** on a `Secret`, shared by `metadata`, `managedFields`, and the
+`Data` map. In `secret` mode, every API key is serialized as a JSON blob under a UUID key (~0.4 – 0.6 KB per entry).
+After excluding metadata / `managedFields` overhead, the usable budget is roughly **~900 KB**, and every create / delete
+rewrites the whole `Secret`, which keeps inflating `managedFields` as usage grows.
+
+Taking room for future field additions and burst growth into account, the conservative recommendation is:
+
+| Total API Keys     | Recommendation                                                                    |
+|--------------------|-----------------------------------------------------------------------------------|
+| **≤ 500**          | `secret` is safe to use.                                                          |
+| **500 – 1000**     | Still works, but start planning migration to `mysql`.                             |
+| **> 1000**         | Must switch to `mysql`; otherwise writes will eventually fail when approaching the 1 MiB hard limit. |
+
+> Rule of thumb: if you expect **more than a few hundred API keys** in a single cluster, pick `mysql` from day one
+> to avoid a disruptive migration later.

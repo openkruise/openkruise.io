@@ -1,6 +1,7 @@
 ---
 id: api-keys-and-teams
 title: API Keys 与 Teams
+sidebar_label: 用户管理
 ---
 
 import Tabs from '@theme/Tabs';
@@ -319,3 +320,19 @@ sandbox-manager \
 | 本地开发、试用、单租户                                  | `secret`                                                   |
 | 生产多租户、多副本共享同一份 Key 存储                        | `mysql`                                                    |
 | Schema 由外部迁移工具管理                             | `mysql` + `--e2b-key-storage-disable-schema-auto-update=true` |
+
+#### `secret` 与 `mysql` 的容量分界线
+
+Kubernetes 对 `Secret` 有单对象 **1 MiB 的硬性上限**，`metadata`、`managedFields` 和 `Data` 共同占用这份配额。
+在 `secret` 模式下，每条 API Key 会以 UUID 为 key、JSON 为 value 写入 `Data`，**单条大约 0.4 – 0.6 KB**。扣除
+`metadata`/`managedFields` 等开销后，实际可用空间约 **~900 KB**；而且每次增/删都是全量重写 `Secret`，随着写入次数循稀 `managedFields` 还会持续膨胀，在逼近上限前性能就已经越来越差。
+
+考虑未来字段扩展、团队增长等 headroom，保守建议如下：
+
+| API Key 总数       | 建议                                                                  |
+|------------------|---------------------------------------------------------------------|
+| **≤ 500**        | `secret` 可以安全使用。                                                 |
+| **500 – 1000**   | 尚能运行，但应开始规划向 `mysql` 迁移。                                    |
+| **> 1000**       | 必须切换到 `mysql`，否则趋近 1 MiB 硬性上限后写入会直接失败。                                 |
+
+> 经验法则：单集群预计 API Key 总数**超过几百条**时，建议从一开始就选 `mysql`，避免后续做破坏性迁移。
