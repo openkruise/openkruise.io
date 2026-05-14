@@ -56,7 +56,7 @@ kubectl create ns sandbox-system
 > **安装顺序**：Sandbox Controller **必须**先于 Sandbox Manager 安装，因为它提供了 Sandbox Manager 所需的 CRD 资源。
 
 ```bash
-helm install agents-sandbox-controller openkruise/kruise-agents-sandbox-controller \
+helm install agents-sandbox-controller openkruise/agents-sandbox-controller \
   -n sandbox-system \
   --version 0.2.0
 ```
@@ -68,7 +68,7 @@ helm install agents-sandbox-controller openkruise/kruise-agents-sandbox-controll
 > - `ingress.className`：Ingress 控制器类名（如 `nginx`、`alb` 等，取决于集群的 Ingress 实现）
 
 ```bash
-helm install agents-sandbox-manager openkruise/kruise-agents-sandbox-manager \
+helm install agents-sandbox-manager openkruise/agents-sandbox-manager \
   -n sandbox-system \
   --version 0.2.0 \
   --set e2b.adminApiKey=<your-api-key> \
@@ -97,7 +97,7 @@ helm install agents-sandbox-manager openkruise/kruise-agents-sandbox-manager \
 **安装 Sandbox Controller（使用国内镜像）**
 
 ```bash
-helm install agents-sandbox-controller openkruise/kruise-agents-sandbox-controller \
+helm install agents-sandbox-controller openkruise/agents-sandbox-controller \
   -n sandbox-system \
   --version 0.2.0 \
   --set image.repository=openkruise-registry.cn-shanghai.cr.aliyuncs.com/openkruise/agent-sandbox-controller
@@ -106,7 +106,7 @@ helm install agents-sandbox-controller openkruise/kruise-agents-sandbox-controll
 **安装 Sandbox Manager（使用国内镜像）**
 
 ```bash
-helm install agents-sandbox-manager openkruise/kruise-agents-sandbox-manager \
+helm install agents-sandbox-manager openkruise/agents-sandbox-manager \
   -n sandbox-system \
   --version 0.2.0 \
   --set e2b.adminApiKey=<your-api-key> \
@@ -131,7 +131,7 @@ helm install agents-sandbox-manager openkruise/kruise-agents-sandbox-manager \
 ### 升级 Sandbox Controller
 
 ```bash
-helm upgrade agents-sandbox-controller openkruise/kruise-agents-sandbox-controller \
+helm upgrade agents-sandbox-controller openkruise/agents-sandbox-controller \
   -n sandbox-system \
   --version 0.2.0
 ```
@@ -139,7 +139,7 @@ helm upgrade agents-sandbox-controller openkruise/kruise-agents-sandbox-controll
 ### 升级 Sandbox Manager
 
 ```bash
-helm upgrade agents-sandbox-manager openkruise/kruise-agents-sandbox-manager \
+helm upgrade agents-sandbox-manager openkruise/agents-sandbox-manager \
   -n sandbox-system \
   --version 0.2.0
 ```
@@ -159,9 +159,9 @@ helm upgrade agents-sandbox-manager openkruise/kruise-agents-sandbox-manager \
 
    ```bash
    # 从 chart 包中提取 CRD 并应用（以在线安装为例）
-   helm pull openkruise/kruise-agents-sandbox-controller --version 0.2.0 --untar
-   kubectl apply -f kruise-agents-sandbox-controller/crds/
-   rm -rf kruise-agents-sandbox-controller
+   helm pull openkruise/agents-sandbox-controller --version 0.2.0 --untar
+   kubectl apply -f agents-sandbox-controller/crds/
+   rm -rf agents-sandbox-controller
    ```
 
    0.2.0 版本 CRD 的主要变化包括：
@@ -372,7 +372,7 @@ gateway.envoy.circuitBreakers:
 **Sandbox Controller 资源调整**
 
 ```bash
-helm install agents-sandbox-controller openkruise/kruise-agents-sandbox-controller \
+helm install agents-sandbox-controller openkruise/agents-sandbox-controller \
   -n sandbox-system \
   --version 0.2.0 \
   --set resources.limits.cpu=4 \
@@ -384,7 +384,7 @@ helm install agents-sandbox-controller openkruise/kruise-agents-sandbox-controll
 **Sandbox Manager + Gateway 资源调整**
 
 ```bash
-helm install agents-sandbox-manager openkruise/kruise-agents-sandbox-manager \
+helm install agents-sandbox-manager openkruise/agents-sandbox-manager \
   -n sandbox-system \
   --version 0.2.0 \
   --set e2b.adminApiKey=<your-api-key> \
@@ -398,7 +398,7 @@ helm install agents-sandbox-manager openkruise/kruise-agents-sandbox-manager \
 ### 配置 E2B 域名和认证
 
 ```bash
-helm install agents-sandbox-manager openkruise/kruise-agents-sandbox-manager \
+helm install agents-sandbox-manager openkruise/agents-sandbox-manager \
   -n sandbox-system \
   --version 0.2.0 \
   --set e2b.domain=sandbox.example.com \
@@ -410,7 +410,7 @@ helm install agents-sandbox-manager openkruise/kruise-agents-sandbox-manager \
 ### 使用 Ingress 暴露服务
 
 ```bash
-helm install agents-sandbox-manager openkruise/kruise-agents-sandbox-manager \
+helm install agents-sandbox-manager openkruise/agents-sandbox-manager \
   -n sandbox-system \
   --version 0.2.0 \
   --set e2b.adminApiKey=<your-api-key> \
@@ -422,7 +422,7 @@ helm install agents-sandbox-manager openkruise/kruise-agents-sandbox-manager \
 ### 配置 Gateway 高可用
 
 ```bash
-helm install agents-sandbox-manager openkruise/kruise-agents-sandbox-manager \
+helm install agents-sandbox-manager openkruise/agents-sandbox-manager \
   -n sandbox-system \
   --version 0.2.0 \
   --set e2b.adminApiKey=<your-api-key> \
@@ -438,7 +438,7 @@ helm install agents-sandbox-manager openkruise/kruise-agents-sandbox-manager \
 如果需要特殊的初始化操作（如 sysctl 调优等），可以启用初始化容器：
 
 ```bash
-helm install agents-sandbox-manager openkruise/kruise-agents-sandbox-manager \
+helm install agents-sandbox-manager openkruise/agents-sandbox-manager \
   -n sandbox-system \
   --version 0.2.0 \
   --set e2b.adminApiKey=<your-api-key> \

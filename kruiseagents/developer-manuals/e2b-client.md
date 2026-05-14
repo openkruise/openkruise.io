@@ -24,13 +24,25 @@ You can edit the deployment with `kubectl edit deploy -n sandbox-system sandbox-
 
 ### How to Configure E2B_DOMAIN for Server-side (sandbox-manager)
 
+#### Method 1: Via Helm (Recommended)
+
+When installing or upgrading the Sandbox Manager via Helm, you can set the `E2B_DOMAIN` using the `e2b.domain` parameter:
+
+```bash
+helm install agents-sandbox-manager openkruise/agents-sandbox-manager \
+  -n sandbox-system \
+  --set e2b.domain=your.domain.com \
+  --set e2b.adminApiKey=<your-api-key> \
+  --set ingress.className=<your-ingress-class>
+```
+
+#### Method 2: Via Manual Patch
+
 You can configure the server-side E2B_DOMAIN by editing the following files before running
 `make deploy-sandbox-manager`:
 
 - [configuration_patch.yaml](https://github.com/openkruise/agents/blob/master/config/sandbox-manager/configuration_patch.yaml)
 - [ingress_patch.yaml](https://github.com/openkruise/agents/blob/master/config/sandbox-manager/ingress_patch.yaml)
-
-[//]: # (TODO: Add new deployment methods like Helm here when available)
 
 ### How to Configure E2B_DOMAIN for Client-side (E2B SDK)
 

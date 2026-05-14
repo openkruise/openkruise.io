@@ -55,7 +55,7 @@ kubectl create ns sandbox-system
 > **Installation Order**: Sandbox Controller **must** be installed before Sandbox Manager, as it provides the CRD resources required by Sandbox Manager.
 
 ```bash
-helm install agents-sandbox-controller openkruise/kruise-agents-sandbox-controller \
+helm install agents-sandbox-controller openkruise/agents-sandbox-controller \
   -n sandbox-system \
   --version 0.2.0
 ```
@@ -67,7 +67,7 @@ helm install agents-sandbox-controller openkruise/kruise-agents-sandbox-controll
 > - `ingress.className`: Ingress controller class name (e.g., `nginx`, `alb`, etc., depending on your cluster's Ingress implementation)
 
 ```bash
-helm install agents-sandbox-manager openkruise/kruise-agents-sandbox-manager \
+helm install agents-sandbox-manager openkruise/agents-sandbox-manager \
   -n sandbox-system \
   --version 0.2.0 \
   --set e2b.adminApiKey=<your-api-key> \
@@ -96,7 +96,7 @@ Due to network restrictions, users in China may not be able to pull images direc
 **Install Sandbox Controller (using China mirror)**
 
 ```bash
-helm install agents-sandbox-controller openkruise/kruise-agents-sandbox-controller \
+helm install agents-sandbox-controller openkruise/agents-sandbox-controller \
   -n sandbox-system \
   --version 0.2.0 \
   --set image.repository=openkruise-registry.cn-shanghai.cr.aliyuncs.com/openkruise/agent-sandbox-controller
@@ -105,7 +105,7 @@ helm install agents-sandbox-controller openkruise/kruise-agents-sandbox-controll
 **Install Sandbox Manager (using China mirror)**
 
 ```bash
-helm install agents-sandbox-manager openkruise/kruise-agents-sandbox-manager \
+helm install agents-sandbox-manager openkruise/agents-sandbox-manager \
   -n sandbox-system \
   --version 0.2.0 \
   --set e2b.adminApiKey=<your-api-key> \
@@ -130,7 +130,7 @@ helm install agents-sandbox-manager openkruise/kruise-agents-sandbox-manager \
 ### Upgrade Sandbox Controller
 
 ```bash
-helm upgrade agents-sandbox-controller openkruise/kruise-agents-sandbox-controller \
+helm upgrade agents-sandbox-controller openkruise/agents-sandbox-controller \
   -n sandbox-system \
   --version 0.2.0
 ```
@@ -138,7 +138,7 @@ helm upgrade agents-sandbox-controller openkruise/kruise-agents-sandbox-controll
 ### Upgrade Sandbox Manager
 
 ```bash
-helm upgrade agents-sandbox-manager openkruise/kruise-agents-sandbox-manager \
+helm upgrade agents-sandbox-manager openkruise/agents-sandbox-manager \
   -n sandbox-system \
   --version 0.2.0
 ```
@@ -158,9 +158,9 @@ Version 0.2.0 introduces an independent Sandbox Gateway component and multiple C
 
    ```bash
    # Extract CRDs from chart package and apply (online installation example)
-   helm pull openkruise/kruise-agents-sandbox-controller --version 0.2.0 --untar
-   kubectl apply -f kruise-agents-sandbox-controller/crds/
-   rm -rf kruise-agents-sandbox-controller
+   helm pull openkruise/agents-sandbox-controller --version 0.2.0 --untar
+   kubectl apply -f agents-sandbox-controller/crds/
+   rm -rf agents-sandbox-controller
    ```
 
    Key CRD changes in 0.2.0 include:
@@ -365,7 +365,7 @@ Based on your cluster scale, it is recommended to adjust the following resource 
 **Sandbox Controller resource adjustment**
 
 ```bash
-helm install agents-sandbox-controller openkruise/kruise-agents-sandbox-controller \
+helm install agents-sandbox-controller openkruise/agents-sandbox-controller \
   -n sandbox-system \
   --version 0.2.0 \
   --set resources.limits.cpu=4 \
@@ -377,7 +377,7 @@ helm install agents-sandbox-controller openkruise/kruise-agents-sandbox-controll
 **Sandbox Manager + Gateway resource adjustment**
 
 ```bash
-helm install agents-sandbox-manager openkruise/kruise-agents-sandbox-manager \
+helm install agents-sandbox-manager openkruise/agents-sandbox-manager \
   -n sandbox-system \
   --version 0.2.0 \
   --set e2b.adminApiKey=<your-api-key> \
@@ -391,7 +391,7 @@ helm install agents-sandbox-manager openkruise/kruise-agents-sandbox-manager \
 ### Configure E2B Domain and Authentication
 
 ```bash
-helm install agents-sandbox-manager openkruise/kruise-agents-sandbox-manager \
+helm install agents-sandbox-manager openkruise/agents-sandbox-manager \
   -n sandbox-system \
   --version 0.2.0 \
   --set e2b.domain=sandbox.example.com \
@@ -403,7 +403,7 @@ helm install agents-sandbox-manager openkruise/kruise-agents-sandbox-manager \
 ### Expose Service via Ingress
 
 ```bash
-helm install agents-sandbox-manager openkruise/kruise-agents-sandbox-manager \
+helm install agents-sandbox-manager openkruise/agents-sandbox-manager \
   -n sandbox-system \
   --version 0.2.0 \
   --set e2b.adminApiKey=<your-api-key> \
@@ -415,7 +415,7 @@ helm install agents-sandbox-manager openkruise/kruise-agents-sandbox-manager \
 ### Configure Gateway High Availability
 
 ```bash
-helm install agents-sandbox-manager openkruise/kruise-agents-sandbox-manager \
+helm install agents-sandbox-manager openkruise/agents-sandbox-manager \
   -n sandbox-system \
   --version 0.2.0 \
   --set e2b.adminApiKey=<your-api-key> \
@@ -431,7 +431,7 @@ helm install agents-sandbox-manager openkruise/kruise-agents-sandbox-manager \
 If special initialization operations are needed (such as sysctl tuning, etc.), you can enable the init container:
 
 ```bash
-helm install agents-sandbox-manager openkruise/kruise-agents-sandbox-manager \
+helm install agents-sandbox-manager openkruise/agents-sandbox-manager \
   -n sandbox-system \
   --version 0.2.0 \
   --set e2b.adminApiKey=<your-api-key> \
