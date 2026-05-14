@@ -9,6 +9,7 @@ import GitHubButton from 'react-github-btn';
 import styles from './index.module.css';
 import HomepageFeatures from '../components/HomepageFeatures';
 import SupportersSection from '../components/SupportersSection';
+import LatestRelease from '../components/LatestRelease';
 
 function Feature({ imgUrl, title, description, reverse }) {
   return (
@@ -60,15 +61,17 @@ export default function Home() {
             Star
           </GitHubButton>
           <p className="hero__subtitle">{siteConfig.tagline}</p>
-          {/* <div
+          <div
             className={clsx(styles.heroButtons, 'name', 'margin-vert--md')}>
             <Button href={useBaseUrl('docs/installation')}><Translate>Getting Started</Translate></Button>
             <Button href={useBaseUrl('docs/')}><Translate>Learn More</Translate></Button>
-          </div> */}
+          </div>
         </div>
       </header>
 
       <WhatIs />
+
+      <LatestRelease />
 
       <main className={clsx('hero', styles.hero)}>
         <div className="container">
