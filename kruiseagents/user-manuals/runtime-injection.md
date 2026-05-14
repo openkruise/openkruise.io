@@ -140,7 +140,7 @@ You should configure `agent-runtime` injection when:
 > Most use cases that rely on the E2B SDK require `agent-runtime` to be injected. If you are unsure, it is recommended
 > to enable it.
 
-For more details, see the [E2B SDK Integration Documentation](../developer-manuals/e2b-client.md).
+For more details, see the [E2B SDK Integration Documentation](./e2b-client.md).
 
 ### csi
 
