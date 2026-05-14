@@ -32,6 +32,7 @@ module.exports = {
                 'user-manuals/pause-resume',
                 'user-manuals/runtime-injection',
                 'user-manuals/checkpoint',
+                'user-manuals/sandbox-update',
                 'user-manuals/api-keys-and-teams',
                 'user-manuals/e2b-client'
             ],
@@ -46,22 +47,8 @@ module.exports = {
                 'best-practices/use-self-signed-cert',
                 'best-practices/cert-manager',
                 'best-practices/running-openclaw-sandbox',
-            ],
-        },
-        {
-            type: 'category',
-            label: 'Developer Manuals',
-            collapsed: true,
-            items: [
-                'developer-manuals/contribution',
-                {
-                   'K8S SDK': [
-                     "developer-manuals/go-client",
-                     "developer-manuals/python-client",
-                     "developer-manuals/java-client",
-                   ],
-                },
-                'developer-manuals/faq',
+                'best-practices/running-harbor-job',
+                'best-practices/running-agentscope-agent',
             ],
         },
         {
@@ -72,6 +59,22 @@ module.exports = {
                 'user-cases/ack-kimi',
                 'user-cases/ack-lixiang',
                 'user-cases/ack-minimax',
+            ],
+        },
+        {
+            type: 'category',
+            label: 'Developer Manuals',
+            collapsed: true,
+            items: [
+                'developer-manuals/contribution',
+                {
+                    'K8S SDK': [
+                        "developer-manuals/go-client",
+                        "developer-manuals/python-client",
+                        "developer-manuals/java-client",
+                    ],
+                },
+                'developer-manuals/faq',
             ],
         }
   ],
