@@ -45,8 +45,8 @@ def fill_version_map() -> None:
 
                 for yamlTxt in content.split('\n---'):
                     apiVersion = find_apiVersion(yamlTxt)
-                    if apiVersion != "":
-                        _d[v_m.get(apiVersion, 'master')].append(dict(yaml=content, path=path))
+                    if apiVersion:
+                        _d[v_m.get(apiVersion, 'master')].append(dict(yaml=yamlTxt, path=path))
 
     for cwd, dirs, files in os.walk('../..'):
         for file in files:
@@ -137,6 +137,7 @@ def write_info(files):
 
 def handle() -> None:
     for version, files in rollouts_version_map.items():
+        write_info(files)
         if version and version != 'master':
             print(version)
             less_0_5 = False
@@ -145,13 +146,14 @@ def handle() -> None:
                     less_0_5 = True
             if less_0_5:
                 _download_version(rollouts_format, "v" + version)
+                _exec('cd ./rollouts && go run . ' + tmp_file_path)
             else:
                 _download_version(rollouts_0_5_format, "v" + version)
+                _exec('cd ./rollouts-0.5 && go run . ' + tmp_file_path)
         else:
             print("master")
-            os.system(rollouts_format.format(version="master"))
-        write_info(files)
-        _exec('cd ./rollouts && go run . ' + tmp_file_path)
+            _exec(rollouts_format.format(version="master"))
+            _exec('cd ./rollouts && go run . ' + tmp_file_path)
 
     for version, files in kruise_game_version_map.items():
         if version and version != 'master':
