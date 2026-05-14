@@ -3,29 +3,6 @@
 This example demonstrates how to deploy an [E2B](https://e2b.dev/) code-interpreter sandbox through OpenKruise Agents
 and invoke it via the E2B SDK.
 
-## 0. Basic Concepts
-
-### Sandbox
-
-`Sandbox` is the core CRD of OpenKruise Agents. It manages the lifecycle of a sandbox instance (such as a Pod) and
-provides advanced features including Pause, Resume, Checkpoint, Fork, and in-place upgrades.
-
-### SandboxSet
-
-`SandboxSet` is the workload that manages `Sandbox`. Its function is similar to a `ReplicaSet` that manages Pods.
-It enables sub-second sandbox startup by pre-warming a pool of sandbox instances. Optimized specifically for scaling
-performance, `SandboxSet` can rapidly replenish sandboxes as they are consumed.
-
-### sandbox-manager
-
-`sandbox-manager` is a stateless backend management component that provides a set of E2B protocol-compatible APIs for
-managing and operating sandbox instances.
-
-### agent-runtime
-
-`agent-runtime` is a Sidecar injected into the Sandbox that provides a series of advanced features for the sandbox,
-including E2B envd-compatible remote operation interfaces, dynamic CSI mounting, etc.
-
 ## 1. Defining Templates
 
 OpenKruise Agents provides the E2B protocol-compatible backend management component `sandbox-manager`, allowing users to

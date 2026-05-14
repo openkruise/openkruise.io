@@ -2,28 +2,6 @@
 
 该示例演示了如何通过 OpenKruise Agents 部署 [E2B](https://e2b.dev/) code-interpreter 沙箱并通过 E2B SDK 进行调用。
 
-## 0. 基本概念
-
-### Sandbox
-
-`Sandbox` 是 OpenKruise Agents 的核心 CRD。它管理一个沙箱实例（比如一个 Pod）的生命周期，并提供
-Pause、Resume、Checkpoint、Fork、原地升级
-等高级功能。
-
-### SandboxSet
-
-`SandboxSet` 是管理 `Sandbox` 的工作负载。其作用类似管理 Pod 的 `ReplicaSet`。`SandboxSet` 通过预热一批沙箱实例以沙箱的秒级启动。
-这个工作负载针对扩容性能特别优化，能够及时地补充被消耗的沙箱。
-
-### sandbox-manager
-
-`sandbox-manager` 是一个无状态的后端管控组件，提供了一套兼容 E2B 协议的 API，用于管理与操作沙箱实例。
-
-### agent-runtime
-
-`agent-runtime` 是注入到 Sandbox 中的一个 Sidecar，为沙箱提供一系列高级功能，包括兼容 E2B envd 的远程操作接口、动态 CSI
-挂载等。
-
 ## 1. 定义模板
 
 OpenKruise Agents 提供了兼容 E2B 协议的后端管控组件 `sandbox-manager`，使得用户可以直接通过原生的 E2B SDK 管理与操作沙箱。该示例中，
