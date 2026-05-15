@@ -1,0 +1,24 @@
+{
+  "age_days": 447,
+  "frontmatter": {
+    "missing": [
+      "title",
+      "sidebar_position",
+      "slug"
+    ],
+    "valid": false,
+    "warnings": []
+  },
+  "last_commit_date": "2025-02-24T18:06:34+08:00",
+  "linkcheck": {
+    "evidence": [],
+    "missing_anchors": [],
+    "missing_files": [],
+    "missing_images": [],
+    "valid_links": [
+      "static/img/kruisegame/user-manuals/gs-lifecycle-delete.png"
+    ]
+  },
+  "path": "kruisegame/user-manuals/lifecycle.md",
+  "sha": "fde7e5d8d9d19890eea4a468cd0b14647909325a"
+}

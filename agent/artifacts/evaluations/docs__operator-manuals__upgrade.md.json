@@ -1,0 +1,21 @@
+{
+  "age_days": 105,
+  "frontmatter": {
+    "missing": [
+      "sidebar_position",
+      "slug"
+    ],
+    "valid": false,
+    "warnings": []
+  },
+  "last_commit_date": "2026-02-02T11:19:52+08:00",
+  "linkcheck": {
+    "evidence": [],
+    "missing_anchors": [],
+    "missing_files": [],
+    "missing_images": [],
+    "valid_links": []
+  },
+  "path": "docs/operator-manuals/upgrade.md",
+  "sha": "a60b97d8c5abb86b211f600145fc42595207b616"
+}

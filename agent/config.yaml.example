@@ -1,0 +1,7 @@
+repo_root: .
+output_dir: artifacts
+inventory_file: inventory.json
+scorecard_file: scorecard.json
+report_dir: reports
+open_pr: false
+github_repo: openkruise/openkruise.io

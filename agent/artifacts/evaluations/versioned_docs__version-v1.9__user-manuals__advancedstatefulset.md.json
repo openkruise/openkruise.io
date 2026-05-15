@@ -1,0 +1,34 @@
+{
+  "age_days": 112,
+  "frontmatter": {
+    "missing": [
+      "sidebar_position",
+      "slug"
+    ],
+    "valid": false,
+    "warnings": []
+  },
+  "last_commit_date": "2026-01-25T20:58:45+08:00",
+  "linkcheck": {
+    "evidence": [
+      {
+        "line": 297,
+        "source": "versioned_docs/version-v1.9/user-manuals/advancedstatefulset.md",
+        "target": "versioned_docs/version-v1.9/installation.md##optional-feature-gate",
+        "type": "missing_anchor"
+      }
+    ],
+    "missing_anchors": [
+      "versioned_docs/version-v1.9/installation.md##optional-feature-gate"
+    ],
+    "missing_files": [],
+    "missing_images": [],
+    "valid_links": [
+      "versioned_docs/version-v1.9/core-concepts/inplace-update.md",
+      "versioned_docs/version-v1.9/installation.md#optional-feature-gate",
+      "versioned_docs/version-v1.9/user-manuals/cloneset.md#lifecycle-hook"
+    ]
+  },
+  "path": "versioned_docs/version-v1.9/user-manuals/advancedstatefulset.md",
+  "sha": "309974b7881e6f5ebdfc90b3ea5ae68a0ff02335"
+}

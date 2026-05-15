@@ -1,0 +1,21 @@
+{
+  "age_days": 9,
+  "frontmatter": {
+    "missing": [
+      "sidebar_position",
+      "slug"
+    ],
+    "valid": false,
+    "warnings": []
+  },
+  "last_commit_date": "2026-05-09T10:53:21+08:00",
+  "linkcheck": {
+    "evidence": [],
+    "missing_anchors": [],
+    "missing_files": [],
+    "missing_images": [],
+    "valid_links": []
+  },
+  "path": "kruiseagents/installation.md",
+  "sha": "0e757cce398c617358e24e4383a7f0b4314d5532"
+}

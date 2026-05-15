@@ -1,0 +1,30 @@
+{
+  "age_days": 174,
+  "frontmatter": {
+    "missing": [
+      "sidebar_position",
+      "slug"
+    ],
+    "valid": false,
+    "warnings": []
+  },
+  "last_commit_date": "2025-11-25T15:26:39+08:00",
+  "linkcheck": {
+    "evidence": [
+      {
+        "line": 31,
+        "source": "docs/best-practices/resource-policy-sidecarset.md",
+        "target": "img/docs/best-practices/sidecarset-resource-policy-plot.png",
+        "type": "missing_image"
+      }
+    ],
+    "missing_anchors": [],
+    "missing_files": [],
+    "missing_images": [
+      "img/docs/best-practices/sidecarset-resource-policy-plot.png"
+    ],
+    "valid_links": []
+  },
+  "path": "docs/best-practices/resource-policy-sidecarset.md",
+  "sha": "771ec311110bbfad4462ead8e56f7155bb1f92d8"
+}

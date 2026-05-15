@@ -1,0 +1,35 @@
+@startuml
+!theme plain
+skinparam backgroundColor transparent
+skinparam shadowing false
+skinparam packageStyle rectangle
+skinparam defaultFontName Arial
+skinparam ArrowColor #444444
+skinparam componentStyle rectangle
+skinparam rectangle {
+  BackgroundColor #F6F8FA
+  BorderColor #4B5563
+}
+
+package "Safety Boundaries" {
+  [Dry-run default] as DryRun
+  [No auto-merge] as NoMerge
+  [Artifact-only outputs] as Artifacts
+  [Scoped tokens] as Tokens
+  [CODEOWNERS review] as Codeowners
+}
+
+package "PR Gate" {
+  [config.open_pr] as Config
+  [--create-pr flag] as Flag
+  [Draft PR] as Draft
+}
+
+DryRun --> Artifacts
+NoMerge --> Draft
+Tokens --> Draft
+Config --> Draft : allow
+Flag --> Draft : allow
+Codeowners --> Draft : review
+
+@enduml

@@ -1,0 +1,22 @@
+{
+  "age_days": 815,
+  "frontmatter": {
+    "missing": [
+      "title",
+      "sidebar_position",
+      "slug"
+    ],
+    "valid": false,
+    "warnings": []
+  },
+  "last_commit_date": "2024-02-23T10:21:02+08:00",
+  "linkcheck": {
+    "evidence": [],
+    "missing_anchors": [],
+    "missing_files": [],
+    "missing_images": [],
+    "valid_links": []
+  },
+  "path": "kruisegame/best-practices/shared-mem.md",
+  "sha": "a02428bf120fdab12cf9d281059e6abe41cc887a"
+}

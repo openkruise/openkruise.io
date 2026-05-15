@@ -1,0 +1,26 @@
+{
+  "age_days": 38,
+  "frontmatter": {
+    "missing": [
+      "sidebar_position",
+      "slug"
+    ],
+    "valid": false,
+    "warnings": []
+  },
+  "last_commit_date": "2026-04-09T17:39:54+08:00",
+  "linkcheck": {
+    "evidence": [],
+    "missing_anchors": [],
+    "missing_files": [],
+    "missing_images": [],
+    "valid_links": [
+      "kruiseagents/best-practices/running-e2b-for-code-interpreter.md",
+      "kruiseagents/developer-manuals/e2b-client.md",
+      "kruiseagents/user-manuals/runtime-injection.md",
+      "kruiseagents/user-manuals/sandbox-claim.md#skip-agent-runtime-initialization"
+    ]
+  },
+  "path": "kruiseagents/user-manuals/sandbox-claim.md",
+  "sha": "8f4b0048a9ac05ccac4dd270903c34e36f73332f"
+}

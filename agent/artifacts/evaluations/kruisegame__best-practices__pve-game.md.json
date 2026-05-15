@@ -1,0 +1,22 @@
+{
+  "age_days": 816,
+  "frontmatter": {
+    "missing": [
+      "title",
+      "sidebar_position",
+      "slug"
+    ],
+    "valid": false,
+    "warnings": []
+  },
+  "last_commit_date": "2024-02-22T10:36:01+08:00",
+  "linkcheck": {
+    "evidence": [],
+    "missing_anchors": [],
+    "missing_files": [],
+    "missing_images": [],
+    "valid_links": []
+  },
+  "path": "kruisegame/best-practices/pve-game.md",
+  "sha": "fc9b63d51226c91656895dbc731c1de171079450"
+}

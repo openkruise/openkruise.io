@@ -1,0 +1,25 @@
+{
+  "age_days": 1088,
+  "frontmatter": {
+    "missing": [
+      "title",
+      "sidebar_position",
+      "slug"
+    ],
+    "valid": false,
+    "warnings": []
+  },
+  "last_commit_date": "2023-05-26T10:48:31+08:00",
+  "linkcheck": {
+    "evidence": [],
+    "missing_anchors": [],
+    "missing_files": [],
+    "missing_images": [],
+    "valid_links": [
+      "kruisegame/user-manuals/hot-update.md",
+      "static/img/kruisegame/user-manuals/update-priority.png"
+    ]
+  },
+  "path": "kruisegame/user-manuals/update-strategy.md",
+  "sha": "7004fb0f04c5c8dc4906b7f12e21a0231d6d1625"
+}

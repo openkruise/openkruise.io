@@ -1,0 +1,43 @@
+{
+  "age_days": 101,
+  "frontmatter": {
+    "missing": [
+      "sidebar_position",
+      "slug"
+    ],
+    "valid": false,
+    "warnings": []
+  },
+  "last_commit_date": "2026-02-06T09:21:57+08:00",
+  "linkcheck": {
+    "evidence": [
+      {
+        "line": 613,
+        "source": "versioned_docs/version-v1.5/user-manuals/cloneset.md",
+        "target": "img/docs/user-manuals/cloneset-lifecycle.png",
+        "type": "missing_image"
+      },
+      {
+        "line": 9,
+        "source": "versioned_docs/version-v1.5/user-manuals/cloneset.md",
+        "target": "blog/workload-classification-guidance.md",
+        "type": "missing_internal_link"
+      }
+    ],
+    "missing_anchors": [],
+    "missing_files": [
+      "blog/workload-classification-guidance.md"
+    ],
+    "missing_images": [
+      "img/docs/user-manuals/cloneset-lifecycle.png"
+    ],
+    "valid_links": [
+      "versioned_docs/version-v1.5/core-concepts/inplace-update.md",
+      "versioned_docs/version-v1.5/installation.md#optional-feature-gate",
+      "versioned_docs/version-v1.5/user-manuals/cloneset.md#deletion-by-spread-constraints",
+      "versioned_docs/version-v1.5/user-manuals/cloneset.md#pod-deletion-cost"
+    ]
+  },
+  "path": "versioned_docs/version-v1.5/user-manuals/cloneset.md",
+  "sha": "1c4717498e659361af9f6d6da5625abe43a8d4cc"
+}

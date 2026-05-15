@@ -1,0 +1,40 @@
+{
+  "age_days": 410,
+  "frontmatter": {
+    "missing": [
+      "sidebar_position",
+      "slug"
+    ],
+    "valid": false,
+    "warnings": []
+  },
+  "last_commit_date": "2025-04-02T19:26:31+08:00",
+  "linkcheck": {
+    "evidence": [
+      {
+        "line": 555,
+        "source": "versioned_docs/version-v1.8/user-manuals/sidecarset.md",
+        "target": "img/docs/user-manuals/sidecarset_hotupgrade.png",
+        "type": "missing_image"
+      },
+      {
+        "line": 543,
+        "source": "versioned_docs/version-v1.8/user-manuals/sidecarset.md",
+        "target": "img/docs/user-manuals/sidecarset_hotupgrade_injection.png",
+        "type": "missing_image"
+      }
+    ],
+    "missing_anchors": [],
+    "missing_files": [],
+    "missing_images": [
+      "img/docs/user-manuals/sidecarset_hotupgrade.png",
+      "img/docs/user-manuals/sidecarset_hotupgrade_injection.png"
+    ],
+    "valid_links": [
+      "docs/user-manuals/containerlaunchpriority.md",
+      "docs/user-manuals/jobsidecarterminator.md"
+    ]
+  },
+  "path": "versioned_docs/version-v1.8/user-manuals/sidecarset.md",
+  "sha": "e74e4a58fbdb000199a4f9abc1577a23a545ed73"
+}

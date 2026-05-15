@@ -1,0 +1,21 @@
+{
+  "age_days": 293,
+  "frontmatter": {
+    "missing": [
+      "sidebar_position",
+      "slug"
+    ],
+    "valid": false,
+    "warnings": []
+  },
+  "last_commit_date": "2025-07-29T15:28:27+08:00",
+  "linkcheck": {
+    "evidence": [],
+    "missing_anchors": [],
+    "missing_files": [],
+    "missing_images": [],
+    "valid_links": []
+  },
+  "path": "docs/faq.md",
+  "sha": "30e3f0b0925e2d37c1d3d1eadfb224b2b3d907d5"
+}

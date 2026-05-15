@@ -1,0 +1,22 @@
+{
+  "age_days": 9,
+  "frontmatter": {
+    "missing": [
+      "title",
+      "sidebar_position",
+      "slug"
+    ],
+    "valid": false,
+    "warnings": []
+  },
+  "last_commit_date": "2026-05-09T17:06:20+08:00",
+  "linkcheck": {
+    "evidence": [],
+    "missing_anchors": [],
+    "missing_files": [],
+    "missing_images": [],
+    "valid_links": []
+  },
+  "path": "kruiseagents/user-cases/ack-minimax.md",
+  "sha": "e58008e322cc6e6babde89993329261e5d300152"
+}

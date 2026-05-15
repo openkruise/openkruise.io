@@ -1,0 +1,22 @@
+{
+  "age_days": 549,
+  "frontmatter": {
+    "missing": [
+      "title",
+      "sidebar_position",
+      "slug"
+    ],
+    "valid": false,
+    "warnings": []
+  },
+  "last_commit_date": "2024-11-15T11:40:04+08:00",
+  "linkcheck": {
+    "evidence": [],
+    "missing_anchors": [],
+    "missing_files": [],
+    "missing_images": [],
+    "valid_links": []
+  },
+  "path": "kruisegame/blog-video/kubecon-chillyroom-20240823.md",
+  "sha": "97fb031623445e9f1327a6279aa1bb834dbef38a"
+}

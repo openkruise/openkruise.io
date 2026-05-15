@@ -1,0 +1,53 @@
+{
+  "age_days": 968,
+  "frontmatter": {
+    "missing": [
+      "sidebar_position",
+      "slug"
+    ],
+    "valid": false,
+    "warnings": []
+  },
+  "last_commit_date": "2023-09-23T11:11:19+08:00",
+  "linkcheck": {
+    "evidence": [
+      {
+        "line": 9,
+        "source": "versioned_docs/version-v1.5/best-practices/ci-pipeline-image-predownload.md",
+        "target": "img/docs/best-practices/ci_cd_pipeline.png",
+        "type": "missing_image"
+      },
+      {
+        "line": 35,
+        "source": "versioned_docs/version-v1.5/best-practices/ci-pipeline-image-predownload.md",
+        "target": "img/docs/best-practices/helloworld.png",
+        "type": "missing_image"
+      },
+      {
+        "line": 17,
+        "source": "versioned_docs/version-v1.5/best-practices/ci-pipeline-image-predownload.md",
+        "target": "img/docs/best-practices/imagepulljob.png",
+        "type": "missing_image"
+      },
+      {
+        "line": 303,
+        "source": "versioned_docs/version-v1.5/best-practices/ci-pipeline-image-predownload.md",
+        "target": "img/docs/best-practices/tekton_pipeline.png",
+        "type": "missing_image"
+      }
+    ],
+    "missing_anchors": [],
+    "missing_files": [],
+    "missing_images": [
+      "img/docs/best-practices/ci_cd_pipeline.png",
+      "img/docs/best-practices/helloworld.png",
+      "img/docs/best-practices/imagepulljob.png",
+      "img/docs/best-practices/tekton_pipeline.png"
+    ],
+    "valid_links": [
+      "versioned_docs/version-v1.5/installation.md#optional-feature-gate"
+    ]
+  },
+  "path": "versioned_docs/version-v1.5/best-practices/ci-pipeline-image-predownload.md",
+  "sha": "8245fd7b3029f9133bb1a96144ac53f0e3e9c5e0"
+}

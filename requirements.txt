@@ -1,0 +1,5 @@
+click
+pytest
+python-frontmatter
+PyYAML
+PyGithub

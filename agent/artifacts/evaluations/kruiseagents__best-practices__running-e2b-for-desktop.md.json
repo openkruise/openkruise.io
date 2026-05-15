@@ -1,0 +1,31 @@
+{
+  "age_days": 70,
+  "frontmatter": {
+    "missing": [
+      "title",
+      "sidebar_position",
+      "slug"
+    ],
+    "valid": false,
+    "warnings": []
+  },
+  "last_commit_date": "2026-03-09T15:46:13+08:00",
+  "linkcheck": {
+    "evidence": [
+      {
+        "line": 6,
+        "source": "kruiseagents/best-practices/running-e2b-for-desktop.md",
+        "target": "kruiseagents/code_interpreter.md",
+        "type": "missing_internal_link"
+      }
+    ],
+    "missing_anchors": [],
+    "missing_files": [
+      "kruiseagents/code_interpreter.md"
+    ],
+    "missing_images": [],
+    "valid_links": []
+  },
+  "path": "kruiseagents/best-practices/running-e2b-for-desktop.md",
+  "sha": "0fc2e0460324c0e906b804875cee90c5e60df34e"
+}

@@ -1,0 +1,21 @@
+{
+  "age_days": 1697,
+  "frontmatter": {
+    "missing": [
+      "sidebar_position",
+      "slug"
+    ],
+    "valid": false,
+    "warnings": []
+  },
+  "last_commit_date": "2021-09-24T15:22:49+08:00",
+  "linkcheck": {
+    "evidence": [],
+    "missing_anchors": [],
+    "missing_files": [],
+    "missing_images": [],
+    "valid_links": []
+  },
+  "path": "docs/best-practices/hpa-configuration.md",
+  "sha": "9608d31ae8b9f70383975261e38ae49b40f5cb91"
+}

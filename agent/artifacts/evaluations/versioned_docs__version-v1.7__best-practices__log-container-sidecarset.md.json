@@ -1,0 +1,37 @@
+{
+  "age_days": 628,
+  "frontmatter": {
+    "missing": [
+      "sidebar_position",
+      "slug"
+    ],
+    "valid": false,
+    "warnings": []
+  },
+  "last_commit_date": "2024-08-28T11:04:39+08:00",
+  "linkcheck": {
+    "evidence": [
+      {
+        "line": 13,
+        "source": "versioned_docs/version-v1.7/best-practices/log-container-sidecarset.md",
+        "target": "img/docs/best-practices/k8s-log-sidecar.png",
+        "type": "missing_image"
+      },
+      {
+        "line": 208,
+        "source": "versioned_docs/version-v1.7/best-practices/log-container-sidecarset.md",
+        "target": "img/docs/best-practices/update-sidecarset.gif",
+        "type": "missing_image"
+      }
+    ],
+    "missing_anchors": [],
+    "missing_files": [],
+    "missing_images": [
+      "img/docs/best-practices/k8s-log-sidecar.png",
+      "img/docs/best-practices/update-sidecarset.gif"
+    ],
+    "valid_links": []
+  },
+  "path": "versioned_docs/version-v1.7/best-practices/log-container-sidecarset.md",
+  "sha": "45e73791d6be6d2f449db64712b918987d1f843b"
+}
