@@ -16,6 +16,10 @@ This was built as a proof-of-concept for an LFX mentorship application.
 | 3 | Evaluates **documentation freshness** — a release older than 30 days is flagged `STALE`. |
 | 4 | Auto-generates a Docusaurus-compatible blog post for each sub-project's latest release. |
 | 5 | Writes a consolidated freshness report. |
+| 6 | **Evaluates the existing `docs/` folder** — broken links, stale pages, and TODO/FIXME/XXX markers — and writes a documentation evaluation report. |
+
+Full pipeline: **fetch releases → generate blogs → evaluate docs → write all
+reports.**
 
 ## Tracked sub-projects
 
@@ -28,8 +32,9 @@ To track more, add an entry to `SUB_PROJECTS` in `scripts/doc_agent.py`.
 
 ## Tools & dependencies
 
-- **Python 3.9+** (uses standard library: `json`, `os`, `re`, `sys`,
-  `textwrap`, `datetime`).
+- **Python 3.9+** (standard library only: `json`, `os`, `re`, `sys`,
+  `datetime`, `importlib` for the main agent; `subprocess` for the
+  staleness checker's `git log` calls).
 - **[`requests`](https://pypi.org/project/requests/)** — the only third-party
   dependency, used for GitHub API calls.
 - **GitHub Releases API** — public endpoints, no authentication token
@@ -43,6 +48,45 @@ pip install requests
 python scripts/doc_agent.py
 ```
 
+## Documentation evaluation layer
+
+In addition to generating blog posts from upstream releases, the agent
+**evaluates the documentation already in this repo's `docs/` folder**. This
+is a separate, pluggable layer that lives in the `scripts/doc_agent/`
+package:
+
+```
+scripts/
+├── doc_agent.py              # main agent (entry point)
+└── doc_agent/
+    ├── evaluate.py           # runs all checkers, writes the report
+    └── checkers/
+        ├── broken_links.py   # empty links + links to missing local files
+        ├── staleness.py      # pages whose last git commit is > 180 days old
+        └── todo_scan.py      # TODO / FIXME / XXX markers in docs
+```
+
+Each checker exposes one uniform entry point — `run(docs_dir: str) ->
+list[dict]` — and is fully independent, so checkers can be run or unit-tested
+in isolation:
+
+```bash
+python scripts/doc_agent/checkers/broken_links.py docs   # JSON to stdout
+python scripts/doc_agent/evaluate.py                      # full report
+```
+
+| Checker | Detects |
+| ------- | ------- |
+| `broken_links` | `[text]()` (empty) and `[text](./missing.md)` (link to a non-existent local file). External/anchor/site-absolute links are skipped to avoid false positives. |
+| `staleness` | Pages whose **last git commit** is more than 180 days old (uses `git log` via `subprocess`, not filesystem mtime, which a fresh checkout would reset). |
+| `todo_scan` | `TODO`, `FIXME`, `XXX` markers (case-sensitive, word-boundary) with surrounding context. |
+
+`evaluate.py` aggregates all three into
+`agent-output/docs-evaluation-report.md`. Note: `scripts/doc_agent.py` (file)
+and `scripts/doc_agent/` (package) share a base name, so the main agent loads
+`evaluate.py` by file path via `importlib` rather than a normal import, which
+sidesteps that ambiguity.
+
 ## Outputs
 
 All generated files are written to `agent-output/` (kept separate from the
@@ -54,8 +98,9 @@ agent-output/
 │   ├── <date>-kruise-<tag>.md
 │   ├── <date>-rollouts-<tag>.md
 │   ├── <date>-kruise-game-<tag>.md
-│   └── <date>-kruise-rollout-<tag>.md
-└── freshness-report.md
+│   └── <date>-kruise-rollout-api-<tag>.md
+├── freshness-report.md
+└── docs-evaluation-report.md
 ```
 
 ### Blog post format
@@ -108,3 +153,7 @@ review.
    paragraph so the post still has real content.
 4. `generate_blog_post()` / `write_freshness_report()` — render the
    Docusaurus markdown and the report table.
+5. `run_docs_evaluation()` — loads `scripts/doc_agent/evaluate.py` by path,
+   which runs the three checkers against `docs/` and writes
+   `agent-output/docs-evaluation-report.md`. This step always runs, even if
+   a release fetch failed, so the docs report is still produced.

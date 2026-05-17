@@ -14,6 +14,11 @@ What it does
    days is flagged as STALE).
 4. Auto-generates a Docusaurus-compatible blog post for each sub-project.
 5. Writes a consolidated freshness report.
+6. Evaluates the existing `docs/` folder (broken links, stale pages,
+   TODO/FIXME markers) and writes a documentation evaluation report.
+
+Full pipeline: fetch releases -> generate blogs -> evaluate docs ->
+write all reports.
 
 Dependencies: Python standard library + `requests`.
 
@@ -23,6 +28,7 @@ Run:
 
 from __future__ import annotations
 
+import importlib.util
 import json
 import os
 import re
@@ -52,6 +58,14 @@ STALE_AFTER_DAYS = 30
 OUTPUT_ROOT = "agent-output"
 BLOG_DIR = os.path.join(OUTPUT_ROOT, "blogs")
 FRESHNESS_REPORT = os.path.join(OUTPUT_ROOT, "freshness-report.md")
+EVAL_REPORT = os.path.join(OUTPUT_ROOT, "docs-evaluation-report.md")
+
+# Documentation evaluation. Paths are anchored to this script's location so
+# the docs scan works no matter what the current working directory is.
+_SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+REPO_ROOT = os.path.dirname(_SCRIPT_DIR)
+DOCS_DIR = os.path.join(REPO_ROOT, "docs")
+EVALUATE_PY = os.path.join(_SCRIPT_DIR, "doc_agent", "evaluate.py")
 
 # Network behaviour.
 REQUEST_TIMEOUT = 30  # seconds
@@ -311,6 +325,41 @@ def write_freshness_report(results: list[dict], now: datetime) -> str:
 
 
 # --------------------------------------------------------------------------- #
+# Documentation evaluation
+# --------------------------------------------------------------------------- #
+
+def run_docs_evaluation() -> dict | None:
+    """Run the docs evaluation module against this repo's `docs/` folder.
+
+    `evaluate.py` lives in the `scripts/doc_agent/` package directory, which
+    shares a base name with this file (`scripts/doc_agent.py`). To avoid that
+    import ambiguity entirely, we load it directly by file path rather than
+    via `import doc_agent.evaluate`.
+    """
+    if not os.path.isfile(EVALUATE_PY):
+        print(f"  ! Evaluation module not found: {EVALUATE_PY}",
+              file=sys.stderr)
+        return None
+    if not os.path.isdir(DOCS_DIR):
+        print(f"  ! docs/ directory not found: {DOCS_DIR}", file=sys.stderr)
+        return None
+
+    spec = importlib.util.spec_from_file_location("doc_agent_evaluate",
+                                                  EVALUATE_PY)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    results = module.run_evaluation(DOCS_DIR, EVAL_REPORT)
+    print(f"  + Docs evaluation written: {EVAL_REPORT}")
+    print(
+        f"    broken links: {len(results['broken_links'])}  |  "
+        f"stale docs: {len(results['staleness'])}  |  "
+        f"TODO/FIXME/XXX: {len(results['todos'])}"
+    )
+    return results
+
+
+# --------------------------------------------------------------------------- #
 # Orchestration
 # --------------------------------------------------------------------------- #
 
@@ -328,6 +377,9 @@ def main() -> int:
     print("\nGenerating outputs ...")
     write_blog_posts(results, now)
     report = write_freshness_report(results, now)
+
+    print("\nEvaluating existing documentation ...")
+    run_docs_evaluation()
 
     print("\n" + "=" * 60)
     print(report)

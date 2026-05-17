@@ -1,6 +1,6 @@
 # OpenKruise Documentation Freshness Report
 
-_Generated on 2026-05-17 19:07 UTC by the OpenKruise Document Agent._
+_Generated on 2026-05-17 19:47 UTC by the OpenKruise Document Agent._
 
 A release is flagged **STALE** when its publish date is more than 30 days old.
 
