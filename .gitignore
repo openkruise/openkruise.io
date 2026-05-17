@@ -24,4 +24,4 @@ yarn-error.log*
 
 .github/workflows/game/go.*
 .github/workflows/kruise/go.*
-.github/workflows/rollouts/go.*
+.github/workflows/rollouts/go.*__pycache__/
