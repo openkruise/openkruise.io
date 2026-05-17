@@ -27,7 +27,12 @@ _HERE = os.path.dirname(os.path.abspath(__file__))
 if _HERE not in sys.path:
     sys.path.insert(0, _HERE)
 
-from checkers import broken_links, staleness, todo_scan  # noqa: E402
+from checkers import (  # noqa: E402
+    broken_links,
+    external_links,
+    staleness,
+    todo_scan,
+)
 
 # Repo root = .../scripts/doc_agent/evaluate.py -> up three levels.
 _REPO_ROOT = os.path.dirname(os.path.dirname(_HERE))
@@ -70,8 +75,12 @@ def _build_report(docs_dir: str, results: dict, now: datetime) -> str:
     n_files = _count_md_files(docs_dir)
 
     links = results["broken_links"]
+    external = results["external_links"]
+    ext_skipped = results.get("external_skipped", False)
     stale = results["staleness"]
     todos = results["todos"]
+
+    ext_summary = "⏭️ skipped" if ext_skipped else str(len(external))
 
     lines: list[str] = [
         "# OpenKruise Documentation Evaluation Report",
@@ -88,14 +97,15 @@ def _build_report(docs_dir: str, results: dict, now: datetime) -> str:
     lines += _table(
         ["Check", "Issues"],
         [
-            ["🔗 Broken links", str(len(links))],
+            ["🔗 Broken internal links", str(len(links))],
+            ["🌐 Broken external links", ext_summary],
             ["🕒 Stale docs (> 180 days)", str(len(stale))],
             ["📝 TODO / FIXME / XXX", str(len(todos))],
         ],
     )
 
-    # --- Broken links ----------------------------------------------------- #
-    lines += ["", f"## 🔗 Broken Links ({len(links)})", ""]
+    # --- Broken internal links ------------------------------------------- #
+    lines += ["", f"## 🔗 Broken Internal Links ({len(links)})", ""]
     if links:
         lines += _table(
             ["File", "Line", "Link Text", "Issue"],
@@ -106,7 +116,29 @@ def _build_report(docs_dir: str, results: dict, now: datetime) -> str:
             ],
         )
     else:
-        lines.append("✅ No broken links found.")
+        lines.append("✅ No broken internal links found.")
+
+    # --- Broken external links ------------------------------------------- #
+    if ext_skipped:
+        lines += [
+            "", "## 🌐 Broken External Links (skipped)", "",
+            f"⏭️ Skipped — `{external_links.SKIP_ENV_VAR}` is set "
+            "(offline / CI mode).",
+        ]
+    else:
+        lines += ["", f"## 🌐 Broken External Links ({len(external)})", "",
+                  "_HEAD request, 10s timeout, redirects followed, "
+                  "rate-limited to 1 req/s._", ""]
+        if external:
+            lines += _table(
+                ["File", "Line", "URL", "Status"],
+                [
+                    [_rel(i["file"], base), i["line"], i["url"], i["status"]]
+                    for i in external
+                ],
+            )
+        else:
+            lines.append("✅ No broken external links found.")
 
     # --- Stale docs ------------------------------------------------------- #
     lines += ["", f"## 🕒 Stale Documentation ({len(stale)})", "",
@@ -144,10 +176,14 @@ def run_evaluation(docs_dir: str, output_path: str) -> dict:
     """Run all checkers, write the report, and return the aggregated results."""
     now = datetime.now(timezone.utc)
 
+    external_skipped = bool(os.environ.get(external_links.SKIP_ENV_VAR))
+
     results = {
         "broken_links": broken_links.run(docs_dir),
+        "external_links": external_links.run(docs_dir),
         "staleness": staleness.run(docs_dir),
         "todos": todo_scan.run(docs_dir),
+        "external_skipped": external_skipped,
     }
 
     report = _build_report(docs_dir, results, now)

@@ -2,9 +2,14 @@
 """TODO / FIXME / XXX scanner.
 
 Scans every Markdown file under ``docs_dir`` for unfinished-work markers.
-Matching is case-sensitive on the conventional upper-case spellings
-(``TODO``, ``FIXME``, ``XXX``) with word boundaries, so ordinary prose such
-as "to do this" or "fix me" does not generate noise.
+Matching uses word boundaries and a deliberately *hybrid* casing policy:
+
+* ``TODO`` / ``FIXME`` — **case-insensitive** (``todo``, ``Fixme``, ... all
+  count). These spellings rarely occur by accident in prose.
+* ``XXX`` — **upper-case only**. Lower-case ``xxx`` is far too common in
+  placeholders, redactions and URLs to treat as a marker.
+
+Reported markers are normalised to their canonical upper-case form.
 
 Two sources of false positives are deliberately excluded:
 
@@ -20,7 +25,9 @@ from __future__ import annotations
 import os
 import re
 
-_MARKER_RE = re.compile(r"\b(TODO|FIXME|XXX)\b")
+# `(?i:TODO|FIXME)` is case-insensitive only inside that scoped group;
+# `XXX` outside it stays case-sensitive (upper-case only).
+_MARKER_RE = re.compile(r"\b((?i:TODO|FIXME)|XXX)\b")
 
 # A line that opens or closes a fenced code block.
 _FENCE_RE = re.compile(r"^\s*(```|~~~)")
@@ -68,7 +75,7 @@ def run(docs_dir: str) -> list[dict]:
                 findings.append({
                     "file": md_file,
                     "line": lineno,
-                    "marker": match.group(1),
+                    "marker": match.group(1).upper(),  # normalise todo -> TODO
                     "context": context,
                 })
 

@@ -14,8 +14,10 @@ What it does
    days is flagged as STALE).
 4. Auto-generates a Docusaurus-compatible blog post for each sub-project.
 5. Writes a consolidated freshness report.
-6. Evaluates the existing `docs/` folder (broken links, stale pages,
-   TODO/FIXME markers) and writes a documentation evaluation report.
+6. Evaluates the existing `docs/` folder (broken internal links, broken
+   external links, stale pages, TODO/FIXME/XXX markers) and writes a
+   documentation evaluation report. External link checking honours the
+   `SKIP_EXTERNAL_LINKS` env var for offline / CI runs.
 
 Full pipeline: fetch releases -> generate blogs -> evaluate docs ->
 write all reports.
@@ -350,9 +352,12 @@ def run_docs_evaluation() -> dict | None:
     spec.loader.exec_module(module)
 
     results = module.run_evaluation(DOCS_DIR, EVAL_REPORT)
+    ext = ("skipped" if results.get("external_skipped")
+           else len(results["external_links"]))
     print(f"  + Docs evaluation written: {EVAL_REPORT}")
     print(
-        f"    broken links: {len(results['broken_links'])}  |  "
+        f"    broken internal links: {len(results['broken_links'])}  |  "
+        f"broken external links: {ext}  |  "
         f"stale docs: {len(results['staleness'])}  |  "
         f"TODO/FIXME/XXX: {len(results['todos'])}"
     )

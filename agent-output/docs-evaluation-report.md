@@ -1,6 +1,6 @@
 # OpenKruise Documentation Evaluation Report
 
-_Generated on 2026-05-17 19:47 UTC by the OpenKruise Document Agent._
+_Generated on 2026-05-17 21:10 UTC by the OpenKruise Document Agent._
 
 **Scanned:** `docs/` — 39 Markdown files
 
@@ -8,17 +8,31 @@ _Generated on 2026-05-17 19:47 UTC by the OpenKruise Document Agent._
 
 | Check | Issues |
 | --- | --- |
-| 🔗 Broken links | 3 |
+| 🔗 Broken internal links | 3 |
+| 🌐 Broken external links | 6 |
 | 🕒 Stale docs (> 180 days) | 20 |
 | 📝 TODO / FIXME / XXX | 0 |
 
-## 🔗 Broken Links (3)
+## 🔗 Broken Internal Links (3)
 
 | File | Line | Link Text | Issue |
 | --- | --- | --- | --- |
 | docs/introduction.md | 59 | install OpenKruise | missing_file |
 | docs/introduction.md | 60 | Architecture | missing_file |
 | docs/user-manuals/sidecarset.md | 439 | Dynamic Resource Injection with SidecarSet | missing_file |
+
+## 🌐 Broken External Links (6)
+
+_HEAD request, 10s timeout, redirects followed, rate-limited to 1 req/s._
+
+| File | Line | URL | Status |
+| --- | --- | --- | --- |
+| docs/user-manuals/sidecarset.md | 1087 | https://help.aliyun.com/document_detail/193804.html | error: ConnectionError |
+| docs/cli-tool/kubectl-plugin.md | 9 | https://krew.sigs.k8s.io/ | timeout |
+| docs/installation.md | 30 | https://kubernetes.io/docs/tasks/administer-cluster/migrating-from-dockershim/migrate-dockershim-dockerd/ | 404 |
+| docs/best-practices/log-container-sidecarset.md | 210 | https://openkruise.io/docs/next/core-concepts/inplace-update/ | 404 |
+| docs/best-practices/ci-pipeline-image-predownload.md | 14 | https://openkruise.io/docs/user-manuals/imagepulljob/ | 404 |
+| docs/best-practices/log-container-sidecarset.md | 46 | https://openkruise.io/docs/user-manuals/sidecarset/ | 404 |
 
 ## 🕒 Stale Documentation (20)
 
