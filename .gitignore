@@ -25,3 +25,7 @@ yarn-error.log*
 .github/workflows/game/go.*
 .github/workflows/kruise/go.*
 .github/workflows/rollouts/go.*
+
+# Python (doc agent)
+__pycache__/
+*.pyc
