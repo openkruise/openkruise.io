@@ -12,6 +12,8 @@ from .linkcheck import check_links
 from .pr import create_draft_pr, load_config
 from .report import generate_report
 from .scorer import score_evaluations
+from .tools.release_staleness import fetch_release_staleness
+from .tools.blog_generator import generate_blog_posts
 
 
 @click.group(
@@ -20,6 +22,7 @@ from .scorer import score_evaluations
         "Examples:\n"
         "  python -m agent.cli collect --repo-root . --output inventory.json\n"
         "  python -m agent.cli evaluate --repo-root . --output-dir agent/artifacts\n"
+        "  python -m agent.cli release-check --output-dir agent/artifacts\n"
         "  python -m agent.cli score --input-dir agent/artifacts --output scorecard.json\n"
         "  python -m agent.cli stage --input-dir agent/artifacts --output-dir agent/staging\n"
         "  python -m agent.cli report --input-dir agent/artifacts --output-dir agent/reports"
@@ -203,6 +206,84 @@ def open_pr(
         report_dir=report_dir,
     )
     click.echo(json.dumps(result, indent=2, sort_keys=True))
+
+
+@cli.command("release-check")
+@click.option("--output-dir", default="agent/artifacts", type=click.Path(file_okay=False, path_type=Path))
+@click.option("--blog-staging-dir", default="agent/staging/blog", type=click.Path(file_okay=False, path_type=Path))
+@click.option("--enrich-evaluations/--no-enrich-evaluations", default=True,
+              help="Patch existing evaluation JSONs with release_stale signal.")
+def release_check(output_dir: Path, blog_staging_dir: Path, enrich_evaluations: bool):
+    """
+    Fetch latest GitHub releases for tracked sub-projects, write a release
+    freshness report, generate blog post drafts, and optionally enrich
+    existing evaluation JSONs with the release_stale signal.
+    """
+    start = time.monotonic()
+    output_dir = output_dir.resolve()
+    blog_staging_dir = blog_staging_dir.resolve()
+
+    click.echo("Fetching release data from GitHub...")
+    records = fetch_release_staleness()
+
+    # Write freshness report
+    output_dir.mkdir(parents=True, exist_ok=True)
+    report_path = output_dir / "release_freshness.json"
+    report_path.write_text(json.dumps(records, indent=2), encoding="utf-8")
+    click.echo(f"Release freshness report -> {report_path}")
+
+    # Print summary table
+    click.echo("\n{:<22} {:<10} {:<12} {:<6} {}".format(
+        "Sub-project", "Tag", "Published", "Days", "Status"))
+    click.echo("-" * 70)
+    for r in records:
+        if "error" in r:
+            click.echo(f"{r['name']:<22} ERROR: {r['error']}")
+            continue
+        status = "🔴 STALE" if r["stale"] else "🟢 OK"
+        pub = r["published_at"][:10]
+        click.echo(f"{r['name']:<22} {r['tag']:<10} {pub:<12} {r['days_since']:<6} {status}")
+    click.echo("")
+
+    # Generate blog post drafts
+    written = generate_blog_posts(records, blog_staging_dir)
+    for p in written:
+        click.echo(f"Blog draft -> {p}")
+
+    # Enrich existing evaluation JSONs with release_stale signal
+    if enrich_evaluations:
+        eval_dir = output_dir / "evaluations"
+        if eval_dir.exists():
+            # Build a lookup: doc path prefix -> release record
+            # e.g. files under rollouts/ map to the "rollouts" record
+            prefix_map: dict[str, dict] = {}
+            for r in records:
+                if "error" not in r:
+                    prefix_map[r["name"]] = r
+            # Also map "kruise" to the docs/ root (core kruise docs)
+            prefix_map["docs"] = prefix_map.get("kruise", {})
+
+            enriched = 0
+            for eval_file in sorted(eval_dir.glob("*.json")):
+                try:
+                    data = json.loads(eval_file.read_text(encoding="utf-8"))
+                except json.JSONDecodeError:
+                    continue
+                doc_path: str = data.get("path", "")
+                matched: dict | None = None
+                for prefix, record in prefix_map.items():
+                    if doc_path.startswith(prefix + "/") or doc_path.startswith(prefix + "__"):
+                        matched = record
+                        break
+                if matched:
+                    data["release_stale"] = matched.get("stale", False)
+                    data["release_days_since"] = matched.get("days_since")
+                    eval_file.write_text(json.dumps(data, indent=2, sort_keys=True), encoding="utf-8")
+                    enriched += 1
+            click.echo(f"Enriched {enriched} evaluation(s) with release_stale signal.")
+
+    elapsed = time.monotonic() - start
+    click.echo(f"Release check complete in {elapsed:.2f}s")
 
 
 if __name__ == "__main__":

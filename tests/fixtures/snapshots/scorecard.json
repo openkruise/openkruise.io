@@ -14,6 +14,7 @@
         "missing_frontmatter": 1,
         "missing_images": 0,
         "penalty": 6,
+        "release_stale": false,
         "stale": true
       }
     },
@@ -27,6 +28,7 @@
         "missing_frontmatter": 0,
         "missing_images": 0,
         "penalty": 0,
+        "release_stale": false,
         "stale": false
       }
     }

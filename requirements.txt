@@ -3,3 +3,4 @@ pytest
 python-frontmatter
 PyYAML
 PyGithub
+requests

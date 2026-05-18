@@ -37,6 +37,8 @@ The agent relies on a suite of tools located in the `agent/tools/` directory:
 - `evaluate_doc.py`: Uses an LLM to read a single document and scores it on Accuracy, Completeness, Clarity, and Link validity.
 - `draft_update.py`: Uses an LLM to draft an updated version of a stale document to fix issues identified during evaluation.
 - `open_pr.py`: Uses the GitHub API to open a Draft Pull Request containing the proposed documentation updates.
+- `release_staleness.py`: Fetches the latest release for each tracked sub-project (kruise, rollouts, kruise-game, kruise-rollout-api) via the public GitHub Releases API. Returns a staleness record per repo containing the tag, publish date, days since release, and raw changelog body. No authentication required. The `release-check` CLI command uses this tool to enrich evaluation JSONs with a `release_stale` signal, which the scorer treats as an additional penalty dimension.
+- `blog_generator.py`: Generates Docusaurus-compatible blog post drafts from release changelog data produced by `release_staleness.py`. Drafts are written to `agent/staging/blog/` — never directly into the live `blog/` directory. Maintainers review and move posts manually.
 
 ## Pull Request Guidelines
 

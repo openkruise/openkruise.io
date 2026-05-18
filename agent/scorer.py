@@ -11,6 +11,7 @@ DEFAULT_CONFIG = {
         "missing_anchors": 2,
         "missing_frontmatter": 2,
         "stale": 1,
+        "release_stale": 2,
     },
     "priority_thresholds": {"high": 4, "medium": 7},
 }
@@ -66,6 +67,9 @@ def _score_evaluation(evaluation: dict[str, Any], config: dict[str, Any]) -> dic
     severe_count = missing_files + missing_images + missing_anchors
     medium_count = missing_frontmatter
     stale = age_days is not None and age_days > 90
+    # release_stale is set by the release-check CLI command enriching the evaluation
+    release_stale: bool = evaluation.get("release_stale", False)
+    release_days_since: int | None = evaluation.get("release_days_since")
 
     weights = config["weights"]
     penalty = (
@@ -74,6 +78,7 @@ def _score_evaluation(evaluation: dict[str, Any], config: dict[str, Any]) -> dic
         + missing_anchors * weights["missing_anchors"]
         + missing_frontmatter * weights["missing_frontmatter"]
         + (weights["stale"] if stale else 0)
+        + (weights.get("release_stale", 2) if release_stale else 0)
     )
 
     score = max(0, 10 - penalty)
@@ -89,11 +94,14 @@ def _score_evaluation(evaluation: dict[str, Any], config: dict[str, Any]) -> dic
         evidence.append(f"Missing frontmatter keys ({missing_frontmatter})")
     if stale:
         evidence.append(f"Stale content ({age_days} days)")
+    if release_stale:
+        label = f"{release_days_since} days" if release_days_since is not None else "unknown"
+        evidence.append(f"Upstream release not reflected in docs ({label} since release)")
 
     thresholds = config["priority_thresholds"]
     if score <= thresholds["high"] or severe_count > 0:
         priority = "high"
-    elif score <= thresholds["medium"] or medium_count > 0 or stale:
+    elif score <= thresholds["medium"] or medium_count > 0 or stale or release_stale:
         priority = "medium"
     else:
         priority = "low"
@@ -108,6 +116,7 @@ def _score_evaluation(evaluation: dict[str, Any], config: dict[str, Any]) -> dic
             "missing_anchors": missing_anchors,
             "missing_frontmatter": missing_frontmatter,
             "stale": stale,
+            "release_stale": release_stale,
             "penalty": penalty,
         },
     }
