@@ -1029,7 +1029,7 @@ reason: ProgressDeadlineExceeded
 
 **FEATURE STATE:** Kruise v1.8.0
 
-如果你在[安装或升级 Kruise](../installation##optional-feature-gate) 的时候启用了 `InPlaceWorkloadVerticalScaling`，
+如果你在[安装或升级 Kruise](../installation#optional-feature-gate) 的时候启用了 `InPlaceWorkloadVerticalScaling`，
 CloneSet 支持在原地升级过程中修改容器资源（CPU/Memory）。该功能允许用户直接更新以下字段而不触发 Pod 重建：
 
 <Tabs>
@@ -1097,7 +1097,7 @@ spec:
 
 **FEATURE STATE:** Kruise v0.9.0
 
-如果你在[安装或升级 Kruise](../installation##optional-feature-gate) 的时候启用了 `PreDownloadImageForInPlaceUpdate` feature-gate，
+如果你在[安装或升级 Kruise](../installation#optional-feature-gate) 的时候启用了 `PreDownloadImageForInPlaceUpdate` feature-gate，
 CloneSet 控制器会自动在所有旧版本 pod 所在 node 节点上预热你正在灰度发布的新版本镜像。 这对于应用发布加速很有帮助。
 
 默认情况下 CloneSet 每个新镜像预热时的并发度都是 `1`，也就是一个个节点拉镜像。如果需要调整并发度或控制预热时机，不同版本的配置方式有所差异：
