@@ -167,6 +167,7 @@ spec:
 - **v1alpha1**：默认**启用 PVC 复用**，新创建的 Pod 会复用原 Pod 的 **instance-id** 并关联原有的 PVC
 - **v1beta1**：默认**禁用 PVC 复用**，新创建的 Pod 不会复用 PVC
 
+#### 配置
 
 PVC 复用在某些场景下可能导致问题。例如，当 Pod 所在的 Node 出现异常时，复用 PVC 可能会导致新 Pod 无法正常启动（详见 [issue 1099](https://github.com/openkruise/kruise/issues/1099)）。因此提供了以下配置选项：
 
