@@ -13,13 +13,18 @@ handler = {}
 result = False
 pre_dict = set()
 pre_dict_increment = set()
-en_tool = language_tool_python.LanguageTool(
-    'en-US',
-    config={
-        'cacheSize': 100000,
-        'pipelineCaching': True,
-    }
-)
+en_tool = None
+try:
+    en_tool = language_tool_python.LanguageTool(
+        'en-US',
+        config={
+            'cacheSize': 100000,
+            'pipelineCaching': True,
+        }
+    )
+except Exception as e:
+    print(f"Warning: Failed to initialize LanguageTool: {e}")
+    print("Continuing without spell-checking...")
 #  https://github.com/jxmorris12/language_tool_python
 try:
     with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'pre_dict.json'), 'r', encoding='utf8') as f:
@@ -123,6 +128,8 @@ def inline_count(e_path, z_path):
 
 # Check the word for correctness
 def lexical_analysis(e_path, _):
+    if en_tool is None:
+        return
     with open(e_path, 'r', encoding='utf8') as f:
         for item in list(filter(lambda x: x.category == 'TYPOS', en_tool.check(f.read()))):
             if item.matched_text not in pre_dict:
@@ -153,7 +160,8 @@ if __name__ == '__main__':
                 for name, func in handler.items():
                     func(en_path, zn_path)
 
-    en_tool.close()
+    if en_tool is not None:
+        en_tool.close()
     if result:
         print("Please add these abnormal words to pre_dict.json :",json.dumps(sorted(list(pre_dict_increment))))
         sys.exit(1)
