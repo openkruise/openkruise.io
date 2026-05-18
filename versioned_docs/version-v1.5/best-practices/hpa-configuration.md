@@ -10,7 +10,7 @@ which means they allow systems like HorizontalPodAutoscaler and PodDisruptionBud
 Just set the CloneSet's type and name into `scaleTargetRef`:
 
 ```yaml
-apiVersion: autoscaling/v2beta2
+apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 # ...
 spec:

@@ -21,6 +21,7 @@
     "Argo-cd",
     "ArgoCD",
     "Autoscaler",
+    "averageUtilization",
     "BackoffLimitExceeded",
     "BeforeAppContainer",
     "BroadcastJob",

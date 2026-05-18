@@ -5,12 +5,14 @@ title: HPA configuration
 Kruise workloads, such as CloneSet, Advanced StatefulSet, UnitedDeployment, are all implemented scale subresource,
 which means they allow systems like HorizontalPodAutoscaler and PodDisruptionBudget interact with these resources.
 
+Examples use `apiVersion: autoscaling/v2` (stable since Kubernetes 1.23). The older `autoscaling/v2beta1` and `autoscaling/v2beta2` APIs were removed in Kubernetes 1.25 and 1.26, respectively. For resource metrics, use `resource.target.type: Utilization` and `averageUtilization` instead of the deprecated `targetAverageUtilization` field.
+
 ### Example
 
 Just set the CloneSet's type and name into `scaleTargetRef`:
 
 ```yaml
-apiVersion: autoscaling/v2beta2
+apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 # ...
 spec:
