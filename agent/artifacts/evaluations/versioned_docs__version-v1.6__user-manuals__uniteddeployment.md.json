@@ -1,0 +1,30 @@
+{
+  "age_days": 101,
+  "frontmatter": {
+    "missing": [
+      "sidebar_position",
+      "slug"
+    ],
+    "valid": false,
+    "warnings": []
+  },
+  "last_commit_date": "2026-02-06T09:21:57+08:00",
+  "linkcheck": {
+    "evidence": [
+      {
+        "line": 6,
+        "source": "versioned_docs/version-v1.6/user-manuals/uniteddeployment.md",
+        "target": "blog/uniteddeployment.md",
+        "type": "missing_internal_link"
+      }
+    ],
+    "missing_anchors": [],
+    "missing_files": [
+      "blog/uniteddeployment.md"
+    ],
+    "missing_images": [],
+    "valid_links": []
+  },
+  "path": "versioned_docs/version-v1.6/user-manuals/uniteddeployment.md",
+  "sha": "1c4717498e659361af9f6d6da5625abe43a8d4cc"
+}

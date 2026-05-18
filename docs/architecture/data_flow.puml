@@ -1,0 +1,35 @@
+@startuml
+!theme plain
+skinparam backgroundColor transparent
+skinparam shadowing false
+skinparam packageStyle rectangle
+skinparam defaultFontName Arial
+skinparam ArrowColor #444444
+skinparam componentStyle rectangle
+skinparam rectangle {
+  BackgroundColor #F6F8FA
+  BorderColor #4B5563
+}
+
+[Markdown Files] as Docs
+[collect] as Collect
+[evaluate] as Evaluate
+[score] as Score
+[stage] as Stage
+[report] as Report
+
+Docs --> Collect : scan
+Collect --> [inventory.json]
+[inventory.json] --> Evaluate
+Evaluate --> [evaluations/*.json]
+[evaluations/*.json] --> Score
+Score --> [scorecard.json]
+[scorecard.json] --> Stage
+Stage --> [suggestions.patch]
+Stage --> [suggestions.preview.html]
+Stage --> [suggestions.patch.meta.json]
+[scorecard.json] --> Report
+Report --> [summary.md]
+Report --> [report.json]
+
+@enduml

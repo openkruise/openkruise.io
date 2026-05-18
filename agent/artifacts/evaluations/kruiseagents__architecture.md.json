@@ -1,0 +1,30 @@
+{
+  "age_days": 56,
+  "frontmatter": {
+    "missing": [
+      "sidebar_position",
+      "slug"
+    ],
+    "valid": false,
+    "warnings": []
+  },
+  "last_commit_date": "2026-03-23T05:59:48+08:00",
+  "linkcheck": {
+    "evidence": [
+      {
+        "line": 7,
+        "source": "kruiseagents/architecture.md",
+        "target": "img/kruiseagents/architecture.svg",
+        "type": "missing_image"
+      }
+    ],
+    "missing_anchors": [],
+    "missing_files": [],
+    "missing_images": [
+      "img/kruiseagents/architecture.svg"
+    ],
+    "valid_links": []
+  },
+  "path": "kruiseagents/architecture.md",
+  "sha": "f07e7399e8d8a4cda3e5ab0a8b6b3a602399543e"
+}

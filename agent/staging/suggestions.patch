@@ -1,0 +1,314 @@
+--- a/doc-agent-suggestions.txt
++++ b/doc-agent-suggestions.txt
+@@ -0,0 +1,311 @@
++Doc Agent Suggestions
++Source: scorecard.json
++
++High Priority
++- blog/2019-11-10-learning-concurrent-reconciling.md - Missing image assets (2); Missing frontmatter keys (1); Stale content (1697 days). Suggestion: repair links, assets, or frontmatter.
++- blog/2019-11-20-uniteddeployment.md - Missing image assets (2); Missing frontmatter keys (1); Stale content (101 days). Suggestion: repair links, assets, or frontmatter.
++- blog/2021-05-20-release-0.9.0.md - Missing image assets (1); Missing frontmatter keys (1); Stale content (101 days). Suggestion: repair links, assets, or frontmatter.
++- blog/2021-12-13-release-1.0.md - Missing image assets (2); Missing frontmatter keys (1); Stale content (101 days). Suggestion: repair links, assets, or frontmatter.
++- docs/best-practices/ci-pipeline-image-predownload.md - Missing image assets (4); Missing frontmatter keys (2); Stale content (968 days). Suggestion: repair links, assets, or frontmatter.
++- docs/best-practices/cloneset-lifecycle.md - Missing image assets (1); Missing frontmatter keys (2); Stale content (968 days). Suggestion: repair links, assets, or frontmatter.
++- docs/best-practices/elastic-deployment.md - Missing image assets (5); Missing frontmatter keys (2); Stale content (968 days). Suggestion: repair links, assets, or frontmatter.
++- docs/best-practices/gitops-with-kruise.md - Missing image assets (2); Missing frontmatter keys (2); Stale content (1259 days). Suggestion: repair links, assets, or frontmatter.
++- docs/best-practices/log-container-sidecarset.md - Missing image assets (2); Missing frontmatter keys (2); Stale content (696 days). Suggestion: repair links, assets, or frontmatter.
++- docs/best-practices/resource-policy-sidecarset.md - Missing image assets (1); Missing frontmatter keys (2); Stale content (174 days). Suggestion: repair links, assets, or frontmatter.
++- docs/cli-tool/kustomize-plugin.md - Missing image assets (1); Missing frontmatter keys (2); Stale content (968 days). Suggestion: repair links, assets, or frontmatter.
++- docs/core-concepts/architecture.md - Missing image assets (1); Missing frontmatter keys (2); Stale content (1697 days). Suggestion: repair links, assets, or frontmatter.
++- docs/core-concepts/inplace-update.md - Missing image assets (2); Missing anchors (1); Missing frontmatter keys (2); Stale content (101 days). Suggestion: repair links, assets, or frontmatter.
++- docs/demo/mentor_demo_walkthrough.md - Missing frontmatter keys (3). Suggestion: repair links, assets, or frontmatter.
++- docs/demo/sample_ci_run.md - Missing frontmatter keys (3). Suggestion: repair links, assets, or frontmatter.
++- docs/demo/sample_pr.md - Missing frontmatter keys (3). Suggestion: repair links, assets, or frontmatter.
++- docs/demo/troubleshooting.md - Missing frontmatter keys (3). Suggestion: repair links, assets, or frontmatter.
++- docs/introduction.md - Missing markdown targets (2); Missing frontmatter keys (1); Stale content (101 days). Suggestion: repair links, assets, or frontmatter.
++- docs/research/design_decisions.md - Missing frontmatter keys (3). Suggestion: repair links, assets, or frontmatter.
++- docs/research/literature_review.md - Missing frontmatter keys (3). Suggestion: repair links, assets, or frontmatter.
++- docs/research/related_work.md - Missing frontmatter keys (3). Suggestion: repair links, assets, or frontmatter.
++- docs/user-manuals/advancedcronjob.md - Missing image assets (1); Missing frontmatter keys (2); Stale content (159 days). Suggestion: repair links, assets, or frontmatter.
++- docs/user-manuals/advanceddaemonset.md - Missing anchors (1); Missing frontmatter keys (2); Stale content (159 days). Suggestion: repair links, assets, or frontmatter.
++- docs/user-manuals/advancedstatefulset.md - Missing anchors (1); Missing frontmatter keys (2); Stale content (181 days). Suggestion: repair links, assets, or frontmatter.
++- docs/user-manuals/cloneset.md - Missing markdown targets (1); Missing image assets (1); Missing anchors (1); Missing frontmatter keys (2). Suggestion: repair links, assets, or frontmatter.
++- docs/user-manuals/containerrecreaterequest.md - Missing image assets (1); Missing frontmatter keys (2); Stale content (968 days). Suggestion: repair links, assets, or frontmatter.
++- docs/user-manuals/imagepulljob.md - Missing image assets (1); Missing frontmatter keys (2); Stale content (159 days). Suggestion: repair links, assets, or frontmatter.
++- docs/user-manuals/persistentpodstate.md - Missing image assets (1); Missing frontmatter keys (2); Stale content (101 days). Suggestion: repair links, assets, or frontmatter.
++- docs/user-manuals/podunavailablebudget.md - Missing image assets (1); Missing frontmatter keys (2); Stale content (105 days). Suggestion: repair links, assets, or frontmatter.
++- docs/user-manuals/resourcedistribution.md - Missing markdown targets (1); Missing frontmatter keys (2); Stale content (968 days). Suggestion: repair links, assets, or frontmatter.
++- docs/user-manuals/sidecarset.md - Missing markdown targets (1); Missing image assets (2); Missing frontmatter keys (2); Stale content (157 days). Suggestion: repair links, assets, or frontmatter.
++- docs/user-manuals/uniteddeployment.md - Missing markdown targets (1); Missing frontmatter keys (2); Stale content (101 days). Suggestion: repair links, assets, or frontmatter.
++- kruiseagents/architecture.md - Missing image assets (1); Missing frontmatter keys (2). Suggestion: repair links, assets, or frontmatter.
++- kruiseagents/best-practices/cert-manager.md - Missing frontmatter keys (3). Suggestion: repair links, assets, or frontmatter.
++- kruiseagents/best-practices/running-e2b-for-code-interpreter.md - Missing frontmatter keys (3); Stale content (100 days). Suggestion: repair links, assets, or frontmatter.
++- kruiseagents/best-practices/running-e2b-for-desktop.md - Missing markdown targets (1); Missing frontmatter keys (3). Suggestion: repair links, assets, or frontmatter.
++- kruiseagents/best-practices/running-openclaw-sandbox.md - Missing frontmatter keys (3). Suggestion: repair links, assets, or frontmatter.
++- kruiseagents/best-practices/use-self-signed-cert.md - Missing frontmatter keys (3). Suggestion: repair links, assets, or frontmatter.
++- kruiseagents/core-concept.md - Missing frontmatter keys (3). Suggestion: repair links, assets, or frontmatter.
++- kruiseagents/developer-manuals/contribution.md - Missing frontmatter keys (3); Stale content (100 days). Suggestion: repair links, assets, or frontmatter.
++- kruiseagents/developer-manuals/e2b-client.md - Missing frontmatter keys (3). Suggestion: repair links, assets, or frontmatter.
++- kruiseagents/developer-manuals/faq.md - Missing frontmatter keys (3); Stale content (100 days). Suggestion: repair links, assets, or frontmatter.
++- kruiseagents/introduction.md - Missing markdown targets (1); Missing frontmatter keys (3). Suggestion: repair links, assets, or frontmatter.
++- kruiseagents/user-cases/ack-kimi.md - Missing frontmatter keys (3). Suggestion: repair links, assets, or frontmatter.
++- kruiseagents/user-cases/ack-lixiang.md - Missing frontmatter keys (3). Suggestion: repair links, assets, or frontmatter.
++- kruiseagents/user-cases/ack-minimax.md - Missing frontmatter keys (3). Suggestion: repair links, assets, or frontmatter.
++- kruiseagents/user-manuals/warmpool-management.md - Missing frontmatter keys (3); Stale content (100 days). Suggestion: repair links, assets, or frontmatter.
++- kruisegame/best-practices/gameserver-delivery-management.md - Missing frontmatter keys (3); Stale content (739 days). Suggestion: repair links, assets, or frontmatter.
++- kruisegame/best-practices/pve-game.md - Missing frontmatter keys (3); Stale content (816 days). Suggestion: repair links, assets, or frontmatter.
++- kruisegame/best-practices/session-based-game.md - Missing frontmatter keys (3); Stale content (864 days). Suggestion: repair links, assets, or frontmatter.
++- kruisegame/best-practices/shared-mem.md - Missing frontmatter keys (3); Stale content (815 days). Suggestion: repair links, assets, or frontmatter.
++- kruisegame/best-practices/workflow.md - Missing frontmatter keys (3); Stale content (683 days). Suggestion: repair links, assets, or frontmatter.
++- kruisegame/blog-video/ack-one-okg.md - Missing frontmatter keys (3); Stale content (712 days). Suggestion: repair links, assets, or frontmatter.
++- kruisegame/blog-video/api-gateway-okg.md - Missing frontmatter keys (3); Stale content (263 days). Suggestion: repair links, assets, or frontmatter.
++- kruisegame/blog-video/cloud-forward-okg.md - Missing frontmatter keys (3); Stale content (712 days). Suggestion: repair links, assets, or frontmatter.
++- kruisegame/blog-video/gameserver-scale.md - Missing frontmatter keys (3); Stale content (418 days). Suggestion: repair links, assets, or frontmatter.
++- kruisegame/blog-video/guanying-20231129.md - Missing frontmatter keys (3); Stale content (901 days). Suggestion: repair links, assets, or frontmatter.
++- kruisegame/blog-video/higress.md - Missing frontmatter keys (3); Stale content (797 days). Suggestion: repair links, assets, or frontmatter.
++- kruisegame/blog-video/kubecon-chillyroom-20240823.md - Missing frontmatter keys (3); Stale content (549 days). Suggestion: repair links, assets, or frontmatter.
++- kruisegame/blog-video/kubecon-shangyou-20230926.md - Missing frontmatter keys (3); Stale content (901 days). Suggestion: repair links, assets, or frontmatter.
++- kruisegame/blog-video/lilith-okg.md - Missing frontmatter keys (3); Stale content (619 days). Suggestion: repair links, assets, or frontmatter.
++- kruisegame/blog-video/meetup-guangzhou-20231125.md - Missing frontmatter keys (3); Stale content (901 days). Suggestion: repair links, assets, or frontmatter.
++- kruisegame/blog-video/okg-360.md - Missing frontmatter keys (3); Stale content (514 days). Suggestion: repair links, assets, or frontmatter.
++- kruisegame/blog-video/okg-911.md - Missing frontmatter keys (3); Stale content (712 days). Suggestion: repair links, assets, or frontmatter.
++- kruisegame/blog-video/okg-gsshosting.md - Missing frontmatter keys (3); Stale content (712 days). Suggestion: repair links, assets, or frontmatter.
++- kruisegame/blog-video/paomu.md - Missing frontmatter keys (3); Stale content (202 days). Suggestion: repair links, assets, or frontmatter.
++- kruisegame/blog-video/yahaha-okg.md - Missing frontmatter keys (3); Stale content (306 days). Suggestion: repair links, assets, or frontmatter.
++- kruisegame/design-concept.md - Missing frontmatter keys (3); Stale content (101 days). Suggestion: repair links, assets, or frontmatter.
++- kruisegame/developer-manuals/contribution.md - Missing frontmatter keys (3); Stale content (1132 days). Suggestion: repair links, assets, or frontmatter.
++- kruisegame/developer-manuals/faq.md - Missing frontmatter keys (3); Stale content (1131 days). Suggestion: repair links, assets, or frontmatter.
++- kruisegame/developer-manuals/go-client.md - Missing frontmatter keys (3); Stale content (832 days). Suggestion: repair links, assets, or frontmatter.
++- kruisegame/developer-manuals/kruise-game-api.md - Missing frontmatter keys (3); Stale content (448 days). Suggestion: repair links, assets, or frontmatter.
++- kruisegame/installation.md - Missing frontmatter keys (3); Stale content (306 days). Suggestion: repair links, assets, or frontmatter.
++- kruisegame/introduction.md - Missing frontmatter keys (3); Stale content (263 days). Suggestion: repair links, assets, or frontmatter.
++- kruisegame/user-manuals/container-startup-sequence-control.md - Missing frontmatter keys (3); Stale content (1132 days). Suggestion: repair links, assets, or frontmatter.
++- kruisegame/user-manuals/crd-field-description.md - Missing frontmatter keys (3); Stale content (299 days). Suggestion: repair links, assets, or frontmatter.
++- kruisegame/user-manuals/deploy-gameservers.md - Missing frontmatter keys (3); Stale content (420 days). Suggestion: repair links, assets, or frontmatter.
++- kruisegame/user-manuals/faq.md - Missing frontmatter keys (3); Stale content (306 days). Suggestion: repair links, assets, or frontmatter.
++- kruisegame/user-manuals/game-dashboard.md - Missing image assets (22); Missing frontmatter keys (3); Stale content (103 days). Suggestion: repair links, assets, or frontmatter.
++- kruisegame/user-manuals/game-matchmaking.md - Missing frontmatter keys (3); Stale content (1011 days). Suggestion: repair links, assets, or frontmatter.
++- kruisegame/user-manuals/gameserver-monitor.md - Missing frontmatter keys (3); Stale content (1088 days). Suggestion: repair links, assets, or frontmatter.
++- kruisegame/user-manuals/gameserver-scheduler.md - Missing frontmatter keys (3); Stale content (306 days). Suggestion: repair links, assets, or frontmatter.
++- kruisegame/user-manuals/gameserver-state.md - Missing frontmatter keys (3); Stale content (306 days). Suggestion: repair links, assets, or frontmatter.
++- kruisegame/user-manuals/gameservers-scale.md - Missing frontmatter keys (3); Stale content (306 days). Suggestion: repair links, assets, or frontmatter.
++- kruisegame/user-manuals/hot-update.md - Missing frontmatter keys (3); Stale content (1043 days). Suggestion: repair links, assets, or frontmatter.
++- kruisegame/user-manuals/lifecycle.md - Missing frontmatter keys (3); Stale content (447 days). Suggestion: repair links, assets, or frontmatter.
++- kruisegame/user-manuals/network.md - Missing frontmatter keys (3); Stale content (299 days). Suggestion: repair links, assets, or frontmatter.
++- kruisegame/user-manuals/service-qualities.md - Missing frontmatter keys (3); Stale content (103 days). Suggestion: repair links, assets, or frontmatter.
++- kruisegame/user-manuals/update-strategy.md - Missing frontmatter keys (3); Stale content (1088 days). Suggestion: repair links, assets, or frontmatter.
++- versioned_docs/version-v1.5/best-practices/ci-pipeline-image-predownload.md - Missing image assets (4); Missing frontmatter keys (2); Stale content (968 days). Suggestion: repair links, assets, or frontmatter.
++- versioned_docs/version-v1.5/best-practices/cloneset-lifecycle.md - Missing image assets (1); Missing frontmatter keys (2); Stale content (968 days). Suggestion: repair links, assets, or frontmatter.
++- versioned_docs/version-v1.5/best-practices/elastic-deployment.md - Missing image assets (5); Missing frontmatter keys (2); Stale content (968 days). Suggestion: repair links, assets, or frontmatter.
++- versioned_docs/version-v1.5/best-practices/gitops-with-kruise.md - Missing image assets (2); Missing frontmatter keys (2); Stale content (978 days). Suggestion: repair links, assets, or frontmatter.
++- versioned_docs/version-v1.5/best-practices/log-container-sidecarset.md - Missing image assets (2); Missing frontmatter keys (2); Stale content (696 days). Suggestion: repair links, assets, or frontmatter.
++- versioned_docs/version-v1.5/cli-tool/kustomize-plugin.md - Missing image assets (1); Missing frontmatter keys (2); Stale content (968 days). Suggestion: repair links, assets, or frontmatter.
++- versioned_docs/version-v1.5/core-concepts/architecture.md - Missing image assets (1); Missing frontmatter keys (2); Stale content (978 days). Suggestion: repair links, assets, or frontmatter.
++- versioned_docs/version-v1.5/core-concepts/inplace-update.md - Missing image assets (2); Missing frontmatter keys (2); Stale content (101 days). Suggestion: repair links, assets, or frontmatter.
++- versioned_docs/version-v1.5/user-manuals/advancedcronjob.md - Missing image assets (1); Missing frontmatter keys (2); Stale content (968 days). Suggestion: repair links, assets, or frontmatter.
++- versioned_docs/version-v1.5/user-manuals/cloneset.md - Missing markdown targets (1); Missing image assets (1); Missing frontmatter keys (2); Stale content (101 days). Suggestion: repair links, assets, or frontmatter.
++- versioned_docs/version-v1.5/user-manuals/containerrecreaterequest.md - Missing image assets (1); Missing frontmatter keys (2); Stale content (968 days). Suggestion: repair links, assets, or frontmatter.
++- versioned_docs/version-v1.5/user-manuals/imagepulljob.md - Missing image assets (1); Missing frontmatter keys (2); Stale content (968 days). Suggestion: repair links, assets, or frontmatter.
++- versioned_docs/version-v1.5/user-manuals/persistentpodstate.md - Missing image assets (1); Missing frontmatter keys (2); Stale content (101 days). Suggestion: repair links, assets, or frontmatter.
++- versioned_docs/version-v1.5/user-manuals/podunavailablebudget.md - Missing image assets (1); Missing frontmatter keys (2); Stale content (978 days). Suggestion: repair links, assets, or frontmatter.
++- versioned_docs/version-v1.5/user-manuals/resourcedistribution.md - Missing markdown targets (1); Missing frontmatter keys (2); Stale content (968 days). Suggestion: repair links, assets, or frontmatter.
++- versioned_docs/version-v1.5/user-manuals/sidecarset.md - Missing image assets (2); Missing frontmatter keys (2); Stale content (420 days). Suggestion: repair links, assets, or frontmatter.
++- versioned_docs/version-v1.5/user-manuals/uniteddeployment.md - Missing markdown targets (1); Missing frontmatter keys (2); Stale content (101 days). Suggestion: repair links, assets, or frontmatter.
++- versioned_docs/version-v1.6/best-practices/ci-pipeline-image-predownload.md - Missing image assets (4); Missing frontmatter keys (2); Stale content (786 days). Suggestion: repair links, assets, or frontmatter.
++- versioned_docs/version-v1.6/best-practices/cloneset-lifecycle.md - Missing image assets (1); Missing frontmatter keys (2); Stale content (786 days). Suggestion: repair links, assets, or frontmatter.
++- versioned_docs/version-v1.6/best-practices/elastic-deployment.md - Missing image assets (5); Missing frontmatter keys (2); Stale content (786 days). Suggestion: repair links, assets, or frontmatter.
++- versioned_docs/version-v1.6/best-practices/gitops-with-kruise.md - Missing image assets (2); Missing frontmatter keys (2); Stale content (786 days). Suggestion: repair links, assets, or frontmatter.
++- versioned_docs/version-v1.6/best-practices/log-container-sidecarset.md - Missing image assets (2); Missing frontmatter keys (2); Stale content (696 days). Suggestion: repair links, assets, or frontmatter.
++- versioned_docs/version-v1.6/cli-tool/kustomize-plugin.md - Missing image assets (1); Missing frontmatter keys (2); Stale content (786 days). Suggestion: repair links, assets, or frontmatter.
++- versioned_docs/version-v1.6/core-concepts/architecture.md - Missing image assets (1); Missing frontmatter keys (2); Stale content (786 days). Suggestion: repair links, assets, or frontmatter.
++- versioned_docs/version-v1.6/core-concepts/inplace-update.md - Missing image assets (2); Missing frontmatter keys (2); Stale content (101 days). Suggestion: repair links, assets, or frontmatter.
++- versioned_docs/version-v1.6/user-manuals/advancedcronjob.md - Missing image assets (1); Missing frontmatter keys (2); Stale content (786 days). Suggestion: repair links, assets, or frontmatter.
++- versioned_docs/version-v1.6/user-manuals/cloneset.md - Missing markdown targets (1); Missing image assets (1); Missing frontmatter keys (2); Stale content (101 days). Suggestion: repair links, assets, or frontmatter.
++- versioned_docs/version-v1.6/user-manuals/containerrecreaterequest.md - Missing image assets (1); Missing frontmatter keys (2); Stale content (786 days). Suggestion: repair links, assets, or frontmatter.
++- versioned_docs/version-v1.6/user-manuals/imagepulljob.md - Missing image assets (1); Missing frontmatter keys (2); Stale content (786 days). Suggestion: repair links, assets, or frontmatter.
++- versioned_docs/version-v1.6/user-manuals/persistentpodstate.md - Missing image assets (1); Missing frontmatter keys (2); Stale content (101 days). Suggestion: repair links, assets, or frontmatter.
++- versioned_docs/version-v1.6/user-manuals/podunavailablebudget.md - Missing image assets (1); Missing frontmatter keys (2); Stale content (786 days). Suggestion: repair links, assets, or frontmatter.
++- versioned_docs/version-v1.6/user-manuals/resourcedistribution.md - Missing markdown targets (1); Missing frontmatter keys (2); Stale content (786 days). Suggestion: repair links, assets, or frontmatter.
++- versioned_docs/version-v1.6/user-manuals/sidecarset.md - Missing image assets (2); Missing frontmatter keys (2); Stale content (420 days). Suggestion: repair links, assets, or frontmatter.
++- versioned_docs/version-v1.6/user-manuals/uniteddeployment.md - Missing markdown targets (1); Missing frontmatter keys (2); Stale content (101 days). Suggestion: repair links, assets, or frontmatter.
++- versioned_docs/version-v1.7/best-practices/ci-pipeline-image-predownload.md - Missing image assets (4); Missing frontmatter keys (2); Stale content (628 days). Suggestion: repair links, assets, or frontmatter.
++- versioned_docs/version-v1.7/best-practices/cloneset-lifecycle.md - Missing image assets (1); Missing frontmatter keys (2); Stale content (628 days). Suggestion: repair links, assets, or frontmatter.
++- versioned_docs/version-v1.7/best-practices/elastic-deployment.md - Missing image assets (5); Missing frontmatter keys (2); Stale content (628 days). Suggestion: repair links, assets, or frontmatter.
++- versioned_docs/version-v1.7/best-practices/gitops-with-kruise.md - Missing image assets (2); Missing frontmatter keys (2); Stale content (628 days). Suggestion: repair links, assets, or frontmatter.
++- versioned_docs/version-v1.7/best-practices/log-container-sidecarset.md - Missing image assets (2); Missing frontmatter keys (2); Stale content (628 days). Suggestion: repair links, assets, or frontmatter.
++- versioned_docs/version-v1.7/cli-tool/kustomize-plugin.md - Missing image assets (1); Missing frontmatter keys (2); Stale content (628 days). Suggestion: repair links, assets, or frontmatter.
++- versioned_docs/version-v1.7/core-concepts/architecture.md - Missing image assets (1); Missing frontmatter keys (2); Stale content (628 days). Suggestion: repair links, assets, or frontmatter.
++- versioned_docs/version-v1.7/core-concepts/inplace-update.md - Missing image assets (2); Missing frontmatter keys (2); Stale content (101 days). Suggestion: repair links, assets, or frontmatter.
++- versioned_docs/version-v1.7/introduction.md - Missing markdown targets (2); Missing frontmatter keys (1); Stale content (101 days). Suggestion: repair links, assets, or frontmatter.
++- versioned_docs/version-v1.7/user-manuals/advancedcronjob.md - Missing image assets (1); Missing frontmatter keys (2); Stale content (628 days). Suggestion: repair links, assets, or frontmatter.
++- versioned_docs/version-v1.7/user-manuals/cloneset.md - Missing markdown targets (1); Missing image assets (1); Missing frontmatter keys (2); Stale content (101 days). Suggestion: repair links, assets, or frontmatter.
++- versioned_docs/version-v1.7/user-manuals/containerrecreaterequest.md - Missing image assets (1); Missing frontmatter keys (2); Stale content (628 days). Suggestion: repair links, assets, or frontmatter.
++- versioned_docs/version-v1.7/user-manuals/imagepulljob.md - Missing image assets (1); Missing frontmatter keys (2); Stale content (628 days). Suggestion: repair links, assets, or frontmatter.
++- versioned_docs/version-v1.7/user-manuals/persistentpodstate.md - Missing image assets (1); Missing frontmatter keys (2); Stale content (101 days). Suggestion: repair links, assets, or frontmatter.
++- versioned_docs/version-v1.7/user-manuals/podunavailablebudget.md - Missing image assets (1); Missing frontmatter keys (2); Stale content (628 days). Suggestion: repair links, assets, or frontmatter.
++- versioned_docs/version-v1.7/user-manuals/resourcedistribution.md - Missing markdown targets (1); Missing frontmatter keys (2); Stale content (628 days). Suggestion: repair links, assets, or frontmatter.
++- versioned_docs/version-v1.7/user-manuals/sidecarset.md - Missing image assets (2); Missing frontmatter keys (2); Stale content (420 days). Suggestion: repair links, assets, or frontmatter.
++- versioned_docs/version-v1.7/user-manuals/uniteddeployment.md - Missing markdown targets (1); Missing frontmatter keys (2); Stale content (101 days). Suggestion: repair links, assets, or frontmatter.
++- versioned_docs/version-v1.8/best-practices/ci-pipeline-image-predownload.md - Missing image assets (4); Missing frontmatter keys (2); Stale content (410 days). Suggestion: repair links, assets, or frontmatter.
++- versioned_docs/version-v1.8/best-practices/cloneset-lifecycle.md - Missing image assets (1); Missing frontmatter keys (2); Stale content (410 days). Suggestion: repair links, assets, or frontmatter.
++- versioned_docs/version-v1.8/best-practices/elastic-deployment.md - Missing image assets (5); Missing frontmatter keys (2); Stale content (410 days). Suggestion: repair links, assets, or frontmatter.
++- versioned_docs/version-v1.8/best-practices/gitops-with-kruise.md - Missing image assets (2); Missing frontmatter keys (2); Stale content (410 days). Suggestion: repair links, assets, or frontmatter.
++- versioned_docs/version-v1.8/best-practices/log-container-sidecarset.md - Missing image assets (2); Missing frontmatter keys (2); Stale content (410 days). Suggestion: repair links, assets, or frontmatter.
++- versioned_docs/version-v1.8/cli-tool/kustomize-plugin.md - Missing image assets (1); Missing frontmatter keys (2); Stale content (410 days). Suggestion: repair links, assets, or frontmatter.
++- versioned_docs/version-v1.8/core-concepts/architecture.md - Missing image assets (1); Missing frontmatter keys (2); Stale content (410 days). Suggestion: repair links, assets, or frontmatter.
++- versioned_docs/version-v1.8/core-concepts/inplace-update.md - Missing image assets (2); Missing anchors (1); Missing frontmatter keys (2); Stale content (101 days). Suggestion: repair links, assets, or frontmatter.
++- versioned_docs/version-v1.8/introduction.md - Missing markdown targets (2); Missing frontmatter keys (1); Stale content (101 days). Suggestion: repair links, assets, or frontmatter.
++- versioned_docs/version-v1.8/user-manuals/advancedcronjob.md - Missing image assets (1); Missing frontmatter keys (2); Stale content (410 days). Suggestion: repair links, assets, or frontmatter.
++- versioned_docs/version-v1.8/user-manuals/advanceddaemonset.md - Missing anchors (1); Missing frontmatter keys (2); Stale content (410 days). Suggestion: repair links, assets, or frontmatter.
++- versioned_docs/version-v1.8/user-manuals/advancedstatefulset.md - Missing anchors (1); Missing frontmatter keys (2); Stale content (181 days). Suggestion: repair links, assets, or frontmatter.
++- versioned_docs/version-v1.8/user-manuals/cloneset.md - Missing markdown targets (1); Missing image assets (1); Missing anchors (1); Missing frontmatter keys (2); Stale content (101 days). Suggestion: repair links, assets, or frontmatter.
++- versioned_docs/version-v1.8/user-manuals/containerrecreaterequest.md - Missing image assets (1); Missing frontmatter keys (2); Stale content (410 days). Suggestion: repair links, assets, or frontmatter.
++- versioned_docs/version-v1.8/user-manuals/imagepulljob.md - Missing image assets (1); Missing frontmatter keys (2); Stale content (410 days). Suggestion: repair links, assets, or frontmatter.
++- versioned_docs/version-v1.8/user-manuals/persistentpodstate.md - Missing image assets (1); Missing frontmatter keys (2); Stale content (101 days). Suggestion: repair links, assets, or frontmatter.
++- versioned_docs/version-v1.8/user-manuals/podunavailablebudget.md - Missing image assets (1); Missing frontmatter keys (2); Stale content (410 days). Suggestion: repair links, assets, or frontmatter.
++- versioned_docs/version-v1.8/user-manuals/resourcedistribution.md - Missing markdown targets (1); Missing frontmatter keys (2); Stale content (410 days). Suggestion: repair links, assets, or frontmatter.
++- versioned_docs/version-v1.8/user-manuals/sidecarset.md - Missing image assets (2); Missing frontmatter keys (2); Stale content (410 days). Suggestion: repair links, assets, or frontmatter.
++- versioned_docs/version-v1.8/user-manuals/uniteddeployment.md - Missing markdown targets (1); Missing frontmatter keys (2); Stale content (101 days). Suggestion: repair links, assets, or frontmatter.
++- versioned_docs/version-v1.9/best-practices/ci-pipeline-image-predownload.md - Missing image assets (4); Missing frontmatter keys (2); Stale content (112 days). Suggestion: repair links, assets, or frontmatter.
++- versioned_docs/version-v1.9/best-practices/cloneset-lifecycle.md - Missing image assets (1); Missing frontmatter keys (2); Stale content (112 days). Suggestion: repair links, assets, or frontmatter.
++- versioned_docs/version-v1.9/best-practices/elastic-deployment.md - Missing image assets (5); Missing frontmatter keys (2); Stale content (112 days). Suggestion: repair links, assets, or frontmatter.
++- versioned_docs/version-v1.9/best-practices/gitops-with-kruise.md - Missing image assets (2); Missing frontmatter keys (2); Stale content (112 days). Suggestion: repair links, assets, or frontmatter.
++- versioned_docs/version-v1.9/best-practices/log-container-sidecarset.md - Missing image assets (2); Missing frontmatter keys (2); Stale content (112 days). Suggestion: repair links, assets, or frontmatter.
++- versioned_docs/version-v1.9/best-practices/resource-policy-sidecarset.md - Missing image assets (1); Missing frontmatter keys (2); Stale content (112 days). Suggestion: repair links, assets, or frontmatter.
++- versioned_docs/version-v1.9/cli-tool/kustomize-plugin.md - Missing image assets (1); Missing frontmatter keys (2); Stale content (112 days). Suggestion: repair links, assets, or frontmatter.
++- versioned_docs/version-v1.9/core-concepts/architecture.md - Missing image assets (1); Missing frontmatter keys (2); Stale content (112 days). Suggestion: repair links, assets, or frontmatter.
++- versioned_docs/version-v1.9/core-concepts/inplace-update.md - Missing image assets (2); Missing anchors (1); Missing frontmatter keys (2); Stale content (101 days). Suggestion: repair links, assets, or frontmatter.
++- versioned_docs/version-v1.9/introduction.md - Missing markdown targets (2); Missing frontmatter keys (1); Stale content (105 days). Suggestion: repair links, assets, or frontmatter.
++- versioned_docs/version-v1.9/user-manuals/advancedcronjob.md - Missing image assets (1); Missing frontmatter keys (2); Stale content (112 days). Suggestion: repair links, assets, or frontmatter.
++- versioned_docs/version-v1.9/user-manuals/advanceddaemonset.md - Missing anchors (1); Missing frontmatter keys (2); Stale content (112 days). Suggestion: repair links, assets, or frontmatter.
++- versioned_docs/version-v1.9/user-manuals/advancedstatefulset.md - Missing anchors (1); Missing frontmatter keys (2); Stale content (112 days). Suggestion: repair links, assets, or frontmatter.
++- versioned_docs/version-v1.9/user-manuals/cloneset.md - Missing markdown targets (1); Missing image assets (1); Missing anchors (1); Missing frontmatter keys (2); Stale content (112 days). Suggestion: repair links, assets, or frontmatter.
++- versioned_docs/version-v1.9/user-manuals/containerrecreaterequest.md - Missing image assets (1); Missing frontmatter keys (2); Stale content (112 days). Suggestion: repair links, assets, or frontmatter.
++- versioned_docs/version-v1.9/user-manuals/imagepulljob.md - Missing image assets (1); Missing frontmatter keys (2); Stale content (112 days). Suggestion: repair links, assets, or frontmatter.
++- versioned_docs/version-v1.9/user-manuals/persistentpodstate.md - Missing image assets (1); Missing frontmatter keys (2); Stale content (112 days). Suggestion: repair links, assets, or frontmatter.
++- versioned_docs/version-v1.9/user-manuals/podunavailablebudget.md - Missing image assets (1); Missing frontmatter keys (2); Stale content (105 days). Suggestion: repair links, assets, or frontmatter.
++- versioned_docs/version-v1.9/user-manuals/resourcedistribution.md - Missing markdown targets (1); Missing frontmatter keys (2); Stale content (112 days). Suggestion: repair links, assets, or frontmatter.
++- versioned_docs/version-v1.9/user-manuals/sidecarset.md - Missing markdown targets (1); Missing image assets (2); Missing frontmatter keys (2); Stale content (112 days). Suggestion: repair links, assets, or frontmatter.
++- versioned_docs/version-v1.9/user-manuals/uniteddeployment.md - Missing markdown targets (1); Missing frontmatter keys (2); Stale content (105 days). Suggestion: repair links, assets, or frontmatter.
++
++Medium Priority
++- blog/2019-10-10-workload-classification-guidance.md - Missing frontmatter keys (1); Stale content (1697 days). Suggestion: review and update content.
++- blog/2021-03-15-sidecarSet-0.8.0.md - Missing frontmatter keys (1); Stale content (101 days). Suggestion: review and update content.
++- blog/2021-06-10-sidecarset-hot-update-0.9.0.md - Missing frontmatter keys (1); Stale content (420 days). Suggestion: review and update content.
++- blog/2021-09-06-release-0.10.0.md - Missing frontmatter keys (1); Stale content (968 days). Suggestion: review and update content.
++- blog/2021-09-22-workloadspread.md - Missing frontmatter keys (1); Stale content (101 days). Suggestion: review and update content.
++- blog/2022-03-29-release-1.1.md - Missing frontmatter keys (1); Stale content (101 days). Suggestion: review and update content.
++- blog/2022-06-07-release-1.2.md - Missing frontmatter keys (1); Stale content (101 days). Suggestion: review and update content.
++- blog/2022-10-07-release-1.3.md - Missing frontmatter keys (1); Stale content (420 days). Suggestion: review and update content.
++- blog/2023-04-18-release-1.4.md - Missing frontmatter keys (1); Stale content (968 days). Suggestion: review and update content.
++- blog/2025-02-19-elastic-components.md - Missing frontmatter keys (1); Stale content (293 days). Suggestion: review and update content.
++- docs/best-practices/acronjob+broadcastjob.md - Missing frontmatter keys (2); Stale content (968 days). Suggestion: review and update content.
++- docs/best-practices/hpa-configuration.md - Missing frontmatter keys (2); Stale content (1697 days). Suggestion: review and update content.
++- docs/cli-tool/kubectl-plugin.md - Missing frontmatter keys (2); Stale content (101 days). Suggestion: review and update content.
++- docs/cli-tool/kustomize-schema-generator.md - Missing frontmatter keys (2); Stale content (934 days). Suggestion: review and update content.
++- docs/developer-manuals/go-client.md - Missing frontmatter keys (2); Stale content (410 days). Suggestion: review and update content.
++- docs/developer-manuals/java-client.md - Missing frontmatter keys (2); Stale content (968 days). Suggestion: review and update content.
++- docs/developer-manuals/other-languages.md - Missing frontmatter keys (2); Stale content (968 days). Suggestion: review and update content.
++- docs/faq.md - Missing frontmatter keys (2); Stale content (293 days). Suggestion: review and update content.
++- docs/installation.md - Missing frontmatter keys (2); Stale content (101 days). Suggestion: review and update content.
++- docs/operator-manuals/availability.md - Missing frontmatter keys (2); Stale content (315 days). Suggestion: review and update content.
++- docs/operator-manuals/troubleshooting.md - Missing frontmatter keys (2); Stale content (101 days). Suggestion: review and update content.
++- docs/operator-manuals/upgrade.md - Missing frontmatter keys (2); Stale content (105 days). Suggestion: review and update content.
++- docs/user-manuals/broadcastjob.md - Missing frontmatter keys (2); Stale content (159 days). Suggestion: review and update content.
++- docs/user-manuals/containerlaunchpriority.md - Missing frontmatter keys (2); Stale content (313 days). Suggestion: review and update content.
++- docs/user-manuals/deletionprotection.md - Missing frontmatter keys (2); Stale content (101 days). Suggestion: review and update content.
++- docs/user-manuals/jobsidecarterminator.md - Missing frontmatter keys (2); Stale content (497 days). Suggestion: review and update content.
++- docs/user-manuals/podprobemarker.md - Missing frontmatter keys (2); Stale content (410 days). Suggestion: review and update content.
++- docs/user-manuals/workloadspread.md - Missing frontmatter keys (2); Stale content (101 days). Suggestion: review and update content.
++- kruiseagents/developer-manuals/go-client.md - Missing frontmatter keys (2). Suggestion: review and update content.
++- kruiseagents/developer-manuals/java-client.md - Missing frontmatter keys (2). Suggestion: review and update content.
++- kruiseagents/developer-manuals/python-client.md - Missing frontmatter keys (2). Suggestion: review and update content.
++- kruiseagents/installation.md - Missing frontmatter keys (2). Suggestion: review and update content.
++- kruiseagents/user-manuals/runtime-injection.md - Missing frontmatter keys (2). Suggestion: review and update content.
++- kruiseagents/user-manuals/sandbox-claim.md - Missing frontmatter keys (2). Suggestion: review and update content.
++- versioned_docs/version-v1.5/best-practices/acronjob+broadcastjob.md - Missing frontmatter keys (2); Stale content (968 days). Suggestion: review and update content.
++- versioned_docs/version-v1.5/best-practices/hpa-configuration.md - Missing frontmatter keys (2); Stale content (978 days). Suggestion: review and update content.
++- versioned_docs/version-v1.5/cli-tool/kubectl-plugin.md - Missing frontmatter keys (2); Stale content (101 days). Suggestion: review and update content.
++- versioned_docs/version-v1.5/developer-manuals/go-client.md - Missing frontmatter keys (2); Stale content (420 days). Suggestion: review and update content.
++- versioned_docs/version-v1.5/developer-manuals/java-client.md - Missing frontmatter keys (2); Stale content (968 days). Suggestion: review and update content.
++- versioned_docs/version-v1.5/developer-manuals/other-languages.md - Missing frontmatter keys (2); Stale content (968 days). Suggestion: review and update content.
++- versioned_docs/version-v1.5/faq.md - Missing frontmatter keys (2); Stale content (978 days). Suggestion: review and update content.
++- versioned_docs/version-v1.5/installation.md - Missing frontmatter keys (2); Stale content (584 days). Suggestion: review and update content.
++- versioned_docs/version-v1.5/introduction.md - Missing frontmatter keys (1); Stale content (101 days). Suggestion: review and update content.
++- versioned_docs/version-v1.5/user-manuals/advanceddaemonset.md - Missing frontmatter keys (2); Stale content (968 days). Suggestion: review and update content.
++- versioned_docs/version-v1.5/user-manuals/advancedstatefulset.md - Missing frontmatter keys (2); Stale content (181 days). Suggestion: review and update content.
++- versioned_docs/version-v1.5/user-manuals/broadcastjob.md - Missing frontmatter keys (2); Stale content (968 days). Suggestion: review and update content.
++- versioned_docs/version-v1.5/user-manuals/containerlaunchpriority.md - Missing frontmatter keys (2); Stale content (978 days). Suggestion: review and update content.
++- versioned_docs/version-v1.5/user-manuals/deletionprotection.md - Missing frontmatter keys (2); Stale content (101 days). Suggestion: review and update content.
++- versioned_docs/version-v1.5/user-manuals/jobsidecarterminator.md - Missing frontmatter keys (2); Stale content (697 days). Suggestion: review and update content.
++- versioned_docs/version-v1.5/user-manuals/podprobemarker.md - Missing frontmatter keys (2); Stale content (968 days). Suggestion: review and update content.
++- versioned_docs/version-v1.5/user-manuals/workloadspread.md - Missing frontmatter keys (2); Stale content (420 days). Suggestion: review and update content.
++- versioned_docs/version-v1.6/best-practices/acronjob+broadcastjob.md - Missing frontmatter keys (2); Stale content (786 days). Suggestion: review and update content.
++- versioned_docs/version-v1.6/best-practices/hpa-configuration.md - Missing frontmatter keys (2); Stale content (786 days). Suggestion: review and update content.
++- versioned_docs/version-v1.6/cli-tool/kubectl-plugin.md - Missing frontmatter keys (2); Stale content (101 days). Suggestion: review and update content.
++- versioned_docs/version-v1.6/cli-tool/kustomize-schema-generator.md - Missing frontmatter keys (2); Stale content (786 days). Suggestion: review and update content.
++- versioned_docs/version-v1.6/developer-manuals/go-client.md - Missing frontmatter keys (2); Stale content (420 days). Suggestion: review and update content.
++- versioned_docs/version-v1.6/developer-manuals/java-client.md - Missing frontmatter keys (2); Stale content (786 days). Suggestion: review and update content.
++- versioned_docs/version-v1.6/developer-manuals/other-languages.md - Missing frontmatter keys (2); Stale content (786 days). Suggestion: review and update content.
++- versioned_docs/version-v1.6/faq.md - Missing frontmatter keys (2); Stale content (786 days). Suggestion: review and update content.
++- versioned_docs/version-v1.6/installation.md - Missing frontmatter keys (2); Stale content (584 days). Suggestion: review and update content.
++- versioned_docs/version-v1.6/introduction.md - Missing frontmatter keys (1); Stale content (101 days). Suggestion: review and update content.
++- versioned_docs/version-v1.6/user-manuals/advanceddaemonset.md - Missing frontmatter keys (2); Stale content (786 days). Suggestion: review and update content.
++- versioned_docs/version-v1.6/user-manuals/advancedstatefulset.md - Missing frontmatter keys (2); Stale content (181 days). Suggestion: review and update content.
++- versioned_docs/version-v1.6/user-manuals/broadcastjob.md - Missing frontmatter keys (2); Stale content (786 days). Suggestion: review and update content.
++- versioned_docs/version-v1.6/user-manuals/containerlaunchpriority.md - Missing frontmatter keys (2); Stale content (786 days). Suggestion: review and update content.
++- versioned_docs/version-v1.6/user-manuals/deletionprotection.md - Missing frontmatter keys (2); Stale content (101 days). Suggestion: review and update content.
++- versioned_docs/version-v1.6/user-manuals/jobsidecarterminator.md - Missing frontmatter keys (2); Stale content (697 days). Suggestion: review and update content.
++- versioned_docs/version-v1.6/user-manuals/podprobemarker.md - Missing frontmatter keys (2); Stale content (786 days). Suggestion: review and update content.
++- versioned_docs/version-v1.6/user-manuals/workloadspread.md - Missing frontmatter keys (2); Stale content (420 days). Suggestion: review and update content.
++- versioned_docs/version-v1.7/best-practices/acronjob+broadcastjob.md - Missing frontmatter keys (2); Stale content (628 days). Suggestion: review and update content.
++- versioned_docs/version-v1.7/best-practices/hpa-configuration.md - Missing frontmatter keys (2); Stale content (628 days). Suggestion: review and update content.
++- versioned_docs/version-v1.7/cli-tool/kubectl-plugin.md - Missing frontmatter keys (2); Stale content (101 days). Suggestion: review and update content.
++- versioned_docs/version-v1.7/cli-tool/kustomize-schema-generator.md - Missing frontmatter keys (2); Stale content (628 days). Suggestion: review and update content.
++- versioned_docs/version-v1.7/developer-manuals/go-client.md - Missing frontmatter keys (2); Stale content (420 days). Suggestion: review and update content.
++- versioned_docs/version-v1.7/developer-manuals/java-client.md - Missing frontmatter keys (2); Stale content (628 days). Suggestion: review and update content.
++- versioned_docs/version-v1.7/developer-manuals/other-languages.md - Missing frontmatter keys (2); Stale content (628 days). Suggestion: review and update content.
++- versioned_docs/version-v1.7/faq.md - Missing frontmatter keys (2); Stale content (628 days). Suggestion: review and update content.
++- versioned_docs/version-v1.7/installation.md - Missing frontmatter keys (2); Stale content (315 days). Suggestion: review and update content.
++- versioned_docs/version-v1.7/operator-manuals/availability.md - Missing frontmatter keys (2); Stale content (315 days). Suggestion: review and update content.
++- versioned_docs/version-v1.7/operator-manuals/troubleshooting.md - Missing frontmatter keys (2); Stale content (101 days). Suggestion: review and update content.
++- versioned_docs/version-v1.7/user-manuals/advanceddaemonset.md - Missing frontmatter keys (2); Stale content (628 days). Suggestion: review and update content.
++- versioned_docs/version-v1.7/user-manuals/advancedstatefulset.md - Missing frontmatter keys (2); Stale content (181 days). Suggestion: review and update content.
++- versioned_docs/version-v1.7/user-manuals/broadcastjob.md - Missing frontmatter keys (2); Stale content (628 days). Suggestion: review and update content.
++- versioned_docs/version-v1.7/user-manuals/containerlaunchpriority.md - Missing frontmatter keys (2); Stale content (628 days). Suggestion: review and update content.
++- versioned_docs/version-v1.7/user-manuals/deletionprotection.md - Missing frontmatter keys (2); Stale content (101 days). Suggestion: review and update content.
++- versioned_docs/version-v1.7/user-manuals/jobsidecarterminator.md - Missing frontmatter keys (2); Stale content (628 days). Suggestion: review and update content.
++- versioned_docs/version-v1.7/user-manuals/podprobemarker.md - Missing frontmatter keys (2); Stale content (628 days). Suggestion: review and update content.
++- versioned_docs/version-v1.7/user-manuals/workloadspread.md - Missing frontmatter keys (2); Stale content (420 days). Suggestion: review and update content.
++- versioned_docs/version-v1.8/best-practices/acronjob+broadcastjob.md - Missing frontmatter keys (2); Stale content (410 days). Suggestion: review and update content.
++- versioned_docs/version-v1.8/best-practices/hpa-configuration.md - Missing frontmatter keys (2); Stale content (410 days). Suggestion: review and update content.
++- versioned_docs/version-v1.8/cli-tool/kubectl-plugin.md - Missing frontmatter keys (2); Stale content (101 days). Suggestion: review and update content.
++- versioned_docs/version-v1.8/cli-tool/kustomize-schema-generator.md - Missing frontmatter keys (2); Stale content (410 days). Suggestion: review and update content.
++- versioned_docs/version-v1.8/developer-manuals/go-client.md - Missing frontmatter keys (2); Stale content (410 days). Suggestion: review and update content.
++- versioned_docs/version-v1.8/developer-manuals/java-client.md - Missing frontmatter keys (2); Stale content (410 days). Suggestion: review and update content.
++- versioned_docs/version-v1.8/developer-manuals/other-languages.md - Missing frontmatter keys (2); Stale content (410 days). Suggestion: review and update content.
++- versioned_docs/version-v1.8/faq.md - Missing frontmatter keys (2); Stale content (410 days). Suggestion: review and update content.
++- versioned_docs/version-v1.8/installation.md - Missing frontmatter keys (2); Stale content (315 days). Suggestion: review and update content.
++- versioned_docs/version-v1.8/operator-manuals/availability.md - Missing frontmatter keys (2); Stale content (315 days). Suggestion: review and update content.
++- versioned_docs/version-v1.8/operator-manuals/troubleshooting.md - Missing frontmatter keys (2); Stale content (101 days). Suggestion: review and update content.
++- versioned_docs/version-v1.8/user-manuals/broadcastjob.md - Missing frontmatter keys (2); Stale content (410 days). Suggestion: review and update content.
++- versioned_docs/version-v1.8/user-manuals/containerlaunchpriority.md - Missing frontmatter keys (2); Stale content (410 days). Suggestion: review and update content.
++- versioned_docs/version-v1.8/user-manuals/deletionprotection.md - Missing frontmatter keys (2); Stale content (101 days). Suggestion: review and update content.
++- versioned_docs/version-v1.8/user-manuals/jobsidecarterminator.md - Missing frontmatter keys (2); Stale content (410 days). Suggestion: review and update content.
++- versioned_docs/version-v1.8/user-manuals/podprobemarker.md - Missing frontmatter keys (2); Stale content (410 days). Suggestion: review and update content.
++- versioned_docs/version-v1.8/user-manuals/workloadspread.md - Missing frontmatter keys (2); Stale content (410 days). Suggestion: review and update content.
++- versioned_docs/version-v1.9/best-practices/acronjob+broadcastjob.md - Missing frontmatter keys (2); Stale content (112 days). Suggestion: review and update content.
++- versioned_docs/version-v1.9/best-practices/hpa-configuration.md - Missing frontmatter keys (2); Stale content (112 days). Suggestion: review and update content.
++- versioned_docs/version-v1.9/cli-tool/kubectl-plugin.md - Missing frontmatter keys (2); Stale content (112 days). Suggestion: review and update content.
++- versioned_docs/version-v1.9/cli-tool/kustomize-schema-generator.md - Missing frontmatter keys (2); Stale content (112 days). Suggestion: review and update content.
++- versioned_docs/version-v1.9/developer-manuals/go-client.md - Missing frontmatter keys (2); Stale content (112 days). Suggestion: review and update content.
++- versioned_docs/version-v1.9/developer-manuals/java-client.md - Missing frontmatter keys (2); Stale content (112 days). Suggestion: review and update content.
++- versioned_docs/version-v1.9/developer-manuals/other-languages.md - Missing frontmatter keys (2); Stale content (112 days). Suggestion: review and update content.
++- versioned_docs/version-v1.9/faq.md - Missing frontmatter keys (2); Stale content (112 days). Suggestion: review and update content.
++- versioned_docs/version-v1.9/installation.md - Missing frontmatter keys (2); Stale content (105 days). Suggestion: review and update content.
++- versioned_docs/version-v1.9/operator-manuals/availability.md - Missing frontmatter keys (2); Stale content (112 days). Suggestion: review and update content.
++- versioned_docs/version-v1.9/operator-manuals/troubleshooting.md - Missing frontmatter keys (2); Stale content (112 days). Suggestion: review and update content.
++- versioned_docs/version-v1.9/operator-manuals/upgrade.md - Missing frontmatter keys (2); Stale content (105 days). Suggestion: review and update content.
++- versioned_docs/version-v1.9/user-manuals/broadcastjob.md - Missing frontmatter keys (2); Stale content (112 days). Suggestion: review and update content.
++- versioned_docs/version-v1.9/user-manuals/containerlaunchpriority.md - Missing frontmatter keys (2); Stale content (112 days). Suggestion: review and update content.
++- versioned_docs/version-v1.9/user-manuals/deletionprotection.md - Missing frontmatter keys (2); Stale content (101 days). Suggestion: review and update content.
++- versioned_docs/version-v1.9/user-manuals/jobsidecarterminator.md - Missing frontmatter keys (2); Stale content (112 days). Suggestion: review and update content.
++- versioned_docs/version-v1.9/user-manuals/podprobemarker.md - Missing frontmatter keys (2); Stale content (112 days). Suggestion: review and update content.
++- versioned_docs/version-v1.9/user-manuals/workloadspread.md - Missing frontmatter keys (2); Stale content (112 days). Suggestion: review and update content.

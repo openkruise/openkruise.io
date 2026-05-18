@@ -1,0 +1,2142 @@
+{
+  "errors": [],
+  "files": [
+    {
+      "age_days": 1697,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2021-09-24T15:22:49+08:00",
+      "path": "blog/2019-10-10-workload-classification-guidance.md",
+      "sha": "9608d31ae8b9f70383975261e38ae49b40f5cb91"
+    },
+    {
+      "age_days": 1697,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2021-09-24T15:22:49+08:00",
+      "path": "blog/2019-11-10-learning-concurrent-reconciling.md",
+      "sha": "9608d31ae8b9f70383975261e38ae49b40f5cb91"
+    },
+    {
+      "age_days": 101,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2026-02-06T09:21:57+08:00",
+      "path": "blog/2019-11-20-uniteddeployment.md",
+      "sha": "1c4717498e659361af9f6d6da5625abe43a8d4cc"
+    },
+    {
+      "age_days": 101,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2026-02-06T09:21:57+08:00",
+      "path": "blog/2021-03-15-sidecarSet-0.8.0.md",
+      "sha": "1c4717498e659361af9f6d6da5625abe43a8d4cc"
+    },
+    {
+      "age_days": 101,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2026-02-06T09:21:57+08:00",
+      "path": "blog/2021-05-20-release-0.9.0.md",
+      "sha": "1c4717498e659361af9f6d6da5625abe43a8d4cc"
+    },
+    {
+      "age_days": 420,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2025-03-24T09:50:51+08:00",
+      "path": "blog/2021-06-10-sidecarset-hot-update-0.9.0.md",
+      "sha": "a9a3ca44aadd3c698b49845db26ce04af59a1550"
+    },
+    {
+      "age_days": 968,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2023-09-23T11:11:19+08:00",
+      "path": "blog/2021-09-06-release-0.10.0.md",
+      "sha": "8245fd7b3029f9133bb1a96144ac53f0e3e9c5e0"
+    },
+    {
+      "age_days": 101,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2026-02-06T09:21:57+08:00",
+      "path": "blog/2021-09-22-workloadspread.md",
+      "sha": "1c4717498e659361af9f6d6da5625abe43a8d4cc"
+    },
+    {
+      "age_days": 101,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2026-02-06T09:21:57+08:00",
+      "path": "blog/2021-12-13-release-1.0.md",
+      "sha": "1c4717498e659361af9f6d6da5625abe43a8d4cc"
+    },
+    {
+      "age_days": 101,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2026-02-06T09:21:57+08:00",
+      "path": "blog/2022-03-29-release-1.1.md",
+      "sha": "1c4717498e659361af9f6d6da5625abe43a8d4cc"
+    },
+    {
+      "age_days": 101,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2026-02-06T09:21:57+08:00",
+      "path": "blog/2022-06-07-release-1.2.md",
+      "sha": "1c4717498e659361af9f6d6da5625abe43a8d4cc"
+    },
+    {
+      "age_days": 420,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2025-03-24T09:50:51+08:00",
+      "path": "blog/2022-10-07-release-1.3.md",
+      "sha": "a9a3ca44aadd3c698b49845db26ce04af59a1550"
+    },
+    {
+      "age_days": 968,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2023-09-23T11:11:19+08:00",
+      "path": "blog/2023-04-18-release-1.4.md",
+      "sha": "8245fd7b3029f9133bb1a96144ac53f0e3e9c5e0"
+    },
+    {
+      "age_days": 293,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2025-07-29T14:54:55+08:00",
+      "path": "blog/2025-02-19-elastic-components.md",
+      "sha": "fc66f6fbda145e3178dc7c0e106276a6174ddf93"
+    },
+    {
+      "age_days": 968,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2023-09-23T11:11:19+08:00",
+      "path": "docs/best-practices/acronjob+broadcastjob.md",
+      "sha": "8245fd7b3029f9133bb1a96144ac53f0e3e9c5e0"
+    },
+    {
+      "age_days": 968,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2023-09-23T11:11:19+08:00",
+      "path": "docs/best-practices/ci-pipeline-image-predownload.md",
+      "sha": "8245fd7b3029f9133bb1a96144ac53f0e3e9c5e0"
+    },
+    {
+      "age_days": 968,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2023-09-23T11:11:19+08:00",
+      "path": "docs/best-practices/cloneset-lifecycle.md",
+      "sha": "8245fd7b3029f9133bb1a96144ac53f0e3e9c5e0"
+    },
+    {
+      "age_days": 968,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2023-09-23T11:11:19+08:00",
+      "path": "docs/best-practices/elastic-deployment.md",
+      "sha": "8245fd7b3029f9133bb1a96144ac53f0e3e9c5e0"
+    },
+    {
+      "age_days": 1259,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2022-12-06T15:50:57+08:00",
+      "path": "docs/best-practices/gitops-with-kruise.md",
+      "sha": "5412255d500a775c7c3643bd484b1adbbd30aecf"
+    },
+    {
+      "age_days": 1697,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2021-09-24T15:22:49+08:00",
+      "path": "docs/best-practices/hpa-configuration.md",
+      "sha": "9608d31ae8b9f70383975261e38ae49b40f5cb91"
+    },
+    {
+      "age_days": 696,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2024-06-20T20:31:51+08:00",
+      "path": "docs/best-practices/log-container-sidecarset.md",
+      "sha": "a2cb8b1a55b6d03eb8fa75d2b2cf9c2c521d2037"
+    },
+    {
+      "age_days": 174,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2025-11-25T15:26:39+08:00",
+      "path": "docs/best-practices/resource-policy-sidecarset.md",
+      "sha": "771ec311110bbfad4462ead8e56f7155bb1f92d8"
+    },
+    {
+      "age_days": 101,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2026-02-06T09:21:57+08:00",
+      "path": "docs/cli-tool/kubectl-plugin.md",
+      "sha": "1c4717498e659361af9f6d6da5625abe43a8d4cc"
+    },
+    {
+      "age_days": 968,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2023-09-23T11:11:19+08:00",
+      "path": "docs/cli-tool/kustomize-plugin.md",
+      "sha": "8245fd7b3029f9133bb1a96144ac53f0e3e9c5e0"
+    },
+    {
+      "age_days": 934,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2023-10-27T10:42:54+08:00",
+      "path": "docs/cli-tool/kustomize-schema-generator.md",
+      "sha": "b91699515ca3a2624304c72792da3ef02b827de0"
+    },
+    {
+      "age_days": 1697,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2021-09-24T15:22:49+08:00",
+      "path": "docs/core-concepts/architecture.md",
+      "sha": "9608d31ae8b9f70383975261e38ae49b40f5cb91"
+    },
+    {
+      "age_days": 101,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2026-02-06T09:21:57+08:00",
+      "path": "docs/core-concepts/inplace-update.md",
+      "sha": "1c4717498e659361af9f6d6da5625abe43a8d4cc"
+    },
+    {
+      "age_days": null,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": null,
+      "path": "docs/demo/mentor_demo_walkthrough.md",
+      "sha": null
+    },
+    {
+      "age_days": null,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": null,
+      "path": "docs/demo/sample_ci_run.md",
+      "sha": null
+    },
+    {
+      "age_days": null,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": null,
+      "path": "docs/demo/sample_pr.md",
+      "sha": null
+    },
+    {
+      "age_days": null,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": null,
+      "path": "docs/demo/troubleshooting.md",
+      "sha": null
+    },
+    {
+      "age_days": 410,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2025-04-02T19:26:31+08:00",
+      "path": "docs/developer-manuals/go-client.md",
+      "sha": "e74e4a58fbdb000199a4f9abc1577a23a545ed73"
+    },
+    {
+      "age_days": 968,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2023-09-23T11:11:19+08:00",
+      "path": "docs/developer-manuals/java-client.md",
+      "sha": "8245fd7b3029f9133bb1a96144ac53f0e3e9c5e0"
+    },
+    {
+      "age_days": 968,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2023-09-23T11:11:19+08:00",
+      "path": "docs/developer-manuals/other-languages.md",
+      "sha": "8245fd7b3029f9133bb1a96144ac53f0e3e9c5e0"
+    },
+    {
+      "age_days": 293,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2025-07-29T15:28:27+08:00",
+      "path": "docs/faq.md",
+      "sha": "30e3f0b0925e2d37c1d3d1eadfb224b2b3d907d5"
+    },
+    {
+      "age_days": 101,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2026-02-06T09:21:57+08:00",
+      "path": "docs/installation.md",
+      "sha": "1c4717498e659361af9f6d6da5625abe43a8d4cc"
+    },
+    {
+      "age_days": 101,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2026-02-06T09:21:57+08:00",
+      "path": "docs/introduction.md",
+      "sha": "1c4717498e659361af9f6d6da5625abe43a8d4cc"
+    },
+    {
+      "age_days": 315,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2025-07-07T10:31:40+08:00",
+      "path": "docs/operator-manuals/availability.md",
+      "sha": "dbb5d412b8d5032c009c79a9e773f22192743ddb"
+    },
+    {
+      "age_days": 101,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2026-02-06T09:21:57+08:00",
+      "path": "docs/operator-manuals/troubleshooting.md",
+      "sha": "1c4717498e659361af9f6d6da5625abe43a8d4cc"
+    },
+    {
+      "age_days": 105,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2026-02-02T11:19:52+08:00",
+      "path": "docs/operator-manuals/upgrade.md",
+      "sha": "a60b97d8c5abb86b211f600145fc42595207b616"
+    },
+    {
+      "age_days": null,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": null,
+      "path": "docs/research/design_decisions.md",
+      "sha": null
+    },
+    {
+      "age_days": null,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": null,
+      "path": "docs/research/literature_review.md",
+      "sha": null
+    },
+    {
+      "age_days": null,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": null,
+      "path": "docs/research/related_work.md",
+      "sha": null
+    },
+    {
+      "age_days": 159,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2025-12-09T20:58:02+08:00",
+      "path": "docs/user-manuals/advancedcronjob.md",
+      "sha": "c27203733298e96cd97c9cbc1c3b217d80b365c4"
+    },
+    {
+      "age_days": 159,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2025-12-09T21:07:03+08:00",
+      "path": "docs/user-manuals/advanceddaemonset.md",
+      "sha": "b68c91639919e6d2e4c58f9b43e8dd86be4e74a6"
+    },
+    {
+      "age_days": 181,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2025-11-18T11:28:03+08:00",
+      "path": "docs/user-manuals/advancedstatefulset.md",
+      "sha": "4025a5894e66dd6f70d199451fcaa29798785ff0"
+    },
+    {
+      "age_days": 159,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2025-12-09T20:58:02+08:00",
+      "path": "docs/user-manuals/broadcastjob.md",
+      "sha": "c27203733298e96cd97c9cbc1c3b217d80b365c4"
+    },
+    {
+      "age_days": 21,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2026-04-26T21:21:09+08:00",
+      "path": "docs/user-manuals/cloneset.md",
+      "sha": "ffcb8dfc17a1daf17343e8e6b71baad2463c310c"
+    },
+    {
+      "age_days": 313,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2025-07-09T09:46:41+08:00",
+      "path": "docs/user-manuals/containerlaunchpriority.md",
+      "sha": "bce21bb82ece2caeeae87287326682f3dc0b12ee"
+    },
+    {
+      "age_days": 968,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2023-09-23T11:11:19+08:00",
+      "path": "docs/user-manuals/containerrecreaterequest.md",
+      "sha": "8245fd7b3029f9133bb1a96144ac53f0e3e9c5e0"
+    },
+    {
+      "age_days": 101,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2026-02-06T09:21:57+08:00",
+      "path": "docs/user-manuals/deletionprotection.md",
+      "sha": "1c4717498e659361af9f6d6da5625abe43a8d4cc"
+    },
+    {
+      "age_days": 159,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2025-12-09T20:58:02+08:00",
+      "path": "docs/user-manuals/imagepulljob.md",
+      "sha": "c27203733298e96cd97c9cbc1c3b217d80b365c4"
+    },
+    {
+      "age_days": 497,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2025-01-06T13:52:57+08:00",
+      "path": "docs/user-manuals/jobsidecarterminator.md",
+      "sha": "3398a7470a1ffdd1014b2f57f8e08724d4a7307b"
+    },
+    {
+      "age_days": 101,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2026-02-06T09:21:57+08:00",
+      "path": "docs/user-manuals/persistentpodstate.md",
+      "sha": "1c4717498e659361af9f6d6da5625abe43a8d4cc"
+    },
+    {
+      "age_days": 410,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2025-04-02T19:26:31+08:00",
+      "path": "docs/user-manuals/podprobemarker.md",
+      "sha": "e74e4a58fbdb000199a4f9abc1577a23a545ed73"
+    },
+    {
+      "age_days": 105,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2026-02-02T11:19:52+08:00",
+      "path": "docs/user-manuals/podunavailablebudget.md",
+      "sha": "a60b97d8c5abb86b211f600145fc42595207b616"
+    },
+    {
+      "age_days": 968,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2023-09-23T11:11:19+08:00",
+      "path": "docs/user-manuals/resourcedistribution.md",
+      "sha": "8245fd7b3029f9133bb1a96144ac53f0e3e9c5e0"
+    },
+    {
+      "age_days": 157,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2025-12-12T14:49:06+08:00",
+      "path": "docs/user-manuals/sidecarset.md",
+      "sha": "7a2b0f33c4bf6e1dcd9737bf4234b8183a961490"
+    },
+    {
+      "age_days": 101,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2026-02-06T09:21:57+08:00",
+      "path": "docs/user-manuals/uniteddeployment.md",
+      "sha": "1c4717498e659361af9f6d6da5625abe43a8d4cc"
+    },
+    {
+      "age_days": 101,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2026-02-06T09:21:57+08:00",
+      "path": "docs/user-manuals/workloadspread.md",
+      "sha": "1c4717498e659361af9f6d6da5625abe43a8d4cc"
+    },
+    {
+      "age_days": 56,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2026-03-23T05:59:48+08:00",
+      "path": "kruiseagents/architecture.md",
+      "sha": "f07e7399e8d8a4cda3e5ab0a8b6b3a602399543e"
+    },
+    {
+      "age_days": 56,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2026-03-23T05:59:48+08:00",
+      "path": "kruiseagents/best-practices/cert-manager.md",
+      "sha": "f07e7399e8d8a4cda3e5ab0a8b6b3a602399543e"
+    },
+    {
+      "age_days": 100,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2026-02-06T18:19:41+08:00",
+      "path": "kruiseagents/best-practices/running-e2b-for-code-interpreter.md",
+      "sha": "4717a26e95efb5b66ddad5ef020e74887ed01518"
+    },
+    {
+      "age_days": 70,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2026-03-09T15:46:13+08:00",
+      "path": "kruiseagents/best-practices/running-e2b-for-desktop.md",
+      "sha": "0fc2e0460324c0e906b804875cee90c5e60df34e"
+    },
+    {
+      "age_days": 10,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2026-05-08T14:56:20+08:00",
+      "path": "kruiseagents/best-practices/running-openclaw-sandbox.md",
+      "sha": "f7b28f78c974d6ee115c5d70ac5bbffbff905ae6"
+    },
+    {
+      "age_days": 56,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2026-03-23T05:59:48+08:00",
+      "path": "kruiseagents/best-practices/use-self-signed-cert.md",
+      "sha": "f07e7399e8d8a4cda3e5ab0a8b6b3a602399543e"
+    },
+    {
+      "age_days": 56,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2026-03-23T05:59:48+08:00",
+      "path": "kruiseagents/core-concept.md",
+      "sha": "f07e7399e8d8a4cda3e5ab0a8b6b3a602399543e"
+    },
+    {
+      "age_days": 100,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2026-02-06T18:19:41+08:00",
+      "path": "kruiseagents/developer-manuals/contribution.md",
+      "sha": "4717a26e95efb5b66ddad5ef020e74887ed01518"
+    },
+    {
+      "age_days": 38,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2026-04-09T17:39:54+08:00",
+      "path": "kruiseagents/developer-manuals/e2b-client.md",
+      "sha": "8f4b0048a9ac05ccac4dd270903c34e36f73332f"
+    },
+    {
+      "age_days": 100,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2026-02-06T18:19:41+08:00",
+      "path": "kruiseagents/developer-manuals/faq.md",
+      "sha": "4717a26e95efb5b66ddad5ef020e74887ed01518"
+    },
+    {
+      "age_days": 31,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2026-04-17T16:36:01+08:00",
+      "path": "kruiseagents/developer-manuals/go-client.md",
+      "sha": "3add8053aacf7b4d17bb5e2fff7630afaf788c5c"
+    },
+    {
+      "age_days": 68,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2026-03-11T13:45:52+08:00",
+      "path": "kruiseagents/developer-manuals/java-client.md",
+      "sha": "67157f5cc4a32e7f91458b0117591fd5d6a95907"
+    },
+    {
+      "age_days": 68,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2026-03-11T13:45:52+08:00",
+      "path": "kruiseagents/developer-manuals/python-client.md",
+      "sha": "67157f5cc4a32e7f91458b0117591fd5d6a95907"
+    },
+    {
+      "age_days": 9,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2026-05-09T10:53:21+08:00",
+      "path": "kruiseagents/installation.md",
+      "sha": "0e757cce398c617358e24e4383a7f0b4314d5532"
+    },
+    {
+      "age_days": 9,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2026-05-09T10:53:21+08:00",
+      "path": "kruiseagents/introduction.md",
+      "sha": "0e757cce398c617358e24e4383a7f0b4314d5532"
+    },
+    {
+      "age_days": 9,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2026-05-09T17:06:20+08:00",
+      "path": "kruiseagents/user-cases/ack-kimi.md",
+      "sha": "e58008e322cc6e6babde89993329261e5d300152"
+    },
+    {
+      "age_days": 9,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2026-05-09T17:06:20+08:00",
+      "path": "kruiseagents/user-cases/ack-lixiang.md",
+      "sha": "e58008e322cc6e6babde89993329261e5d300152"
+    },
+    {
+      "age_days": 9,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2026-05-09T17:06:20+08:00",
+      "path": "kruiseagents/user-cases/ack-minimax.md",
+      "sha": "e58008e322cc6e6babde89993329261e5d300152"
+    },
+    {
+      "age_days": 38,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2026-04-09T17:39:54+08:00",
+      "path": "kruiseagents/user-manuals/runtime-injection.md",
+      "sha": "8f4b0048a9ac05ccac4dd270903c34e36f73332f"
+    },
+    {
+      "age_days": 38,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2026-04-09T17:39:54+08:00",
+      "path": "kruiseagents/user-manuals/sandbox-claim.md",
+      "sha": "8f4b0048a9ac05ccac4dd270903c34e36f73332f"
+    },
+    {
+      "age_days": 100,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2026-02-06T18:19:41+08:00",
+      "path": "kruiseagents/user-manuals/warmpool-management.md",
+      "sha": "4717a26e95efb5b66ddad5ef020e74887ed01518"
+    },
+    {
+      "age_days": 739,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2024-05-09T11:28:12+08:00",
+      "path": "kruisegame/best-practices/gameserver-delivery-management.md",
+      "sha": "c98d3ea98d27bed988f076186229dab97f8c7c02"
+    },
+    {
+      "age_days": 816,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2024-02-22T10:36:01+08:00",
+      "path": "kruisegame/best-practices/pve-game.md",
+      "sha": "fc9b63d51226c91656895dbc731c1de171079450"
+    },
+    {
+      "age_days": 864,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2024-01-04T18:51:17+08:00",
+      "path": "kruisegame/best-practices/session-based-game.md",
+      "sha": "398a0f621b6d41dbe65c3eb9a1dc7878ab68b67b"
+    },
+    {
+      "age_days": 815,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2024-02-23T10:21:02+08:00",
+      "path": "kruisegame/best-practices/shared-mem.md",
+      "sha": "a02428bf120fdab12cf9d281059e6abe41cc887a"
+    },
+    {
+      "age_days": 683,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2024-07-04T10:29:03+08:00",
+      "path": "kruisegame/best-practices/workflow.md",
+      "sha": "a0b7bc624f103bf857e446989c117ddd47ddbf3a"
+    },
+    {
+      "age_days": 712,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2024-06-04T21:18:36+08:00",
+      "path": "kruisegame/blog-video/ack-one-okg.md",
+      "sha": "fd84109936efa2f9df98639c7d5ded7100c4e792"
+    },
+    {
+      "age_days": 263,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2025-08-28T15:07:27+08:00",
+      "path": "kruisegame/blog-video/api-gateway-okg.md",
+      "sha": "b262124f90c07138dd520edef528b9cb98f8e8bf"
+    },
+    {
+      "age_days": 712,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2024-06-04T21:18:36+08:00",
+      "path": "kruisegame/blog-video/cloud-forward-okg.md",
+      "sha": "fd84109936efa2f9df98639c7d5ded7100c4e792"
+    },
+    {
+      "age_days": 418,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2025-03-25T18:11:40+08:00",
+      "path": "kruisegame/blog-video/gameserver-scale.md",
+      "sha": "cb4bf970a5d4ba99d2f6ad8faeac2d2d0414d3d3"
+    },
+    {
+      "age_days": 901,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2023-11-29T16:12:44+08:00",
+      "path": "kruisegame/blog-video/guanying-20231129.md",
+      "sha": "7200d7e4b683fbf1aea411e62d45ca0306512fa7"
+    },
+    {
+      "age_days": 797,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2024-03-12T15:02:19+08:00",
+      "path": "kruisegame/blog-video/higress.md",
+      "sha": "92ee09e2b4552c9e056541abbe68ffa15264be57"
+    },
+    {
+      "age_days": 549,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2024-11-15T11:40:04+08:00",
+      "path": "kruisegame/blog-video/kubecon-chillyroom-20240823.md",
+      "sha": "97fb031623445e9f1327a6279aa1bb834dbef38a"
+    },
+    {
+      "age_days": 901,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2023-11-29T16:12:44+08:00",
+      "path": "kruisegame/blog-video/kubecon-shangyou-20230926.md",
+      "sha": "7200d7e4b683fbf1aea411e62d45ca0306512fa7"
+    },
+    {
+      "age_days": 619,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2024-09-06T11:28:03+08:00",
+      "path": "kruisegame/blog-video/lilith-okg.md",
+      "sha": "e78f1c68c7e0b2e614e3d566f203ce89cac3dcf1"
+    },
+    {
+      "age_days": 901,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2023-11-29T16:12:44+08:00",
+      "path": "kruisegame/blog-video/meetup-guangzhou-20231125.md",
+      "sha": "7200d7e4b683fbf1aea411e62d45ca0306512fa7"
+    },
+    {
+      "age_days": 514,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2024-12-20T09:24:54+08:00",
+      "path": "kruisegame/blog-video/okg-360.md",
+      "sha": "db0bb0dec09f5680d63fe5de7a1ec9b070211caa"
+    },
+    {
+      "age_days": 712,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2024-06-04T21:18:36+08:00",
+      "path": "kruisegame/blog-video/okg-911.md",
+      "sha": "fd84109936efa2f9df98639c7d5ded7100c4e792"
+    },
+    {
+      "age_days": 712,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2024-06-04T21:18:36+08:00",
+      "path": "kruisegame/blog-video/okg-gsshosting.md",
+      "sha": "fd84109936efa2f9df98639c7d5ded7100c4e792"
+    },
+    {
+      "age_days": 202,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2025-10-28T11:30:23+08:00",
+      "path": "kruisegame/blog-video/paomu.md",
+      "sha": "6a386661fb62aa883d20c350f593d9ee47af9360"
+    },
+    {
+      "age_days": 306,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2025-07-15T17:59:47+08:00",
+      "path": "kruisegame/blog-video/yahaha-okg.md",
+      "sha": "dcbf7c906fa20eb10c006c53fd1755d711bada21"
+    },
+    {
+      "age_days": 101,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2026-02-06T09:21:57+08:00",
+      "path": "kruisegame/design-concept.md",
+      "sha": "1c4717498e659361af9f6d6da5625abe43a8d4cc"
+    },
+    {
+      "age_days": 1132,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2023-04-12T17:19:52+08:00",
+      "path": "kruisegame/developer-manuals/contribution.md",
+      "sha": "2447ca2e2546e292e3851fa0084e05f5f1c99cd6"
+    },
+    {
+      "age_days": 1131,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2023-04-13T11:08:53+08:00",
+      "path": "kruisegame/developer-manuals/faq.md",
+      "sha": "723612e1a83ef2f584f9fbff1ee6badb683044c2"
+    },
+    {
+      "age_days": 832,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2024-02-05T17:50:46+08:00",
+      "path": "kruisegame/developer-manuals/go-client.md",
+      "sha": "544cf948d8bdd7f0ea3dfac9508beb6688a46f01"
+    },
+    {
+      "age_days": 448,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2025-02-24T14:33:42+08:00",
+      "path": "kruisegame/developer-manuals/kruise-game-api.md",
+      "sha": "81c95e3d4c5b61c5952ada227b3f2d7628c12467"
+    },
+    {
+      "age_days": 306,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2025-07-15T17:59:47+08:00",
+      "path": "kruisegame/installation.md",
+      "sha": "dcbf7c906fa20eb10c006c53fd1755d711bada21"
+    },
+    {
+      "age_days": 263,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2025-08-28T15:07:27+08:00",
+      "path": "kruisegame/introduction.md",
+      "sha": "b262124f90c07138dd520edef528b9cb98f8e8bf"
+    },
+    {
+      "age_days": 1132,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2023-04-12T17:19:52+08:00",
+      "path": "kruisegame/user-manuals/container-startup-sequence-control.md",
+      "sha": "2447ca2e2546e292e3851fa0084e05f5f1c99cd6"
+    },
+    {
+      "age_days": 299,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2025-07-23T09:16:54+08:00",
+      "path": "kruisegame/user-manuals/crd-field-description.md",
+      "sha": "12095e910af05242e1b76e575ef5cd1b6ae2ed3f"
+    },
+    {
+      "age_days": 420,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2025-03-24T09:50:51+08:00",
+      "path": "kruisegame/user-manuals/deploy-gameservers.md",
+      "sha": "a9a3ca44aadd3c698b49845db26ce04af59a1550"
+    },
+    {
+      "age_days": 306,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2025-07-15T17:59:47+08:00",
+      "path": "kruisegame/user-manuals/faq.md",
+      "sha": "dcbf7c906fa20eb10c006c53fd1755d711bada21"
+    },
+    {
+      "age_days": 103,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2026-02-03T18:59:47+08:00",
+      "path": "kruisegame/user-manuals/game-dashboard.md",
+      "sha": "2adb6c5b01a9da520a2acb28380c9d4f2c7e2903"
+    },
+    {
+      "age_days": 1011,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2023-08-11T10:41:40+08:00",
+      "path": "kruisegame/user-manuals/game-matchmaking.md",
+      "sha": "9a6e20392312421c9980e5c95f25837d302b9000"
+    },
+    {
+      "age_days": 1088,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2023-05-26T10:48:31+08:00",
+      "path": "kruisegame/user-manuals/gameserver-monitor.md",
+      "sha": "7004fb0f04c5c8dc4906b7f12e21a0231d6d1625"
+    },
+    {
+      "age_days": 306,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2025-07-15T17:59:47+08:00",
+      "path": "kruisegame/user-manuals/gameserver-scheduler.md",
+      "sha": "dcbf7c906fa20eb10c006c53fd1755d711bada21"
+    },
+    {
+      "age_days": 306,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2025-07-15T17:59:47+08:00",
+      "path": "kruisegame/user-manuals/gameserver-state.md",
+      "sha": "dcbf7c906fa20eb10c006c53fd1755d711bada21"
+    },
+    {
+      "age_days": 306,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2025-07-15T17:59:47+08:00",
+      "path": "kruisegame/user-manuals/gameservers-scale.md",
+      "sha": "dcbf7c906fa20eb10c006c53fd1755d711bada21"
+    },
+    {
+      "age_days": 1043,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2023-07-10T10:06:11+08:00",
+      "path": "kruisegame/user-manuals/hot-update.md",
+      "sha": "34534c125f8ad8fe74023e50391180783d6ec7ab"
+    },
+    {
+      "age_days": 447,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2025-02-24T18:06:34+08:00",
+      "path": "kruisegame/user-manuals/lifecycle.md",
+      "sha": "fde7e5d8d9d19890eea4a468cd0b14647909325a"
+    },
+    {
+      "age_days": 299,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2025-07-23T09:15:54+08:00",
+      "path": "kruisegame/user-manuals/network.md",
+      "sha": "af7ba0cf6b9a8d405ff833d9e603cf599b057e52"
+    },
+    {
+      "age_days": 103,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2026-02-03T18:59:47+08:00",
+      "path": "kruisegame/user-manuals/service-qualities.md",
+      "sha": "2adb6c5b01a9da520a2acb28380c9d4f2c7e2903"
+    },
+    {
+      "age_days": 1088,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2023-05-26T10:48:31+08:00",
+      "path": "kruisegame/user-manuals/update-strategy.md",
+      "sha": "7004fb0f04c5c8dc4906b7f12e21a0231d6d1625"
+    },
+    {
+      "age_days": 968,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2023-09-23T11:11:19+08:00",
+      "path": "versioned_docs/version-v1.5/best-practices/acronjob+broadcastjob.md",
+      "sha": "8245fd7b3029f9133bb1a96144ac53f0e3e9c5e0"
+    },
+    {
+      "age_days": 968,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2023-09-23T11:11:19+08:00",
+      "path": "versioned_docs/version-v1.5/best-practices/ci-pipeline-image-predownload.md",
+      "sha": "8245fd7b3029f9133bb1a96144ac53f0e3e9c5e0"
+    },
+    {
+      "age_days": 968,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2023-09-23T11:11:19+08:00",
+      "path": "versioned_docs/version-v1.5/best-practices/cloneset-lifecycle.md",
+      "sha": "8245fd7b3029f9133bb1a96144ac53f0e3e9c5e0"
+    },
+    {
+      "age_days": 968,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2023-09-23T11:11:19+08:00",
+      "path": "versioned_docs/version-v1.5/best-practices/elastic-deployment.md",
+      "sha": "8245fd7b3029f9133bb1a96144ac53f0e3e9c5e0"
+    },
+    {
+      "age_days": 978,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2023-09-12T20:39:09+08:00",
+      "path": "versioned_docs/version-v1.5/best-practices/gitops-with-kruise.md",
+      "sha": "c33a011c0b50768db63d1b0fa3ca563f42691c10"
+    },
+    {
+      "age_days": 978,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2023-09-12T20:39:09+08:00",
+      "path": "versioned_docs/version-v1.5/best-practices/hpa-configuration.md",
+      "sha": "c33a011c0b50768db63d1b0fa3ca563f42691c10"
+    },
+    {
+      "age_days": 696,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2024-06-20T20:31:51+08:00",
+      "path": "versioned_docs/version-v1.5/best-practices/log-container-sidecarset.md",
+      "sha": "a2cb8b1a55b6d03eb8fa75d2b2cf9c2c521d2037"
+    },
+    {
+      "age_days": 101,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2026-02-06T09:21:57+08:00",
+      "path": "versioned_docs/version-v1.5/cli-tool/kubectl-plugin.md",
+      "sha": "1c4717498e659361af9f6d6da5625abe43a8d4cc"
+    },
+    {
+      "age_days": 968,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2023-09-23T11:11:19+08:00",
+      "path": "versioned_docs/version-v1.5/cli-tool/kustomize-plugin.md",
+      "sha": "8245fd7b3029f9133bb1a96144ac53f0e3e9c5e0"
+    },
+    {
+      "age_days": 978,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2023-09-12T20:39:09+08:00",
+      "path": "versioned_docs/version-v1.5/core-concepts/architecture.md",
+      "sha": "c33a011c0b50768db63d1b0fa3ca563f42691c10"
+    },
+    {
+      "age_days": 101,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2026-02-06T09:21:57+08:00",
+      "path": "versioned_docs/version-v1.5/core-concepts/inplace-update.md",
+      "sha": "1c4717498e659361af9f6d6da5625abe43a8d4cc"
+    },
+    {
+      "age_days": 420,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2025-03-24T09:50:51+08:00",
+      "path": "versioned_docs/version-v1.5/developer-manuals/go-client.md",
+      "sha": "a9a3ca44aadd3c698b49845db26ce04af59a1550"
+    },
+    {
+      "age_days": 968,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2023-09-23T11:11:19+08:00",
+      "path": "versioned_docs/version-v1.5/developer-manuals/java-client.md",
+      "sha": "8245fd7b3029f9133bb1a96144ac53f0e3e9c5e0"
+    },
+    {
+      "age_days": 968,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2023-09-23T11:11:19+08:00",
+      "path": "versioned_docs/version-v1.5/developer-manuals/other-languages.md",
+      "sha": "8245fd7b3029f9133bb1a96144ac53f0e3e9c5e0"
+    },
+    {
+      "age_days": 978,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2023-09-12T20:39:09+08:00",
+      "path": "versioned_docs/version-v1.5/faq.md",
+      "sha": "c33a011c0b50768db63d1b0fa3ca563f42691c10"
+    },
+    {
+      "age_days": 584,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2024-10-10T20:26:26+08:00",
+      "path": "versioned_docs/version-v1.5/installation.md",
+      "sha": "3bbb05bb51fff46851ada7eff7b167ec581d36e2"
+    },
+    {
+      "age_days": 101,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2026-02-06T09:21:57+08:00",
+      "path": "versioned_docs/version-v1.5/introduction.md",
+      "sha": "1c4717498e659361af9f6d6da5625abe43a8d4cc"
+    },
+    {
+      "age_days": 968,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2023-09-23T11:11:19+08:00",
+      "path": "versioned_docs/version-v1.5/user-manuals/advancedcronjob.md",
+      "sha": "8245fd7b3029f9133bb1a96144ac53f0e3e9c5e0"
+    },
+    {
+      "age_days": 968,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2023-09-23T11:11:19+08:00",
+      "path": "versioned_docs/version-v1.5/user-manuals/advanceddaemonset.md",
+      "sha": "8245fd7b3029f9133bb1a96144ac53f0e3e9c5e0"
+    },
+    {
+      "age_days": 181,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2025-11-18T11:28:03+08:00",
+      "path": "versioned_docs/version-v1.5/user-manuals/advancedstatefulset.md",
+      "sha": "4025a5894e66dd6f70d199451fcaa29798785ff0"
+    },
+    {
+      "age_days": 968,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2023-09-23T11:11:19+08:00",
+      "path": "versioned_docs/version-v1.5/user-manuals/broadcastjob.md",
+      "sha": "8245fd7b3029f9133bb1a96144ac53f0e3e9c5e0"
+    },
+    {
+      "age_days": 101,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2026-02-06T09:21:57+08:00",
+      "path": "versioned_docs/version-v1.5/user-manuals/cloneset.md",
+      "sha": "1c4717498e659361af9f6d6da5625abe43a8d4cc"
+    },
+    {
+      "age_days": 978,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2023-09-12T20:39:09+08:00",
+      "path": "versioned_docs/version-v1.5/user-manuals/containerlaunchpriority.md",
+      "sha": "c33a011c0b50768db63d1b0fa3ca563f42691c10"
+    },
+    {
+      "age_days": 968,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2023-09-23T11:11:19+08:00",
+      "path": "versioned_docs/version-v1.5/user-manuals/containerrecreaterequest.md",
+      "sha": "8245fd7b3029f9133bb1a96144ac53f0e3e9c5e0"
+    },
+    {
+      "age_days": 101,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2026-02-06T09:21:57+08:00",
+      "path": "versioned_docs/version-v1.5/user-manuals/deletionprotection.md",
+      "sha": "1c4717498e659361af9f6d6da5625abe43a8d4cc"
+    },
+    {
+      "age_days": 968,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2023-09-23T11:11:19+08:00",
+      "path": "versioned_docs/version-v1.5/user-manuals/imagepulljob.md",
+      "sha": "8245fd7b3029f9133bb1a96144ac53f0e3e9c5e0"
+    },
+    {
+      "age_days": 697,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2024-06-20T15:35:51+08:00",
+      "path": "versioned_docs/version-v1.5/user-manuals/jobsidecarterminator.md",
+      "sha": "a8dac7994fe8092f293b0dcc984d1827627fb297"
+    },
+    {
+      "age_days": 101,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2026-02-06T09:21:57+08:00",
+      "path": "versioned_docs/version-v1.5/user-manuals/persistentpodstate.md",
+      "sha": "1c4717498e659361af9f6d6da5625abe43a8d4cc"
+    },
+    {
+      "age_days": 968,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2023-09-23T11:11:19+08:00",
+      "path": "versioned_docs/version-v1.5/user-manuals/podprobemarker.md",
+      "sha": "8245fd7b3029f9133bb1a96144ac53f0e3e9c5e0"
+    },
+    {
+      "age_days": 978,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2023-09-12T20:39:09+08:00",
+      "path": "versioned_docs/version-v1.5/user-manuals/podunavailablebudget.md",
+      "sha": "c33a011c0b50768db63d1b0fa3ca563f42691c10"
+    },
+    {
+      "age_days": 968,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2023-09-23T11:11:19+08:00",
+      "path": "versioned_docs/version-v1.5/user-manuals/resourcedistribution.md",
+      "sha": "8245fd7b3029f9133bb1a96144ac53f0e3e9c5e0"
+    },
+    {
+      "age_days": 420,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2025-03-24T09:50:51+08:00",
+      "path": "versioned_docs/version-v1.5/user-manuals/sidecarset.md",
+      "sha": "a9a3ca44aadd3c698b49845db26ce04af59a1550"
+    },
+    {
+      "age_days": 101,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2026-02-06T09:21:57+08:00",
+      "path": "versioned_docs/version-v1.5/user-manuals/uniteddeployment.md",
+      "sha": "1c4717498e659361af9f6d6da5625abe43a8d4cc"
+    },
+    {
+      "age_days": 420,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2025-03-24T09:50:51+08:00",
+      "path": "versioned_docs/version-v1.5/user-manuals/workloadspread.md",
+      "sha": "a9a3ca44aadd3c698b49845db26ce04af59a1550"
+    },
+    {
+      "age_days": 786,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2024-03-22T18:59:28+08:00",
+      "path": "versioned_docs/version-v1.6/best-practices/acronjob+broadcastjob.md",
+      "sha": "e2741a06915b2246a85f88086b6c7db02106b357"
+    },
+    {
+      "age_days": 786,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2024-03-22T18:59:28+08:00",
+      "path": "versioned_docs/version-v1.6/best-practices/ci-pipeline-image-predownload.md",
+      "sha": "e2741a06915b2246a85f88086b6c7db02106b357"
+    },
+    {
+      "age_days": 786,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2024-03-22T18:59:28+08:00",
+      "path": "versioned_docs/version-v1.6/best-practices/cloneset-lifecycle.md",
+      "sha": "e2741a06915b2246a85f88086b6c7db02106b357"
+    },
+    {
+      "age_days": 786,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2024-03-22T18:59:28+08:00",
+      "path": "versioned_docs/version-v1.6/best-practices/elastic-deployment.md",
+      "sha": "e2741a06915b2246a85f88086b6c7db02106b357"
+    },
+    {
+      "age_days": 786,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2024-03-22T18:59:28+08:00",
+      "path": "versioned_docs/version-v1.6/best-practices/gitops-with-kruise.md",
+      "sha": "e2741a06915b2246a85f88086b6c7db02106b357"
+    },
+    {
+      "age_days": 786,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2024-03-22T18:59:28+08:00",
+      "path": "versioned_docs/version-v1.6/best-practices/hpa-configuration.md",
+      "sha": "e2741a06915b2246a85f88086b6c7db02106b357"
+    },
+    {
+      "age_days": 696,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2024-06-20T20:31:51+08:00",
+      "path": "versioned_docs/version-v1.6/best-practices/log-container-sidecarset.md",
+      "sha": "a2cb8b1a55b6d03eb8fa75d2b2cf9c2c521d2037"
+    },
+    {
+      "age_days": 101,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2026-02-06T09:21:57+08:00",
+      "path": "versioned_docs/version-v1.6/cli-tool/kubectl-plugin.md",
+      "sha": "1c4717498e659361af9f6d6da5625abe43a8d4cc"
+    },
+    {
+      "age_days": 786,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2024-03-22T18:59:28+08:00",
+      "path": "versioned_docs/version-v1.6/cli-tool/kustomize-plugin.md",
+      "sha": "e2741a06915b2246a85f88086b6c7db02106b357"
+    },
+    {
+      "age_days": 786,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2024-03-22T18:59:28+08:00",
+      "path": "versioned_docs/version-v1.6/cli-tool/kustomize-schema-generator.md",
+      "sha": "e2741a06915b2246a85f88086b6c7db02106b357"
+    },
+    {
+      "age_days": 786,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2024-03-22T18:59:28+08:00",
+      "path": "versioned_docs/version-v1.6/core-concepts/architecture.md",
+      "sha": "e2741a06915b2246a85f88086b6c7db02106b357"
+    },
+    {
+      "age_days": 101,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2026-02-06T09:21:57+08:00",
+      "path": "versioned_docs/version-v1.6/core-concepts/inplace-update.md",
+      "sha": "1c4717498e659361af9f6d6da5625abe43a8d4cc"
+    },
+    {
+      "age_days": 420,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2025-03-24T09:50:51+08:00",
+      "path": "versioned_docs/version-v1.6/developer-manuals/go-client.md",
+      "sha": "a9a3ca44aadd3c698b49845db26ce04af59a1550"
+    },
+    {
+      "age_days": 786,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2024-03-22T18:59:28+08:00",
+      "path": "versioned_docs/version-v1.6/developer-manuals/java-client.md",
+      "sha": "e2741a06915b2246a85f88086b6c7db02106b357"
+    },
+    {
+      "age_days": 786,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2024-03-22T18:59:28+08:00",
+      "path": "versioned_docs/version-v1.6/developer-manuals/other-languages.md",
+      "sha": "e2741a06915b2246a85f88086b6c7db02106b357"
+    },
+    {
+      "age_days": 786,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2024-03-22T18:59:28+08:00",
+      "path": "versioned_docs/version-v1.6/faq.md",
+      "sha": "e2741a06915b2246a85f88086b6c7db02106b357"
+    },
+    {
+      "age_days": 584,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2024-10-10T20:26:26+08:00",
+      "path": "versioned_docs/version-v1.6/installation.md",
+      "sha": "3bbb05bb51fff46851ada7eff7b167ec581d36e2"
+    },
+    {
+      "age_days": 101,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2026-02-06T09:21:57+08:00",
+      "path": "versioned_docs/version-v1.6/introduction.md",
+      "sha": "1c4717498e659361af9f6d6da5625abe43a8d4cc"
+    },
+    {
+      "age_days": 786,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2024-03-22T18:59:28+08:00",
+      "path": "versioned_docs/version-v1.6/user-manuals/advancedcronjob.md",
+      "sha": "e2741a06915b2246a85f88086b6c7db02106b357"
+    },
+    {
+      "age_days": 786,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2024-03-22T18:59:28+08:00",
+      "path": "versioned_docs/version-v1.6/user-manuals/advanceddaemonset.md",
+      "sha": "e2741a06915b2246a85f88086b6c7db02106b357"
+    },
+    {
+      "age_days": 181,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2025-11-18T11:28:03+08:00",
+      "path": "versioned_docs/version-v1.6/user-manuals/advancedstatefulset.md",
+      "sha": "4025a5894e66dd6f70d199451fcaa29798785ff0"
+    },
+    {
+      "age_days": 786,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2024-03-22T18:59:28+08:00",
+      "path": "versioned_docs/version-v1.6/user-manuals/broadcastjob.md",
+      "sha": "e2741a06915b2246a85f88086b6c7db02106b357"
+    },
+    {
+      "age_days": 101,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2026-02-06T09:21:57+08:00",
+      "path": "versioned_docs/version-v1.6/user-manuals/cloneset.md",
+      "sha": "1c4717498e659361af9f6d6da5625abe43a8d4cc"
+    },
+    {
+      "age_days": 786,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2024-03-22T18:59:28+08:00",
+      "path": "versioned_docs/version-v1.6/user-manuals/containerlaunchpriority.md",
+      "sha": "e2741a06915b2246a85f88086b6c7db02106b357"
+    },
+    {
+      "age_days": 786,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2024-03-22T18:59:28+08:00",
+      "path": "versioned_docs/version-v1.6/user-manuals/containerrecreaterequest.md",
+      "sha": "e2741a06915b2246a85f88086b6c7db02106b357"
+    },
+    {
+      "age_days": 101,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2026-02-06T09:21:57+08:00",
+      "path": "versioned_docs/version-v1.6/user-manuals/deletionprotection.md",
+      "sha": "1c4717498e659361af9f6d6da5625abe43a8d4cc"
+    },
+    {
+      "age_days": 786,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2024-03-22T18:59:28+08:00",
+      "path": "versioned_docs/version-v1.6/user-manuals/imagepulljob.md",
+      "sha": "e2741a06915b2246a85f88086b6c7db02106b357"
+    },
+    {
+      "age_days": 697,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2024-06-20T15:35:51+08:00",
+      "path": "versioned_docs/version-v1.6/user-manuals/jobsidecarterminator.md",
+      "sha": "a8dac7994fe8092f293b0dcc984d1827627fb297"
+    },
+    {
+      "age_days": 101,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2026-02-06T09:21:57+08:00",
+      "path": "versioned_docs/version-v1.6/user-manuals/persistentpodstate.md",
+      "sha": "1c4717498e659361af9f6d6da5625abe43a8d4cc"
+    },
+    {
+      "age_days": 786,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2024-03-22T18:59:28+08:00",
+      "path": "versioned_docs/version-v1.6/user-manuals/podprobemarker.md",
+      "sha": "e2741a06915b2246a85f88086b6c7db02106b357"
+    },
+    {
+      "age_days": 786,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2024-03-22T18:59:28+08:00",
+      "path": "versioned_docs/version-v1.6/user-manuals/podunavailablebudget.md",
+      "sha": "e2741a06915b2246a85f88086b6c7db02106b357"
+    },
+    {
+      "age_days": 786,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2024-03-22T18:59:28+08:00",
+      "path": "versioned_docs/version-v1.6/user-manuals/resourcedistribution.md",
+      "sha": "e2741a06915b2246a85f88086b6c7db02106b357"
+    },
+    {
+      "age_days": 420,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2025-03-24T09:50:51+08:00",
+      "path": "versioned_docs/version-v1.6/user-manuals/sidecarset.md",
+      "sha": "a9a3ca44aadd3c698b49845db26ce04af59a1550"
+    },
+    {
+      "age_days": 101,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2026-02-06T09:21:57+08:00",
+      "path": "versioned_docs/version-v1.6/user-manuals/uniteddeployment.md",
+      "sha": "1c4717498e659361af9f6d6da5625abe43a8d4cc"
+    },
+    {
+      "age_days": 420,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2025-03-24T09:50:51+08:00",
+      "path": "versioned_docs/version-v1.6/user-manuals/workloadspread.md",
+      "sha": "a9a3ca44aadd3c698b49845db26ce04af59a1550"
+    },
+    {
+      "age_days": 628,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2024-08-28T11:04:39+08:00",
+      "path": "versioned_docs/version-v1.7/best-practices/acronjob+broadcastjob.md",
+      "sha": "45e73791d6be6d2f449db64712b918987d1f843b"
+    },
+    {
+      "age_days": 628,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2024-08-28T11:04:39+08:00",
+      "path": "versioned_docs/version-v1.7/best-practices/ci-pipeline-image-predownload.md",
+      "sha": "45e73791d6be6d2f449db64712b918987d1f843b"
+    },
+    {
+      "age_days": 628,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2024-08-28T11:04:39+08:00",
+      "path": "versioned_docs/version-v1.7/best-practices/cloneset-lifecycle.md",
+      "sha": "45e73791d6be6d2f449db64712b918987d1f843b"
+    },
+    {
+      "age_days": 628,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2024-08-28T11:04:39+08:00",
+      "path": "versioned_docs/version-v1.7/best-practices/elastic-deployment.md",
+      "sha": "45e73791d6be6d2f449db64712b918987d1f843b"
+    },
+    {
+      "age_days": 628,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2024-08-28T11:04:39+08:00",
+      "path": "versioned_docs/version-v1.7/best-practices/gitops-with-kruise.md",
+      "sha": "45e73791d6be6d2f449db64712b918987d1f843b"
+    },
+    {
+      "age_days": 628,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2024-08-28T11:04:39+08:00",
+      "path": "versioned_docs/version-v1.7/best-practices/hpa-configuration.md",
+      "sha": "45e73791d6be6d2f449db64712b918987d1f843b"
+    },
+    {
+      "age_days": 628,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2024-08-28T11:04:39+08:00",
+      "path": "versioned_docs/version-v1.7/best-practices/log-container-sidecarset.md",
+      "sha": "45e73791d6be6d2f449db64712b918987d1f843b"
+    },
+    {
+      "age_days": 101,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2026-02-06T09:21:57+08:00",
+      "path": "versioned_docs/version-v1.7/cli-tool/kubectl-plugin.md",
+      "sha": "1c4717498e659361af9f6d6da5625abe43a8d4cc"
+    },
+    {
+      "age_days": 628,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2024-08-28T11:04:39+08:00",
+      "path": "versioned_docs/version-v1.7/cli-tool/kustomize-plugin.md",
+      "sha": "45e73791d6be6d2f449db64712b918987d1f843b"
+    },
+    {
+      "age_days": 628,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2024-08-28T11:04:39+08:00",
+      "path": "versioned_docs/version-v1.7/cli-tool/kustomize-schema-generator.md",
+      "sha": "45e73791d6be6d2f449db64712b918987d1f843b"
+    },
+    {
+      "age_days": 628,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2024-08-28T11:04:39+08:00",
+      "path": "versioned_docs/version-v1.7/core-concepts/architecture.md",
+      "sha": "45e73791d6be6d2f449db64712b918987d1f843b"
+    },
+    {
+      "age_days": 101,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2026-02-06T09:21:57+08:00",
+      "path": "versioned_docs/version-v1.7/core-concepts/inplace-update.md",
+      "sha": "1c4717498e659361af9f6d6da5625abe43a8d4cc"
+    },
+    {
+      "age_days": 420,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2025-03-24T09:50:51+08:00",
+      "path": "versioned_docs/version-v1.7/developer-manuals/go-client.md",
+      "sha": "a9a3ca44aadd3c698b49845db26ce04af59a1550"
+    },
+    {
+      "age_days": 628,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2024-08-28T11:04:39+08:00",
+      "path": "versioned_docs/version-v1.7/developer-manuals/java-client.md",
+      "sha": "45e73791d6be6d2f449db64712b918987d1f843b"
+    },
+    {
+      "age_days": 628,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2024-08-28T11:04:39+08:00",
+      "path": "versioned_docs/version-v1.7/developer-manuals/other-languages.md",
+      "sha": "45e73791d6be6d2f449db64712b918987d1f843b"
+    },
+    {
+      "age_days": 628,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2024-08-28T11:04:39+08:00",
+      "path": "versioned_docs/version-v1.7/faq.md",
+      "sha": "45e73791d6be6d2f449db64712b918987d1f843b"
+    },
+    {
+      "age_days": 315,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2025-07-07T14:41:39+08:00",
+      "path": "versioned_docs/version-v1.7/installation.md",
+      "sha": "4973bbcf8901e0a6704cbaf218fe56db83a77e6e"
+    },
+    {
+      "age_days": 101,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2026-02-06T09:21:57+08:00",
+      "path": "versioned_docs/version-v1.7/introduction.md",
+      "sha": "1c4717498e659361af9f6d6da5625abe43a8d4cc"
+    },
+    {
+      "age_days": 315,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2025-07-07T10:31:40+08:00",
+      "path": "versioned_docs/version-v1.7/operator-manuals/availability.md",
+      "sha": "dbb5d412b8d5032c009c79a9e773f22192743ddb"
+    },
+    {
+      "age_days": 101,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2026-02-06T09:21:57+08:00",
+      "path": "versioned_docs/version-v1.7/operator-manuals/troubleshooting.md",
+      "sha": "1c4717498e659361af9f6d6da5625abe43a8d4cc"
+    },
+    {
+      "age_days": 628,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2024-08-28T11:04:39+08:00",
+      "path": "versioned_docs/version-v1.7/user-manuals/advancedcronjob.md",
+      "sha": "45e73791d6be6d2f449db64712b918987d1f843b"
+    },
+    {
+      "age_days": 628,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2024-08-28T11:04:39+08:00",
+      "path": "versioned_docs/version-v1.7/user-manuals/advanceddaemonset.md",
+      "sha": "45e73791d6be6d2f449db64712b918987d1f843b"
+    },
+    {
+      "age_days": 181,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2025-11-18T11:28:03+08:00",
+      "path": "versioned_docs/version-v1.7/user-manuals/advancedstatefulset.md",
+      "sha": "4025a5894e66dd6f70d199451fcaa29798785ff0"
+    },
+    {
+      "age_days": 628,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2024-08-28T11:04:39+08:00",
+      "path": "versioned_docs/version-v1.7/user-manuals/broadcastjob.md",
+      "sha": "45e73791d6be6d2f449db64712b918987d1f843b"
+    },
+    {
+      "age_days": 101,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2026-02-06T09:21:57+08:00",
+      "path": "versioned_docs/version-v1.7/user-manuals/cloneset.md",
+      "sha": "1c4717498e659361af9f6d6da5625abe43a8d4cc"
+    },
+    {
+      "age_days": 628,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2024-08-28T11:04:39+08:00",
+      "path": "versioned_docs/version-v1.7/user-manuals/containerlaunchpriority.md",
+      "sha": "45e73791d6be6d2f449db64712b918987d1f843b"
+    },
+    {
+      "age_days": 628,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2024-08-28T11:04:39+08:00",
+      "path": "versioned_docs/version-v1.7/user-manuals/containerrecreaterequest.md",
+      "sha": "45e73791d6be6d2f449db64712b918987d1f843b"
+    },
+    {
+      "age_days": 101,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2026-02-06T09:21:57+08:00",
+      "path": "versioned_docs/version-v1.7/user-manuals/deletionprotection.md",
+      "sha": "1c4717498e659361af9f6d6da5625abe43a8d4cc"
+    },
+    {
+      "age_days": 628,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2024-08-28T11:04:39+08:00",
+      "path": "versioned_docs/version-v1.7/user-manuals/imagepulljob.md",
+      "sha": "45e73791d6be6d2f449db64712b918987d1f843b"
+    },
+    {
+      "age_days": 628,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2024-08-28T11:04:39+08:00",
+      "path": "versioned_docs/version-v1.7/user-manuals/jobsidecarterminator.md",
+      "sha": "45e73791d6be6d2f449db64712b918987d1f843b"
+    },
+    {
+      "age_days": 101,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2026-02-06T09:21:57+08:00",
+      "path": "versioned_docs/version-v1.7/user-manuals/persistentpodstate.md",
+      "sha": "1c4717498e659361af9f6d6da5625abe43a8d4cc"
+    },
+    {
+      "age_days": 628,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2024-08-28T11:04:39+08:00",
+      "path": "versioned_docs/version-v1.7/user-manuals/podprobemarker.md",
+      "sha": "45e73791d6be6d2f449db64712b918987d1f843b"
+    },
+    {
+      "age_days": 628,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2024-08-28T11:04:39+08:00",
+      "path": "versioned_docs/version-v1.7/user-manuals/podunavailablebudget.md",
+      "sha": "45e73791d6be6d2f449db64712b918987d1f843b"
+    },
+    {
+      "age_days": 628,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2024-08-28T11:04:39+08:00",
+      "path": "versioned_docs/version-v1.7/user-manuals/resourcedistribution.md",
+      "sha": "45e73791d6be6d2f449db64712b918987d1f843b"
+    },
+    {
+      "age_days": 420,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2025-03-24T09:50:51+08:00",
+      "path": "versioned_docs/version-v1.7/user-manuals/sidecarset.md",
+      "sha": "a9a3ca44aadd3c698b49845db26ce04af59a1550"
+    },
+    {
+      "age_days": 101,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2026-02-06T09:21:57+08:00",
+      "path": "versioned_docs/version-v1.7/user-manuals/uniteddeployment.md",
+      "sha": "1c4717498e659361af9f6d6da5625abe43a8d4cc"
+    },
+    {
+      "age_days": 420,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2025-03-24T09:50:51+08:00",
+      "path": "versioned_docs/version-v1.7/user-manuals/workloadspread.md",
+      "sha": "a9a3ca44aadd3c698b49845db26ce04af59a1550"
+    },
+    {
+      "age_days": 410,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2025-04-02T19:26:31+08:00",
+      "path": "versioned_docs/version-v1.8/best-practices/acronjob+broadcastjob.md",
+      "sha": "e74e4a58fbdb000199a4f9abc1577a23a545ed73"
+    },
+    {
+      "age_days": 410,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2025-04-02T19:26:31+08:00",
+      "path": "versioned_docs/version-v1.8/best-practices/ci-pipeline-image-predownload.md",
+      "sha": "e74e4a58fbdb000199a4f9abc1577a23a545ed73"
+    },
+    {
+      "age_days": 410,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2025-04-02T19:26:31+08:00",
+      "path": "versioned_docs/version-v1.8/best-practices/cloneset-lifecycle.md",
+      "sha": "e74e4a58fbdb000199a4f9abc1577a23a545ed73"
+    },
+    {
+      "age_days": 410,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2025-04-02T19:26:31+08:00",
+      "path": "versioned_docs/version-v1.8/best-practices/elastic-deployment.md",
+      "sha": "e74e4a58fbdb000199a4f9abc1577a23a545ed73"
+    },
+    {
+      "age_days": 410,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2025-04-02T19:26:31+08:00",
+      "path": "versioned_docs/version-v1.8/best-practices/gitops-with-kruise.md",
+      "sha": "e74e4a58fbdb000199a4f9abc1577a23a545ed73"
+    },
+    {
+      "age_days": 410,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2025-04-02T19:26:31+08:00",
+      "path": "versioned_docs/version-v1.8/best-practices/hpa-configuration.md",
+      "sha": "e74e4a58fbdb000199a4f9abc1577a23a545ed73"
+    },
+    {
+      "age_days": 410,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2025-04-02T19:26:31+08:00",
+      "path": "versioned_docs/version-v1.8/best-practices/log-container-sidecarset.md",
+      "sha": "e74e4a58fbdb000199a4f9abc1577a23a545ed73"
+    },
+    {
+      "age_days": 101,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2026-02-06T09:21:57+08:00",
+      "path": "versioned_docs/version-v1.8/cli-tool/kubectl-plugin.md",
+      "sha": "1c4717498e659361af9f6d6da5625abe43a8d4cc"
+    },
+    {
+      "age_days": 410,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2025-04-02T19:26:31+08:00",
+      "path": "versioned_docs/version-v1.8/cli-tool/kustomize-plugin.md",
+      "sha": "e74e4a58fbdb000199a4f9abc1577a23a545ed73"
+    },
+    {
+      "age_days": 410,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2025-04-02T19:26:31+08:00",
+      "path": "versioned_docs/version-v1.8/cli-tool/kustomize-schema-generator.md",
+      "sha": "e74e4a58fbdb000199a4f9abc1577a23a545ed73"
+    },
+    {
+      "age_days": 410,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2025-04-02T19:26:31+08:00",
+      "path": "versioned_docs/version-v1.8/core-concepts/architecture.md",
+      "sha": "e74e4a58fbdb000199a4f9abc1577a23a545ed73"
+    },
+    {
+      "age_days": 101,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2026-02-06T09:21:57+08:00",
+      "path": "versioned_docs/version-v1.8/core-concepts/inplace-update.md",
+      "sha": "1c4717498e659361af9f6d6da5625abe43a8d4cc"
+    },
+    {
+      "age_days": 410,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2025-04-02T19:26:31+08:00",
+      "path": "versioned_docs/version-v1.8/developer-manuals/go-client.md",
+      "sha": "e74e4a58fbdb000199a4f9abc1577a23a545ed73"
+    },
+    {
+      "age_days": 410,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2025-04-02T19:26:31+08:00",
+      "path": "versioned_docs/version-v1.8/developer-manuals/java-client.md",
+      "sha": "e74e4a58fbdb000199a4f9abc1577a23a545ed73"
+    },
+    {
+      "age_days": 410,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2025-04-02T19:26:31+08:00",
+      "path": "versioned_docs/version-v1.8/developer-manuals/other-languages.md",
+      "sha": "e74e4a58fbdb000199a4f9abc1577a23a545ed73"
+    },
+    {
+      "age_days": 410,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2025-04-02T19:26:31+08:00",
+      "path": "versioned_docs/version-v1.8/faq.md",
+      "sha": "e74e4a58fbdb000199a4f9abc1577a23a545ed73"
+    },
+    {
+      "age_days": 315,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2025-07-07T14:41:39+08:00",
+      "path": "versioned_docs/version-v1.8/installation.md",
+      "sha": "4973bbcf8901e0a6704cbaf218fe56db83a77e6e"
+    },
+    {
+      "age_days": 101,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2026-02-06T09:21:57+08:00",
+      "path": "versioned_docs/version-v1.8/introduction.md",
+      "sha": "1c4717498e659361af9f6d6da5625abe43a8d4cc"
+    },
+    {
+      "age_days": 315,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2025-07-07T10:31:40+08:00",
+      "path": "versioned_docs/version-v1.8/operator-manuals/availability.md",
+      "sha": "dbb5d412b8d5032c009c79a9e773f22192743ddb"
+    },
+    {
+      "age_days": 101,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2026-02-06T09:21:57+08:00",
+      "path": "versioned_docs/version-v1.8/operator-manuals/troubleshooting.md",
+      "sha": "1c4717498e659361af9f6d6da5625abe43a8d4cc"
+    },
+    {
+      "age_days": 410,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2025-04-02T19:26:31+08:00",
+      "path": "versioned_docs/version-v1.8/user-manuals/advancedcronjob.md",
+      "sha": "e74e4a58fbdb000199a4f9abc1577a23a545ed73"
+    },
+    {
+      "age_days": 410,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2025-04-02T19:26:31+08:00",
+      "path": "versioned_docs/version-v1.8/user-manuals/advanceddaemonset.md",
+      "sha": "e74e4a58fbdb000199a4f9abc1577a23a545ed73"
+    },
+    {
+      "age_days": 181,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2025-11-18T11:28:03+08:00",
+      "path": "versioned_docs/version-v1.8/user-manuals/advancedstatefulset.md",
+      "sha": "4025a5894e66dd6f70d199451fcaa29798785ff0"
+    },
+    {
+      "age_days": 410,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2025-04-02T19:26:31+08:00",
+      "path": "versioned_docs/version-v1.8/user-manuals/broadcastjob.md",
+      "sha": "e74e4a58fbdb000199a4f9abc1577a23a545ed73"
+    },
+    {
+      "age_days": 101,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2026-02-06T09:21:57+08:00",
+      "path": "versioned_docs/version-v1.8/user-manuals/cloneset.md",
+      "sha": "1c4717498e659361af9f6d6da5625abe43a8d4cc"
+    },
+    {
+      "age_days": 410,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2025-04-02T19:26:31+08:00",
+      "path": "versioned_docs/version-v1.8/user-manuals/containerlaunchpriority.md",
+      "sha": "e74e4a58fbdb000199a4f9abc1577a23a545ed73"
+    },
+    {
+      "age_days": 410,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2025-04-02T19:26:31+08:00",
+      "path": "versioned_docs/version-v1.8/user-manuals/containerrecreaterequest.md",
+      "sha": "e74e4a58fbdb000199a4f9abc1577a23a545ed73"
+    },
+    {
+      "age_days": 101,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2026-02-06T09:21:57+08:00",
+      "path": "versioned_docs/version-v1.8/user-manuals/deletionprotection.md",
+      "sha": "1c4717498e659361af9f6d6da5625abe43a8d4cc"
+    },
+    {
+      "age_days": 410,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2025-04-02T19:26:31+08:00",
+      "path": "versioned_docs/version-v1.8/user-manuals/imagepulljob.md",
+      "sha": "e74e4a58fbdb000199a4f9abc1577a23a545ed73"
+    },
+    {
+      "age_days": 410,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2025-04-02T19:26:31+08:00",
+      "path": "versioned_docs/version-v1.8/user-manuals/jobsidecarterminator.md",
+      "sha": "e74e4a58fbdb000199a4f9abc1577a23a545ed73"
+    },
+    {
+      "age_days": 101,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2026-02-06T09:21:57+08:00",
+      "path": "versioned_docs/version-v1.8/user-manuals/persistentpodstate.md",
+      "sha": "1c4717498e659361af9f6d6da5625abe43a8d4cc"
+    },
+    {
+      "age_days": 410,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2025-04-02T19:26:31+08:00",
+      "path": "versioned_docs/version-v1.8/user-manuals/podprobemarker.md",
+      "sha": "e74e4a58fbdb000199a4f9abc1577a23a545ed73"
+    },
+    {
+      "age_days": 410,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2025-04-02T19:26:31+08:00",
+      "path": "versioned_docs/version-v1.8/user-manuals/podunavailablebudget.md",
+      "sha": "e74e4a58fbdb000199a4f9abc1577a23a545ed73"
+    },
+    {
+      "age_days": 410,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2025-04-02T19:26:31+08:00",
+      "path": "versioned_docs/version-v1.8/user-manuals/resourcedistribution.md",
+      "sha": "e74e4a58fbdb000199a4f9abc1577a23a545ed73"
+    },
+    {
+      "age_days": 410,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2025-04-02T19:26:31+08:00",
+      "path": "versioned_docs/version-v1.8/user-manuals/sidecarset.md",
+      "sha": "e74e4a58fbdb000199a4f9abc1577a23a545ed73"
+    },
+    {
+      "age_days": 101,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2026-02-06T09:21:57+08:00",
+      "path": "versioned_docs/version-v1.8/user-manuals/uniteddeployment.md",
+      "sha": "1c4717498e659361af9f6d6da5625abe43a8d4cc"
+    },
+    {
+      "age_days": 410,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2025-04-02T19:26:31+08:00",
+      "path": "versioned_docs/version-v1.8/user-manuals/workloadspread.md",
+      "sha": "e74e4a58fbdb000199a4f9abc1577a23a545ed73"
+    },
+    {
+      "age_days": 112,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2026-01-25T20:58:45+08:00",
+      "path": "versioned_docs/version-v1.9/best-practices/acronjob+broadcastjob.md",
+      "sha": "309974b7881e6f5ebdfc90b3ea5ae68a0ff02335"
+    },
+    {
+      "age_days": 112,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2026-01-25T20:58:45+08:00",
+      "path": "versioned_docs/version-v1.9/best-practices/ci-pipeline-image-predownload.md",
+      "sha": "309974b7881e6f5ebdfc90b3ea5ae68a0ff02335"
+    },
+    {
+      "age_days": 112,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2026-01-25T20:58:45+08:00",
+      "path": "versioned_docs/version-v1.9/best-practices/cloneset-lifecycle.md",
+      "sha": "309974b7881e6f5ebdfc90b3ea5ae68a0ff02335"
+    },
+    {
+      "age_days": 112,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2026-01-25T20:58:45+08:00",
+      "path": "versioned_docs/version-v1.9/best-practices/elastic-deployment.md",
+      "sha": "309974b7881e6f5ebdfc90b3ea5ae68a0ff02335"
+    },
+    {
+      "age_days": 112,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2026-01-25T20:58:45+08:00",
+      "path": "versioned_docs/version-v1.9/best-practices/gitops-with-kruise.md",
+      "sha": "309974b7881e6f5ebdfc90b3ea5ae68a0ff02335"
+    },
+    {
+      "age_days": 112,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2026-01-25T20:58:45+08:00",
+      "path": "versioned_docs/version-v1.9/best-practices/hpa-configuration.md",
+      "sha": "309974b7881e6f5ebdfc90b3ea5ae68a0ff02335"
+    },
+    {
+      "age_days": 112,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2026-01-25T20:58:45+08:00",
+      "path": "versioned_docs/version-v1.9/best-practices/log-container-sidecarset.md",
+      "sha": "309974b7881e6f5ebdfc90b3ea5ae68a0ff02335"
+    },
+    {
+      "age_days": 112,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2026-01-25T20:58:45+08:00",
+      "path": "versioned_docs/version-v1.9/best-practices/resource-policy-sidecarset.md",
+      "sha": "309974b7881e6f5ebdfc90b3ea5ae68a0ff02335"
+    },
+    {
+      "age_days": 112,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2026-01-25T20:58:45+08:00",
+      "path": "versioned_docs/version-v1.9/cli-tool/kubectl-plugin.md",
+      "sha": "309974b7881e6f5ebdfc90b3ea5ae68a0ff02335"
+    },
+    {
+      "age_days": 112,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2026-01-25T20:58:45+08:00",
+      "path": "versioned_docs/version-v1.9/cli-tool/kustomize-plugin.md",
+      "sha": "309974b7881e6f5ebdfc90b3ea5ae68a0ff02335"
+    },
+    {
+      "age_days": 112,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2026-01-25T20:58:45+08:00",
+      "path": "versioned_docs/version-v1.9/cli-tool/kustomize-schema-generator.md",
+      "sha": "309974b7881e6f5ebdfc90b3ea5ae68a0ff02335"
+    },
+    {
+      "age_days": 112,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2026-01-25T20:58:45+08:00",
+      "path": "versioned_docs/version-v1.9/core-concepts/architecture.md",
+      "sha": "309974b7881e6f5ebdfc90b3ea5ae68a0ff02335"
+    },
+    {
+      "age_days": 101,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2026-02-06T09:21:57+08:00",
+      "path": "versioned_docs/version-v1.9/core-concepts/inplace-update.md",
+      "sha": "1c4717498e659361af9f6d6da5625abe43a8d4cc"
+    },
+    {
+      "age_days": 112,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2026-01-25T20:58:45+08:00",
+      "path": "versioned_docs/version-v1.9/developer-manuals/go-client.md",
+      "sha": "309974b7881e6f5ebdfc90b3ea5ae68a0ff02335"
+    },
+    {
+      "age_days": 112,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2026-01-25T20:58:45+08:00",
+      "path": "versioned_docs/version-v1.9/developer-manuals/java-client.md",
+      "sha": "309974b7881e6f5ebdfc90b3ea5ae68a0ff02335"
+    },
+    {
+      "age_days": 112,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2026-01-25T20:58:45+08:00",
+      "path": "versioned_docs/version-v1.9/developer-manuals/other-languages.md",
+      "sha": "309974b7881e6f5ebdfc90b3ea5ae68a0ff02335"
+    },
+    {
+      "age_days": 112,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2026-01-25T20:58:45+08:00",
+      "path": "versioned_docs/version-v1.9/faq.md",
+      "sha": "309974b7881e6f5ebdfc90b3ea5ae68a0ff02335"
+    },
+    {
+      "age_days": 105,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2026-02-02T11:19:52+08:00",
+      "path": "versioned_docs/version-v1.9/installation.md",
+      "sha": "a60b97d8c5abb86b211f600145fc42595207b616"
+    },
+    {
+      "age_days": 105,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2026-02-02T11:19:52+08:00",
+      "path": "versioned_docs/version-v1.9/introduction.md",
+      "sha": "a60b97d8c5abb86b211f600145fc42595207b616"
+    },
+    {
+      "age_days": 112,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2026-01-25T20:58:45+08:00",
+      "path": "versioned_docs/version-v1.9/operator-manuals/availability.md",
+      "sha": "309974b7881e6f5ebdfc90b3ea5ae68a0ff02335"
+    },
+    {
+      "age_days": 112,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2026-01-25T20:58:45+08:00",
+      "path": "versioned_docs/version-v1.9/operator-manuals/troubleshooting.md",
+      "sha": "309974b7881e6f5ebdfc90b3ea5ae68a0ff02335"
+    },
+    {
+      "age_days": 105,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2026-02-02T11:19:52+08:00",
+      "path": "versioned_docs/version-v1.9/operator-manuals/upgrade.md",
+      "sha": "a60b97d8c5abb86b211f600145fc42595207b616"
+    },
+    {
+      "age_days": 112,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2026-01-25T20:58:45+08:00",
+      "path": "versioned_docs/version-v1.9/user-manuals/advancedcronjob.md",
+      "sha": "309974b7881e6f5ebdfc90b3ea5ae68a0ff02335"
+    },
+    {
+      "age_days": 112,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2026-01-25T20:58:45+08:00",
+      "path": "versioned_docs/version-v1.9/user-manuals/advanceddaemonset.md",
+      "sha": "309974b7881e6f5ebdfc90b3ea5ae68a0ff02335"
+    },
+    {
+      "age_days": 112,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2026-01-25T20:58:45+08:00",
+      "path": "versioned_docs/version-v1.9/user-manuals/advancedstatefulset.md",
+      "sha": "309974b7881e6f5ebdfc90b3ea5ae68a0ff02335"
+    },
+    {
+      "age_days": 112,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2026-01-25T20:58:45+08:00",
+      "path": "versioned_docs/version-v1.9/user-manuals/broadcastjob.md",
+      "sha": "309974b7881e6f5ebdfc90b3ea5ae68a0ff02335"
+    },
+    {
+      "age_days": 112,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2026-01-25T20:58:45+08:00",
+      "path": "versioned_docs/version-v1.9/user-manuals/cloneset.md",
+      "sha": "309974b7881e6f5ebdfc90b3ea5ae68a0ff02335"
+    },
+    {
+      "age_days": 112,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2026-01-25T20:58:45+08:00",
+      "path": "versioned_docs/version-v1.9/user-manuals/containerlaunchpriority.md",
+      "sha": "309974b7881e6f5ebdfc90b3ea5ae68a0ff02335"
+    },
+    {
+      "age_days": 112,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2026-01-25T20:58:45+08:00",
+      "path": "versioned_docs/version-v1.9/user-manuals/containerrecreaterequest.md",
+      "sha": "309974b7881e6f5ebdfc90b3ea5ae68a0ff02335"
+    },
+    {
+      "age_days": 101,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2026-02-06T09:21:57+08:00",
+      "path": "versioned_docs/version-v1.9/user-manuals/deletionprotection.md",
+      "sha": "1c4717498e659361af9f6d6da5625abe43a8d4cc"
+    },
+    {
+      "age_days": 112,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2026-01-25T20:58:45+08:00",
+      "path": "versioned_docs/version-v1.9/user-manuals/imagepulljob.md",
+      "sha": "309974b7881e6f5ebdfc90b3ea5ae68a0ff02335"
+    },
+    {
+      "age_days": 112,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2026-01-25T20:58:45+08:00",
+      "path": "versioned_docs/version-v1.9/user-manuals/jobsidecarterminator.md",
+      "sha": "309974b7881e6f5ebdfc90b3ea5ae68a0ff02335"
+    },
+    {
+      "age_days": 112,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2026-01-25T20:58:45+08:00",
+      "path": "versioned_docs/version-v1.9/user-manuals/persistentpodstate.md",
+      "sha": "309974b7881e6f5ebdfc90b3ea5ae68a0ff02335"
+    },
+    {
+      "age_days": 112,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2026-01-25T20:58:45+08:00",
+      "path": "versioned_docs/version-v1.9/user-manuals/podprobemarker.md",
+      "sha": "309974b7881e6f5ebdfc90b3ea5ae68a0ff02335"
+    },
+    {
+      "age_days": 105,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2026-02-02T11:19:52+08:00",
+      "path": "versioned_docs/version-v1.9/user-manuals/podunavailablebudget.md",
+      "sha": "a60b97d8c5abb86b211f600145fc42595207b616"
+    },
+    {
+      "age_days": 112,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2026-01-25T20:58:45+08:00",
+      "path": "versioned_docs/version-v1.9/user-manuals/resourcedistribution.md",
+      "sha": "309974b7881e6f5ebdfc90b3ea5ae68a0ff02335"
+    },
+    {
+      "age_days": 112,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2026-01-25T20:58:45+08:00",
+      "path": "versioned_docs/version-v1.9/user-manuals/sidecarset.md",
+      "sha": "309974b7881e6f5ebdfc90b3ea5ae68a0ff02335"
+    },
+    {
+      "age_days": 105,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2026-02-02T11:19:52+08:00",
+      "path": "versioned_docs/version-v1.9/user-manuals/uniteddeployment.md",
+      "sha": "a60b97d8c5abb86b211f600145fc42595207b616"
+    },
+    {
+      "age_days": 112,
+      "collected_at": "2026-05-18T09:22:35.433010+00:00",
+      "last_commit_date": "2026-01-25T20:58:45+08:00",
+      "path": "versioned_docs/version-v1.9/user-manuals/workloadspread.md",
+      "sha": "309974b7881e6f5ebdfc90b3ea5ae68a0ff02335"
+    }
+  ],
+  "generated_at": "2026-05-18T09:22:35.433010+00:00",
+  "schema_version": 1
+}

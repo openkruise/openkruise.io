@@ -1,0 +1,23 @@
+{
+  "age_days": 697,
+  "frontmatter": {
+    "missing": [
+      "sidebar_position",
+      "slug"
+    ],
+    "valid": false,
+    "warnings": []
+  },
+  "last_commit_date": "2024-06-20T15:35:51+08:00",
+  "linkcheck": {
+    "evidence": [],
+    "missing_anchors": [],
+    "missing_files": [],
+    "missing_images": [],
+    "valid_links": [
+      "versioned_docs/version-v1.6/user-manuals/containerrecreaterequest.md"
+    ]
+  },
+  "path": "versioned_docs/version-v1.6/user-manuals/jobsidecarterminator.md",
+  "sha": "a8dac7994fe8092f293b0dcc984d1827627fb297"
+}

@@ -1,0 +1,30 @@
+{
+  "age_days": 112,
+  "frontmatter": {
+    "missing": [
+      "sidebar_position",
+      "slug"
+    ],
+    "valid": false,
+    "warnings": []
+  },
+  "last_commit_date": "2026-01-25T20:58:45+08:00",
+  "linkcheck": {
+    "evidence": [
+      {
+        "line": 10,
+        "source": "versioned_docs/version-v1.9/best-practices/cloneset-lifecycle.md",
+        "target": "img/docs/best-practices/cloneset_lifecycle.png",
+        "type": "missing_image"
+      }
+    ],
+    "missing_anchors": [],
+    "missing_files": [],
+    "missing_images": [
+      "img/docs/best-practices/cloneset_lifecycle.png"
+    ],
+    "valid_links": []
+  },
+  "path": "versioned_docs/version-v1.9/best-practices/cloneset-lifecycle.md",
+  "sha": "309974b7881e6f5ebdfc90b3ea5ae68a0ff02335"
+}

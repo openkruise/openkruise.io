@@ -1,0 +1,58 @@
+{
+  "age_days": 968,
+  "frontmatter": {
+    "missing": [
+      "sidebar_position",
+      "slug"
+    ],
+    "valid": false,
+    "warnings": []
+  },
+  "last_commit_date": "2023-09-23T11:11:19+08:00",
+  "linkcheck": {
+    "evidence": [
+      {
+        "line": 14,
+        "source": "docs/best-practices/elastic-deployment.md",
+        "target": "img/docs/user-manuals/elasticd-deployment-arch.jpg",
+        "type": "missing_image"
+      },
+      {
+        "line": 430,
+        "source": "docs/best-practices/elastic-deployment.md",
+        "target": "img/docs/user-manuals/elasticd-deployment-show-0.gif",
+        "type": "missing_image"
+      },
+      {
+        "line": 436,
+        "source": "docs/best-practices/elastic-deployment.md",
+        "target": "img/docs/user-manuals/elasticd-deployment-show-1.gif",
+        "type": "missing_image"
+      },
+      {
+        "line": 441,
+        "source": "docs/best-practices/elastic-deployment.md",
+        "target": "img/docs/user-manuals/elasticd-deployment-show-2.gif",
+        "type": "missing_image"
+      },
+      {
+        "line": 445,
+        "source": "docs/best-practices/elastic-deployment.md",
+        "target": "img/docs/user-manuals/elasticd-deployment-show-3.gif",
+        "type": "missing_image"
+      }
+    ],
+    "missing_anchors": [],
+    "missing_files": [],
+    "missing_images": [
+      "img/docs/user-manuals/elasticd-deployment-arch.jpg",
+      "img/docs/user-manuals/elasticd-deployment-show-0.gif",
+      "img/docs/user-manuals/elasticd-deployment-show-1.gif",
+      "img/docs/user-manuals/elasticd-deployment-show-2.gif",
+      "img/docs/user-manuals/elasticd-deployment-show-3.gif"
+    ],
+    "valid_links": []
+  },
+  "path": "docs/best-practices/elastic-deployment.md",
+  "sha": "8245fd7b3029f9133bb1a96144ac53f0e3e9c5e0"
+}

@@ -1,0 +1,22 @@
+{
+  "age_days": 418,
+  "frontmatter": {
+    "missing": [
+      "title",
+      "sidebar_position",
+      "slug"
+    ],
+    "valid": false,
+    "warnings": []
+  },
+  "last_commit_date": "2025-03-25T18:11:40+08:00",
+  "linkcheck": {
+    "evidence": [],
+    "missing_anchors": [],
+    "missing_files": [],
+    "missing_images": [],
+    "valid_links": []
+  },
+  "path": "kruisegame/blog-video/gameserver-scale.md",
+  "sha": "cb4bf970a5d4ba99d2f6ad8faeac2d2d0414d3d3"
+}

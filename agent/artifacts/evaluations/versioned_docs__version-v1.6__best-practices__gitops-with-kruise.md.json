@@ -1,0 +1,37 @@
+{
+  "age_days": 786,
+  "frontmatter": {
+    "missing": [
+      "sidebar_position",
+      "slug"
+    ],
+    "valid": false,
+    "warnings": []
+  },
+  "last_commit_date": "2024-03-22T18:59:28+08:00",
+  "linkcheck": {
+    "evidence": [
+      {
+        "line": 254,
+        "source": "versioned_docs/version-v1.6/best-practices/gitops-with-kruise.md",
+        "target": "img/docs/best-practices/argo_sync_healthy.png",
+        "type": "missing_image"
+      },
+      {
+        "line": 10,
+        "source": "versioned_docs/version-v1.6/best-practices/gitops-with-kruise.md",
+        "target": "img/docs/best-practices/argocd.jpeg",
+        "type": "missing_image"
+      }
+    ],
+    "missing_anchors": [],
+    "missing_files": [],
+    "missing_images": [
+      "img/docs/best-practices/argo_sync_healthy.png",
+      "img/docs/best-practices/argocd.jpeg"
+    ],
+    "valid_links": []
+  },
+  "path": "versioned_docs/version-v1.6/best-practices/gitops-with-kruise.md",
+  "sha": "e2741a06915b2246a85f88086b6c7db02106b357"
+}

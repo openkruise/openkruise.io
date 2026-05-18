@@ -1,0 +1,178 @@
+{
+  "age_days": 103,
+  "frontmatter": {
+    "missing": [
+      "title",
+      "sidebar_position",
+      "slug"
+    ],
+    "valid": false,
+    "warnings": []
+  },
+  "last_commit_date": "2026-02-03T18:59:47+08:00",
+  "linkcheck": {
+    "evidence": [
+      {
+        "line": 197,
+        "source": "kruisegame/user-manuals/game-dashboard.md",
+        "target": "img/kruisegame/user-manuals/dash-addresource.png",
+        "type": "missing_image"
+      },
+      {
+        "line": 77,
+        "source": "kruisegame/user-manuals/game-dashboard.md",
+        "target": "img/kruisegame/user-manuals/dash-begin-install.png",
+        "type": "missing_image"
+      },
+      {
+        "line": 145,
+        "source": "kruisegame/user-manuals/game-dashboard.md",
+        "target": "img/kruisegame/user-manuals/dash-config.png",
+        "type": "missing_image"
+      },
+      {
+        "line": 182,
+        "source": "kruisegame/user-manuals/game-dashboard.md",
+        "target": "img/kruisegame/user-manuals/dash-deployunit.png",
+        "type": "missing_image"
+      },
+      {
+        "line": 305,
+        "source": "kruisegame/user-manuals/game-dashboard.md",
+        "target": "img/kruisegame/user-manuals/dash-gs-jump.png",
+        "type": "missing_image"
+      },
+      {
+        "line": 307,
+        "source": "kruisegame/user-manuals/game-dashboard.md",
+        "target": "img/kruisegame/user-manuals/dash-gs-ops.png",
+        "type": "missing_image"
+      },
+      {
+        "line": 311,
+        "source": "kruisegame/user-manuals/game-dashboard.md",
+        "target": "img/kruisegame/user-manuals/dash-gs-opsState-updated.png",
+        "type": "missing_image"
+      },
+      {
+        "line": 243,
+        "source": "kruisegame/user-manuals/game-dashboard.md",
+        "target": "img/kruisegame/user-manuals/dash-gs-project.png",
+        "type": "missing_image"
+      },
+      {
+        "line": 309,
+        "source": "kruisegame/user-manuals/game-dashboard.md",
+        "target": "img/kruisegame/user-manuals/dash-gs-update-opsState.png",
+        "type": "missing_image"
+      },
+      {
+        "line": 295,
+        "source": "kruisegame/user-manuals/game-dashboard.md",
+        "target": "img/kruisegame/user-manuals/dash-gs.png",
+        "type": "missing_image"
+      },
+      {
+        "line": 286,
+        "source": "kruisegame/user-manuals/game-dashboard.md",
+        "target": "img/kruisegame/user-manuals/dash-gss-jump.png",
+        "type": "missing_image"
+      },
+      {
+        "line": 288,
+        "source": "kruisegame/user-manuals/game-dashboard.md",
+        "target": "img/kruisegame/user-manuals/dash-gss-ops.png",
+        "type": "missing_image"
+      },
+      {
+        "line": 214,
+        "source": "kruisegame/user-manuals/game-dashboard.md",
+        "target": "img/kruisegame/user-manuals/dash-gss-project.png",
+        "type": "missing_image"
+      },
+      {
+        "line": 278,
+        "source": "kruisegame/user-manuals/game-dashboard.md",
+        "target": "img/kruisegame/user-manuals/dash-gss.png",
+        "type": "missing_image"
+      },
+      {
+        "line": 81,
+        "source": "kruisegame/user-manuals/game-dashboard.md",
+        "target": "img/kruisegame/user-manuals/dash-installed.png",
+        "type": "missing_image"
+      },
+      {
+        "line": 63,
+        "source": "kruisegame/user-manuals/game-dashboard.md",
+        "target": "img/kruisegame/user-manuals/dash-mainpage.png",
+        "type": "missing_image"
+      },
+      {
+        "line": 71,
+        "source": "kruisegame/user-manuals/game-dashboard.md",
+        "target": "img/kruisegame/user-manuals/dash-management.png",
+        "type": "missing_image"
+      },
+      {
+        "line": 67,
+        "source": "kruisegame/user-manuals/game-dashboard.md",
+        "target": "img/kruisegame/user-manuals/dash-okg.png",
+        "type": "missing_image"
+      },
+      {
+        "line": 250,
+        "source": "kruisegame/user-manuals/game-dashboard.md",
+        "target": "img/kruisegame/user-manuals/dash-ops.png",
+        "type": "missing_image"
+      },
+      {
+        "line": 256,
+        "source": "kruisegame/user-manuals/game-dashboard.md",
+        "target": "img/kruisegame/user-manuals/dash-overview.jpg",
+        "type": "missing_image"
+      },
+      {
+        "line": 166,
+        "source": "kruisegame/user-manuals/game-dashboard.md",
+        "target": "img/kruisegame/user-manuals/dash-project.png",
+        "type": "missing_image"
+      },
+      {
+        "line": 75,
+        "source": "kruisegame/user-manuals/game-dashboard.md",
+        "target": "img/kruisegame/user-manuals/dash-version-select.png",
+        "type": "missing_image"
+      }
+    ],
+    "missing_anchors": [],
+    "missing_files": [],
+    "missing_images": [
+      "img/kruisegame/user-manuals/dash-addresource.png",
+      "img/kruisegame/user-manuals/dash-begin-install.png",
+      "img/kruisegame/user-manuals/dash-config.png",
+      "img/kruisegame/user-manuals/dash-deployunit.png",
+      "img/kruisegame/user-manuals/dash-gs-jump.png",
+      "img/kruisegame/user-manuals/dash-gs-ops.png",
+      "img/kruisegame/user-manuals/dash-gs-opsState-updated.png",
+      "img/kruisegame/user-manuals/dash-gs-project.png",
+      "img/kruisegame/user-manuals/dash-gs-update-opsState.png",
+      "img/kruisegame/user-manuals/dash-gs.png",
+      "img/kruisegame/user-manuals/dash-gss-jump.png",
+      "img/kruisegame/user-manuals/dash-gss-ops.png",
+      "img/kruisegame/user-manuals/dash-gss-project.png",
+      "img/kruisegame/user-manuals/dash-gss.png",
+      "img/kruisegame/user-manuals/dash-installed.png",
+      "img/kruisegame/user-manuals/dash-mainpage.png",
+      "img/kruisegame/user-manuals/dash-management.png",
+      "img/kruisegame/user-manuals/dash-okg.png",
+      "img/kruisegame/user-manuals/dash-ops.png",
+      "img/kruisegame/user-manuals/dash-overview.jpg",
+      "img/kruisegame/user-manuals/dash-project.png",
+      "img/kruisegame/user-manuals/dash-version-select.png"
+    ],
+    "valid_links": []
+  },
+  "path": "kruisegame/user-manuals/game-dashboard.md",
+  "sha": "2adb6c5b01a9da520a2acb28380c9d4f2c7e2903"
+}

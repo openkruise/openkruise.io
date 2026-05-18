@@ -1,0 +1,36 @@
+{
+  "age_days": 101,
+  "frontmatter": {
+    "missing": [
+      "sidebar_position"
+    ],
+    "valid": false,
+    "warnings": []
+  },
+  "last_commit_date": "2026-02-06T09:21:57+08:00",
+  "linkcheck": {
+    "evidence": [
+      {
+        "line": 98,
+        "source": "blog/2019-11-20-uniteddeployment.md",
+        "target": "img/blog/2019-11-20-uniteddeployment/uniteddeployment-1.png",
+        "type": "missing_image"
+      },
+      {
+        "line": 167,
+        "source": "blog/2019-11-20-uniteddeployment.md",
+        "target": "img/blog/2019-11-20-uniteddeployment/uniteddeployment-2.png",
+        "type": "missing_image"
+      }
+    ],
+    "missing_anchors": [],
+    "missing_files": [],
+    "missing_images": [
+      "img/blog/2019-11-20-uniteddeployment/uniteddeployment-1.png",
+      "img/blog/2019-11-20-uniteddeployment/uniteddeployment-2.png"
+    ],
+    "valid_links": []
+  },
+  "path": "blog/2019-11-20-uniteddeployment.md",
+  "sha": "1c4717498e659361af9f6d6da5625abe43a8d4cc"
+}

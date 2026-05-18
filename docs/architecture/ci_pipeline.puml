@@ -1,0 +1,46 @@
+@startuml
+!theme plain
+skinparam backgroundColor transparent
+skinparam shadowing false
+skinparam packageStyle rectangle
+skinparam defaultFontName Arial
+skinparam ArrowColor #444444
+skinparam componentStyle rectangle
+skinparam rectangleBackgroundColor #F6F8FA
+skinparam rectangleBorderColor #4B5563
+
+package "GitHub Actions" {
+  [Schedule] as Schedule
+  [Manual] as Manual
+  [Tests] as Tests
+  [Pytest] as Pytest
+}
+
+package "Steps" {
+  [collect] as Collect
+  [evaluate] as Evaluate
+  [score] as Score
+  [stage] as Stage
+  [report] as Report
+  [upload artifacts] as Upload
+  [open draft PR] as OpenPR
+}
+
+Schedule --> Collect
+Collect --> Evaluate
+Evaluate --> Score
+Score --> Stage
+Stage --> Report
+Report --> Upload
+
+Manual --> Collect
+Manual --> Evaluate
+Manual --> Score
+Manual --> Stage
+Manual --> Report
+Manual --> Upload
+Manual --> OpenPR : gated
+
+Tests --> Pytest
+
+@enduml

@@ -1,0 +1,44 @@
+{
+  "age_days": 101,
+  "frontmatter": {
+    "missing": [
+      "sidebar_position",
+      "slug"
+    ],
+    "valid": false,
+    "warnings": []
+  },
+  "last_commit_date": "2026-02-06T09:21:57+08:00",
+  "linkcheck": {
+    "evidence": [
+      {
+        "line": 22,
+        "source": "versioned_docs/version-v1.5/core-concepts/inplace-update.md",
+        "target": "img/docs/core-concepts/inplace-update-comparation.png",
+        "type": "missing_image"
+      },
+      {
+        "line": 86,
+        "source": "versioned_docs/version-v1.5/core-concepts/inplace-update.md",
+        "target": "img/docs/core-concepts/inplace-update-workflow.png",
+        "type": "missing_image"
+      }
+    ],
+    "missing_anchors": [],
+    "missing_files": [],
+    "missing_images": [
+      "img/docs/core-concepts/inplace-update-comparation.png",
+      "img/docs/core-concepts/inplace-update-workflow.png"
+    ],
+    "valid_links": [
+      "docs/user-manuals/advanceddaemonset.md",
+      "docs/user-manuals/advancedstatefulset.md",
+      "docs/user-manuals/cloneset.md",
+      "docs/user-manuals/containerlaunchpriority.md",
+      "docs/user-manuals/sidecarset.md",
+      "versioned_docs/version-v1.5/core-concepts/inplace-update.md#requirements"
+    ]
+  },
+  "path": "versioned_docs/version-v1.5/core-concepts/inplace-update.md",
+  "sha": "1c4717498e659361af9f6d6da5625abe43a8d4cc"
+}

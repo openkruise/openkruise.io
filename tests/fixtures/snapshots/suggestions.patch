@@ -1,0 +1,10 @@
+--- a/doc-agent-suggestions.txt
++++ b/doc-agent-suggestions.txt
+@@ -0,0 +1,7 @@
++Doc Agent Suggestions
++Source: scorecard.json
++
++High Priority
++- docs/a.md - Missing markdown targets (1); Missing frontmatter keys (1); Stale content (120 days). Suggestion: repair links, assets, or frontmatter.
++
++Medium Priority

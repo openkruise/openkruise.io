@@ -1,0 +1,64 @@
+@startuml
+!theme plain
+skinparam backgroundColor transparent
+skinparam shadowing false
+skinparam packageStyle rectangle
+skinparam defaultFontName Arial
+skinparam ArrowColor #444444
+skinparam componentStyle rectangle
+skinparam rectangleBackgroundColor #F6F8FA
+skinparam rectangleBorderColor #4B5563
+
+rectangle "Doc Agent CLI" {
+  component "CLI" as CLI
+}
+
+rectangle "Core Pipeline" {
+  component "Collector" as Collector
+  component "Evaluator" as Evaluator
+  component "Scorer" as Scorer
+  component "Differ" as Differ
+  component "Reporter" as Reporter
+}
+
+rectangle "Config" {
+  file "config.yaml" as ConfigFile
+}
+
+rectangle "Artifacts" {
+  file "inventory.json" as Inventory
+  file "evaluations.json" as Evaluations
+  file "scorecard.json" as Scorecard
+  file "suggestions.patch" as Patch
+  file "suggestions.preview.html" as Preview
+  file "summary.md" as Summary
+}
+
+rectangle "GitHub Actions" {
+  component "schedule workflow" as Schedule
+  component "manual workflow" as Manual
+  component "tests workflow" as Tests
+}
+
+rectangle "Draft PR" {
+  component "draft PR" as DraftPR
+}
+
+Tests --> CLI : run pipeline
+Schedule --> CLI : scheduled run
+Manual --> CLI : manual run
+CLI --> Collector
+Collector --> Inventory
+Inventory --> Evaluator
+Evaluator --> Evaluations
+Evaluations --> Scorer
+Scorer --> Scorecard
+Scorecard --> Differ
+Differ --> Patch
+Differ --> Preview
+Scorecard --> Reporter
+Reporter --> Summary
+ConfigFile --> CLI
+Manual --> DraftPR : optional
+
+@enduml

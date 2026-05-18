@@ -1,0 +1,25 @@
+{
+  "age_days": 263,
+  "frontmatter": {
+    "missing": [
+      "title",
+      "sidebar_position",
+      "slug"
+    ],
+    "valid": false,
+    "warnings": []
+  },
+  "last_commit_date": "2025-08-28T15:07:27+08:00",
+  "linkcheck": {
+    "evidence": [],
+    "missing_anchors": [],
+    "missing_files": [],
+    "missing_images": [],
+    "valid_links": [
+      "kruisegame/developer-manuals/contribution.md",
+      "kruisegame/installation.md"
+    ]
+  },
+  "path": "kruisegame/introduction.md",
+  "sha": "b262124f90c07138dd520edef528b9cb98f8e8bf"
+}

@@ -1,0 +1,5003 @@
+{
+  "files": {
+    "blog/2019-10-10-workload-classification-guidance.md": {
+      "evidence": [
+        "Missing frontmatter keys (1)",
+        "Stale content (1697 days)"
+      ],
+      "priority": "medium",
+      "score": 7,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 1,
+        "missing_images": 0,
+        "penalty": 3,
+        "stale": true
+      }
+    },
+    "blog/2019-11-10-learning-concurrent-reconciling.md": {
+      "evidence": [
+        "Missing image assets (2)",
+        "Missing frontmatter keys (1)",
+        "Stale content (1697 days)"
+      ],
+      "priority": "high",
+      "score": 1,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 1,
+        "missing_images": 2,
+        "penalty": 9,
+        "stale": true
+      }
+    },
+    "blog/2019-11-20-uniteddeployment.md": {
+      "evidence": [
+        "Missing image assets (2)",
+        "Missing frontmatter keys (1)",
+        "Stale content (101 days)"
+      ],
+      "priority": "high",
+      "score": 1,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 1,
+        "missing_images": 2,
+        "penalty": 9,
+        "stale": true
+      }
+    },
+    "blog/2021-03-15-sidecarSet-0.8.0.md": {
+      "evidence": [
+        "Missing frontmatter keys (1)",
+        "Stale content (101 days)"
+      ],
+      "priority": "medium",
+      "score": 7,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 1,
+        "missing_images": 0,
+        "penalty": 3,
+        "stale": true
+      }
+    },
+    "blog/2021-05-20-release-0.9.0.md": {
+      "evidence": [
+        "Missing image assets (1)",
+        "Missing frontmatter keys (1)",
+        "Stale content (101 days)"
+      ],
+      "priority": "high",
+      "score": 4,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 1,
+        "missing_images": 1,
+        "penalty": 6,
+        "stale": true
+      }
+    },
+    "blog/2021-06-10-sidecarset-hot-update-0.9.0.md": {
+      "evidence": [
+        "Missing frontmatter keys (1)",
+        "Stale content (420 days)"
+      ],
+      "priority": "medium",
+      "score": 7,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 1,
+        "missing_images": 0,
+        "penalty": 3,
+        "stale": true
+      }
+    },
+    "blog/2021-09-06-release-0.10.0.md": {
+      "evidence": [
+        "Missing frontmatter keys (1)",
+        "Stale content (968 days)"
+      ],
+      "priority": "medium",
+      "score": 7,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 1,
+        "missing_images": 0,
+        "penalty": 3,
+        "stale": true
+      }
+    },
+    "blog/2021-09-22-workloadspread.md": {
+      "evidence": [
+        "Missing frontmatter keys (1)",
+        "Stale content (101 days)"
+      ],
+      "priority": "medium",
+      "score": 7,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 1,
+        "missing_images": 0,
+        "penalty": 3,
+        "stale": true
+      }
+    },
+    "blog/2021-12-13-release-1.0.md": {
+      "evidence": [
+        "Missing image assets (2)",
+        "Missing frontmatter keys (1)",
+        "Stale content (101 days)"
+      ],
+      "priority": "high",
+      "score": 1,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 1,
+        "missing_images": 2,
+        "penalty": 9,
+        "stale": true
+      }
+    },
+    "blog/2022-03-29-release-1.1.md": {
+      "evidence": [
+        "Missing frontmatter keys (1)",
+        "Stale content (101 days)"
+      ],
+      "priority": "medium",
+      "score": 7,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 1,
+        "missing_images": 0,
+        "penalty": 3,
+        "stale": true
+      }
+    },
+    "blog/2022-06-07-release-1.2.md": {
+      "evidence": [
+        "Missing frontmatter keys (1)",
+        "Stale content (101 days)"
+      ],
+      "priority": "medium",
+      "score": 7,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 1,
+        "missing_images": 0,
+        "penalty": 3,
+        "stale": true
+      }
+    },
+    "blog/2022-10-07-release-1.3.md": {
+      "evidence": [
+        "Missing frontmatter keys (1)",
+        "Stale content (420 days)"
+      ],
+      "priority": "medium",
+      "score": 7,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 1,
+        "missing_images": 0,
+        "penalty": 3,
+        "stale": true
+      }
+    },
+    "blog/2023-04-18-release-1.4.md": {
+      "evidence": [
+        "Missing frontmatter keys (1)",
+        "Stale content (968 days)"
+      ],
+      "priority": "medium",
+      "score": 7,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 1,
+        "missing_images": 0,
+        "penalty": 3,
+        "stale": true
+      }
+    },
+    "blog/2025-02-19-elastic-components.md": {
+      "evidence": [
+        "Missing frontmatter keys (1)",
+        "Stale content (293 days)"
+      ],
+      "priority": "medium",
+      "score": 7,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 1,
+        "missing_images": 0,
+        "penalty": 3,
+        "stale": true
+      }
+    },
+    "docs/best-practices/acronjob+broadcastjob.md": {
+      "evidence": [
+        "Missing frontmatter keys (2)",
+        "Stale content (968 days)"
+      ],
+      "priority": "medium",
+      "score": 5,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 5,
+        "stale": true
+      }
+    },
+    "docs/best-practices/ci-pipeline-image-predownload.md": {
+      "evidence": [
+        "Missing image assets (4)",
+        "Missing frontmatter keys (2)",
+        "Stale content (968 days)"
+      ],
+      "priority": "high",
+      "score": 0,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 4,
+        "penalty": 17,
+        "stale": true
+      }
+    },
+    "docs/best-practices/cloneset-lifecycle.md": {
+      "evidence": [
+        "Missing image assets (1)",
+        "Missing frontmatter keys (2)",
+        "Stale content (968 days)"
+      ],
+      "priority": "high",
+      "score": 2,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 1,
+        "penalty": 8,
+        "stale": true
+      }
+    },
+    "docs/best-practices/elastic-deployment.md": {
+      "evidence": [
+        "Missing image assets (5)",
+        "Missing frontmatter keys (2)",
+        "Stale content (968 days)"
+      ],
+      "priority": "high",
+      "score": 0,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 5,
+        "penalty": 20,
+        "stale": true
+      }
+    },
+    "docs/best-practices/gitops-with-kruise.md": {
+      "evidence": [
+        "Missing image assets (2)",
+        "Missing frontmatter keys (2)",
+        "Stale content (1259 days)"
+      ],
+      "priority": "high",
+      "score": 0,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 2,
+        "penalty": 11,
+        "stale": true
+      }
+    },
+    "docs/best-practices/hpa-configuration.md": {
+      "evidence": [
+        "Missing frontmatter keys (2)",
+        "Stale content (1697 days)"
+      ],
+      "priority": "medium",
+      "score": 5,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 5,
+        "stale": true
+      }
+    },
+    "docs/best-practices/log-container-sidecarset.md": {
+      "evidence": [
+        "Missing image assets (2)",
+        "Missing frontmatter keys (2)",
+        "Stale content (696 days)"
+      ],
+      "priority": "high",
+      "score": 0,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 2,
+        "penalty": 11,
+        "stale": true
+      }
+    },
+    "docs/best-practices/resource-policy-sidecarset.md": {
+      "evidence": [
+        "Missing image assets (1)",
+        "Missing frontmatter keys (2)",
+        "Stale content (174 days)"
+      ],
+      "priority": "high",
+      "score": 2,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 1,
+        "penalty": 8,
+        "stale": true
+      }
+    },
+    "docs/cli-tool/kubectl-plugin.md": {
+      "evidence": [
+        "Missing frontmatter keys (2)",
+        "Stale content (101 days)"
+      ],
+      "priority": "medium",
+      "score": 5,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 5,
+        "stale": true
+      }
+    },
+    "docs/cli-tool/kustomize-plugin.md": {
+      "evidence": [
+        "Missing image assets (1)",
+        "Missing frontmatter keys (2)",
+        "Stale content (968 days)"
+      ],
+      "priority": "high",
+      "score": 2,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 1,
+        "penalty": 8,
+        "stale": true
+      }
+    },
+    "docs/cli-tool/kustomize-schema-generator.md": {
+      "evidence": [
+        "Missing frontmatter keys (2)",
+        "Stale content (934 days)"
+      ],
+      "priority": "medium",
+      "score": 5,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 5,
+        "stale": true
+      }
+    },
+    "docs/core-concepts/architecture.md": {
+      "evidence": [
+        "Missing image assets (1)",
+        "Missing frontmatter keys (2)",
+        "Stale content (1697 days)"
+      ],
+      "priority": "high",
+      "score": 2,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 1,
+        "penalty": 8,
+        "stale": true
+      }
+    },
+    "docs/core-concepts/inplace-update.md": {
+      "evidence": [
+        "Missing image assets (2)",
+        "Missing anchors (1)",
+        "Missing frontmatter keys (2)",
+        "Stale content (101 days)"
+      ],
+      "priority": "high",
+      "score": 0,
+      "subscores": {
+        "missing_anchors": 1,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 2,
+        "penalty": 13,
+        "stale": true
+      }
+    },
+    "docs/demo/mentor_demo_walkthrough.md": {
+      "evidence": [
+        "Missing frontmatter keys (3)"
+      ],
+      "priority": "high",
+      "score": 4,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 3,
+        "missing_images": 0,
+        "penalty": 6,
+        "stale": false
+      }
+    },
+    "docs/demo/sample_ci_run.md": {
+      "evidence": [
+        "Missing frontmatter keys (3)"
+      ],
+      "priority": "high",
+      "score": 4,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 3,
+        "missing_images": 0,
+        "penalty": 6,
+        "stale": false
+      }
+    },
+    "docs/demo/sample_pr.md": {
+      "evidence": [
+        "Missing frontmatter keys (3)"
+      ],
+      "priority": "high",
+      "score": 4,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 3,
+        "missing_images": 0,
+        "penalty": 6,
+        "stale": false
+      }
+    },
+    "docs/demo/troubleshooting.md": {
+      "evidence": [
+        "Missing frontmatter keys (3)"
+      ],
+      "priority": "high",
+      "score": 4,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 3,
+        "missing_images": 0,
+        "penalty": 6,
+        "stale": false
+      }
+    },
+    "docs/developer-manuals/go-client.md": {
+      "evidence": [
+        "Missing frontmatter keys (2)",
+        "Stale content (410 days)"
+      ],
+      "priority": "medium",
+      "score": 5,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 5,
+        "stale": true
+      }
+    },
+    "docs/developer-manuals/java-client.md": {
+      "evidence": [
+        "Missing frontmatter keys (2)",
+        "Stale content (968 days)"
+      ],
+      "priority": "medium",
+      "score": 5,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 5,
+        "stale": true
+      }
+    },
+    "docs/developer-manuals/other-languages.md": {
+      "evidence": [
+        "Missing frontmatter keys (2)",
+        "Stale content (968 days)"
+      ],
+      "priority": "medium",
+      "score": 5,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 5,
+        "stale": true
+      }
+    },
+    "docs/faq.md": {
+      "evidence": [
+        "Missing frontmatter keys (2)",
+        "Stale content (293 days)"
+      ],
+      "priority": "medium",
+      "score": 5,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 5,
+        "stale": true
+      }
+    },
+    "docs/installation.md": {
+      "evidence": [
+        "Missing frontmatter keys (2)",
+        "Stale content (101 days)"
+      ],
+      "priority": "medium",
+      "score": 5,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 5,
+        "stale": true
+      }
+    },
+    "docs/introduction.md": {
+      "evidence": [
+        "Missing markdown targets (2)",
+        "Missing frontmatter keys (1)",
+        "Stale content (101 days)"
+      ],
+      "priority": "high",
+      "score": 1,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 2,
+        "missing_frontmatter": 1,
+        "missing_images": 0,
+        "penalty": 9,
+        "stale": true
+      }
+    },
+    "docs/operator-manuals/availability.md": {
+      "evidence": [
+        "Missing frontmatter keys (2)",
+        "Stale content (315 days)"
+      ],
+      "priority": "medium",
+      "score": 5,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 5,
+        "stale": true
+      }
+    },
+    "docs/operator-manuals/troubleshooting.md": {
+      "evidence": [
+        "Missing frontmatter keys (2)",
+        "Stale content (101 days)"
+      ],
+      "priority": "medium",
+      "score": 5,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 5,
+        "stale": true
+      }
+    },
+    "docs/operator-manuals/upgrade.md": {
+      "evidence": [
+        "Missing frontmatter keys (2)",
+        "Stale content (105 days)"
+      ],
+      "priority": "medium",
+      "score": 5,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 5,
+        "stale": true
+      }
+    },
+    "docs/research/design_decisions.md": {
+      "evidence": [
+        "Missing frontmatter keys (3)"
+      ],
+      "priority": "high",
+      "score": 4,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 3,
+        "missing_images": 0,
+        "penalty": 6,
+        "stale": false
+      }
+    },
+    "docs/research/literature_review.md": {
+      "evidence": [
+        "Missing frontmatter keys (3)"
+      ],
+      "priority": "high",
+      "score": 4,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 3,
+        "missing_images": 0,
+        "penalty": 6,
+        "stale": false
+      }
+    },
+    "docs/research/related_work.md": {
+      "evidence": [
+        "Missing frontmatter keys (3)"
+      ],
+      "priority": "high",
+      "score": 4,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 3,
+        "missing_images": 0,
+        "penalty": 6,
+        "stale": false
+      }
+    },
+    "docs/user-manuals/advancedcronjob.md": {
+      "evidence": [
+        "Missing image assets (1)",
+        "Missing frontmatter keys (2)",
+        "Stale content (159 days)"
+      ],
+      "priority": "high",
+      "score": 2,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 1,
+        "penalty": 8,
+        "stale": true
+      }
+    },
+    "docs/user-manuals/advanceddaemonset.md": {
+      "evidence": [
+        "Missing anchors (1)",
+        "Missing frontmatter keys (2)",
+        "Stale content (159 days)"
+      ],
+      "priority": "high",
+      "score": 3,
+      "subscores": {
+        "missing_anchors": 1,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 7,
+        "stale": true
+      }
+    },
+    "docs/user-manuals/advancedstatefulset.md": {
+      "evidence": [
+        "Missing anchors (1)",
+        "Missing frontmatter keys (2)",
+        "Stale content (181 days)"
+      ],
+      "priority": "high",
+      "score": 3,
+      "subscores": {
+        "missing_anchors": 1,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 7,
+        "stale": true
+      }
+    },
+    "docs/user-manuals/broadcastjob.md": {
+      "evidence": [
+        "Missing frontmatter keys (2)",
+        "Stale content (159 days)"
+      ],
+      "priority": "medium",
+      "score": 5,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 5,
+        "stale": true
+      }
+    },
+    "docs/user-manuals/cloneset.md": {
+      "evidence": [
+        "Missing markdown targets (1)",
+        "Missing image assets (1)",
+        "Missing anchors (1)",
+        "Missing frontmatter keys (2)"
+      ],
+      "priority": "high",
+      "score": 0,
+      "subscores": {
+        "missing_anchors": 1,
+        "missing_files": 1,
+        "missing_frontmatter": 2,
+        "missing_images": 1,
+        "penalty": 12,
+        "stale": false
+      }
+    },
+    "docs/user-manuals/containerlaunchpriority.md": {
+      "evidence": [
+        "Missing frontmatter keys (2)",
+        "Stale content (313 days)"
+      ],
+      "priority": "medium",
+      "score": 5,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 5,
+        "stale": true
+      }
+    },
+    "docs/user-manuals/containerrecreaterequest.md": {
+      "evidence": [
+        "Missing image assets (1)",
+        "Missing frontmatter keys (2)",
+        "Stale content (968 days)"
+      ],
+      "priority": "high",
+      "score": 2,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 1,
+        "penalty": 8,
+        "stale": true
+      }
+    },
+    "docs/user-manuals/deletionprotection.md": {
+      "evidence": [
+        "Missing frontmatter keys (2)",
+        "Stale content (101 days)"
+      ],
+      "priority": "medium",
+      "score": 5,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 5,
+        "stale": true
+      }
+    },
+    "docs/user-manuals/imagepulljob.md": {
+      "evidence": [
+        "Missing image assets (1)",
+        "Missing frontmatter keys (2)",
+        "Stale content (159 days)"
+      ],
+      "priority": "high",
+      "score": 2,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 1,
+        "penalty": 8,
+        "stale": true
+      }
+    },
+    "docs/user-manuals/jobsidecarterminator.md": {
+      "evidence": [
+        "Missing frontmatter keys (2)",
+        "Stale content (497 days)"
+      ],
+      "priority": "medium",
+      "score": 5,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 5,
+        "stale": true
+      }
+    },
+    "docs/user-manuals/persistentpodstate.md": {
+      "evidence": [
+        "Missing image assets (1)",
+        "Missing frontmatter keys (2)",
+        "Stale content (101 days)"
+      ],
+      "priority": "high",
+      "score": 2,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 1,
+        "penalty": 8,
+        "stale": true
+      }
+    },
+    "docs/user-manuals/podprobemarker.md": {
+      "evidence": [
+        "Missing frontmatter keys (2)",
+        "Stale content (410 days)"
+      ],
+      "priority": "medium",
+      "score": 5,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 5,
+        "stale": true
+      }
+    },
+    "docs/user-manuals/podunavailablebudget.md": {
+      "evidence": [
+        "Missing image assets (1)",
+        "Missing frontmatter keys (2)",
+        "Stale content (105 days)"
+      ],
+      "priority": "high",
+      "score": 2,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 1,
+        "penalty": 8,
+        "stale": true
+      }
+    },
+    "docs/user-manuals/resourcedistribution.md": {
+      "evidence": [
+        "Missing markdown targets (1)",
+        "Missing frontmatter keys (2)",
+        "Stale content (968 days)"
+      ],
+      "priority": "high",
+      "score": 2,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 1,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 8,
+        "stale": true
+      }
+    },
+    "docs/user-manuals/sidecarset.md": {
+      "evidence": [
+        "Missing markdown targets (1)",
+        "Missing image assets (2)",
+        "Missing frontmatter keys (2)",
+        "Stale content (157 days)"
+      ],
+      "priority": "high",
+      "score": 0,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 1,
+        "missing_frontmatter": 2,
+        "missing_images": 2,
+        "penalty": 14,
+        "stale": true
+      }
+    },
+    "docs/user-manuals/uniteddeployment.md": {
+      "evidence": [
+        "Missing markdown targets (1)",
+        "Missing frontmatter keys (2)",
+        "Stale content (101 days)"
+      ],
+      "priority": "high",
+      "score": 2,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 1,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 8,
+        "stale": true
+      }
+    },
+    "docs/user-manuals/workloadspread.md": {
+      "evidence": [
+        "Missing frontmatter keys (2)",
+        "Stale content (101 days)"
+      ],
+      "priority": "medium",
+      "score": 5,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 5,
+        "stale": true
+      }
+    },
+    "kruiseagents/architecture.md": {
+      "evidence": [
+        "Missing image assets (1)",
+        "Missing frontmatter keys (2)"
+      ],
+      "priority": "high",
+      "score": 3,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 1,
+        "penalty": 7,
+        "stale": false
+      }
+    },
+    "kruiseagents/best-practices/cert-manager.md": {
+      "evidence": [
+        "Missing frontmatter keys (3)"
+      ],
+      "priority": "high",
+      "score": 4,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 3,
+        "missing_images": 0,
+        "penalty": 6,
+        "stale": false
+      }
+    },
+    "kruiseagents/best-practices/running-e2b-for-code-interpreter.md": {
+      "evidence": [
+        "Missing frontmatter keys (3)",
+        "Stale content (100 days)"
+      ],
+      "priority": "high",
+      "score": 3,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 3,
+        "missing_images": 0,
+        "penalty": 7,
+        "stale": true
+      }
+    },
+    "kruiseagents/best-practices/running-e2b-for-desktop.md": {
+      "evidence": [
+        "Missing markdown targets (1)",
+        "Missing frontmatter keys (3)"
+      ],
+      "priority": "high",
+      "score": 1,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 1,
+        "missing_frontmatter": 3,
+        "missing_images": 0,
+        "penalty": 9,
+        "stale": false
+      }
+    },
+    "kruiseagents/best-practices/running-openclaw-sandbox.md": {
+      "evidence": [
+        "Missing frontmatter keys (3)"
+      ],
+      "priority": "high",
+      "score": 4,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 3,
+        "missing_images": 0,
+        "penalty": 6,
+        "stale": false
+      }
+    },
+    "kruiseagents/best-practices/use-self-signed-cert.md": {
+      "evidence": [
+        "Missing frontmatter keys (3)"
+      ],
+      "priority": "high",
+      "score": 4,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 3,
+        "missing_images": 0,
+        "penalty": 6,
+        "stale": false
+      }
+    },
+    "kruiseagents/core-concept.md": {
+      "evidence": [
+        "Missing frontmatter keys (3)"
+      ],
+      "priority": "high",
+      "score": 4,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 3,
+        "missing_images": 0,
+        "penalty": 6,
+        "stale": false
+      }
+    },
+    "kruiseagents/developer-manuals/contribution.md": {
+      "evidence": [
+        "Missing frontmatter keys (3)",
+        "Stale content (100 days)"
+      ],
+      "priority": "high",
+      "score": 3,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 3,
+        "missing_images": 0,
+        "penalty": 7,
+        "stale": true
+      }
+    },
+    "kruiseagents/developer-manuals/e2b-client.md": {
+      "evidence": [
+        "Missing frontmatter keys (3)"
+      ],
+      "priority": "high",
+      "score": 4,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 3,
+        "missing_images": 0,
+        "penalty": 6,
+        "stale": false
+      }
+    },
+    "kruiseagents/developer-manuals/faq.md": {
+      "evidence": [
+        "Missing frontmatter keys (3)",
+        "Stale content (100 days)"
+      ],
+      "priority": "high",
+      "score": 3,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 3,
+        "missing_images": 0,
+        "penalty": 7,
+        "stale": true
+      }
+    },
+    "kruiseagents/developer-manuals/go-client.md": {
+      "evidence": [
+        "Missing frontmatter keys (2)"
+      ],
+      "priority": "medium",
+      "score": 6,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 4,
+        "stale": false
+      }
+    },
+    "kruiseagents/developer-manuals/java-client.md": {
+      "evidence": [
+        "Missing frontmatter keys (2)"
+      ],
+      "priority": "medium",
+      "score": 6,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 4,
+        "stale": false
+      }
+    },
+    "kruiseagents/developer-manuals/python-client.md": {
+      "evidence": [
+        "Missing frontmatter keys (2)"
+      ],
+      "priority": "medium",
+      "score": 6,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 4,
+        "stale": false
+      }
+    },
+    "kruiseagents/installation.md": {
+      "evidence": [
+        "Missing frontmatter keys (2)"
+      ],
+      "priority": "medium",
+      "score": 6,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 4,
+        "stale": false
+      }
+    },
+    "kruiseagents/introduction.md": {
+      "evidence": [
+        "Missing markdown targets (1)",
+        "Missing frontmatter keys (3)"
+      ],
+      "priority": "high",
+      "score": 1,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 1,
+        "missing_frontmatter": 3,
+        "missing_images": 0,
+        "penalty": 9,
+        "stale": false
+      }
+    },
+    "kruiseagents/user-cases/ack-kimi.md": {
+      "evidence": [
+        "Missing frontmatter keys (3)"
+      ],
+      "priority": "high",
+      "score": 4,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 3,
+        "missing_images": 0,
+        "penalty": 6,
+        "stale": false
+      }
+    },
+    "kruiseagents/user-cases/ack-lixiang.md": {
+      "evidence": [
+        "Missing frontmatter keys (3)"
+      ],
+      "priority": "high",
+      "score": 4,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 3,
+        "missing_images": 0,
+        "penalty": 6,
+        "stale": false
+      }
+    },
+    "kruiseagents/user-cases/ack-minimax.md": {
+      "evidence": [
+        "Missing frontmatter keys (3)"
+      ],
+      "priority": "high",
+      "score": 4,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 3,
+        "missing_images": 0,
+        "penalty": 6,
+        "stale": false
+      }
+    },
+    "kruiseagents/user-manuals/runtime-injection.md": {
+      "evidence": [
+        "Missing frontmatter keys (2)"
+      ],
+      "priority": "medium",
+      "score": 6,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 4,
+        "stale": false
+      }
+    },
+    "kruiseagents/user-manuals/sandbox-claim.md": {
+      "evidence": [
+        "Missing frontmatter keys (2)"
+      ],
+      "priority": "medium",
+      "score": 6,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 4,
+        "stale": false
+      }
+    },
+    "kruiseagents/user-manuals/warmpool-management.md": {
+      "evidence": [
+        "Missing frontmatter keys (3)",
+        "Stale content (100 days)"
+      ],
+      "priority": "high",
+      "score": 3,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 3,
+        "missing_images": 0,
+        "penalty": 7,
+        "stale": true
+      }
+    },
+    "kruisegame/best-practices/gameserver-delivery-management.md": {
+      "evidence": [
+        "Missing frontmatter keys (3)",
+        "Stale content (739 days)"
+      ],
+      "priority": "high",
+      "score": 3,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 3,
+        "missing_images": 0,
+        "penalty": 7,
+        "stale": true
+      }
+    },
+    "kruisegame/best-practices/pve-game.md": {
+      "evidence": [
+        "Missing frontmatter keys (3)",
+        "Stale content (816 days)"
+      ],
+      "priority": "high",
+      "score": 3,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 3,
+        "missing_images": 0,
+        "penalty": 7,
+        "stale": true
+      }
+    },
+    "kruisegame/best-practices/session-based-game.md": {
+      "evidence": [
+        "Missing frontmatter keys (3)",
+        "Stale content (864 days)"
+      ],
+      "priority": "high",
+      "score": 3,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 3,
+        "missing_images": 0,
+        "penalty": 7,
+        "stale": true
+      }
+    },
+    "kruisegame/best-practices/shared-mem.md": {
+      "evidence": [
+        "Missing frontmatter keys (3)",
+        "Stale content (815 days)"
+      ],
+      "priority": "high",
+      "score": 3,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 3,
+        "missing_images": 0,
+        "penalty": 7,
+        "stale": true
+      }
+    },
+    "kruisegame/best-practices/workflow.md": {
+      "evidence": [
+        "Missing frontmatter keys (3)",
+        "Stale content (683 days)"
+      ],
+      "priority": "high",
+      "score": 3,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 3,
+        "missing_images": 0,
+        "penalty": 7,
+        "stale": true
+      }
+    },
+    "kruisegame/blog-video/ack-one-okg.md": {
+      "evidence": [
+        "Missing frontmatter keys (3)",
+        "Stale content (712 days)"
+      ],
+      "priority": "high",
+      "score": 3,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 3,
+        "missing_images": 0,
+        "penalty": 7,
+        "stale": true
+      }
+    },
+    "kruisegame/blog-video/api-gateway-okg.md": {
+      "evidence": [
+        "Missing frontmatter keys (3)",
+        "Stale content (263 days)"
+      ],
+      "priority": "high",
+      "score": 3,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 3,
+        "missing_images": 0,
+        "penalty": 7,
+        "stale": true
+      }
+    },
+    "kruisegame/blog-video/cloud-forward-okg.md": {
+      "evidence": [
+        "Missing frontmatter keys (3)",
+        "Stale content (712 days)"
+      ],
+      "priority": "high",
+      "score": 3,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 3,
+        "missing_images": 0,
+        "penalty": 7,
+        "stale": true
+      }
+    },
+    "kruisegame/blog-video/gameserver-scale.md": {
+      "evidence": [
+        "Missing frontmatter keys (3)",
+        "Stale content (418 days)"
+      ],
+      "priority": "high",
+      "score": 3,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 3,
+        "missing_images": 0,
+        "penalty": 7,
+        "stale": true
+      }
+    },
+    "kruisegame/blog-video/guanying-20231129.md": {
+      "evidence": [
+        "Missing frontmatter keys (3)",
+        "Stale content (901 days)"
+      ],
+      "priority": "high",
+      "score": 3,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 3,
+        "missing_images": 0,
+        "penalty": 7,
+        "stale": true
+      }
+    },
+    "kruisegame/blog-video/higress.md": {
+      "evidence": [
+        "Missing frontmatter keys (3)",
+        "Stale content (797 days)"
+      ],
+      "priority": "high",
+      "score": 3,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 3,
+        "missing_images": 0,
+        "penalty": 7,
+        "stale": true
+      }
+    },
+    "kruisegame/blog-video/kubecon-chillyroom-20240823.md": {
+      "evidence": [
+        "Missing frontmatter keys (3)",
+        "Stale content (549 days)"
+      ],
+      "priority": "high",
+      "score": 3,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 3,
+        "missing_images": 0,
+        "penalty": 7,
+        "stale": true
+      }
+    },
+    "kruisegame/blog-video/kubecon-shangyou-20230926.md": {
+      "evidence": [
+        "Missing frontmatter keys (3)",
+        "Stale content (901 days)"
+      ],
+      "priority": "high",
+      "score": 3,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 3,
+        "missing_images": 0,
+        "penalty": 7,
+        "stale": true
+      }
+    },
+    "kruisegame/blog-video/lilith-okg.md": {
+      "evidence": [
+        "Missing frontmatter keys (3)",
+        "Stale content (619 days)"
+      ],
+      "priority": "high",
+      "score": 3,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 3,
+        "missing_images": 0,
+        "penalty": 7,
+        "stale": true
+      }
+    },
+    "kruisegame/blog-video/meetup-guangzhou-20231125.md": {
+      "evidence": [
+        "Missing frontmatter keys (3)",
+        "Stale content (901 days)"
+      ],
+      "priority": "high",
+      "score": 3,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 3,
+        "missing_images": 0,
+        "penalty": 7,
+        "stale": true
+      }
+    },
+    "kruisegame/blog-video/okg-360.md": {
+      "evidence": [
+        "Missing frontmatter keys (3)",
+        "Stale content (514 days)"
+      ],
+      "priority": "high",
+      "score": 3,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 3,
+        "missing_images": 0,
+        "penalty": 7,
+        "stale": true
+      }
+    },
+    "kruisegame/blog-video/okg-911.md": {
+      "evidence": [
+        "Missing frontmatter keys (3)",
+        "Stale content (712 days)"
+      ],
+      "priority": "high",
+      "score": 3,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 3,
+        "missing_images": 0,
+        "penalty": 7,
+        "stale": true
+      }
+    },
+    "kruisegame/blog-video/okg-gsshosting.md": {
+      "evidence": [
+        "Missing frontmatter keys (3)",
+        "Stale content (712 days)"
+      ],
+      "priority": "high",
+      "score": 3,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 3,
+        "missing_images": 0,
+        "penalty": 7,
+        "stale": true
+      }
+    },
+    "kruisegame/blog-video/paomu.md": {
+      "evidence": [
+        "Missing frontmatter keys (3)",
+        "Stale content (202 days)"
+      ],
+      "priority": "high",
+      "score": 3,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 3,
+        "missing_images": 0,
+        "penalty": 7,
+        "stale": true
+      }
+    },
+    "kruisegame/blog-video/yahaha-okg.md": {
+      "evidence": [
+        "Missing frontmatter keys (3)",
+        "Stale content (306 days)"
+      ],
+      "priority": "high",
+      "score": 3,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 3,
+        "missing_images": 0,
+        "penalty": 7,
+        "stale": true
+      }
+    },
+    "kruisegame/design-concept.md": {
+      "evidence": [
+        "Missing frontmatter keys (3)",
+        "Stale content (101 days)"
+      ],
+      "priority": "high",
+      "score": 3,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 3,
+        "missing_images": 0,
+        "penalty": 7,
+        "stale": true
+      }
+    },
+    "kruisegame/developer-manuals/contribution.md": {
+      "evidence": [
+        "Missing frontmatter keys (3)",
+        "Stale content (1132 days)"
+      ],
+      "priority": "high",
+      "score": 3,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 3,
+        "missing_images": 0,
+        "penalty": 7,
+        "stale": true
+      }
+    },
+    "kruisegame/developer-manuals/faq.md": {
+      "evidence": [
+        "Missing frontmatter keys (3)",
+        "Stale content (1131 days)"
+      ],
+      "priority": "high",
+      "score": 3,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 3,
+        "missing_images": 0,
+        "penalty": 7,
+        "stale": true
+      }
+    },
+    "kruisegame/developer-manuals/go-client.md": {
+      "evidence": [
+        "Missing frontmatter keys (3)",
+        "Stale content (832 days)"
+      ],
+      "priority": "high",
+      "score": 3,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 3,
+        "missing_images": 0,
+        "penalty": 7,
+        "stale": true
+      }
+    },
+    "kruisegame/developer-manuals/kruise-game-api.md": {
+      "evidence": [
+        "Missing frontmatter keys (3)",
+        "Stale content (448 days)"
+      ],
+      "priority": "high",
+      "score": 3,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 3,
+        "missing_images": 0,
+        "penalty": 7,
+        "stale": true
+      }
+    },
+    "kruisegame/installation.md": {
+      "evidence": [
+        "Missing frontmatter keys (3)",
+        "Stale content (306 days)"
+      ],
+      "priority": "high",
+      "score": 3,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 3,
+        "missing_images": 0,
+        "penalty": 7,
+        "stale": true
+      }
+    },
+    "kruisegame/introduction.md": {
+      "evidence": [
+        "Missing frontmatter keys (3)",
+        "Stale content (263 days)"
+      ],
+      "priority": "high",
+      "score": 3,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 3,
+        "missing_images": 0,
+        "penalty": 7,
+        "stale": true
+      }
+    },
+    "kruisegame/user-manuals/container-startup-sequence-control.md": {
+      "evidence": [
+        "Missing frontmatter keys (3)",
+        "Stale content (1132 days)"
+      ],
+      "priority": "high",
+      "score": 3,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 3,
+        "missing_images": 0,
+        "penalty": 7,
+        "stale": true
+      }
+    },
+    "kruisegame/user-manuals/crd-field-description.md": {
+      "evidence": [
+        "Missing frontmatter keys (3)",
+        "Stale content (299 days)"
+      ],
+      "priority": "high",
+      "score": 3,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 3,
+        "missing_images": 0,
+        "penalty": 7,
+        "stale": true
+      }
+    },
+    "kruisegame/user-manuals/deploy-gameservers.md": {
+      "evidence": [
+        "Missing frontmatter keys (3)",
+        "Stale content (420 days)"
+      ],
+      "priority": "high",
+      "score": 3,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 3,
+        "missing_images": 0,
+        "penalty": 7,
+        "stale": true
+      }
+    },
+    "kruisegame/user-manuals/faq.md": {
+      "evidence": [
+        "Missing frontmatter keys (3)",
+        "Stale content (306 days)"
+      ],
+      "priority": "high",
+      "score": 3,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 3,
+        "missing_images": 0,
+        "penalty": 7,
+        "stale": true
+      }
+    },
+    "kruisegame/user-manuals/game-dashboard.md": {
+      "evidence": [
+        "Missing image assets (22)",
+        "Missing frontmatter keys (3)",
+        "Stale content (103 days)"
+      ],
+      "priority": "high",
+      "score": 0,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 3,
+        "missing_images": 22,
+        "penalty": 73,
+        "stale": true
+      }
+    },
+    "kruisegame/user-manuals/game-matchmaking.md": {
+      "evidence": [
+        "Missing frontmatter keys (3)",
+        "Stale content (1011 days)"
+      ],
+      "priority": "high",
+      "score": 3,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 3,
+        "missing_images": 0,
+        "penalty": 7,
+        "stale": true
+      }
+    },
+    "kruisegame/user-manuals/gameserver-monitor.md": {
+      "evidence": [
+        "Missing frontmatter keys (3)",
+        "Stale content (1088 days)"
+      ],
+      "priority": "high",
+      "score": 3,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 3,
+        "missing_images": 0,
+        "penalty": 7,
+        "stale": true
+      }
+    },
+    "kruisegame/user-manuals/gameserver-scheduler.md": {
+      "evidence": [
+        "Missing frontmatter keys (3)",
+        "Stale content (306 days)"
+      ],
+      "priority": "high",
+      "score": 3,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 3,
+        "missing_images": 0,
+        "penalty": 7,
+        "stale": true
+      }
+    },
+    "kruisegame/user-manuals/gameserver-state.md": {
+      "evidence": [
+        "Missing frontmatter keys (3)",
+        "Stale content (306 days)"
+      ],
+      "priority": "high",
+      "score": 3,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 3,
+        "missing_images": 0,
+        "penalty": 7,
+        "stale": true
+      }
+    },
+    "kruisegame/user-manuals/gameservers-scale.md": {
+      "evidence": [
+        "Missing frontmatter keys (3)",
+        "Stale content (306 days)"
+      ],
+      "priority": "high",
+      "score": 3,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 3,
+        "missing_images": 0,
+        "penalty": 7,
+        "stale": true
+      }
+    },
+    "kruisegame/user-manuals/hot-update.md": {
+      "evidence": [
+        "Missing frontmatter keys (3)",
+        "Stale content (1043 days)"
+      ],
+      "priority": "high",
+      "score": 3,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 3,
+        "missing_images": 0,
+        "penalty": 7,
+        "stale": true
+      }
+    },
+    "kruisegame/user-manuals/lifecycle.md": {
+      "evidence": [
+        "Missing frontmatter keys (3)",
+        "Stale content (447 days)"
+      ],
+      "priority": "high",
+      "score": 3,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 3,
+        "missing_images": 0,
+        "penalty": 7,
+        "stale": true
+      }
+    },
+    "kruisegame/user-manuals/network.md": {
+      "evidence": [
+        "Missing frontmatter keys (3)",
+        "Stale content (299 days)"
+      ],
+      "priority": "high",
+      "score": 3,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 3,
+        "missing_images": 0,
+        "penalty": 7,
+        "stale": true
+      }
+    },
+    "kruisegame/user-manuals/service-qualities.md": {
+      "evidence": [
+        "Missing frontmatter keys (3)",
+        "Stale content (103 days)"
+      ],
+      "priority": "high",
+      "score": 3,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 3,
+        "missing_images": 0,
+        "penalty": 7,
+        "stale": true
+      }
+    },
+    "kruisegame/user-manuals/update-strategy.md": {
+      "evidence": [
+        "Missing frontmatter keys (3)",
+        "Stale content (1088 days)"
+      ],
+      "priority": "high",
+      "score": 3,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 3,
+        "missing_images": 0,
+        "penalty": 7,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.5/best-practices/acronjob+broadcastjob.md": {
+      "evidence": [
+        "Missing frontmatter keys (2)",
+        "Stale content (968 days)"
+      ],
+      "priority": "medium",
+      "score": 5,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 5,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.5/best-practices/ci-pipeline-image-predownload.md": {
+      "evidence": [
+        "Missing image assets (4)",
+        "Missing frontmatter keys (2)",
+        "Stale content (968 days)"
+      ],
+      "priority": "high",
+      "score": 0,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 4,
+        "penalty": 17,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.5/best-practices/cloneset-lifecycle.md": {
+      "evidence": [
+        "Missing image assets (1)",
+        "Missing frontmatter keys (2)",
+        "Stale content (968 days)"
+      ],
+      "priority": "high",
+      "score": 2,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 1,
+        "penalty": 8,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.5/best-practices/elastic-deployment.md": {
+      "evidence": [
+        "Missing image assets (5)",
+        "Missing frontmatter keys (2)",
+        "Stale content (968 days)"
+      ],
+      "priority": "high",
+      "score": 0,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 5,
+        "penalty": 20,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.5/best-practices/gitops-with-kruise.md": {
+      "evidence": [
+        "Missing image assets (2)",
+        "Missing frontmatter keys (2)",
+        "Stale content (978 days)"
+      ],
+      "priority": "high",
+      "score": 0,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 2,
+        "penalty": 11,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.5/best-practices/hpa-configuration.md": {
+      "evidence": [
+        "Missing frontmatter keys (2)",
+        "Stale content (978 days)"
+      ],
+      "priority": "medium",
+      "score": 5,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 5,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.5/best-practices/log-container-sidecarset.md": {
+      "evidence": [
+        "Missing image assets (2)",
+        "Missing frontmatter keys (2)",
+        "Stale content (696 days)"
+      ],
+      "priority": "high",
+      "score": 0,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 2,
+        "penalty": 11,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.5/cli-tool/kubectl-plugin.md": {
+      "evidence": [
+        "Missing frontmatter keys (2)",
+        "Stale content (101 days)"
+      ],
+      "priority": "medium",
+      "score": 5,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 5,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.5/cli-tool/kustomize-plugin.md": {
+      "evidence": [
+        "Missing image assets (1)",
+        "Missing frontmatter keys (2)",
+        "Stale content (968 days)"
+      ],
+      "priority": "high",
+      "score": 2,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 1,
+        "penalty": 8,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.5/core-concepts/architecture.md": {
+      "evidence": [
+        "Missing image assets (1)",
+        "Missing frontmatter keys (2)",
+        "Stale content (978 days)"
+      ],
+      "priority": "high",
+      "score": 2,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 1,
+        "penalty": 8,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.5/core-concepts/inplace-update.md": {
+      "evidence": [
+        "Missing image assets (2)",
+        "Missing frontmatter keys (2)",
+        "Stale content (101 days)"
+      ],
+      "priority": "high",
+      "score": 0,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 2,
+        "penalty": 11,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.5/developer-manuals/go-client.md": {
+      "evidence": [
+        "Missing frontmatter keys (2)",
+        "Stale content (420 days)"
+      ],
+      "priority": "medium",
+      "score": 5,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 5,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.5/developer-manuals/java-client.md": {
+      "evidence": [
+        "Missing frontmatter keys (2)",
+        "Stale content (968 days)"
+      ],
+      "priority": "medium",
+      "score": 5,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 5,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.5/developer-manuals/other-languages.md": {
+      "evidence": [
+        "Missing frontmatter keys (2)",
+        "Stale content (968 days)"
+      ],
+      "priority": "medium",
+      "score": 5,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 5,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.5/faq.md": {
+      "evidence": [
+        "Missing frontmatter keys (2)",
+        "Stale content (978 days)"
+      ],
+      "priority": "medium",
+      "score": 5,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 5,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.5/installation.md": {
+      "evidence": [
+        "Missing frontmatter keys (2)",
+        "Stale content (584 days)"
+      ],
+      "priority": "medium",
+      "score": 5,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 5,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.5/introduction.md": {
+      "evidence": [
+        "Missing frontmatter keys (1)",
+        "Stale content (101 days)"
+      ],
+      "priority": "medium",
+      "score": 7,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 1,
+        "missing_images": 0,
+        "penalty": 3,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.5/user-manuals/advancedcronjob.md": {
+      "evidence": [
+        "Missing image assets (1)",
+        "Missing frontmatter keys (2)",
+        "Stale content (968 days)"
+      ],
+      "priority": "high",
+      "score": 2,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 1,
+        "penalty": 8,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.5/user-manuals/advanceddaemonset.md": {
+      "evidence": [
+        "Missing frontmatter keys (2)",
+        "Stale content (968 days)"
+      ],
+      "priority": "medium",
+      "score": 5,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 5,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.5/user-manuals/advancedstatefulset.md": {
+      "evidence": [
+        "Missing frontmatter keys (2)",
+        "Stale content (181 days)"
+      ],
+      "priority": "medium",
+      "score": 5,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 5,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.5/user-manuals/broadcastjob.md": {
+      "evidence": [
+        "Missing frontmatter keys (2)",
+        "Stale content (968 days)"
+      ],
+      "priority": "medium",
+      "score": 5,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 5,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.5/user-manuals/cloneset.md": {
+      "evidence": [
+        "Missing markdown targets (1)",
+        "Missing image assets (1)",
+        "Missing frontmatter keys (2)",
+        "Stale content (101 days)"
+      ],
+      "priority": "high",
+      "score": 0,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 1,
+        "missing_frontmatter": 2,
+        "missing_images": 1,
+        "penalty": 11,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.5/user-manuals/containerlaunchpriority.md": {
+      "evidence": [
+        "Missing frontmatter keys (2)",
+        "Stale content (978 days)"
+      ],
+      "priority": "medium",
+      "score": 5,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 5,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.5/user-manuals/containerrecreaterequest.md": {
+      "evidence": [
+        "Missing image assets (1)",
+        "Missing frontmatter keys (2)",
+        "Stale content (968 days)"
+      ],
+      "priority": "high",
+      "score": 2,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 1,
+        "penalty": 8,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.5/user-manuals/deletionprotection.md": {
+      "evidence": [
+        "Missing frontmatter keys (2)",
+        "Stale content (101 days)"
+      ],
+      "priority": "medium",
+      "score": 5,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 5,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.5/user-manuals/imagepulljob.md": {
+      "evidence": [
+        "Missing image assets (1)",
+        "Missing frontmatter keys (2)",
+        "Stale content (968 days)"
+      ],
+      "priority": "high",
+      "score": 2,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 1,
+        "penalty": 8,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.5/user-manuals/jobsidecarterminator.md": {
+      "evidence": [
+        "Missing frontmatter keys (2)",
+        "Stale content (697 days)"
+      ],
+      "priority": "medium",
+      "score": 5,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 5,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.5/user-manuals/persistentpodstate.md": {
+      "evidence": [
+        "Missing image assets (1)",
+        "Missing frontmatter keys (2)",
+        "Stale content (101 days)"
+      ],
+      "priority": "high",
+      "score": 2,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 1,
+        "penalty": 8,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.5/user-manuals/podprobemarker.md": {
+      "evidence": [
+        "Missing frontmatter keys (2)",
+        "Stale content (968 days)"
+      ],
+      "priority": "medium",
+      "score": 5,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 5,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.5/user-manuals/podunavailablebudget.md": {
+      "evidence": [
+        "Missing image assets (1)",
+        "Missing frontmatter keys (2)",
+        "Stale content (978 days)"
+      ],
+      "priority": "high",
+      "score": 2,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 1,
+        "penalty": 8,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.5/user-manuals/resourcedistribution.md": {
+      "evidence": [
+        "Missing markdown targets (1)",
+        "Missing frontmatter keys (2)",
+        "Stale content (968 days)"
+      ],
+      "priority": "high",
+      "score": 2,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 1,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 8,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.5/user-manuals/sidecarset.md": {
+      "evidence": [
+        "Missing image assets (2)",
+        "Missing frontmatter keys (2)",
+        "Stale content (420 days)"
+      ],
+      "priority": "high",
+      "score": 0,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 2,
+        "penalty": 11,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.5/user-manuals/uniteddeployment.md": {
+      "evidence": [
+        "Missing markdown targets (1)",
+        "Missing frontmatter keys (2)",
+        "Stale content (101 days)"
+      ],
+      "priority": "high",
+      "score": 2,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 1,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 8,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.5/user-manuals/workloadspread.md": {
+      "evidence": [
+        "Missing frontmatter keys (2)",
+        "Stale content (420 days)"
+      ],
+      "priority": "medium",
+      "score": 5,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 5,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.6/best-practices/acronjob+broadcastjob.md": {
+      "evidence": [
+        "Missing frontmatter keys (2)",
+        "Stale content (786 days)"
+      ],
+      "priority": "medium",
+      "score": 5,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 5,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.6/best-practices/ci-pipeline-image-predownload.md": {
+      "evidence": [
+        "Missing image assets (4)",
+        "Missing frontmatter keys (2)",
+        "Stale content (786 days)"
+      ],
+      "priority": "high",
+      "score": 0,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 4,
+        "penalty": 17,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.6/best-practices/cloneset-lifecycle.md": {
+      "evidence": [
+        "Missing image assets (1)",
+        "Missing frontmatter keys (2)",
+        "Stale content (786 days)"
+      ],
+      "priority": "high",
+      "score": 2,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 1,
+        "penalty": 8,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.6/best-practices/elastic-deployment.md": {
+      "evidence": [
+        "Missing image assets (5)",
+        "Missing frontmatter keys (2)",
+        "Stale content (786 days)"
+      ],
+      "priority": "high",
+      "score": 0,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 5,
+        "penalty": 20,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.6/best-practices/gitops-with-kruise.md": {
+      "evidence": [
+        "Missing image assets (2)",
+        "Missing frontmatter keys (2)",
+        "Stale content (786 days)"
+      ],
+      "priority": "high",
+      "score": 0,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 2,
+        "penalty": 11,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.6/best-practices/hpa-configuration.md": {
+      "evidence": [
+        "Missing frontmatter keys (2)",
+        "Stale content (786 days)"
+      ],
+      "priority": "medium",
+      "score": 5,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 5,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.6/best-practices/log-container-sidecarset.md": {
+      "evidence": [
+        "Missing image assets (2)",
+        "Missing frontmatter keys (2)",
+        "Stale content (696 days)"
+      ],
+      "priority": "high",
+      "score": 0,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 2,
+        "penalty": 11,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.6/cli-tool/kubectl-plugin.md": {
+      "evidence": [
+        "Missing frontmatter keys (2)",
+        "Stale content (101 days)"
+      ],
+      "priority": "medium",
+      "score": 5,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 5,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.6/cli-tool/kustomize-plugin.md": {
+      "evidence": [
+        "Missing image assets (1)",
+        "Missing frontmatter keys (2)",
+        "Stale content (786 days)"
+      ],
+      "priority": "high",
+      "score": 2,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 1,
+        "penalty": 8,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.6/cli-tool/kustomize-schema-generator.md": {
+      "evidence": [
+        "Missing frontmatter keys (2)",
+        "Stale content (786 days)"
+      ],
+      "priority": "medium",
+      "score": 5,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 5,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.6/core-concepts/architecture.md": {
+      "evidence": [
+        "Missing image assets (1)",
+        "Missing frontmatter keys (2)",
+        "Stale content (786 days)"
+      ],
+      "priority": "high",
+      "score": 2,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 1,
+        "penalty": 8,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.6/core-concepts/inplace-update.md": {
+      "evidence": [
+        "Missing image assets (2)",
+        "Missing frontmatter keys (2)",
+        "Stale content (101 days)"
+      ],
+      "priority": "high",
+      "score": 0,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 2,
+        "penalty": 11,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.6/developer-manuals/go-client.md": {
+      "evidence": [
+        "Missing frontmatter keys (2)",
+        "Stale content (420 days)"
+      ],
+      "priority": "medium",
+      "score": 5,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 5,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.6/developer-manuals/java-client.md": {
+      "evidence": [
+        "Missing frontmatter keys (2)",
+        "Stale content (786 days)"
+      ],
+      "priority": "medium",
+      "score": 5,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 5,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.6/developer-manuals/other-languages.md": {
+      "evidence": [
+        "Missing frontmatter keys (2)",
+        "Stale content (786 days)"
+      ],
+      "priority": "medium",
+      "score": 5,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 5,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.6/faq.md": {
+      "evidence": [
+        "Missing frontmatter keys (2)",
+        "Stale content (786 days)"
+      ],
+      "priority": "medium",
+      "score": 5,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 5,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.6/installation.md": {
+      "evidence": [
+        "Missing frontmatter keys (2)",
+        "Stale content (584 days)"
+      ],
+      "priority": "medium",
+      "score": 5,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 5,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.6/introduction.md": {
+      "evidence": [
+        "Missing frontmatter keys (1)",
+        "Stale content (101 days)"
+      ],
+      "priority": "medium",
+      "score": 7,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 1,
+        "missing_images": 0,
+        "penalty": 3,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.6/user-manuals/advancedcronjob.md": {
+      "evidence": [
+        "Missing image assets (1)",
+        "Missing frontmatter keys (2)",
+        "Stale content (786 days)"
+      ],
+      "priority": "high",
+      "score": 2,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 1,
+        "penalty": 8,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.6/user-manuals/advanceddaemonset.md": {
+      "evidence": [
+        "Missing frontmatter keys (2)",
+        "Stale content (786 days)"
+      ],
+      "priority": "medium",
+      "score": 5,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 5,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.6/user-manuals/advancedstatefulset.md": {
+      "evidence": [
+        "Missing frontmatter keys (2)",
+        "Stale content (181 days)"
+      ],
+      "priority": "medium",
+      "score": 5,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 5,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.6/user-manuals/broadcastjob.md": {
+      "evidence": [
+        "Missing frontmatter keys (2)",
+        "Stale content (786 days)"
+      ],
+      "priority": "medium",
+      "score": 5,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 5,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.6/user-manuals/cloneset.md": {
+      "evidence": [
+        "Missing markdown targets (1)",
+        "Missing image assets (1)",
+        "Missing frontmatter keys (2)",
+        "Stale content (101 days)"
+      ],
+      "priority": "high",
+      "score": 0,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 1,
+        "missing_frontmatter": 2,
+        "missing_images": 1,
+        "penalty": 11,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.6/user-manuals/containerlaunchpriority.md": {
+      "evidence": [
+        "Missing frontmatter keys (2)",
+        "Stale content (786 days)"
+      ],
+      "priority": "medium",
+      "score": 5,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 5,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.6/user-manuals/containerrecreaterequest.md": {
+      "evidence": [
+        "Missing image assets (1)",
+        "Missing frontmatter keys (2)",
+        "Stale content (786 days)"
+      ],
+      "priority": "high",
+      "score": 2,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 1,
+        "penalty": 8,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.6/user-manuals/deletionprotection.md": {
+      "evidence": [
+        "Missing frontmatter keys (2)",
+        "Stale content (101 days)"
+      ],
+      "priority": "medium",
+      "score": 5,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 5,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.6/user-manuals/imagepulljob.md": {
+      "evidence": [
+        "Missing image assets (1)",
+        "Missing frontmatter keys (2)",
+        "Stale content (786 days)"
+      ],
+      "priority": "high",
+      "score": 2,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 1,
+        "penalty": 8,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.6/user-manuals/jobsidecarterminator.md": {
+      "evidence": [
+        "Missing frontmatter keys (2)",
+        "Stale content (697 days)"
+      ],
+      "priority": "medium",
+      "score": 5,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 5,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.6/user-manuals/persistentpodstate.md": {
+      "evidence": [
+        "Missing image assets (1)",
+        "Missing frontmatter keys (2)",
+        "Stale content (101 days)"
+      ],
+      "priority": "high",
+      "score": 2,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 1,
+        "penalty": 8,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.6/user-manuals/podprobemarker.md": {
+      "evidence": [
+        "Missing frontmatter keys (2)",
+        "Stale content (786 days)"
+      ],
+      "priority": "medium",
+      "score": 5,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 5,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.6/user-manuals/podunavailablebudget.md": {
+      "evidence": [
+        "Missing image assets (1)",
+        "Missing frontmatter keys (2)",
+        "Stale content (786 days)"
+      ],
+      "priority": "high",
+      "score": 2,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 1,
+        "penalty": 8,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.6/user-manuals/resourcedistribution.md": {
+      "evidence": [
+        "Missing markdown targets (1)",
+        "Missing frontmatter keys (2)",
+        "Stale content (786 days)"
+      ],
+      "priority": "high",
+      "score": 2,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 1,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 8,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.6/user-manuals/sidecarset.md": {
+      "evidence": [
+        "Missing image assets (2)",
+        "Missing frontmatter keys (2)",
+        "Stale content (420 days)"
+      ],
+      "priority": "high",
+      "score": 0,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 2,
+        "penalty": 11,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.6/user-manuals/uniteddeployment.md": {
+      "evidence": [
+        "Missing markdown targets (1)",
+        "Missing frontmatter keys (2)",
+        "Stale content (101 days)"
+      ],
+      "priority": "high",
+      "score": 2,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 1,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 8,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.6/user-manuals/workloadspread.md": {
+      "evidence": [
+        "Missing frontmatter keys (2)",
+        "Stale content (420 days)"
+      ],
+      "priority": "medium",
+      "score": 5,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 5,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.7/best-practices/acronjob+broadcastjob.md": {
+      "evidence": [
+        "Missing frontmatter keys (2)",
+        "Stale content (628 days)"
+      ],
+      "priority": "medium",
+      "score": 5,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 5,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.7/best-practices/ci-pipeline-image-predownload.md": {
+      "evidence": [
+        "Missing image assets (4)",
+        "Missing frontmatter keys (2)",
+        "Stale content (628 days)"
+      ],
+      "priority": "high",
+      "score": 0,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 4,
+        "penalty": 17,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.7/best-practices/cloneset-lifecycle.md": {
+      "evidence": [
+        "Missing image assets (1)",
+        "Missing frontmatter keys (2)",
+        "Stale content (628 days)"
+      ],
+      "priority": "high",
+      "score": 2,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 1,
+        "penalty": 8,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.7/best-practices/elastic-deployment.md": {
+      "evidence": [
+        "Missing image assets (5)",
+        "Missing frontmatter keys (2)",
+        "Stale content (628 days)"
+      ],
+      "priority": "high",
+      "score": 0,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 5,
+        "penalty": 20,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.7/best-practices/gitops-with-kruise.md": {
+      "evidence": [
+        "Missing image assets (2)",
+        "Missing frontmatter keys (2)",
+        "Stale content (628 days)"
+      ],
+      "priority": "high",
+      "score": 0,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 2,
+        "penalty": 11,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.7/best-practices/hpa-configuration.md": {
+      "evidence": [
+        "Missing frontmatter keys (2)",
+        "Stale content (628 days)"
+      ],
+      "priority": "medium",
+      "score": 5,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 5,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.7/best-practices/log-container-sidecarset.md": {
+      "evidence": [
+        "Missing image assets (2)",
+        "Missing frontmatter keys (2)",
+        "Stale content (628 days)"
+      ],
+      "priority": "high",
+      "score": 0,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 2,
+        "penalty": 11,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.7/cli-tool/kubectl-plugin.md": {
+      "evidence": [
+        "Missing frontmatter keys (2)",
+        "Stale content (101 days)"
+      ],
+      "priority": "medium",
+      "score": 5,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 5,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.7/cli-tool/kustomize-plugin.md": {
+      "evidence": [
+        "Missing image assets (1)",
+        "Missing frontmatter keys (2)",
+        "Stale content (628 days)"
+      ],
+      "priority": "high",
+      "score": 2,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 1,
+        "penalty": 8,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.7/cli-tool/kustomize-schema-generator.md": {
+      "evidence": [
+        "Missing frontmatter keys (2)",
+        "Stale content (628 days)"
+      ],
+      "priority": "medium",
+      "score": 5,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 5,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.7/core-concepts/architecture.md": {
+      "evidence": [
+        "Missing image assets (1)",
+        "Missing frontmatter keys (2)",
+        "Stale content (628 days)"
+      ],
+      "priority": "high",
+      "score": 2,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 1,
+        "penalty": 8,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.7/core-concepts/inplace-update.md": {
+      "evidence": [
+        "Missing image assets (2)",
+        "Missing frontmatter keys (2)",
+        "Stale content (101 days)"
+      ],
+      "priority": "high",
+      "score": 0,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 2,
+        "penalty": 11,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.7/developer-manuals/go-client.md": {
+      "evidence": [
+        "Missing frontmatter keys (2)",
+        "Stale content (420 days)"
+      ],
+      "priority": "medium",
+      "score": 5,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 5,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.7/developer-manuals/java-client.md": {
+      "evidence": [
+        "Missing frontmatter keys (2)",
+        "Stale content (628 days)"
+      ],
+      "priority": "medium",
+      "score": 5,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 5,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.7/developer-manuals/other-languages.md": {
+      "evidence": [
+        "Missing frontmatter keys (2)",
+        "Stale content (628 days)"
+      ],
+      "priority": "medium",
+      "score": 5,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 5,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.7/faq.md": {
+      "evidence": [
+        "Missing frontmatter keys (2)",
+        "Stale content (628 days)"
+      ],
+      "priority": "medium",
+      "score": 5,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 5,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.7/installation.md": {
+      "evidence": [
+        "Missing frontmatter keys (2)",
+        "Stale content (315 days)"
+      ],
+      "priority": "medium",
+      "score": 5,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 5,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.7/introduction.md": {
+      "evidence": [
+        "Missing markdown targets (2)",
+        "Missing frontmatter keys (1)",
+        "Stale content (101 days)"
+      ],
+      "priority": "high",
+      "score": 1,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 2,
+        "missing_frontmatter": 1,
+        "missing_images": 0,
+        "penalty": 9,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.7/operator-manuals/availability.md": {
+      "evidence": [
+        "Missing frontmatter keys (2)",
+        "Stale content (315 days)"
+      ],
+      "priority": "medium",
+      "score": 5,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 5,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.7/operator-manuals/troubleshooting.md": {
+      "evidence": [
+        "Missing frontmatter keys (2)",
+        "Stale content (101 days)"
+      ],
+      "priority": "medium",
+      "score": 5,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 5,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.7/user-manuals/advancedcronjob.md": {
+      "evidence": [
+        "Missing image assets (1)",
+        "Missing frontmatter keys (2)",
+        "Stale content (628 days)"
+      ],
+      "priority": "high",
+      "score": 2,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 1,
+        "penalty": 8,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.7/user-manuals/advanceddaemonset.md": {
+      "evidence": [
+        "Missing frontmatter keys (2)",
+        "Stale content (628 days)"
+      ],
+      "priority": "medium",
+      "score": 5,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 5,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.7/user-manuals/advancedstatefulset.md": {
+      "evidence": [
+        "Missing frontmatter keys (2)",
+        "Stale content (181 days)"
+      ],
+      "priority": "medium",
+      "score": 5,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 5,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.7/user-manuals/broadcastjob.md": {
+      "evidence": [
+        "Missing frontmatter keys (2)",
+        "Stale content (628 days)"
+      ],
+      "priority": "medium",
+      "score": 5,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 5,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.7/user-manuals/cloneset.md": {
+      "evidence": [
+        "Missing markdown targets (1)",
+        "Missing image assets (1)",
+        "Missing frontmatter keys (2)",
+        "Stale content (101 days)"
+      ],
+      "priority": "high",
+      "score": 0,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 1,
+        "missing_frontmatter": 2,
+        "missing_images": 1,
+        "penalty": 11,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.7/user-manuals/containerlaunchpriority.md": {
+      "evidence": [
+        "Missing frontmatter keys (2)",
+        "Stale content (628 days)"
+      ],
+      "priority": "medium",
+      "score": 5,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 5,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.7/user-manuals/containerrecreaterequest.md": {
+      "evidence": [
+        "Missing image assets (1)",
+        "Missing frontmatter keys (2)",
+        "Stale content (628 days)"
+      ],
+      "priority": "high",
+      "score": 2,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 1,
+        "penalty": 8,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.7/user-manuals/deletionprotection.md": {
+      "evidence": [
+        "Missing frontmatter keys (2)",
+        "Stale content (101 days)"
+      ],
+      "priority": "medium",
+      "score": 5,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 5,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.7/user-manuals/imagepulljob.md": {
+      "evidence": [
+        "Missing image assets (1)",
+        "Missing frontmatter keys (2)",
+        "Stale content (628 days)"
+      ],
+      "priority": "high",
+      "score": 2,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 1,
+        "penalty": 8,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.7/user-manuals/jobsidecarterminator.md": {
+      "evidence": [
+        "Missing frontmatter keys (2)",
+        "Stale content (628 days)"
+      ],
+      "priority": "medium",
+      "score": 5,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 5,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.7/user-manuals/persistentpodstate.md": {
+      "evidence": [
+        "Missing image assets (1)",
+        "Missing frontmatter keys (2)",
+        "Stale content (101 days)"
+      ],
+      "priority": "high",
+      "score": 2,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 1,
+        "penalty": 8,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.7/user-manuals/podprobemarker.md": {
+      "evidence": [
+        "Missing frontmatter keys (2)",
+        "Stale content (628 days)"
+      ],
+      "priority": "medium",
+      "score": 5,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 5,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.7/user-manuals/podunavailablebudget.md": {
+      "evidence": [
+        "Missing image assets (1)",
+        "Missing frontmatter keys (2)",
+        "Stale content (628 days)"
+      ],
+      "priority": "high",
+      "score": 2,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 1,
+        "penalty": 8,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.7/user-manuals/resourcedistribution.md": {
+      "evidence": [
+        "Missing markdown targets (1)",
+        "Missing frontmatter keys (2)",
+        "Stale content (628 days)"
+      ],
+      "priority": "high",
+      "score": 2,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 1,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 8,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.7/user-manuals/sidecarset.md": {
+      "evidence": [
+        "Missing image assets (2)",
+        "Missing frontmatter keys (2)",
+        "Stale content (420 days)"
+      ],
+      "priority": "high",
+      "score": 0,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 2,
+        "penalty": 11,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.7/user-manuals/uniteddeployment.md": {
+      "evidence": [
+        "Missing markdown targets (1)",
+        "Missing frontmatter keys (2)",
+        "Stale content (101 days)"
+      ],
+      "priority": "high",
+      "score": 2,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 1,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 8,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.7/user-manuals/workloadspread.md": {
+      "evidence": [
+        "Missing frontmatter keys (2)",
+        "Stale content (420 days)"
+      ],
+      "priority": "medium",
+      "score": 5,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 5,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.8/best-practices/acronjob+broadcastjob.md": {
+      "evidence": [
+        "Missing frontmatter keys (2)",
+        "Stale content (410 days)"
+      ],
+      "priority": "medium",
+      "score": 5,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 5,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.8/best-practices/ci-pipeline-image-predownload.md": {
+      "evidence": [
+        "Missing image assets (4)",
+        "Missing frontmatter keys (2)",
+        "Stale content (410 days)"
+      ],
+      "priority": "high",
+      "score": 0,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 4,
+        "penalty": 17,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.8/best-practices/cloneset-lifecycle.md": {
+      "evidence": [
+        "Missing image assets (1)",
+        "Missing frontmatter keys (2)",
+        "Stale content (410 days)"
+      ],
+      "priority": "high",
+      "score": 2,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 1,
+        "penalty": 8,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.8/best-practices/elastic-deployment.md": {
+      "evidence": [
+        "Missing image assets (5)",
+        "Missing frontmatter keys (2)",
+        "Stale content (410 days)"
+      ],
+      "priority": "high",
+      "score": 0,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 5,
+        "penalty": 20,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.8/best-practices/gitops-with-kruise.md": {
+      "evidence": [
+        "Missing image assets (2)",
+        "Missing frontmatter keys (2)",
+        "Stale content (410 days)"
+      ],
+      "priority": "high",
+      "score": 0,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 2,
+        "penalty": 11,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.8/best-practices/hpa-configuration.md": {
+      "evidence": [
+        "Missing frontmatter keys (2)",
+        "Stale content (410 days)"
+      ],
+      "priority": "medium",
+      "score": 5,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 5,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.8/best-practices/log-container-sidecarset.md": {
+      "evidence": [
+        "Missing image assets (2)",
+        "Missing frontmatter keys (2)",
+        "Stale content (410 days)"
+      ],
+      "priority": "high",
+      "score": 0,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 2,
+        "penalty": 11,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.8/cli-tool/kubectl-plugin.md": {
+      "evidence": [
+        "Missing frontmatter keys (2)",
+        "Stale content (101 days)"
+      ],
+      "priority": "medium",
+      "score": 5,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 5,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.8/cli-tool/kustomize-plugin.md": {
+      "evidence": [
+        "Missing image assets (1)",
+        "Missing frontmatter keys (2)",
+        "Stale content (410 days)"
+      ],
+      "priority": "high",
+      "score": 2,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 1,
+        "penalty": 8,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.8/cli-tool/kustomize-schema-generator.md": {
+      "evidence": [
+        "Missing frontmatter keys (2)",
+        "Stale content (410 days)"
+      ],
+      "priority": "medium",
+      "score": 5,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 5,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.8/core-concepts/architecture.md": {
+      "evidence": [
+        "Missing image assets (1)",
+        "Missing frontmatter keys (2)",
+        "Stale content (410 days)"
+      ],
+      "priority": "high",
+      "score": 2,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 1,
+        "penalty": 8,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.8/core-concepts/inplace-update.md": {
+      "evidence": [
+        "Missing image assets (2)",
+        "Missing anchors (1)",
+        "Missing frontmatter keys (2)",
+        "Stale content (101 days)"
+      ],
+      "priority": "high",
+      "score": 0,
+      "subscores": {
+        "missing_anchors": 1,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 2,
+        "penalty": 13,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.8/developer-manuals/go-client.md": {
+      "evidence": [
+        "Missing frontmatter keys (2)",
+        "Stale content (410 days)"
+      ],
+      "priority": "medium",
+      "score": 5,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 5,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.8/developer-manuals/java-client.md": {
+      "evidence": [
+        "Missing frontmatter keys (2)",
+        "Stale content (410 days)"
+      ],
+      "priority": "medium",
+      "score": 5,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 5,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.8/developer-manuals/other-languages.md": {
+      "evidence": [
+        "Missing frontmatter keys (2)",
+        "Stale content (410 days)"
+      ],
+      "priority": "medium",
+      "score": 5,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 5,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.8/faq.md": {
+      "evidence": [
+        "Missing frontmatter keys (2)",
+        "Stale content (410 days)"
+      ],
+      "priority": "medium",
+      "score": 5,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 5,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.8/installation.md": {
+      "evidence": [
+        "Missing frontmatter keys (2)",
+        "Stale content (315 days)"
+      ],
+      "priority": "medium",
+      "score": 5,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 5,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.8/introduction.md": {
+      "evidence": [
+        "Missing markdown targets (2)",
+        "Missing frontmatter keys (1)",
+        "Stale content (101 days)"
+      ],
+      "priority": "high",
+      "score": 1,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 2,
+        "missing_frontmatter": 1,
+        "missing_images": 0,
+        "penalty": 9,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.8/operator-manuals/availability.md": {
+      "evidence": [
+        "Missing frontmatter keys (2)",
+        "Stale content (315 days)"
+      ],
+      "priority": "medium",
+      "score": 5,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 5,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.8/operator-manuals/troubleshooting.md": {
+      "evidence": [
+        "Missing frontmatter keys (2)",
+        "Stale content (101 days)"
+      ],
+      "priority": "medium",
+      "score": 5,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 5,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.8/user-manuals/advancedcronjob.md": {
+      "evidence": [
+        "Missing image assets (1)",
+        "Missing frontmatter keys (2)",
+        "Stale content (410 days)"
+      ],
+      "priority": "high",
+      "score": 2,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 1,
+        "penalty": 8,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.8/user-manuals/advanceddaemonset.md": {
+      "evidence": [
+        "Missing anchors (1)",
+        "Missing frontmatter keys (2)",
+        "Stale content (410 days)"
+      ],
+      "priority": "high",
+      "score": 3,
+      "subscores": {
+        "missing_anchors": 1,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 7,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.8/user-manuals/advancedstatefulset.md": {
+      "evidence": [
+        "Missing anchors (1)",
+        "Missing frontmatter keys (2)",
+        "Stale content (181 days)"
+      ],
+      "priority": "high",
+      "score": 3,
+      "subscores": {
+        "missing_anchors": 1,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 7,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.8/user-manuals/broadcastjob.md": {
+      "evidence": [
+        "Missing frontmatter keys (2)",
+        "Stale content (410 days)"
+      ],
+      "priority": "medium",
+      "score": 5,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 5,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.8/user-manuals/cloneset.md": {
+      "evidence": [
+        "Missing markdown targets (1)",
+        "Missing image assets (1)",
+        "Missing anchors (1)",
+        "Missing frontmatter keys (2)",
+        "Stale content (101 days)"
+      ],
+      "priority": "high",
+      "score": 0,
+      "subscores": {
+        "missing_anchors": 1,
+        "missing_files": 1,
+        "missing_frontmatter": 2,
+        "missing_images": 1,
+        "penalty": 13,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.8/user-manuals/containerlaunchpriority.md": {
+      "evidence": [
+        "Missing frontmatter keys (2)",
+        "Stale content (410 days)"
+      ],
+      "priority": "medium",
+      "score": 5,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 5,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.8/user-manuals/containerrecreaterequest.md": {
+      "evidence": [
+        "Missing image assets (1)",
+        "Missing frontmatter keys (2)",
+        "Stale content (410 days)"
+      ],
+      "priority": "high",
+      "score": 2,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 1,
+        "penalty": 8,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.8/user-manuals/deletionprotection.md": {
+      "evidence": [
+        "Missing frontmatter keys (2)",
+        "Stale content (101 days)"
+      ],
+      "priority": "medium",
+      "score": 5,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 5,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.8/user-manuals/imagepulljob.md": {
+      "evidence": [
+        "Missing image assets (1)",
+        "Missing frontmatter keys (2)",
+        "Stale content (410 days)"
+      ],
+      "priority": "high",
+      "score": 2,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 1,
+        "penalty": 8,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.8/user-manuals/jobsidecarterminator.md": {
+      "evidence": [
+        "Missing frontmatter keys (2)",
+        "Stale content (410 days)"
+      ],
+      "priority": "medium",
+      "score": 5,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 5,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.8/user-manuals/persistentpodstate.md": {
+      "evidence": [
+        "Missing image assets (1)",
+        "Missing frontmatter keys (2)",
+        "Stale content (101 days)"
+      ],
+      "priority": "high",
+      "score": 2,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 1,
+        "penalty": 8,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.8/user-manuals/podprobemarker.md": {
+      "evidence": [
+        "Missing frontmatter keys (2)",
+        "Stale content (410 days)"
+      ],
+      "priority": "medium",
+      "score": 5,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 5,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.8/user-manuals/podunavailablebudget.md": {
+      "evidence": [
+        "Missing image assets (1)",
+        "Missing frontmatter keys (2)",
+        "Stale content (410 days)"
+      ],
+      "priority": "high",
+      "score": 2,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 1,
+        "penalty": 8,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.8/user-manuals/resourcedistribution.md": {
+      "evidence": [
+        "Missing markdown targets (1)",
+        "Missing frontmatter keys (2)",
+        "Stale content (410 days)"
+      ],
+      "priority": "high",
+      "score": 2,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 1,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 8,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.8/user-manuals/sidecarset.md": {
+      "evidence": [
+        "Missing image assets (2)",
+        "Missing frontmatter keys (2)",
+        "Stale content (410 days)"
+      ],
+      "priority": "high",
+      "score": 0,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 2,
+        "penalty": 11,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.8/user-manuals/uniteddeployment.md": {
+      "evidence": [
+        "Missing markdown targets (1)",
+        "Missing frontmatter keys (2)",
+        "Stale content (101 days)"
+      ],
+      "priority": "high",
+      "score": 2,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 1,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 8,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.8/user-manuals/workloadspread.md": {
+      "evidence": [
+        "Missing frontmatter keys (2)",
+        "Stale content (410 days)"
+      ],
+      "priority": "medium",
+      "score": 5,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 5,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.9/best-practices/acronjob+broadcastjob.md": {
+      "evidence": [
+        "Missing frontmatter keys (2)",
+        "Stale content (112 days)"
+      ],
+      "priority": "medium",
+      "score": 5,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 5,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.9/best-practices/ci-pipeline-image-predownload.md": {
+      "evidence": [
+        "Missing image assets (4)",
+        "Missing frontmatter keys (2)",
+        "Stale content (112 days)"
+      ],
+      "priority": "high",
+      "score": 0,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 4,
+        "penalty": 17,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.9/best-practices/cloneset-lifecycle.md": {
+      "evidence": [
+        "Missing image assets (1)",
+        "Missing frontmatter keys (2)",
+        "Stale content (112 days)"
+      ],
+      "priority": "high",
+      "score": 2,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 1,
+        "penalty": 8,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.9/best-practices/elastic-deployment.md": {
+      "evidence": [
+        "Missing image assets (5)",
+        "Missing frontmatter keys (2)",
+        "Stale content (112 days)"
+      ],
+      "priority": "high",
+      "score": 0,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 5,
+        "penalty": 20,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.9/best-practices/gitops-with-kruise.md": {
+      "evidence": [
+        "Missing image assets (2)",
+        "Missing frontmatter keys (2)",
+        "Stale content (112 days)"
+      ],
+      "priority": "high",
+      "score": 0,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 2,
+        "penalty": 11,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.9/best-practices/hpa-configuration.md": {
+      "evidence": [
+        "Missing frontmatter keys (2)",
+        "Stale content (112 days)"
+      ],
+      "priority": "medium",
+      "score": 5,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 5,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.9/best-practices/log-container-sidecarset.md": {
+      "evidence": [
+        "Missing image assets (2)",
+        "Missing frontmatter keys (2)",
+        "Stale content (112 days)"
+      ],
+      "priority": "high",
+      "score": 0,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 2,
+        "penalty": 11,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.9/best-practices/resource-policy-sidecarset.md": {
+      "evidence": [
+        "Missing image assets (1)",
+        "Missing frontmatter keys (2)",
+        "Stale content (112 days)"
+      ],
+      "priority": "high",
+      "score": 2,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 1,
+        "penalty": 8,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.9/cli-tool/kubectl-plugin.md": {
+      "evidence": [
+        "Missing frontmatter keys (2)",
+        "Stale content (112 days)"
+      ],
+      "priority": "medium",
+      "score": 5,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 5,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.9/cli-tool/kustomize-plugin.md": {
+      "evidence": [
+        "Missing image assets (1)",
+        "Missing frontmatter keys (2)",
+        "Stale content (112 days)"
+      ],
+      "priority": "high",
+      "score": 2,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 1,
+        "penalty": 8,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.9/cli-tool/kustomize-schema-generator.md": {
+      "evidence": [
+        "Missing frontmatter keys (2)",
+        "Stale content (112 days)"
+      ],
+      "priority": "medium",
+      "score": 5,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 5,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.9/core-concepts/architecture.md": {
+      "evidence": [
+        "Missing image assets (1)",
+        "Missing frontmatter keys (2)",
+        "Stale content (112 days)"
+      ],
+      "priority": "high",
+      "score": 2,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 1,
+        "penalty": 8,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.9/core-concepts/inplace-update.md": {
+      "evidence": [
+        "Missing image assets (2)",
+        "Missing anchors (1)",
+        "Missing frontmatter keys (2)",
+        "Stale content (101 days)"
+      ],
+      "priority": "high",
+      "score": 0,
+      "subscores": {
+        "missing_anchors": 1,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 2,
+        "penalty": 13,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.9/developer-manuals/go-client.md": {
+      "evidence": [
+        "Missing frontmatter keys (2)",
+        "Stale content (112 days)"
+      ],
+      "priority": "medium",
+      "score": 5,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 5,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.9/developer-manuals/java-client.md": {
+      "evidence": [
+        "Missing frontmatter keys (2)",
+        "Stale content (112 days)"
+      ],
+      "priority": "medium",
+      "score": 5,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 5,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.9/developer-manuals/other-languages.md": {
+      "evidence": [
+        "Missing frontmatter keys (2)",
+        "Stale content (112 days)"
+      ],
+      "priority": "medium",
+      "score": 5,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 5,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.9/faq.md": {
+      "evidence": [
+        "Missing frontmatter keys (2)",
+        "Stale content (112 days)"
+      ],
+      "priority": "medium",
+      "score": 5,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 5,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.9/installation.md": {
+      "evidence": [
+        "Missing frontmatter keys (2)",
+        "Stale content (105 days)"
+      ],
+      "priority": "medium",
+      "score": 5,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 5,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.9/introduction.md": {
+      "evidence": [
+        "Missing markdown targets (2)",
+        "Missing frontmatter keys (1)",
+        "Stale content (105 days)"
+      ],
+      "priority": "high",
+      "score": 1,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 2,
+        "missing_frontmatter": 1,
+        "missing_images": 0,
+        "penalty": 9,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.9/operator-manuals/availability.md": {
+      "evidence": [
+        "Missing frontmatter keys (2)",
+        "Stale content (112 days)"
+      ],
+      "priority": "medium",
+      "score": 5,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 5,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.9/operator-manuals/troubleshooting.md": {
+      "evidence": [
+        "Missing frontmatter keys (2)",
+        "Stale content (112 days)"
+      ],
+      "priority": "medium",
+      "score": 5,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 5,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.9/operator-manuals/upgrade.md": {
+      "evidence": [
+        "Missing frontmatter keys (2)",
+        "Stale content (105 days)"
+      ],
+      "priority": "medium",
+      "score": 5,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 5,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.9/user-manuals/advancedcronjob.md": {
+      "evidence": [
+        "Missing image assets (1)",
+        "Missing frontmatter keys (2)",
+        "Stale content (112 days)"
+      ],
+      "priority": "high",
+      "score": 2,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 1,
+        "penalty": 8,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.9/user-manuals/advanceddaemonset.md": {
+      "evidence": [
+        "Missing anchors (1)",
+        "Missing frontmatter keys (2)",
+        "Stale content (112 days)"
+      ],
+      "priority": "high",
+      "score": 3,
+      "subscores": {
+        "missing_anchors": 1,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 7,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.9/user-manuals/advancedstatefulset.md": {
+      "evidence": [
+        "Missing anchors (1)",
+        "Missing frontmatter keys (2)",
+        "Stale content (112 days)"
+      ],
+      "priority": "high",
+      "score": 3,
+      "subscores": {
+        "missing_anchors": 1,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 7,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.9/user-manuals/broadcastjob.md": {
+      "evidence": [
+        "Missing frontmatter keys (2)",
+        "Stale content (112 days)"
+      ],
+      "priority": "medium",
+      "score": 5,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 5,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.9/user-manuals/cloneset.md": {
+      "evidence": [
+        "Missing markdown targets (1)",
+        "Missing image assets (1)",
+        "Missing anchors (1)",
+        "Missing frontmatter keys (2)",
+        "Stale content (112 days)"
+      ],
+      "priority": "high",
+      "score": 0,
+      "subscores": {
+        "missing_anchors": 1,
+        "missing_files": 1,
+        "missing_frontmatter": 2,
+        "missing_images": 1,
+        "penalty": 13,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.9/user-manuals/containerlaunchpriority.md": {
+      "evidence": [
+        "Missing frontmatter keys (2)",
+        "Stale content (112 days)"
+      ],
+      "priority": "medium",
+      "score": 5,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 5,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.9/user-manuals/containerrecreaterequest.md": {
+      "evidence": [
+        "Missing image assets (1)",
+        "Missing frontmatter keys (2)",
+        "Stale content (112 days)"
+      ],
+      "priority": "high",
+      "score": 2,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 1,
+        "penalty": 8,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.9/user-manuals/deletionprotection.md": {
+      "evidence": [
+        "Missing frontmatter keys (2)",
+        "Stale content (101 days)"
+      ],
+      "priority": "medium",
+      "score": 5,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 5,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.9/user-manuals/imagepulljob.md": {
+      "evidence": [
+        "Missing image assets (1)",
+        "Missing frontmatter keys (2)",
+        "Stale content (112 days)"
+      ],
+      "priority": "high",
+      "score": 2,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 1,
+        "penalty": 8,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.9/user-manuals/jobsidecarterminator.md": {
+      "evidence": [
+        "Missing frontmatter keys (2)",
+        "Stale content (112 days)"
+      ],
+      "priority": "medium",
+      "score": 5,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 5,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.9/user-manuals/persistentpodstate.md": {
+      "evidence": [
+        "Missing image assets (1)",
+        "Missing frontmatter keys (2)",
+        "Stale content (112 days)"
+      ],
+      "priority": "high",
+      "score": 2,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 1,
+        "penalty": 8,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.9/user-manuals/podprobemarker.md": {
+      "evidence": [
+        "Missing frontmatter keys (2)",
+        "Stale content (112 days)"
+      ],
+      "priority": "medium",
+      "score": 5,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 5,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.9/user-manuals/podunavailablebudget.md": {
+      "evidence": [
+        "Missing image assets (1)",
+        "Missing frontmatter keys (2)",
+        "Stale content (105 days)"
+      ],
+      "priority": "high",
+      "score": 2,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 1,
+        "penalty": 8,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.9/user-manuals/resourcedistribution.md": {
+      "evidence": [
+        "Missing markdown targets (1)",
+        "Missing frontmatter keys (2)",
+        "Stale content (112 days)"
+      ],
+      "priority": "high",
+      "score": 2,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 1,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 8,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.9/user-manuals/sidecarset.md": {
+      "evidence": [
+        "Missing markdown targets (1)",
+        "Missing image assets (2)",
+        "Missing frontmatter keys (2)",
+        "Stale content (112 days)"
+      ],
+      "priority": "high",
+      "score": 0,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 1,
+        "missing_frontmatter": 2,
+        "missing_images": 2,
+        "penalty": 14,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.9/user-manuals/uniteddeployment.md": {
+      "evidence": [
+        "Missing markdown targets (1)",
+        "Missing frontmatter keys (2)",
+        "Stale content (105 days)"
+      ],
+      "priority": "high",
+      "score": 2,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 1,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 8,
+        "stale": true
+      }
+    },
+    "versioned_docs/version-v1.9/user-manuals/workloadspread.md": {
+      "evidence": [
+        "Missing frontmatter keys (2)",
+        "Stale content (112 days)"
+      ],
+      "priority": "medium",
+      "score": 5,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 2,
+        "missing_images": 0,
+        "penalty": 5,
+        "stale": true
+      }
+    }
+  },
+  "generated_at": "2026-05-18T09:23:11.020766+00:00",
+  "schema_version": 1,
+  "summary": {
+    "high_priority": 182,
+    "low_priority": 0,
+    "medium_priority": 123,
+    "total_files": 305
+  }
+}
