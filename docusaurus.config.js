@@ -172,7 +172,7 @@ function getNextVersionName() {
             position: 'right',
           },
           {
-            to: "docs/",
+            to: "/docs/",
             position: 'left',
             label: 'Kruise',
           },
