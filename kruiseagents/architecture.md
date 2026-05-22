@@ -33,11 +33,12 @@ OpenKruise Agents provides  **Kubernetes API** in the forms of CRD，and they're
 
 ```shell script
 $ kubectl get crd | grep kruise.io
-checkpoints.agents.kruise.io                               2026-03-22T08:50:38Z
-sandboxclaims.agents.kruise.io                             2026-03-22T08:50:38Z
-sandboxes.agents.kruise.io                                 2026-03-22T08:50:38Z
-sandboxsets.agents.kruise.io                               2026-03-22T08:50:38Z
-sandboxtemplates.agents.kruise.io                          2026-03-22T08:50:38Z
+checkpoints.agents.kruise.io                             2026-05-19T03:49:36Z
+sandboxclaims.agents.kruise.io                           2026-05-19T03:49:36Z
+sandboxes.agents.kruise.io                               2026-05-19T03:49:36Z
+sandboxsets.agents.kruise.io                             2026-05-19T03:49:37Z
+sandboxtemplates.agents.kruise.io                        2026-05-19T03:49:37Z
+sandboxupdateops.agents.kruise.io                        2026-05-19T03:49:37Z
 ```
 
 ### E2B APIs
