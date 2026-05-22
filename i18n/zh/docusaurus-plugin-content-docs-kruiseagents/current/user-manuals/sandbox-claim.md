@@ -206,17 +206,30 @@ spec:
 
 你可以在获取沙箱的同时，为 `Sandbox` 资源添加一些元数据（labels 或 annotations），以将多次获取的沙箱进行归类或添加一些自定义信息。
 
+- **annotations** 仅添加到 `Sandbox` 资源上。
+- **labels** 会同时添加到 `Sandbox` 资源和关联的 Pod 上。这允许你使用 Kubernetes label selector 过滤沙箱 Pod、与监控系统集成，或组织沙箱工作负载。
+
 <Tabs>
   <TabItem value="E2B" label="E2B">
 
-> 通过 E2B 设置的 metadata 将作为 annotations 存储
+默认情况下，通过 E2B 设置的 metadata 将作为 annotations 存储在 `Sandbox` 资源上。如果要为关联的 Pod 添加 label，
+请在 metadata 的 key 前添加 `label:` 前缀。以 `label:` 开头的 metadata key 会被解析为 Pod label（前缀会被去除），
+其余 metadata key 仍然作为 annotations 存储。
+
+> Label 的名称和值必须遵循 [Kubernetes label 语法](https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/#syntax-and-character-set)，
+> 无效的 label 名称或值将导致请求错误。
 
 ```python
 from e2b_code_interpreter import Sandbox, SandboxQuery
 
+# "userId" 作为 annotation 存储在 Sandbox 上
 Sandbox.create(template="demo", metadata={"userId": "alice"})
-paginator = Sandbox.list(query=SandboxQuery(metadata={"userId": "alice"}))
-print(paginator.next_items())
+
+# "label:app" 作为 label 添加到关联的 Pod 上（key 为 "app"）
+Sandbox.create(template="demo", metadata={"label:app": "my-app", "label:env": "production"})
+
+# 可以混合使用 label 和 annotation
+Sandbox.create(template="demo", metadata={"label:app": "my-app", "userId": "alice"})
 ```
 
   </TabItem>
@@ -235,6 +248,8 @@ spec:
   annotations:
     foo: "bar"
 ```
+
+`spec.labels` 会同时添加到 `Sandbox` 资源和关联的 Pod 上，而 `spec.annotations` 仅添加到 `Sandbox` 资源上。
 
   </TabItem>
 </Tabs>

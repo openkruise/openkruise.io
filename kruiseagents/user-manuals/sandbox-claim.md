@@ -233,17 +233,31 @@ spec:
 You can add some metadata (labels or annotations) to the `Sandbox` resource when claiming a sandbox, to categorize
 sandboxes claimed multiple times or add some custom information.
 
+- **Annotations** are added to the `Sandbox` resource only.
+- **Labels** are added to both the `Sandbox` resource and the associated Pod. This allows you to use Kubernetes label
+  selectors to filter sandbox Pods, integrate with monitoring systems, or organize sandbox workloads.
+
 <Tabs>
   <TabItem value="E2B" label="E2B">
 
-> Metadata set through E2B will be stored as annotations
+By default, metadata set through E2B is stored as annotations on the `Sandbox` resource. To add labels to the
+associated Pod instead, use the `label:` prefix in metadata keys. Metadata keys that start with `label:` will be
+parsed as Pod labels (with the prefix stripped), while other metadata keys are stored as annotations.
+
+> Label names and values must follow [Kubernetes label syntax](https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/#syntax-and-character-set).
+> Invalid label names or values will result in a request error.
 
 ```python
 from e2b_code_interpreter import Sandbox, SandboxQuery
 
+# "userId" is stored as an annotation on the Sandbox
 Sandbox.create(template="demo", metadata={"userId": "alice"})
-paginator = Sandbox.list(query=SandboxQuery(metadata={"userId": "alice"}))
-print(paginator.next_items())
+
+# "label:app" is added as a label on the associated Pod (key: "app")
+Sandbox.create(template="demo", metadata={"label:app": "my-app", "label:env": "production"})
+
+# You can mix labels and annotations
+Sandbox.create(template="demo", metadata={"label:app": "my-app", "userId": "alice"})
 ```
 
   </TabItem>
@@ -262,6 +276,9 @@ spec:
   annotations:
     foo: "bar"
 ```
+
+The `spec.labels` are added to both the `Sandbox` resource and the associated Pod, while `spec.annotations` are
+added to the `Sandbox` resource only.
 
   </TabItem>
 </Tabs>
