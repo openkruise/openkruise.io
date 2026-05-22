@@ -4,7 +4,7 @@ title: Architecture
 
 The overall architecture of OpenKruise Agents is shown as below:
 
-![alt](/img/kruiseagents/architecture.svg)
+![alt](/img/kruiseagents/architecture.png)
 
 ### sandbox-manager
 

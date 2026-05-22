@@ -5,7 +5,7 @@ title: Architecture
 # 架构
 OpenKruise Agents 的整体架构如下所示：
 
-![alt](/img/kruiseagents/architecture.svg)
+![alt](/img/kruiseagents/architecture.png)
 
 ## sandbox-manager
 sandbox-manager 是一个无状态的后台管理组件，它为管理和操作沙箱实例提供 E2B API 和 MCP API。
