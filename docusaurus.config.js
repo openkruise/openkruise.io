@@ -226,12 +226,10 @@ function getNextVersionName() {
                 href: 'https://kubernetes.slack.com/channels/openkruise',
               },
               {
-                label: 'DingTalk (GroupID: 23330762 )',
-                href: '.',
+                html: '<div class="footer__link" style="pointer-events: none; cursor: default; color: var(--ifm-footer-link-color); font-weight: 400;">DingTalk (GroupID: 23330762 )</div>',
               },
               {
-                label: 'WeChat (User: openkruise )',
-                href: '.',
+                html: '<div class="footer__link" style="pointer-events: none; cursor: default; color: var(--ifm-footer-link-color); font-weight: 400;">WeChat (User: openkruise )</div>',
               },
               {
                 label: 'Bi-week Meeting (APAC, Chinese)',
@@ -255,7 +253,7 @@ function getNextVersionName() {
         ],
         copyright: `
         <br />
-        <strong>© ${new Date().getFullYear()} The OpenKruise Authors. All rights reserved. The Linux Foundation has registered trademarks and uses trademarks. For a list of trademarks of The Linux Foundation, please see our <a href="https://www.linuxfoundation.org/trademark-usage/"> Trademark Usage</a> page.</strong
+        <strong>© ${new Date().getFullYear()} The OpenKruise Authors. All rights reserved. The Linux Foundation has registered trademarks and uses trademarks. For a list of trademarks of The Linux Foundation, please see our <a href="https://www.linuxfoundation.org/trademark-usage/"> Trademark Usage</a> page.</strong>
         `,
       },
       prism: {
