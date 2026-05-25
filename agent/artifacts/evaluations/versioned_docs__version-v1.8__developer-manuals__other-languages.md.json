@@ -1,0 +1,23 @@
+{
+  "age_days": 410,
+  "frontmatter": {
+    "missing": [
+      "sidebar_position",
+      "slug"
+    ],
+    "valid": false,
+    "warnings": []
+  },
+  "last_commit_date": "2025-04-02T19:26:31+08:00",
+  "linkcheck": {
+    "evidence": [],
+    "missing_anchors": [],
+    "missing_files": [],
+    "missing_images": [],
+    "valid_links": [
+      "versioned_docs/version-v1.8/developer-manuals/go-client.md"
+    ]
+  },
+  "path": "versioned_docs/version-v1.8/developer-manuals/other-languages.md",
+  "sha": "e74e4a58fbdb000199a4f9abc1577a23a545ed73"
+}

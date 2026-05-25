@@ -1,0 +1,43 @@
+{
+  "files": {
+    "tests/fixtures/demo_docs/broken.md": {
+      "evidence": [
+        "Missing markdown targets (1)",
+        "Missing image assets (1)",
+        "Missing frontmatter keys (1)",
+        "Stale content (120 days)"
+      ],
+      "priority": "high",
+      "score": 1,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 1,
+        "missing_frontmatter": 1,
+        "missing_images": 1,
+        "penalty": 9,
+        "stale": true
+      }
+    },
+    "tests/fixtures/demo_docs/valid.md": {
+      "evidence": [],
+      "priority": "low",
+      "score": 10,
+      "subscores": {
+        "missing_anchors": 0,
+        "missing_files": 0,
+        "missing_frontmatter": 0,
+        "missing_images": 0,
+        "penalty": 0,
+        "stale": false
+      }
+    }
+  },
+  "schema_version": 1,
+  "generated_at": "2026-05-18T00:00:00+00:00",
+  "summary": {
+    "high_priority": 1,
+    "low_priority": 1,
+    "medium_priority": 0,
+    "total_files": 2
+  }
+}

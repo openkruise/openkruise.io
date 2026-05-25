@@ -1,0 +1,25 @@
+{
+  "age_days": 181,
+  "frontmatter": {
+    "missing": [
+      "sidebar_position",
+      "slug"
+    ],
+    "valid": false,
+    "warnings": []
+  },
+  "last_commit_date": "2025-11-18T11:28:03+08:00",
+  "linkcheck": {
+    "evidence": [],
+    "missing_anchors": [],
+    "missing_files": [],
+    "missing_images": [],
+    "valid_links": [
+      "versioned_docs/version-v1.7/core-concepts/inplace-update.md",
+      "versioned_docs/version-v1.7/installation.md#optional-feature-gate",
+      "versioned_docs/version-v1.7/user-manuals/cloneset.md#lifecycle-hook"
+    ]
+  },
+  "path": "versioned_docs/version-v1.7/user-manuals/advancedstatefulset.md",
+  "sha": "4025a5894e66dd6f70d199451fcaa29798785ff0"
+}

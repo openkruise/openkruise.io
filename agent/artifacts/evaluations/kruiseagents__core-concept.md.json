@@ -1,0 +1,22 @@
+{
+  "age_days": 56,
+  "frontmatter": {
+    "missing": [
+      "title",
+      "sidebar_position",
+      "slug"
+    ],
+    "valid": false,
+    "warnings": []
+  },
+  "last_commit_date": "2026-03-23T05:59:48+08:00",
+  "linkcheck": {
+    "evidence": [],
+    "missing_anchors": [],
+    "missing_files": [],
+    "missing_images": [],
+    "valid_links": []
+  },
+  "path": "kruiseagents/core-concept.md",
+  "sha": "f07e7399e8d8a4cda3e5ab0a8b6b3a602399543e"
+}

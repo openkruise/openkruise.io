@@ -1,0 +1,21 @@
+{
+  "age_days": 934,
+  "frontmatter": {
+    "missing": [
+      "sidebar_position",
+      "slug"
+    ],
+    "valid": false,
+    "warnings": []
+  },
+  "last_commit_date": "2023-10-27T10:42:54+08:00",
+  "linkcheck": {
+    "evidence": [],
+    "missing_anchors": [],
+    "missing_files": [],
+    "missing_images": [],
+    "valid_links": []
+  },
+  "path": "docs/cli-tool/kustomize-schema-generator.md",
+  "sha": "b91699515ca3a2624304c72792da3ef02b827de0"
+}

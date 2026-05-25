@@ -1,0 +1,33 @@
+{
+  "age_days": 159,
+  "frontmatter": {
+    "missing": [
+      "sidebar_position",
+      "slug"
+    ],
+    "valid": false,
+    "warnings": []
+  },
+  "last_commit_date": "2025-12-09T20:58:02+08:00",
+  "linkcheck": {
+    "evidence": [
+      {
+        "line": 63,
+        "source": "docs/user-manuals/advancedcronjob.md",
+        "target": "img/docs/user-manuals/advancedcronjob.png",
+        "type": "missing_image"
+      }
+    ],
+    "missing_anchors": [],
+    "missing_files": [],
+    "missing_images": [
+      "img/docs/user-manuals/advancedcronjob.png"
+    ],
+    "valid_links": [
+      "docs/user-manuals/broadcastjob.md",
+      "docs/user-manuals/imagepulljob.md"
+    ]
+  },
+  "path": "docs/user-manuals/advancedcronjob.md",
+  "sha": "c27203733298e96cd97c9cbc1c3b217d80b365c4"
+}

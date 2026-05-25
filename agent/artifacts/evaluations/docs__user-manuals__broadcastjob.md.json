@@ -1,0 +1,21 @@
+{
+  "age_days": 159,
+  "frontmatter": {
+    "missing": [
+      "sidebar_position",
+      "slug"
+    ],
+    "valid": false,
+    "warnings": []
+  },
+  "last_commit_date": "2025-12-09T20:58:02+08:00",
+  "linkcheck": {
+    "evidence": [],
+    "missing_anchors": [],
+    "missing_files": [],
+    "missing_images": [],
+    "valid_links": []
+  },
+  "path": "docs/user-manuals/broadcastjob.md",
+  "sha": "c27203733298e96cd97c9cbc1c3b217d80b365c4"
+}

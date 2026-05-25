@@ -1,0 +1,21 @@
+{
+  "age_days": 31,
+  "frontmatter": {
+    "missing": [
+      "sidebar_position",
+      "slug"
+    ],
+    "valid": false,
+    "warnings": []
+  },
+  "last_commit_date": "2026-04-17T16:36:01+08:00",
+  "linkcheck": {
+    "evidence": [],
+    "missing_anchors": [],
+    "missing_files": [],
+    "missing_images": [],
+    "valid_links": []
+  },
+  "path": "kruiseagents/developer-manuals/go-client.md",
+  "sha": "3add8053aacf7b4d17bb5e2fff7630afaf788c5c"
+}

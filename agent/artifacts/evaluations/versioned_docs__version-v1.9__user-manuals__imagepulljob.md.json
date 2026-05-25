@@ -1,0 +1,32 @@
+{
+  "age_days": 112,
+  "frontmatter": {
+    "missing": [
+      "sidebar_position",
+      "slug"
+    ],
+    "valid": false,
+    "warnings": []
+  },
+  "last_commit_date": "2026-01-25T20:58:45+08:00",
+  "linkcheck": {
+    "evidence": [
+      {
+        "line": 16,
+        "source": "versioned_docs/version-v1.9/user-manuals/imagepulljob.md",
+        "target": "img/docs/user-manuals/imagepulling.png",
+        "type": "missing_image"
+      }
+    ],
+    "missing_anchors": [],
+    "missing_files": [],
+    "missing_images": [
+      "img/docs/user-manuals/imagepulling.png"
+    ],
+    "valid_links": [
+      "versioned_docs/version-v1.9/user-manuals/advancedcronjob.md"
+    ]
+  },
+  "path": "versioned_docs/version-v1.9/user-manuals/imagepulljob.md",
+  "sha": "309974b7881e6f5ebdfc90b3ea5ae68a0ff02335"
+}

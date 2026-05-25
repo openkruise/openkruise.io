@@ -1,0 +1,20 @@
+{
+  "age_days": 293,
+  "frontmatter": {
+    "missing": [
+      "sidebar_position"
+    ],
+    "valid": false,
+    "warnings": []
+  },
+  "last_commit_date": "2025-07-29T14:54:55+08:00",
+  "linkcheck": {
+    "evidence": [],
+    "missing_anchors": [],
+    "missing_files": [],
+    "missing_images": [],
+    "valid_links": []
+  },
+  "path": "blog/2025-02-19-elastic-components.md",
+  "sha": "fc66f6fbda145e3178dc7c0e106276a6174ddf93"
+}

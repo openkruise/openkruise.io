@@ -1,0 +1,54 @@
+@startuml
+!theme plain
+skinparam backgroundColor transparent
+skinparam shadowing false
+skinparam packageStyle rectangle
+skinparam defaultFontName Arial
+skinparam ArrowColor #444444
+skinparam componentStyle rectangle
+skinparam rectangle {
+  BackgroundColor #F6F8FA
+  BorderColor #4B5563
+}
+
+package "agent" {
+  [collect.py] as Collect
+  [linkcheck.py] as Linkcheck
+  [frontmatter_check.py] as Frontmatter
+  [scorer.py] as Scorer
+  [differ.py] as Differ
+  [report.py] as Report
+  [pr.py] as PR
+}
+
+package "Artifacts" {
+  [inventory.json] as Inventory
+  [evaluations/*.json] as Evaluations
+  [scorecard.json] as Scorecard
+  [suggestions.patch] as Patch
+  [suggestions.preview.html] as Preview
+  [summary.md] as Summary
+  [report.json] as ReportJson
+  [patch.meta.json] as PatchMeta
+}
+
+Collect --> Inventory : write
+Inventory --> Linkcheck : read
+Inventory --> Frontmatter : read
+Linkcheck --> Evaluations : write
+Frontmatter --> Evaluations : write
+Evaluations --> Scorer : read
+Scorer --> Scorecard : write
+Scorecard --> Differ : read
+Differ --> Patch : write
+Differ --> Preview : write
+Differ --> PatchMeta : write
+Scorecard --> Report : read
+Report --> Summary : write
+Report --> ReportJson : write
+PR --> Summary : read
+PR --> Patch : read
+PR --> Preview : read
+PR --> Scorecard : read
+
+@enduml

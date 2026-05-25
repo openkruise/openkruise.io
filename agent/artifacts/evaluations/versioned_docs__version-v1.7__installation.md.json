@@ -1,0 +1,21 @@
+{
+  "age_days": 315,
+  "frontmatter": {
+    "missing": [
+      "sidebar_position",
+      "slug"
+    ],
+    "valid": false,
+    "warnings": []
+  },
+  "last_commit_date": "2025-07-07T14:41:39+08:00",
+  "linkcheck": {
+    "evidence": [],
+    "missing_anchors": [],
+    "missing_files": [],
+    "missing_images": [],
+    "valid_links": []
+  },
+  "path": "versioned_docs/version-v1.7/installation.md",
+  "sha": "4973bbcf8901e0a6704cbaf218fe56db83a77e6e"
+}

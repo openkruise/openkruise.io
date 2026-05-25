@@ -1,0 +1,41 @@
+{
+  "age_days": 101,
+  "frontmatter": {
+    "missing": [
+      "sidebar_position"
+    ],
+    "valid": false,
+    "warnings": []
+  },
+  "last_commit_date": "2026-02-06T09:21:57+08:00",
+  "linkcheck": {
+    "evidence": [
+      {
+        "line": 12,
+        "source": "blog/2021-12-13-release-1.0.md",
+        "target": "img/blog/2021-12-13-release-1.0/features-en.png",
+        "type": "missing_image"
+      },
+      {
+        "line": 29,
+        "source": "blog/2021-12-13-release-1.0.md",
+        "target": "img/docs/core-concepts/inplace-update-comparation.png",
+        "type": "missing_image"
+      }
+    ],
+    "missing_anchors": [],
+    "missing_files": [],
+    "missing_images": [
+      "img/blog/2021-12-13-release-1.0/features-en.png",
+      "img/docs/core-concepts/inplace-update-comparation.png"
+    ],
+    "valid_links": [
+      "docs/cli-tool/kubectl-plugin.md",
+      "docs/core-concepts/inplace-update.md",
+      "docs/user-manuals/containerlaunchpriority.md",
+      "docs/user-manuals/resourcedistribution.md"
+    ]
+  },
+  "path": "blog/2021-12-13-release-1.0.md",
+  "sha": "1c4717498e659361af9f6d6da5625abe43a8d4cc"
+}

@@ -1,0 +1,25 @@
+{
+  "age_days": 797,
+  "frontmatter": {
+    "missing": [
+      "title",
+      "sidebar_position",
+      "slug"
+    ],
+    "valid": false,
+    "warnings": []
+  },
+  "last_commit_date": "2024-03-12T15:02:19+08:00",
+  "linkcheck": {
+    "evidence": [],
+    "missing_anchors": [],
+    "missing_files": [],
+    "missing_images": [],
+    "valid_links": [
+      "kruisegame/installation.md",
+      "kruisegame/user-manuals/gameservers-scale.md"
+    ]
+  },
+  "path": "kruisegame/blog-video/higress.md",
+  "sha": "92ee09e2b4552c9e056541abbe68ffa15264be57"
+}

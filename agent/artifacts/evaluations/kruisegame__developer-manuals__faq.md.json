@@ -1,0 +1,22 @@
+{
+  "age_days": 1131,
+  "frontmatter": {
+    "missing": [
+      "title",
+      "sidebar_position",
+      "slug"
+    ],
+    "valid": false,
+    "warnings": []
+  },
+  "last_commit_date": "2023-04-13T11:08:53+08:00",
+  "linkcheck": {
+    "evidence": [],
+    "missing_anchors": [],
+    "missing_files": [],
+    "missing_images": [],
+    "valid_links": []
+  },
+  "path": "kruisegame/developer-manuals/faq.md",
+  "sha": "723612e1a83ef2f584f9fbff1ee6badb683044c2"
+}

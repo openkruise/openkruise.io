@@ -1,0 +1,21 @@
+{
+  "age_days": 313,
+  "frontmatter": {
+    "missing": [
+      "sidebar_position",
+      "slug"
+    ],
+    "valid": false,
+    "warnings": []
+  },
+  "last_commit_date": "2025-07-09T09:46:41+08:00",
+  "linkcheck": {
+    "evidence": [],
+    "missing_anchors": [],
+    "missing_files": [],
+    "missing_images": [],
+    "valid_links": []
+  },
+  "path": "docs/user-manuals/containerlaunchpriority.md",
+  "sha": "bce21bb82ece2caeeae87287326682f3dc0b12ee"
+}

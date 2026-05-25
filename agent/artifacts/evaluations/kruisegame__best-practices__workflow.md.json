@@ -1,0 +1,22 @@
+{
+  "age_days": 683,
+  "frontmatter": {
+    "missing": [
+      "title",
+      "sidebar_position",
+      "slug"
+    ],
+    "valid": false,
+    "warnings": []
+  },
+  "last_commit_date": "2024-07-04T10:29:03+08:00",
+  "linkcheck": {
+    "evidence": [],
+    "missing_anchors": [],
+    "missing_files": [],
+    "missing_images": [],
+    "valid_links": []
+  },
+  "path": "kruisegame/best-practices/workflow.md",
+  "sha": "a0b7bc624f103bf857e446989c117ddd47ddbf3a"
+}

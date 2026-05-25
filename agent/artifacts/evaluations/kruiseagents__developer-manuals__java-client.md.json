@@ -1,0 +1,21 @@
+{
+  "age_days": 68,
+  "frontmatter": {
+    "missing": [
+      "sidebar_position",
+      "slug"
+    ],
+    "valid": false,
+    "warnings": []
+  },
+  "last_commit_date": "2026-03-11T13:45:52+08:00",
+  "linkcheck": {
+    "evidence": [],
+    "missing_anchors": [],
+    "missing_files": [],
+    "missing_images": [],
+    "valid_links": []
+  },
+  "path": "kruiseagents/developer-manuals/java-client.md",
+  "sha": "67157f5cc4a32e7f91458b0117591fd5d6a95907"
+}

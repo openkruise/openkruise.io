@@ -2,40 +2,36 @@
 title: WorkloadSpread
 ---
 
-**FEATURE STATE:** Kruise v0.10.0
+**FEATURE STATE:** OpenKruise v1.7.0+
 
-WorkloadSpread can distribute Pods of workload to different types of Node according to some polices, which empowers
-single workload the abilities for
-multi-domain deployment and elastic deployment.
+WorkloadSpread can distribute Pods of a workload across different types of nodes according to defined policies, which empowers a single workload with the capabilities for multi-domain deployment and elastic deployment.
 
-Some common policies include:
+### Key Capabilities
 
-- fault toleration spread (for example, spread evenly among hosts, az, etc)
-- spread according to the specified ratio (for example, deploy Pod to several specified az according to the proportion)
-- subset management with priority, such as
-    - deploy Pods to ecs first, and then deploy to eci when its resources are insufficient.
-    - deploy a fixed number of Pods to ecs first, and the rest Pods are deployed to eci.
-- subset management with customization, such as
-    - control how many pods in a workload are deployed in different cpu arch
-    - enable pods in different cpu arch to have different resource requirements
+*   **Fault-tolerant spread:** Spread pods evenly among hosts, availability zones (AZ), etc.
+*   **Ratio-based spread:** Deploy pods to specific zones according to a defined proportion.
+*   **Subset management with priority:**
+    *   Deploy pods to ECS nodes first, and spill over to ECI when resources are insufficient.
+    *   Deploy a fixed number of pods to one domain, and the remainder to another.
+*   **Subset customization:**
+    *   Control how many pods are deployed across different CPU architectures.
+    *   Apply architecture-specific resource requirements or environment variables.
 
-The feature of WorkloadSpread is similar with **UnitedDeployment** in OpenKruise community. Each WorkloadSpread defines
-multi-domain
-called `subset`. Each domain may provide the limit to run the replicas number of pods called `maxReplicas`.
-WorkloadSpread injects the domain configuration into the Pod by Webhook, and it also controls the order of scale in and
-scale out.
+WorkloadSpread is conceptually similar to **UnitedDeployment** in the OpenKruise community. Each WorkloadSpread defines multiple domains called `subsets`. Each subset can define a `maxReplicas` limit. WorkloadSpread injects domain-specific configurations into the Pod via a Webhook and manages the scaling order.
 
-Kruise with version lower than `1.3.0` supports `CloneSet`, `Deployment`, `ReplicaSet`.
+## Prerequisites
 
-Since Kruise `1.3.0`, WorkloadSpread supports `StatefulSet`.
+*   A Kubernetes cluster running version 1.21+.
+*   OpenKruise installed (v1.3.0+ for `StatefulSet` support, v1.5.0+ for customized workloads with scale sub-resources).
+*   `PodWebhook` feature-gate enabled in OpenKruise.
 
-In particular, for `StatefulSet`, WorkloadSpread supports manage its subsets only when `scale up`. The order of
-`scale down` is still controlled by StatefulSet controller. The subset management of StatefulSet is based on ordinals of
-Pods, and more details can be
-found [here](https://github.com/openkruise/kruise/blob/f46097db1fa5a4ed9c002eba050b888344884e11/pkg/util/workloadspread/workloadspread.go#L305).
+## Installation
 
-Since Kruise `1.5.0`, WorkloadSpread supports `customized workloads` that
-have [scale sub-resource](https://kubernetes.io/docs/tasks/extend-kubernetes/custom-resources/custom-resource-definitions/#scale-subresource).
+WorkloadSpread is disabled by default. You must configure the `WorkloadSpread` feature-gate during Helm installation or upgrade:
+
+```bash
+helm install kruise openkruise/kruise --namespace kruise-system --set featureGates="WorkloadSpread=true"
+```
 
 ## Demo
 
@@ -46,8 +42,8 @@ metadata:
   name: workloadspread-demo
 spec:
   targetRef:
-    apiVersion: apps/v1 | apps.kruise.io/v1alpha1
-    kind: Deployment | CloneSet
+    apiVersion: apps/v1
+    kind: Deployment
     name: workload-xxx
   subsets:
     - name: subset-a
@@ -57,20 +53,11 @@ spec:
             operator: In
             values:
               - zone-a
-      preferredNodeSelectorTerms:
-        - weight: 1
-          preference:
-            matchExpressions:
-              - key: another-node-label-key
-                operator: In
-                values:
-                  - another-node-label-value
       maxReplicas: 3
-      tolerations: [ ]
       patch:
         metadata:
           labels:
-            xxx-specific-label: xxx
+            zone: zone-a
     - name: subset-b
       requiredNodeSelectorTerm:
         matchExpressions:
@@ -79,417 +66,64 @@ spec:
             values:
               - zone-b
   scheduleStrategy:
-    type: Adaptive | Fixed
+    type: Adaptive
     adaptive:
       rescheduleCriticalSeconds: 30
 ```
 
-`targetRef`: specify the target workload. Cannot be mutated，and one workload can only correspond to one WorkloadSpread.
+`targetRef`: Specifies the target workload. This is immutable; one workload can only be managed by one WorkloadSpread.
 
-## subsets
+## Subsets
 
-`subsets` consists of multiple domain called `subset`, and each topology has different configuration.
+`subsets` consist of multiple domain definitions.
 
-### sub-fields
+### Sub-fields
+*   **name**: Unique identifier for the subset.
+*   **maxReplicas**: The maximum number of replicas allowed in this subset. If left nil, there is no limit.
+*   **minReplicas**: The minimum number of replicas expected to be scheduled for this subset.
+*   **requiredNodeSelectorTerm / preferredNodeSelectorTerms**: Used to define node affinity constraints for the subset.
+*   **tolerations**: Specific tolerations for Pods in this subset.
+*   **patch**: Customize the Pod configuration (Annotations, Labels, Env, Resources, etc.).
 
-- `name`: the name of `subset`, it is distinct in a WorkloadSpread, which represents a topology.
-
-- `maxReplicas`: the replicas limit of `subset`, and must be Integer and >= 0. There is no replicas limit while the
-  `maxReplicas` is nil.
-
-> Don't support percentage type in current version.
-
-- `minReplicas`: The minimum number of replicas expected to be scheduled for this subset, which must be an integer >= 0.
-  If left empty, it indicates no limit on the number of replicas for the subset. For example, when scattering by region,
-  you can use `minReplicas` to ensure that each region has at least one replica, while the remaining replicas are
-  elastically deployed according to an adaptive scheduling strategy.
-
-> The percentage type is not supported in the current version.
-
-- `requiredNodeSelectorTerm`: match zone hardly。
-
-- `preferredNodeSelectorTerms`: match zone softly。
-
-**Caution**：`requiredNodeSelectorTerm` corresponds the `requiredDuringSchedulingIgnoredDuringExecution` of nodeAffinity.
-`preferredNodeSelectorTerms` corresponds the `preferredDuringSchedulingIgnoredDuringExecution` of nodeAffinity.
-
-- `tolerations`: the tolerations of Pod in `subset`.
-
+### Example: Patching Pod Container Resources
 ```yaml
-tolerations:
-  - key: "key1"
-    operator: "Equal"
-    value: "value1"
-    effect: "NoSchedule"
-```
-
-- `patch`: customize the Pod configuration of `subset`, such as Annotations, Labels, Env.
-
-Example:
-
-```yaml
-# patch pod with a topology label:
-patch:
-  metadata:
-    labels:
-      topology.application.deploy/zone: "zone-a"
-```
-
-```yaml
-# patch pod container resources:
 patch:
   spec:
     containers:
       - name: main
         resources:
-          limit:
+          limits:
             cpu: "2"
             memory: 800Mi
 ```
 
-```yaml
-# patch pod container env with a zone name:
-patch:
-  spec:
-    containers:
-      - name: main
-        env:
-          - name: K8S_AZ_NAME
-            value: zone-a
-```
+## Schedule Strategy
 
-## Schedule strategy
+WorkloadSpread provides two strategies; the default is `Fixed`.
 
-WorkloadSpread provides two kind strategies, the default strategy is `Fixed`.
+*   **Fixed**: Workload is strictly spread according to the definition of the subsets.
+*   **Adaptive**: Kruise monitors unschedulable Pods. If a Pod remains unschedulable beyond `rescheduleCriticalSeconds`, it is rescheduled to another subset.
 
-```yaml
-  scheduleStrategy:
-    type: Adaptive | Fixed
-    adaptive:
-      rescheduleCriticalSeconds: 30
-```
+## Scale Order
 
-- Fixed:
+The workload managed by WorkloadSpread scales according to the defined order in `spec.subsets`.
 
-  Workload is strictly spread according to the definition of the subset.
+*   **Scale out**: Pods are scheduled following the order of `subsets`. It moves to the next subset once `maxReplicas` is reached.
+*   **Scale in**: Pods in subsets that exceed `maxReplicas` are removed first. Otherwise, pods are deleted starting from the last subset in the list.
 
-- Adaptive:
+## Using WorkloadSpread with Customized Workloads
 
-  **Reschedule**: Kruise will check the unschedulable Pods of subset. If it exceeds the defined duration, the failed
-  Pods will be rescheduled to the other `subset`.
+To use WorkloadSpread with non-native workloads (e.g., Argo Rollouts), you must:
+1.  Add the workload to the `WorkloadSpread_Watch_Custom_Workload_WhiteList` in the `kruise-configuration` ConfigMap.
+2.  Grant the `kruise-manager` ServiceAccount read permissions via RBAC for the target resource.
+3.  Ensure the target workload supports the `scale` sub-resource.
 
-## Requirements
+*Note: The WorkloadSpread Webhook does not set a deletion cost for Pods created by custom workloads, which may affect scale-down order.*
 
-WorkloadSpread defaults to be disabled. You have to configure the feature-gate *WorkloadSpread* when install or upgrade
-Kruise:
+## Troubleshooting
 
-```bash
-$ helm install kruise https://... --set featureGates="WorkloadSpread=true"
-```
+1.  **Workload not scaling?** Ensure the `WorkloadSpread` feature-gate is enabled in the `kruise-manager` controller.
+2.  **Pods not landing in correct subset?** Verify the `requiredNodeSelectorTerm` matches your nodes' labels exactly.
+3.  **Webhook errors?** Ensure the `kruise-admission-controller` is running and that no other mutating webhooks are conflicting with the pod patching logic.
 
-### Pod Webhook
-
-WorkloadSpread uses `webhook` to inject fault domain rules.
-
-If the `PodWebhook` feature-gate is set to false, WorkloadSpread will also be disabled.
-
-### deletion-cost feature
-
-`CloneSet` has supported deletion-cost feature in the latest versions.
-
-The other native workload need kubernetes version >= 1.21. (In 1.21, users need to enable PodDeletionCost feature-gate,
-and since 1.22 it will be enabled by default)
-
-## Scale order:
-
-The workload managed by WorkloadSpread will scale according to the defined order in `spec.subsets`.
-
-**The order of `subset` in `spec.subsets` can be changed**, which can adjust the scale order of workload.
-
-### Scale out
-
-- The Pods are scheduled in the subset order defined in the `spec.subsets`. It will be scheduled in the next `subset`
-  while the replica number reaches the maxReplicas of `subset`
-
-### Scale in
-
-- When the replica number of the `subset` is greater than the `maxReplicas`, the extra Pods will be removed in a high
-  priority.
-- According to the `subset` order in the `spec.subsets`, the Pods of the `subset` at the back are deleted before the
-  Pods at the front.
-
-```yaml
-#             subset-a   subset-b  subset-c
-# maxReplicas    10          10        nil
-# pods number    10          10        10
-# deletion order: c -> b -> a
-
-#             subset-a   subset-b  subset-c
-# maxReplicas    10          10        nil
-# pods number    20          20        20
-# deletion order: b -> a -> c
-```
-
-## Use WorkloadSpread with customized workload
-
-If you want to use WorkloadSpread with custom workloads, which is disabled by default, some
-additional configuration is required. This section uses
-the [Rollout Workload from the Argo community](https://argoproj.github.io/argo-rollouts/) as an example to
-demonstrate how to integrate it with WorkloadSpread.
-
-### Configure the custom workload watch whitelist
-
-First, you need to add the custom workload to the `WorkloadSpread_Watch_Custom_Workload_WhiteList` to ensure it can be
-read and understood by WorkloadSpread.
-
-```yaml
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: kruise-configuration
-  namespace: kruise-system
-data:
-  "WorkloadSpread_Watch_Custom_Workload_WhiteList": |
-    {
-      "workloads": [
-        {
-          "Group": "argoproj.io",
-          "Kind": "Rollout",
-          "replicasPath": "spec.replicas",
-        }
-      ]
-    }
-```
-
-The specific configuration items are explained as follows:
-
-- **Group:** ApiGroup of the customized workload.
-- **Kind:** Kind of the customized workload.
-- **subResources:** SubResources of the customized workload, including Group and Kind. For example: Deployment's
-  ReplicaSet. This field is optional, and can be left as empty slice if no sub-workload is used for the customized
-  workload.
-- **replicasPath:** Resource path to the replicas in the resource. For example: spec.replicas.
-
-### Authorize kruise-manager
-
-To use WorkloadSpread with custom workloads, you need to grant the kruise-manager service account read permissions for
-the respective resources.
-
-**Caution**: The WorkloadSpread Webhook does not set a deletion cost for Pods created by custom workloads, so it cannot
-ensure the scaling-down order of custom workloads.
-
-```yaml
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
-metadata:
-  name: kruise-rollouts-access
-rules:
-  - apiGroups: [ "argoproj.io" ]
-    resources: [ "rollouts" ]
-    verbs: [ "get" ]
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
-metadata:
-  name: kruise-rollouts-access-binding
-subjects:
-  - kind: ServiceAccount
-    name: kruise-manager
-    namespace: kruise-system
-roleRef:
-  kind: ClusterRole
-  name: kruise-rollouts-access
-  apiGroup: rbac.authorization.k8s.io
-```
-
-### Reference the custom workload in WorkloadSpread
-
-Once the configuration is complete, the custom workload can be referenced in the `targetRef` field of WorkloadSpread.
-
-```yaml
-apiVersion: apps.kruise.io/v1alpha1
-kind: WorkloadSpread
-metadata:
-  name: workloadspread-demo
-spec:
-  targetRef:
-    apiVersion: argoproj.io/v1alpha1
-    kind: Rollout
-    name: rollouts-demo
-  subsets:
-    ...
-```
-
-### Support for AI Workloads
-
-**FEATURE STATE:** Kruise v1.8.0
-
-In AI scenarios, certain workloads (such as Kubeflow's TFJob) include multiple roles (e.g., PS, Worker), and their
-replica definitions may not align with the standard Scale subresource.
-WorkloadSpread introduces the `targetFilter` field to enable fine-grained resource scattering for such workloads.
-
-#### Typical Scenario Example
-
-For example, in a TFJob, you need to distribute the Pods of the Worker role across different zones:
-
-```yaml
-apiVersion: kubeflow.org/v1
-kind: TFJob
-metadata:
-  name: tfjob-demo
-spec:
-  tfReplicaSpecs:
-  PS:
-    replicas: 1
-    # ...
-  Worker:
-    replicas: 2
-    # ...
-```
-
-#### Configuration Steps
-
-1. **Configure Custom Workload Whitelist**  
-   Refer to the [section: Using WorkloadSpread on Custom Workloads](#use-workloadspread-with-customized-workload), add TFJob
-   to the whitelist, and configure rbac permissions.
-
-2. **Define WorkloadSpread Configuration**
-
-```yaml
-apiVersion: apps.kruise.io/v1alpha1
-kind: WorkloadSpread
-metadata:
-  name: ws-tfjob-demo
-spec:
-  targetRef:
-    apiVersion: kubeflow.org/v1alpha1
-    kind: TFJob
-    name: tfjob-demo
-  targetFilter:
-    selector:
-      matchLabels:
-        role: worker
-    replicasPathList:
-      - spec.tfReplicaSpecs.Worker.replicas
-  #...
-```
-
-#### Key Parameter Descriptions
-
-| Parameter          | Description                                                                                                         |
-|--------------------|---------------------------------------------------------------------------------------------------------------------|
-| `targetFilter`     | Used to filter specific roles (e.g., Worker) in the target workload and specify the path to their replica count.    |
-| `replicasPathList` | Specifies the path to the replica count of the target role in the CRD, e.g., `spec.tfReplicaSpecs.Worker.replicas`. |
-
-#### Expected Behavior
-
-- WorkloadSpread will only manage the Pod distribution of the Worker role in the TFJob; the Pods of the PS role remain
-  unaffected.
-- During scaling operations, the Worker Pods will be distributed across different zones according to the rules defined
-  in `subsets`.
-
-## feature-gates
-
-WorkloadSpread feature is turned off by default, if you want to turn it on set feature-gates *WorkloadSpread*.
-
-```bash
-$ helm install kruise https://... --set featureGates="WorkloadSpread=true"
-```
-
-## Example
-
-### Elastic deployment
-
-`zone-a`(ACK) holds 100 Pods, `zone-b`(ECI) as an elastic zone holds additional Pods.
-
-1. Create a WorkloadSpread instance.
-
-```yaml
-apiVersion: apps.kruise.io/v1alpha1
-kind: WorkloadSpread
-metadata:
-  name: ws-demo
-  namespace: deploy
-spec:
-  targetRef: # workload in the same namespace
-    apiVersion: apps.kruise.io/v1alpha1
-    kind: CloneSet
-    name: workload-xxx
-  subsets:
-  - name: ACK # zone ACK
-    requiredNodeSelectorTerm:
-      matchExpressions:
-      - key: topology.kubernetes.io/zone
-        operator: In
-        values:
-        - ack
-    maxReplicas: 100
-    patch: # inject label.
-      metadata:
-        labels:
-          deploy/zone: ack
-  - name: ECI # zone ECI
-    requiredNodeSelectorTerm:
-      matchExpressions:
-      - key: topology.kubernetes.io/zone
-        operator: In
-        values:
-        - eci
-```
-
-2. Creat a corresponding workload, the number of replicas ca be adjusted freely.
-
-#### Effect
-
-- When the number of `replicas` {'<='} 100, the Pods are scheduled in `ACK` zone.
-- When the number of `replicas` {'>'} 100, the 100 Pods are in `ACK` zone, the extra Pods are scheduled in `ECI` zone.
-- The Pods in `ECI` elastic zone are removed first when scaling in.
-
-### Multi-domain deployment
-
-Deploy 100 Pods to two `zone`(zone-a, zone-b) separately.
-
-1. Create a WorkloadSpread instance.
-
-```yaml
-apiVersion: apps.kruise.io/v1alpha1
-kind: WorkloadSpread
-metadata:
-  name: ws-demo
-  namespace: deploy
-spec:
-  targetRef:
-    apiVersion: apps.kruise.io/v1alpha1
-    kind: CloneSet
-    name: workload-xxx
-  subsets:
-  - name: subset-a
-    requiredNodeSelectorTerm:
-      matchExpressions:
-      - key: topology.kubernetes.io/zone
-        operator: In
-        values:
-        - zone-a
-    maxReplicas: 100
-    patch:
-      metadata:
-        labels:
-          deploy/zone: zone-a
-  - name: subset-b
-    requiredNodeSelectorTerm:
-      matchExpressions:
-      - key: topology.kubernetes.io/zone
-        operator: In
-        values:
-        - zone-b
-    maxReplicas: 100
-    patch:
-      metadata:
-        labels:
-          deploy/zone: zone-b
-```
-
-2. Creat a corresponding workload with a 200 replicas, or perform a rolling update on an existing workload.
-
-3. If the spread of zone needs to be changed, first adjust the `maxReplicas` of `subset`, and then change the `replicas`
-   of workload.
+For more technical details on the implementation of subset management, refer to the [OpenKruise source code](https://github.com/openkruise/kruise/blob/master/pkg/util/workloadspread/workloadspread.go).
