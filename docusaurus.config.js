@@ -156,19 +156,19 @@ function getNextVersionName() {
             label: 'Kruise',
           },
           {
-            to: 'rollouts/introduction',
+            to: '/rollouts/introduction',
             position: 'left',
             label: 'Rollouts',
             activeBasePath: 'rollouts',
           },
           {
-            to: 'kruisegame/introduction',
+            to: '/kruisegame/introduction',
             position: 'left',
             label: 'Kruise-Game',
             activeBasePath: 'kruisegame',
           },
           {
-            to: 'kruiseagents/introduction',
+            to: '/kruiseagents/introduction',
             position: 'left',
             label: 'Kruise-Agents',
             activeBasePath: 'kruiseagents',
