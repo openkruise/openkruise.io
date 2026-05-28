@@ -75,6 +75,7 @@ jobs:
         with:
           python-version: '3.12'
           cache: 'pip'
+          cache-dependency-path: '.github/workflows/requirements-typocheck.txt'
       - name: TypoCheck
         run: |
           pip3 install -r .github/workflows/requirements-typocheck.txt
