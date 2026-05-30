@@ -2,9 +2,8 @@ import React, { useState, useMemo } from 'react';
 import clsx from 'clsx';
 import Layout from '@theme/Layout';
 import Link from '@docusaurus/Link';
-import Translate, { translate } from '@docusaurus/Translate';
-import { adopters } from '../data/adopters';
-import styles from './adopters.module.css';
+import { adopters } from '../../data/adopters';
+import styles from '../adopters.module.css';
 
 // Extract Kruise feature keywords from adopter purpose
 // IMPORTANT: When new Kruise features are released or added to adopter descriptions,
@@ -30,6 +29,30 @@ const FEATURE_KEYWORDS = [
   'DaemonSet'
 ];
 
+// Chinese translations for feature names
+const FEATURE_TRANSLATIONS = {
+  'CloneSet': '克隆集',
+  'SidecarSet': '边车集',
+  'BroadcastJob': '广播任务',
+  'GameServerSet': '游戏服务器集',
+  'Rollouts': '灰度发布',
+  'AdvancedCronTab': '高级定时任务',
+  'UnitedDeployment': '联合部署',
+  'WorkloadSpread': '工作负载扩展',
+  'KruiseGame': 'Kruise游戏',
+  'AdvancedStatefulSet': '高级有状态集',
+  'AdvanceStatefulSet': '高级有状态集',
+  'PersistentPodState': '持久化Pod状态',
+  'ImagePullJobs': '镜像拉取任务',
+  'ImagepullJobs': '镜像拉取任务',
+  'ResourceDistribution': '资源分发',
+  'DaemonSet': '守护进程集'
+};
+
+function getFeatureDisplayName(feature) {
+  return FEATURE_TRANSLATIONS[feature] || feature;
+}
+
 function extractFeatures(purpose) {
   if (!purpose) return [];
   const features = [];
@@ -54,13 +77,13 @@ function AdopterCard({ adopter }) {
         </div>
         <div className={styles.cardBody}>
           <div className={styles.useCase}>
-            <h4><Translate>Use Case</Translate></h4>
+            <h4>使用场景</h4>
             <p>{adopter.purpose}</p>
           </div>
           {features.length > 0 && (
             <div className={styles.features}>
               {features.map(feature => (
-                <span key={feature} className={styles.featureTag}>{feature}</span>
+                <span key={feature} className={styles.featureTag}>{getFeatureDisplayName(feature)}</span>
               ))}
             </div>
           )}
@@ -125,7 +148,7 @@ function AdoptersSection() {
           <input
             type="text"
             className={styles.searchInput}
-            placeholder={translate({message: 'Search by company name or location...'})}
+            placeholder="按公司名或地址搜索..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -134,7 +157,7 @@ function AdoptersSection() {
         {/* Feature Filters */}
         <div className={styles.filterSection}>
           <h3 className={styles.filterTitle}>
-            <Translate>Filter by Features</Translate>
+            按功能筛选
           </h3>
           <div className={styles.filterChips}>
             {allFeatures.map(feature => (
@@ -145,24 +168,20 @@ function AdoptersSection() {
                 })}
                 onClick={() => toggleFilter(feature)}
               >
-                {feature}
+                {getFeatureDisplayName(feature)}
               </button>
             ))}
           </div>
           {selectedFilters.length > 0 && (
             <button className={styles.clearButton} onClick={clearFilters}>
-              <Translate>Clear Filters</Translate>
+              清除筛选
             </button>
           )}
         </div>
 
         {/* Adopter Count */}
         <div className={styles.adopterCount}>
-          <Translate
-            values={{filtered: filteredAdopters.length, total: adopters.length}}
-          >
-            {'Showing {filtered} of {total} adopters'}
-          </Translate>
+          显示 {filteredAdopters.length} 个，共 {adopters.length} 个采纳者
         </div>
 
         {/* Adopters Grid or Empty State */}
@@ -174,7 +193,7 @@ function AdoptersSection() {
           </div>
         ) : (
           <div className={styles.emptyState}>
-            <p><Translate>No adopters found matching your criteria. Try adjusting your search or filters.</Translate></p>
+            <p>没有找到符合条件的采纳者。请尝试调整你的搜索或筛选条件。</p>
           </div>
         )}
       </div>
@@ -190,12 +209,12 @@ function BecomeAdopterSection() {
       <div className="container">
         <div className="text--center">
           <h2 className={styles.becomeAdopterTitle}>
-            <Translate>Already using Kruise? Fill the details in the below link</Translate>
+            已经在使用 Kruise？填写以下链接中的详细信息
           </h2>
           <Link
             className={styles.becomeAdopterButton}
             href="https://github.com/openkruise/kruise/issues/289">
-            <Translate>Open</Translate>
+            打开
           </Link>
         </div>
       </div>
@@ -206,24 +225,16 @@ function BecomeAdopterSection() {
 export default function Adopters() {
   return (
     <Layout
-      title={translate({
-        message: 'Adopters & Supporters',
-        description: 'The title of the adopters page',
-      })}
-      description={translate({
-        message: 'Companies and organizations using OpenKruise and supporting its development',
-        description: 'The description of the adopters page',
-      })}
+      title="采纳者与支持者"
+      description="使用 OpenKruise 的公司和组织"
     >
       <header className={clsx('hero hero--primary', styles.heroBanner)}>
         <div className="container">
           <h1 className="hero__title">
-            <Translate>Adopters</Translate>
+            采纳者
           </h1>
           <p className="hero__subtitle">
-            <Translate>
-              Companies and organizations using OpenKruise in production
-            </Translate>
+            在生产环境中使用 OpenKruise 的公司和组织
           </p>
         </div>
       </header>
