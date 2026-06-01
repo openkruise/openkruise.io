@@ -62,7 +62,7 @@ spec:
   - 浮点数：例如 `3.14`
   - 百分比：例如 `50%`（自动转换为 0.5）
   - Kubernetes 资源：例如 `200m`、`512Mi`、`1Gi`
-- 如果同时配置了 resourcesPolicy 和 resources, kruise validating webhook 将拒绝 Pod 创建请求。
+- 如果同时配置了 `resourcesPolicy` 和 `resources`, kruise validating webhook 将拒绝 Pod 创建请求。
 - `targetContainersNameRegex` 是用于匹配目标容器名称的正则表达式模式。如果没有容器名称与此正则表达式匹配，验证 webhook 将拒绝 Pod 创建请求。目标容器包括原生 sidecar 容器和普通容器，不包括 Kruise sidecar 容器。
 - `resourcesPolicy` 可以应用于原生 sidecar 容器（`sidecarset.spec.initContainers.resourcesPolicy`）和普通容器（`sidecarset.spec.containers.resourcesPolicy`）。
 - 动态资源注入仅在 Pod 创建时生效，不会在 Pod 运行时动态更新。

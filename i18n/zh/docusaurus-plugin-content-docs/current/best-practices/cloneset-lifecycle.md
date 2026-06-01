@@ -213,7 +213,7 @@ func IsPreDeleteHooked(pod *v1.Pod) bool {
 }
 ```
 
-上述代码中四个 case 分别从上到下对应 Pod 的创建后、升级前、升级后、删除前等四个重要声明周期节点，用户需要根据自己的需要来完善相应的 Hook。在本文的场景中，上述几个 Hook 的行为具体为：
+上述代码中四个 `switch-cases` 分别从上到下对应 Pod 的创建后、升级前、升级后、删除前等四个重要声明周期节点，用户需要根据自己的需要来完善相应的 Hook。在本文的场景中，上述几个 Hook 的行为具体为：
 - `postRegistry(pod *v1.Pod)` : 发送请求通知服务发现中心注册该 Pod 服务；
 - `postFailOver(pod *v1.Pod)` : 发送请求通知服务发现中心 Fail Over 该 Pod 服务；
 - `postUnregiste(pod *v1.Pod)`: 发送请求通知服务发现中心将该 Pod 服务注销。
