@@ -89,11 +89,20 @@ function SkeletonLoader() {
   );
 }
 
-function ErrorFallback() {
+function ErrorFallback({ error }) {
+  const isRateLimited = error?.message?.startsWith('rate_limited:');
+  const resetTime = isRateLimited ? error.message.split(':')[1] : null;
+  
   return (
     <div className={styles.errorContainer}>
       <p className={styles.errorText}>
-        <Translate>Unable to fetch latest release information.</Translate>
+        {isRateLimited ? (
+          <Translate values={{ time: resetTime }}>
+            {'Release information is temporarily unavailable. Please try again after {time}.'}
+          </Translate>
+        ) : (
+          <Translate>Unable to fetch latest release information.</Translate>
+        )}
       </p>
       <Link
         href="https://github.com/openkruise/kruise/releases/latest"
@@ -130,6 +139,18 @@ export default function LatestRelease() {
         );
 
         if (!response.ok) {
+          // Handle rate limiting specifically
+          if (response.status === 403 || response.status === 429) {
+            const resetTime = response.headers.get('X-RateLimit-Reset');
+            const remaining = response.headers.get('X-RateLimit-Remaining');
+            
+            if (remaining === '0') {
+              const resetDate = resetTime 
+                ? new Date(parseInt(resetTime) * 1000).toLocaleTimeString()
+                : 'soon';
+              throw new Error(`rate_limited:${resetDate}`);
+            }
+          }
           throw new Error(`GitHub API error: ${response.status}`);
         }
 
@@ -153,7 +174,7 @@ export default function LatestRelease() {
   }
 
   if (error || !release) {
-    return <ErrorFallback />;
+    return <ErrorFallback error={error} />;
   }
 
   // Format release date
