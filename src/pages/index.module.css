@@ -38,6 +38,17 @@
   padding-left: 1.5rem;
 }
 
+.githubButtonContainer {
+  margin: 1.5rem 0;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+}
+
+.githubButtonContainer iframe {
+  border: none;
+}
+
 .heroBanner {
   padding: 4rem 0;
   text-align: center;

@@ -5,7 +5,6 @@ import Link from '@docusaurus/Link';
 import Translate, { translate } from '@docusaurus/Translate';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import useBaseUrl from '@docusaurus/useBaseUrl';
-import GitHubButton from 'react-github-btn';
 import styles from './index.module.css';
 import HomepageFeatures from '../components/HomepageFeatures';
 import SupportersSection from '../components/SupportersSection';
@@ -52,14 +51,17 @@ export default function Home() {
             <img className={styles.heroLogo} src={useBaseUrl('img/logo_colorful.png')} alt="OpenKruise Logo" />
           </div> */}
           <h2 className={clsx('hero__title', styles.heroTitle)}>{siteConfig.title}</h2>
-          <GitHubButton
-            href="https://github.com/openkruise/kruise"
-            data-icon="octicon-star"
-            data-size="large"
-            data-show-count="true"
-            aria-label="Star openkruise/kruise on GitHub">
-            Star
-          </GitHubButton>
+          <div className={styles.githubButtonContainer}>
+            <iframe 
+              src="https://ghbtns.com/github-btn.html?user=openkruise&repo=kruise&type=star&count=true&size=large" 
+              frameBorder="0" 
+              scrolling="0" 
+              width="170" 
+              height="30"
+              title="Star openkruise/kruise on GitHub"
+              loading="lazy">
+            </iframe>
+          </div>
           <p className="hero__subtitle">{siteConfig.tagline}</p>
           <div
             className={clsx(styles.heroButtons, 'name', 'margin-vert--md')}>
