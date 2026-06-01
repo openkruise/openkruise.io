@@ -4,11 +4,15 @@ title: Installation
 
 ## Overview
 
-Sandbox Controller, Sandbox Manager, and Sandbox Gateway are three core components in the OpenKruise ecosystem that together form a complete Sandbox runtime environment:
+Sandbox Controller, Sandbox Manager, and Sandbox Gateway are three core components in the OpenKruise ecosystem that
+together form a complete Sandbox runtime environment:
 
-- **Sandbox Controller**: Manages CRD resources related to Sandbox, including lifecycle management of SandboxSet, Sandbox, SandboxClaim, and SandboxTemplate.
-- **Sandbox Manager**: Provides API services and control plane for Sandbox, responsible for scheduling, creating, and recycling Sandbox instances, supporting E2B protocol access.
-- **Sandbox Gateway** (new in 0.2.0): An independent data plane gateway service built on Envoy + Golang Filter, responsible for traffic routing, load balancing, and circuit breaking protection, supporting independent scaling.
+- **Sandbox Controller**: Manages CRD resources related to Sandbox, including lifecycle management of SandboxSet,
+  Sandbox, SandboxClaim, and SandboxTemplate.
+- **Sandbox Manager**: Provides API services and control plane for Sandbox, responsible for scheduling, creating, and
+  recycling Sandbox instances, supporting E2B protocol access.
+- **Sandbox Gateway** (new in 0.2.0): An independent data plane gateway service built on Envoy + Golang Filter,
+  responsible for traffic routing, load balancing, and circuit breaking protection, supporting independent scaling.
 
 ---
 
@@ -16,11 +20,12 @@ Sandbox Controller, Sandbox Manager, and Sandbox Gateway are three core componen
 
 | Component          | Chart Version | Image Version | Kubernetes Compatibility |
 |--------------------|---------------|---------------|--------------------------|
-| Sandbox Controller | 0.2.0         | v0.2.0        | `>= 1.28`                |
-| Sandbox Manager    | 0.2.0         | v0.2.0        | `>= 1.28`                |
-| Sandbox Gateway    | —             | v0.2.1        | `>= 1.28`                |
+| Sandbox Controller | 0.3.0         | v0.3.0        | `>= 1.28`                |
+| Sandbox Manager    | 0.3.0         | v0.3.0        | `>= 1.28`                |
+| Sandbox Gateway    | —             | v0.3.0        | `>= 1.28`                |
 
-> **Note**: Sandbox Gateway is deployed together with the Sandbox Manager chart and does not require separate installation.
+> **Note**: Sandbox Gateway is deployed together with the Sandbox Manager chart and does not require separate
+> installation.
 
 ---
 
@@ -52,43 +57,47 @@ helm repo update
 kubectl create ns sandbox-system
 ```
 
-> **Installation Order**: Sandbox Controller **must** be installed before Sandbox Manager, as it provides the CRD resources required by Sandbox Manager.
+> **Installation Order**: Sandbox Controller **must** be installed before Sandbox Manager, as it provides the CRD
+> resources required by Sandbox Manager.
 
 ```bash
 helm install agents-sandbox-controller openkruise/agents-sandbox-controller \
   -n sandbox-system \
-  --version 0.2.0
+  --version 0.3.0
 ```
 
 ### 3. Install Sandbox Manager
 
 > **Required Parameters**: The following parameters must be explicitly specified during installation:
 > - `e2b.adminApiKey`: E2B admin API Key for authentication
-> - `ingress.className`: Ingress controller class name (e.g., `nginx`, `alb`, etc., depending on your cluster's Ingress implementation)
+> - `ingress.className`: Ingress controller class name (e.g., `nginx`, `alb`, etc., depending on your cluster's Ingress
+    implementation)
 
 ```bash
 helm install agents-sandbox-manager openkruise/agents-sandbox-manager \
   -n sandbox-system \
-  --version 0.2.0 \
+  --version 0.3.0 \
   --set e2b.adminApiKey=<your-api-key> \
   --set ingress.className=<your-ingress-class>
 ```
 
-> **Note**: The 0.2.0 version of the Sandbox Manager chart will also deploy Sandbox Gateway, no additional installation required.
+> **Note**: The 0.3.0 version of the Sandbox Manager chart will also deploy Sandbox Gateway, no additional installation
+> required.
 
 ---
 
 ## Using China Mirror Registry
 
-Due to network restrictions, users in China may not be able to pull images directly from Docker Hub. It is recommended to use China mirrors provided by Alibaba Cloud Container Registry.
+Due to network restrictions, users in China may not be able to pull images directly from Docker Hub. It is recommended
+to use China mirrors provided by Alibaba Cloud Container Registry.
 
 ### China Mirror Addresses
 
 | Component          | Image Address                                                                         | Version        |
 |--------------------|---------------------------------------------------------------------------------------|----------------|
-| Sandbox Controller | `openkruise-registry.cn-shanghai.cr.aliyuncs.com/openkruise/agent-sandbox-controller` | `v0.2.0`       |
-| Sandbox Manager    | `openkruise-registry.cn-shanghai.cr.aliyuncs.com/openkruise/sandbox-manager`          | `v0.2.0`       |
-| Sandbox Gateway    | `openkruise-registry.cn-shanghai.cr.aliyuncs.com/openkruise/sandbox-gateway`          | `v0.2.1`       |
+| Sandbox Controller | `openkruise-registry.cn-shanghai.cr.aliyuncs.com/openkruise/agent-sandbox-controller` | `v0.3.0`       |
+| Sandbox Manager    | `openkruise-registry.cn-shanghai.cr.aliyuncs.com/openkruise/sandbox-manager`          | `v0.3.0`       |
+| Sandbox Gateway    | `openkruise-registry.cn-shanghai.cr.aliyuncs.com/openkruise/sandbox-gateway`          | `v0.3.0`       |
 | Envoy Proxy        | `openkruise-registry.cn-shanghai.cr.aliyuncs.com/openkruise/envoy`                    | `v1.33-latest` |
 
 ### Install with China Mirrors
@@ -98,7 +107,7 @@ Due to network restrictions, users in China may not be able to pull images direc
 ```bash
 helm install agents-sandbox-controller openkruise/agents-sandbox-controller \
   -n sandbox-system \
-  --version 0.2.0 \
+  --version 0.3.0 \
   --set image.repository=openkruise-registry.cn-shanghai.cr.aliyuncs.com/openkruise/agent-sandbox-controller
 ```
 
@@ -107,7 +116,7 @@ helm install agents-sandbox-controller openkruise/agents-sandbox-controller \
 ```bash
 helm install agents-sandbox-manager openkruise/agents-sandbox-manager \
   -n sandbox-system \
-  --version 0.2.0 \
+  --version 0.3.0 \
   --set e2b.adminApiKey=<your-api-key> \
   --set ingress.className=<your-ingress-class> \
   --set controller.repository=openkruise-registry.cn-shanghai.cr.aliyuncs.com/openkruise/sandbox-manager \
@@ -132,7 +141,7 @@ helm install agents-sandbox-manager openkruise/agents-sandbox-manager \
 ```bash
 helm upgrade agents-sandbox-controller openkruise/agents-sandbox-controller \
   -n sandbox-system \
-  --version 0.2.0
+  --version 0.3.0
 ```
 
 ### Upgrade Sandbox Manager
@@ -140,7 +149,7 @@ helm upgrade agents-sandbox-controller openkruise/agents-sandbox-controller \
 ```bash
 helm upgrade agents-sandbox-manager openkruise/agents-sandbox-manager \
   -n sandbox-system \
-  --version 0.2.0
+  --version 0.3.0
 ```
 
 > **Note:**
@@ -152,9 +161,12 @@ helm upgrade agents-sandbox-manager openkruise/agents-sandbox-manager \
 
 ### Upgrading from 0.1.0 to 0.2.0
 
-Version 0.2.0 introduces an independent Sandbox Gateway component and multiple CRD changes. Please note the following during upgrade:
+Version 0.2.0 introduces an independent Sandbox Gateway component and multiple CRD changes. Please note the following
+during upgrade:
 
-1. **Manually Update CRDs (Required)**: Helm upgrade **will not automatically update** CRD definitions under the `crds/` directory. Version 0.2.0 has significant CRD changes, and **new CRDs must be manually applied before running `helm upgrade`**, otherwise new features will not work properly.
+1. **Manually Update CRDs (Required)**: Helm upgrade **will not automatically update** CRD definitions under the `crds/`
+   directory. Version 0.2.0 has significant CRD changes, and **new CRDs must be manually applied before
+   running `helm upgrade`**, otherwise new features will not work properly.
 
    ```bash
    # Extract CRDs from chart package and apply (online installation example)
@@ -165,20 +177,78 @@ Version 0.2.0 introduces an independent Sandbox Gateway component and multiple C
 
    Key CRD changes in 0.2.0 include:
     - **New Checkpoint CRD** (`checkpoints.agents.kruise.io`): For sandbox state checkpoint/snapshot management
-    - **New `runtimes` field in all CRDs**: Sandbox, SandboxSet, SandboxClaim, and SandboxTemplate all have new runtime configuration
-    - **New `updateStrategy` in SandboxSet**: Supports rolling update strategy configuration (`maxUnavailable`), along with `updatedReplicas` and `updatedAvailableReplicas` status fields
-    - **SandboxClaim enhancements**: New dynamic volume mount (`dynamicVolumesMount`), in-place resource update (`inplaceUpdate.resources`), skip init runtime (`skipInitRuntime`); `ttlAfterCompleted` default changed from `5m` to `60m`
+    - **New `runtimes` field in all CRDs**: Sandbox, SandboxSet, SandboxClaim, and SandboxTemplate all have new runtime
+      configuration
+    - **New `updateStrategy` in SandboxSet**: Supports rolling update strategy configuration (`maxUnavailable`), along
+      with `updatedReplicas` and `updatedAvailableReplicas` status fields
+    - **SandboxClaim enhancements**: New dynamic volume mount (`dynamicVolumesMount`), in-place resource update (
+      `inplaceUpdate.resources`), skip init runtime (`skipInitRuntime`); `ttlAfterCompleted` default changed from `5m`
+      to `60m`
     - **Webhook enhancements**: New ValidatingWebhook for Pod Delete and Pod Eviction
 
-2. **New Gateway Deployment**: 0.2.0 adds an independent Sandbox Gateway Deployment on top of the existing Envoy Sidecar in the Manager Pod, which can be scaled independently based on traffic pressure.
-3. **Ingress Routing Changes**: 0.2.0 adds the `ingress.dataplaneService` parameter (default `sandbox-gateway`), and data plane traffic will be routed to the Gateway Service instead of the Manager Service. Please ensure your Ingress configuration is correctly updated.
-4. **New Required Parameters**: `ingress.className` has an empty string default in 0.2.0 and must be explicitly specified.
+2. **New Gateway Deployment**: 0.2.0 adds an independent Sandbox Gateway Deployment on top of the existing Envoy Sidecar
+   in the Manager Pod, which can be scaled independently based on traffic pressure.
+3. **Ingress Routing Changes**: 0.2.0 adds the `ingress.dataplaneService` parameter (default `sandbox-gateway`), and
+   data plane traffic will be routed to the Gateway Service instead of the Manager Service. Please ensure your Ingress
+   configuration is correctly updated.
+4. **New Required Parameters**: `ingress.className` has an empty string default in 0.2.0 and must be explicitly
+   specified.
+
+### Upgrading from 0.2.0 to 0.3.0
+
+Version 0.3.0 introduces Sandbox batch upgrade capability (SandboxUpdateOps) and Gateway optimizations. Please note the
+following during upgrade:
+
+1. **Manually Update CRDs (Required)**: Helm upgrade **will not automatically update** CRD definitions under the `crds/`
+   directory. Version 0.3.0 adds new CRDs and has multiple changes to existing CRDs, and **new CRDs must be manually
+   applied before running `helm upgrade`**, otherwise new features will not work properly.
+
+   ```bash
+   # Extract CRDs from chart package and apply (online installation example)
+   helm pull openkruise/agents-sandbox-controller --version 0.3.0 --untar
+   kubectl apply -f agents-sandbox-controller/crds/
+   rm -rf agents-sandbox-controller
+   ```
+
+   Key CRD changes in 0.3.0 include:
+    - **New SandboxUpdateOps CRD** (`sandboxupdateops.agents.kruise.io`): For batch upgrading Sandbox instances,
+      supports selecting target sandboxes via label selectors, configuring rolling update strategy (`maxUnavailable`),
+      and tracking upgrade progress (`updatedReplicas`, `updatingReplicas`, `failedReplicas`)
+    - **New `lifecycle` field in Sandbox**: Supports upgrade lifecycle hooks, including `preUpgrade` (executed before
+      upgrade, for backing up workspace data) and `postUpgrade` (executed after upgrade, for restoring workspace data),
+      each hook supports `exec` command and `timeoutSeconds` timeout configuration
+    - **New `upgradePolicy` field in Sandbox**: Defines sandbox upgrade policy type (e.g., `Recreate`), disabled when
+      empty
+    - **SandboxClaim enhancements**: `claimTimeout` adds minimum value validation (must be >= 1s); `waitReadyTimeout`
+      adds minimum value validation (must be >= 1s);
+
+2. **New Webhook**: New ValidatingWebhook for SandboxUpdateOps resource (`v-suo.kb.io`), validates CREATE and UPDATE
+   operations.
+
+3. **RBAC Changes**: Controller adds permissions for `sandboxupdateops` and `sandboxupdateops/status` resources.
+
+4. **Gateway Port Changes**: Gateway listener port changed from `10000` to `7788`, Gateway Service port and target port
+   unified to `7788`. If you have hardcoded port `10000` in Ingress or other configurations, **you must update** it to
+   `7788`.
+
+5. **Gateway Graceful Shutdown**: Gateway Envoy container adds `preStop` lifecycle hook, drains listener connections (
+   `drain_listeners?graceful`) before termination, waits for `drainTimeSeconds` (default 30s) before exiting, avoiding
+   traffic interruption during upgrade/scale-down.
+
+6. **Envoy Configuration Enhancements**:
+    - New `gateway.envoy.drainTimeSeconds` (drain time, default `30`)
+    - New `gateway.envoy.streamIdleTimeout` (stream idle timeout, default `600s`)
+    - New `gateway.envoy.connectTimeout` (connection timeout, default `5s`, previously hardcoded as `5s`)
+    - `gateway.envoy.concurrency` default changed from `4` to empty string, when not specified, it matches
+      `gateway.resources.cpu` value
 
 ---
 
 ## Manual Chart Download
 
-If you cannot connect to `https://openkruise.github.io/charts/` in your production environment, you can manually download the chart package from [GitHub Releases](https://github.com/openkruise/charts/releases) and then install or upgrade it to your cluster.
+If you cannot connect to `https://openkruise.github.io/charts/` in your production environment, you can manually
+download the chart package from [GitHub Releases](https://github.com/openkruise/charts/releases) and then install or
+upgrade it to your cluster.
 
 ```bash
 helm install/upgrade agents-sandbox-controller /PATH/TO/CONTROLLER/CHART -n sandbox-system
@@ -197,7 +267,7 @@ The following table shows all configurable parameters for the Sandbox Controller
 |------------------------------|--------------------------------------------|-------------------------------------------------------------------------------------------------------------------------|
 | `replicaCount`               | Controller replica count                   | `2`                                                                                                                     |
 | `image.repository`           | Controller image repository                | `openkruise/agent-sandbox-controller`                                                                                   |
-| `image.tag`                  | Controller image version                   | `v0.2.0`                                                                                                                |
+| `image.tag`                  | Controller image version                   | `v0.3.0`                                                                                                                |
 | `image.pullPolicy`           | Image pull policy                          | `IfNotPresent`                                                                                                          |
 | `webhook.port`               | Webhook service port                       | `9443`                                                                                                                  |
 | `metrics.port`               | Metrics service port                       | `8443`                                                                                                                  |
@@ -233,7 +303,7 @@ The following table shows all configurable parameters for the Sandbox Manager ch
 |------------------------------------|------------------------------------|------------------------------|
 | `replicaCount`                     | Manager replica count              | `2`                          |
 | `controller.repository`            | Controller image repository        | `openkruise/sandbox-manager` |
-| `controller.tag`                   | Controller image version           | `v0.2.0`                     |
+| `controller.tag`                   | Controller image version           | `v0.3.0`                     |
 | `controller.pullPolicy`            | Image pull policy                  | `IfNotPresent`               |
 | `controller.logLevel`              | Log level                          | `5`                          |
 | `controller.infra`                 | Sandbox infrastructure type        | `sandbox-cr`                 |
@@ -254,30 +324,36 @@ The following table shows all configurable parameters for the Sandbox Manager ch
 
 #### Gateway Parameters (New)
 
-| Parameter                             | Description                    | Default                      |
-|---------------------------------------|--------------------------------|------------------------------|
-| `gateway.replicaCount`                | Gateway replica count          | `2`                          |
-| `gateway.image.repository`            | Gateway image repository       | `openkruise/sandbox-gateway` |
-| `gateway.image.tag`                   | Gateway image version          | `v0.2.1`                     |
-| `gateway.image.pullPolicy`            | Gateway image pull policy      | `IfNotPresent`               |
-| `gateway.resources.cpu`               | Gateway CPU resources          | `2`                          |
-| `gateway.resources.memory`            | Gateway memory resources       | `4Gi`                        |
-| `gateway.livenessProbe`               | Liveness probe configuration   | See configuration below      |
-| `gateway.readinessProbe`              | Readiness probe configuration  | See configuration below      |
-| `gateway.envoy.admin.address`         | Envoy admin interface address  | `127.0.0.1`                  |
-| `gateway.envoy.admin.port`            | Envoy admin interface port     | `9901`                       |
-| `gateway.envoy.listener.address`      | Envoy listener address         | `0.0.0.0`                    |
-| `gateway.envoy.listener.port`         | Envoy listener port            | `10000`                      |
-| `gateway.envoy.logLevel`              | Envoy log level                | `warn`                       |
-| `gateway.envoy.concurrency`           | Envoy concurrency              | `4`                          |
-| `gateway.envoy.circuitBreakers`       | Circuit breaker configuration  | See configuration below      |
-| `gateway.service.type`                | Gateway Service type           | `ClusterIP`                  |
-| `gateway.service.port`                | Gateway Service port           | `7788`                       |
-| `gateway.service.targetPort`          | Gateway Service target port    | `10000`                      |
-| `gateway.podAntiAffinity.type`        | Pod anti-affinity type         | `soft`                       |
-| `gateway.podAntiAffinity.weight`      | Pod anti-affinity weight       | `100`                        |
-| `gateway.podAntiAffinity.topologyKey` | Pod anti-affinity topology key | `kubernetes.io/hostname`     |
-| `gateway.initContainer.enabled`       | Whether to enable init container | `false`                    |
+| Parameter                             | Description                      | Default                                                    |
+|---------------------------------------|----------------------------------|------------------------------------------------------------|
+| `gateway.replicaCount`                | Gateway replica count            | `2`                                                        |
+| `gateway.image.repository`            | Gateway image repository         | `openkruise/sandbox-gateway`                               |
+| `gateway.image.tag`                   | Gateway image version            | `v0.3.0`                                                   |
+| `gateway.image.pullPolicy`            | Gateway image pull policy        | `IfNotPresent`                                             |
+| `gateway.resources.cpu`               | Gateway CPU resources            | `2`                                                        |
+| `gateway.resources.memory`            | Gateway memory resources         | `4Gi`                                                      |
+| `gateway.livenessProbe`               | Liveness probe configuration     | See configuration below                                    |
+| `gateway.readinessProbe`              | Readiness probe configuration    | See configuration below                                    |
+| `gateway.envoy.admin.address`         | Envoy admin interface address    | `127.0.0.1`                                                |
+| `gateway.envoy.admin.port`            | Envoy admin interface port       | `9901`                                                     |
+| `gateway.envoy.listener.address`      | Envoy listener address           | `0.0.0.0`                                                  |
+| `gateway.envoy.listener.port`         | Envoy listener port              | `7788`                                                     |
+| `gateway.envoy.logLevel`              | Envoy log level                  | `warn`                                                     |
+| `gateway.envoy.concurrency`           | Envoy concurrency                | `""` (empty string, falls back to `gateway.resources.cpu`) |
+| `gateway.envoy.circuitBreakers`       | Circuit breaker configuration    | See configuration below                                    |
+| `gateway.envoy.drainTimeSeconds`      | Envoy drain time (seconds)       | `30`                                                       |
+| `gateway.envoy.streamIdleTimeout`     | Stream idle timeout              | `600s`                                                     |
+| `gateway.envoy.connectTimeout`        | Connection timeout               | `5s`                                                       |
+| `gateway.envoy.pluginConfig`          | Golang Filter plugin config      | See configuration below                                    |
+| `gateway.service.type`                | Gateway Service type             | `ClusterIP`                                                |
+| `gateway.service.port`                | Gateway Service port             | `7788`                                                     |
+| `gateway.service.targetPort`          | Gateway Service target port      | `7788`                                                     |
+| `gateway.service.annotations`         | Gateway Service annotations      | `{}`                                                       |
+| `gateway.service.labels`              | Gateway Service labels           | `{}`                                                       |
+| `gateway.podAntiAffinity.type`        | Pod anti-affinity type           | `soft`                                                     |
+| `gateway.podAntiAffinity.weight`      | Pod anti-affinity weight         | `100`                                                      |
+| `gateway.podAntiAffinity.topologyKey` | Pod anti-affinity topology key   | `kubernetes.io/hostname`                                   |
+| `gateway.initContainer.enabled`       | Whether to enable init container | `false`                                                    |
 
 #### E2B Protocol Parameters
 
@@ -325,7 +401,7 @@ These parameters can be set via `--set key=value[,key=value]` in the `helm insta
 # Liveness probe
 gateway.livenessProbe:
   tcpSocket:
-    port: 10000
+    port: 7788
   initialDelaySeconds: 10
   periodSeconds: 10
   timeoutSeconds: 5
@@ -334,7 +410,7 @@ gateway.livenessProbe:
 # Readiness probe
 gateway.readinessProbe:
   tcpSocket:
-    port: 10000
+    port: 7788
   initialDelaySeconds: 5
   periodSeconds: 5
   timeoutSeconds: 3
@@ -367,7 +443,7 @@ Based on your cluster scale, it is recommended to adjust the following resource 
 ```bash
 helm install agents-sandbox-controller openkruise/agents-sandbox-controller \
   -n sandbox-system \
-  --version 0.2.0 \
+  --version 0.3.0 \
   --set resources.limits.cpu=4 \
   --set resources.limits.memory=8Gi \
   --set resources.requests.cpu=2 \
@@ -379,7 +455,7 @@ helm install agents-sandbox-controller openkruise/agents-sandbox-controller \
 ```bash
 helm install agents-sandbox-manager openkruise/agents-sandbox-manager \
   -n sandbox-system \
-  --version 0.2.0 \
+  --version 0.3.0 \
   --set e2b.adminApiKey=<your-api-key> \
   --set ingress.className=<your-ingress-class> \
   --set controller.resources.cpu=4 \
@@ -393,7 +469,7 @@ helm install agents-sandbox-manager openkruise/agents-sandbox-manager \
 ```bash
 helm install agents-sandbox-manager openkruise/agents-sandbox-manager \
   -n sandbox-system \
-  --version 0.2.0 \
+  --version 0.3.0 \
   --set e2b.domain=sandbox.example.com \
   --set e2b.enableAuth=true \
   --set e2b.adminApiKey=your-secure-api-key \
@@ -405,7 +481,7 @@ helm install agents-sandbox-manager openkruise/agents-sandbox-manager \
 ```bash
 helm install agents-sandbox-manager openkruise/agents-sandbox-manager \
   -n sandbox-system \
-  --version 0.2.0 \
+  --version 0.3.0 \
   --set e2b.adminApiKey=<your-api-key> \
   --set ingress.className=nginx \
   --set ingress.annotations."cert-manager\.io/cluster-issuer"=letsencrypt-prod \
@@ -417,7 +493,7 @@ helm install agents-sandbox-manager openkruise/agents-sandbox-manager \
 ```bash
 helm install agents-sandbox-manager openkruise/agents-sandbox-manager \
   -n sandbox-system \
-  --version 0.2.0 \
+  --version 0.3.0 \
   --set e2b.adminApiKey=<your-api-key> \
   --set ingress.className=<your-ingress-class> \
   --set gateway.replicaCount=3 \
@@ -433,7 +509,7 @@ If special initialization operations are needed (such as sysctl tuning, etc.), y
 ```bash
 helm install agents-sandbox-manager openkruise/agents-sandbox-manager \
   -n sandbox-system \
-  --version 0.2.0 \
+  --version 0.3.0 \
   --set e2b.adminApiKey=<your-api-key> \
   --set ingress.className=<your-ingress-class> \
   --set gateway.initContainer.enabled=true \
@@ -446,10 +522,14 @@ helm install agents-sandbox-manager openkruise/agents-sandbox-manager \
 ## Uninstall
 
 > **Note:**
-> - `helm uninstall` will delete Deployments, Services, Webhook Configurations, and other chart-managed resources, but **will not delete CRDs**.
->   This is standard Helm behavior — CRDs are located in the `crds/` directory, and Helm only creates them during initial installation, leaving them untouched during uninstall and upgrade.
-> - CRDs not being deleted means that already created Sandbox, SandboxSet, and other CR resources along with their associated Pods **will be retained**.
-> - The Namespace will not be automatically deleted either. For a complete cleanup, refer to the "Complete Cleanup" section below.
+> - `helm uninstall` will delete Deployments, Services, Webhook Configurations, and other chart-managed resources, but *
+    *will not delete CRDs**.
+    > This is standard Helm behavior — CRDs are located in the `crds/` directory, and Helm only creates them during
+    initial installation, leaving them untouched during uninstall and upgrade.
+> - CRDs not being deleted means that already created Sandbox, SandboxSet, and other CR resources along with their
+    associated Pods **will be retained**.
+> - The Namespace will not be automatically deleted either. For a complete cleanup, refer to the "Complete Cleanup"
+    section below.
 
 **Uninstall order**: Uninstall Sandbox Manager first, then Sandbox Controller.
 
@@ -477,7 +557,8 @@ kubectl get crd | grep agents.kruise.io | awk '{print $1}' | xargs kubectl delet
 kubectl delete ns sandbox-system
 ```
 
-> ⚠️ **Warning**: Deleting CRDs will irreversibly destroy all Sandbox instances and their associated Pods. Make sure data is backed up before proceeding.
+> ⚠️ **Warning**: Deleting CRDs will irreversibly destroy all Sandbox instances and their associated Pods. Make sure
+> data is backed up before proceeding.
 
 ---
 
@@ -485,16 +566,30 @@ kubectl delete ns sandbox-system
 
 ### Major Changes in 0.2.0 Compared to 0.1.0
 
-| Category          | Changes                                                                                                                |
-|-------------------|------------------------------------------------------------------------------------------------------------------------|
-| **Architecture**  | Added independent Sandbox Gateway Deployment, providing an independently scalable data plane gateway on top of the existing Envoy Sidecar in Manager |
-| **CRD Changes**   | New Checkpoint CRD; new `runtimes` field in all CRDs; new `updateStrategy` in SandboxSet; new dynamic volume mount, in-place resource update in SandboxClaim (CRDs must be manually updated during upgrade) |
-| **Webhook**       | New ValidatingWebhook for Pod Delete and Pod Eviction, enhancing Pod lifecycle management                              |
-| **Log Level**     | Controller log level default changed from `3` to `5` for easier troubleshooting                                        |
-| **Ingress**       | New `dataplaneService` parameter; `className` default changed to empty string, must be explicitly specified             |
-| **E2B**           | `adminApiKey` default changed to empty string (was `admin-987654321` in 0.1.0), must be explicitly specified during installation |
-| **Gateway**       | Complete set of new Gateway configuration options, including replica count, resources, probes, Envoy configuration, circuit breakers, Pod anti-affinity, etc. |
-| **Security**      | `podSecurityContextAllowPrivilegeEscalation` parameter removed, now managed uniformly in `securityContext`             |
-| **RBAC**          | New permissions for `pods/resize`, `checkpoints`, `sandboxtemplates` resources                                         |
+| Category         | Changes                                                                                                                                                                                                     |
+|------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **Architecture** | Added independent Sandbox Gateway Deployment, providing an independently scalable data plane gateway on top of the existing Envoy Sidecar in Manager                                                        |
+| **CRD Changes**  | New Checkpoint CRD; new `runtimes` field in all CRDs; new `updateStrategy` in SandboxSet; new dynamic volume mount, in-place resource update in SandboxClaim (CRDs must be manually updated during upgrade) |
+| **Webhook**      | New ValidatingWebhook for Pod Delete and Pod Eviction, enhancing Pod lifecycle management                                                                                                                   |
+| **Log Level**    | Controller log level default changed from `3` to `5` for easier troubleshooting                                                                                                                             |
+| **Ingress**      | New `dataplaneService` parameter; `className` default changed to empty string, must be explicitly specified                                                                                                 |
+| **E2B**          | `adminApiKey` default changed to empty string (was `admin-987654321` in 0.1.0), must be explicitly specified during installation                                                                            |
+| **Gateway**      | Complete set of new Gateway configuration options, including replica count, resources, probes, Envoy configuration, circuit breakers, Pod anti-affinity, etc.                                               |
+| **Security**     | `podSecurityContextAllowPrivilegeEscalation` parameter removed, now managed uniformly in `securityContext`                                                                                                  |
+| **RBAC**         | New permissions for `pods/resize`, `checkpoints`, `sandboxtemplates` resources                                                                                                                              |
+
+### Major Changes in 0.3.0 Compared to 0.2.0
+
+| Category                      | Changes                                                                                                                                                                   |
+|-------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **New CRD**                   | New SandboxUpdateOps CRD (`sandboxupdateops.agents.kruise.io`) for batch upgrading Sandbox instances, supports rolling update strategy and upgrade progress tracking      |
+| **CRD Enhancements**          | Sandbox adds `lifecycle` (preUpgrade/postUpgrade hooks) and `upgradePolicy` fields; SandboxClaim adds `claimTimeout`, `waitReadyTimeout` minimum value validation (>= 1s) |
+| **Webhook**                   | New ValidatingWebhook for SandboxUpdateOps (`v-suo.kb.io`), validates CREATE/UPDATE operations                                                                            |
+| **RBAC**                      | Controller adds permissions for `sandboxupdateops` and `sandboxupdateops/status` resources                                                                                |
+| **Gateway Port**              | Gateway listener port changed from `10000` to `7788`, Gateway Service port and target port unified to `7788`                                                              |
+| **Gateway Graceful Shutdown** | New Envoy `preStop` lifecycle hook, drains listener connections and waits for `drainTimeSeconds` (default 30s) before exiting                                             |
+| **Envoy Configuration**       | New `drainTimeSeconds`, `streamIdleTimeout`, `connectTimeout` timeout parameters; `concurrency` default changed to empty string, falls back to `gateway.resources.cpu`    |
+| **Ingress**                   | New `api.{{ e2b.domain }}` domain matching, supports API subdomain independent routing                                                                                    |
+| **Version Upgrade**           | All image versions upgraded to `v0.3.0` (Controller, Manager, Gateway)                                                                                                    |
 
 For detailed changes, please refer to the [Change Log](https://github.com/openkruise/agents/blob/master/CHANGELOG.md)
