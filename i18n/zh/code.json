@@ -708,5 +708,21 @@
   "theme.ErrorPageContent.tryAgain": {
     "message": "重试",
     "description": "The label of the button to try again rendering when the React error boundary captures an error"
+  },
+  "Search by company name or location...": {
+    "message": "按公司名或地址搜索...",
+    "description": "The placeholder for the search input in the adopters page"
+  },
+  "Filter by Features": {
+    "message": "按功能筛选",
+    "description": "The title of the filter section in the adopters page"
+  },
+  "Clear Filters": {
+    "message": "清除筛选",
+    "description": "The label for the clear filters button"
+  },
+  "Showing {filtered} of {total} adopters": {
+    "message": "显示 {filtered} 个，共 {total} 个采纳者",
+    "description": "The adopter count display message"
   }
 }
