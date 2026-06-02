@@ -117,7 +117,43 @@ kubectl create secret tls sandbox-manager-tls \
 3. Resolve single domain `your.domain.com` to sandbox-manager ingress endpoint with your DNS provider
 4. Install single domain certificate `your.domain.com`
 
-### 3. Private protocol in-cluster access
+### 3. In-cluster access using E2B URL parameters
+
+> Connect to sandbox-manager within the cluster using E2B SDK's native URL parameters — no domain, certificate, or private protocol patch required. Requires `e2b >= 2.7.0`.
+
+1. Ensure the client (agent) and sandbox-manager are in the same cluster.
+2. Client configuration environment variables:
+    ```shell
+    export E2B_API_URL="http://sandbox-manager.sandbox-system.svc.cluster.local:8080"
+    # If the external traffic gateway sandbox-gateway is not installed, you can replace the service below with sandbox-manager
+    # to continue using sandbox-manager's built-in traffic proxy (not recommended)
+    export E2B_SANDBOX_URL="http://sandbox-gateway.sandbox-system.svc.cluster.local:7788"
+    export E2B_API_KEY=<your-api-key>
+    ```
+3. Create a Sandbox using the E2B SDK — no additional patching required:
+    ```python
+    from e2b import Sandbox
+
+    # E2B_API_URL and E2B_SANDBOX_URL are automatically read from environment variables
+    sandbox = Sandbox()
+    print(sandbox.get_host(8000))  # Get the access URL for a service inside the Sandbox
+    sandbox.kill()
+    ```
+
+> ⚠️ **Limitation**: The following extended features in the upper-level libraries `e2b-code-interpreter` and `e2b-desktop` do not read the `E2B_API_URL` / `E2B_SANDBOX_URL` environment variables, and therefore do not support this access method:
+>
+> **e2b-code-interpreter:**
+> - `Sandbox.run_code`
+> - `Sandbox.create_code_context`
+> - `Sandbox.remove_code_context`
+> - `Sandbox.list_code_contexts`
+> - `Sandbox.restart_code_context`
+>
+> **e2b-desktop:**
+> - `desktop.stream.get_url`
+> - `desktop.stream.start`
+
+### 4. Private protocol in-cluster access
 
 > This approach enables rapid automated deployment without requiring domain and certificate configuration. Recommended
 > for E2E testing scenarios only, or after rigorous evaluation.
@@ -135,7 +171,7 @@ kubectl create secret tls sandbox-manager-tls \
     patch_e2b(https=False)
     ```
 
-### 4. Port forward sandbox-manager to local machine
+### 5. Port forward sandbox-manager to local machine
 
 1. Client configuration environment variables:
     ```shell

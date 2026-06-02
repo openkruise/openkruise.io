@@ -110,7 +110,43 @@ kubectl create secret tls sandbox-manager-tls \
 3. 在您的 DNS 提供商处将单个域名 `your.domain.com` 解析到 sandbox-manager 的 ingress 端点
 4. 安装单个域名证书 `your.domain.com`
 
-### 3. 私有协议集群内访问
+### 3. 使用 E2B URL 参数实现集群内访问
+
+> 通过 E2B SDK 原生支持的 URL 参数直接连接集群内的 sandbox-manager，无需域名、证书或私有协议 patch。要求 `e2b >= 2.7.0`。
+
+1. 确保客户端（agent）和 sandbox-manager 在同一集群中。
+2. 客户端配置环境变量：
+    ```shell
+    export E2B_API_URL="http://sandbox-manager.sandbox-system.svc.cluster.local:8080"
+    # 如果未安装外置的流量网关 sandbox-gateway，可以将下方 service 替换为 sandbox-manager
+    # 以继续使用 sandbox-manager 内置的流量代理（不推荐）
+    export E2B_SANDBOX_URL="http://sandbox-gateway.sandbox-system.svc.cluster.local:7788"
+    export E2B_API_KEY=<your-api-key>
+    ```
+3. 使用 E2B SDK 创建 Sandbox，无需额外 patch：
+    ```python
+    from e2b import Sandbox
+
+    # E2B_API_URL 和 E2B_SANDBOX_URL 会自动从环境变量读取
+    sandbox = Sandbox()
+    print(sandbox.get_host(8000))  # 获取 Sandbox 内服务的访问地址
+    sandbox.kill()
+    ```
+
+> ⚠️ **限制说明**：上层库 `e2b-code-interpreter` 和 `e2b-desktop` 的以下扩展功能不读取 `E2B_API_URL` / `E2B_SANDBOX_URL` 环境变量，因此不支持此接入方式：
+>
+> **e2b-code-interpreter：**
+> - `Sandbox.run_code`
+> - `Sandbox.create_code_context`
+> - `Sandbox.remove_code_context`
+> - `Sandbox.list_code_contexts`
+> - `Sandbox.restart_code_context`
+>
+> **e2b-desktop：**
+> - `desktop.stream.get_url`
+> - `desktop.stream.start`
+
+### 4. 私有协议集群内访问
 
 > 这种方式可以快速自动化部署，无需配置域名和证书。仅推荐用于 E2E 测试场景，或经过严格评估后使用。
 
@@ -127,7 +163,7 @@ kubectl create secret tls sandbox-manager-tls \
     patch_e2b(https=False)
     ```
 
-### 4. 端口转发 sandbox-manager 到本地机器
+### 5. 端口转发 sandbox-manager 到本地机器
 
 1. 客户端配置环境变量：
     ```shell
