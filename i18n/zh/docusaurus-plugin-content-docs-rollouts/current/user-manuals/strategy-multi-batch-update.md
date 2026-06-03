@@ -8,6 +8,9 @@
 - 需要逐步发布验证但不需要复杂流量管理的场景 
 - 可以通过副本级别监控而非基于流量分析进行验证的工作负载
 
+
+## 发布流程
+
 <center><img src={require('/static/img/rollouts/multi-batch.jpg').default} width="90%" /></center>
 
 多批次策略按顺序执行发布，每批更新指定数量或百分比的 Pod。批次之间的手动审批关卡为验证提供了控制点，然后再进入后续阶段。
