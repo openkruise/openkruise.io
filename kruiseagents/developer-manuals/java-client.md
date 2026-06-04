@@ -4,7 +4,7 @@ title: Java Client
 
 ## Overview
 
-We provide a [client-java](https://github.com/openkruise/agents-api/tree/master/clients/java) repository that contains
+We provide a [client-java](https://github.com/openkruise/agents-api/tree/master/k8s/java) repository that contains
 schema definitions for Agents resources.
 
 ## Prerequisites

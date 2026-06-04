@@ -4,7 +4,7 @@ title: Python Client
 
 ## Overview
 
-We provide the [agents-api](https://github.com/openkruise/agents-api/tree/master/clients/python/openkruise) repository,
+We provide the [agents-api](https://github.com/openkruise/agents-api/tree/master/k8s/python/openkruise) repository,
 which contains the Python Client library for Agents resources.
 
 ## Prerequisites
@@ -19,7 +19,7 @@ Before using the Python Client, please note the following:
 ### Install via Git
 
 ```bash
-pip install git+https://github.com/openkruise/agents-api.git@master#subdirectory=clients/python/openkruise
+pip install git+https://github.com/openkruise/agents-api.git@master#subdirectory=k8s/python/openkruise
 ```
 
 ## Usage Example

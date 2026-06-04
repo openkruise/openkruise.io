@@ -68,6 +68,16 @@ module.exports = {
             items: [
                 'developer-manuals/contribution',
                 {
+                    'E2B SDK': [
+                        "developer-manuals/e2b-client",
+                    ],
+                },
+                {
+                    'Runtime SDK': [
+                        "developer-manuals/runtime-client",
+                    ],
+                },
+                {
                     'K8S SDK': [
                         "developer-manuals/go-client",
                         "developer-manuals/python-client",
