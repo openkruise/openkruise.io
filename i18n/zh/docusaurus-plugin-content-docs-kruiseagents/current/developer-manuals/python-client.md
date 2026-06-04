@@ -4,7 +4,7 @@ title: Python 客户端
 
 ## 概述
 
-我们提供了 [agents-api](https://github.com/openkruise/agents-api/tree/master/clients/python/openkruise) 仓库，其中包含
+我们提供了 [agents-api](https://github.com/openkruise/agents-api/tree/master/k8s/python/openkruise) 仓库，其中包含
 Agents 资源的 Python Client 库。
 
 ## 前置条件
@@ -19,7 +19,7 @@ Agents 资源的 Python Client 库。
 ### 通过 Git 安装
 
 ```bash
-pip install git+https://github.com/openkruise/agents-api.git@master#subdirectory=clients/python/openkruise
+pip install git+https://github.com/openkruise/agents-api.git@master#subdirectory=k8s/python/openkruise
 ```
 
 ## 使用示例

@@ -4,7 +4,7 @@ title: Java 客户端
 
 ## 概述
 
-我们提供了 [client-java](https://github.com/openkruise/agents-api/tree/master/clients/java) 仓库，其中包含 Agents 资源的
+我们提供了 [client-java](https://github.com/openkruise/agents-api/tree/master/k8s/java) 仓库，其中包含 Agents 资源的
 Schema 定义。
 
 ## 前置条件
