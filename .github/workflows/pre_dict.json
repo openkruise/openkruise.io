@@ -64,6 +64,7 @@
     "Autoscaler",
     "availableReplicas",
     "available；",
+    "averageUtilization",
     "awk",
     "aws",
     "awsCredentialsDir",

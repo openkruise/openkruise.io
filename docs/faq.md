@@ -293,7 +293,7 @@ Use SidecarSet for consistent sidecar injection across workloads.
 For comprehensive autoscaling strategies, see the [autoscaling best practices](https://openkruise.io/docs/best-practices/elastic-deployment).
 
 ```yaml
-apiVersion: autoscaling/v2beta2
+apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: cloneset-hpa
@@ -308,7 +308,9 @@ spec:
   - type: Resource
     resource:
       name: cpu
-      targetAverageUtilization: 70
+      target:
+        type: Utilization
+        averageUtilization: 70
 ```
 
 ## Best Practices and Recommendations
