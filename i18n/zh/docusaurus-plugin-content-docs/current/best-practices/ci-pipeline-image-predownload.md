@@ -114,7 +114,7 @@ spec:
 #### Kruise CloneSet & Advanced StatefulSet原地升级内置镜像预热能力
 **Note：此种场景不再需要下发ImagePullJob CRD资源**
 
-如果你在[安装或升级 Kruise](../installation##optional-feature-gate) 的时候启用了 `PreDownloadImageForInPlaceUpdate` feature-gate，
+如果你在[安装或升级 Kruise](../installation#optional-feature-gate) 的时候启用了 `PreDownloadImageForInPlaceUpdate` feature-gate，
 CloneSet & Advanced StatefulSet 控制器会自动在所有旧版本 pod 所在 node 节点上预热你正在灰度发布的新版本镜像。 这对于应用发布加速很有帮助。
 ```
 # Firstly add openkruise charts repository if you haven't do this.

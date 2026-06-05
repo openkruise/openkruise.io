@@ -169,7 +169,7 @@ spec:
 
 **FEATURE STATE:** Kruise v1.8.0
 
-如果你在[安装或升级 Kruise](../installation##optional-feature-gate) 的时候启用了 `InPlaceWorkloadVerticalScaling`，
+如果你在[安装或升级 Kruise](../installation#optional-feature-gate) 的时候启用了 `InPlaceWorkloadVerticalScaling`，
 Kruise Advanced Workloads 支持在原地升级过程中修改容器资源（CPU/Memory）。该功能允许用户直接更新以下字段而不触发 Pod 重建：
 
 ```yaml
