@@ -665,8 +665,8 @@ Share your voice at our <a href="https://shimo.im/docs/gXqmeQOYBehZ4vqo" target=
         <id>https://openkruise.io/blog/openkruise-1.1</id>
         <link href="https://openkruise.io/blog/openkruise-1.1"/>
         <updated>2022-03-29T00:00:00.000Z</updated>
-        <summary type="html"><![CDATA[We’re pleased to announce the release of Kubernetes 1.1, which is a CNCF Sandbox level project.]]></summary>
-        <content type="html"><![CDATA[<p>We’re pleased to announce the release of Kubernetes 1.1, which is a CNCF Sandbox level project.</p>
+        <summary type="html"><![CDATA[We’re pleased to announce the release of OpenKruise 1.1, which is a CNCF Sandbox level project.]]></summary>
+        <content type="html"><![CDATA[<p>We’re pleased to announce the release of OpenKruise 1.1, which is a CNCF Sandbox level project.</p>
 <p><a href="https://openkruise.io/" target="_blank" rel="noopener noreferrer" class="">OpenKruise</a> is an extended component suite for Kubernetes, which mainly focuses on application automations, such as deployment, upgrade, ops and availability protection. Mostly features provided by OpenKruise are built primarily based on CRD extensions. They can work in pure Kubernetes clusters without any other dependences.</p>
 <h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="whats-new">What's new?<a href="https://openkruise.io/blog/openkruise-1.1#whats-new" class="hash-link" aria-label="Direct link to What's new?" title="Direct link to What's new?" translate="no">​</a></h2>
 <p>In release v1.1, OpenKruise optimizes some existing features, and improves its performance in large-scale clusters.
@@ -777,8 +777,8 @@ Share your voice at our <a href="https://shimo.im/docs/gXqmeQOYBehZ4vqo" target=
         <id>https://openkruise.io/blog/openkruise-1.0</id>
         <link href="https://openkruise.io/blog/openkruise-1.0"/>
         <updated>2021-12-13T00:00:00.000Z</updated>
-        <summary type="html"><![CDATA[We’re pleased to announce the release of Kubernetes 1.0, which is a CNCF Sandbox level project.]]></summary>
-        <content type="html"><![CDATA[<p>We’re pleased to announce the release of Kubernetes 1.0, which is a CNCF Sandbox level project.</p>
+        <summary type="html"><![CDATA[We’re pleased to announce the release of OpenKruise 1.0, which is a CNCF Sandbox level project.]]></summary>
+        <content type="html"><![CDATA[<p>We’re pleased to announce the release of OpenKruise 1.0, which is a CNCF Sandbox level project.</p>
 <p><a href="https://openkruise.io/" target="_blank" rel="noopener noreferrer" class="">OpenKruise</a> is an extended component suite for Kubernetes, which mainly focuses on application automations, such as deployment, upgrade, ops and availability protection. Mostly features provided by OpenKruise are built primarily based on CRD extensions. They can work in pure Kubernetes clusters without any other dependences.</p>
 <p><img decoding="async" loading="lazy" alt="openkruise-features|center|450x400" src="https://openkruise.io/assets/images/features-en-659914e95b0df596a344f733aa198993.png" width="6534" height="5442" class="img_ev3q"></p>
 <p>Overall, OpenKruise currently provides features in these areas:</p>
