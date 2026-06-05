@@ -1,12 +1,10 @@
-import glob
 import json
 import os
 import re
 import subprocess
 import sys
-import tempfile
-import urllib.request
 from collections import defaultdict
+from typing import Dict, List, Tuple
 
 kruise_version_map = defaultdict(list)
 kruise_game_version_map = defaultdict(list)
@@ -63,53 +61,73 @@ def fill_version_map() -> None:
                 read_file(p, kruise_version_map, kruise_api_version_map)
 
 
-def _run(cmd, cwd="."):
-    """Run a command as a list of arguments without shell=True."""
-    print(f"Running: {' '.join(cmd)} (in {cwd})")
-    result = subprocess.run(cmd, cwd=cwd, capture_output=True, text=True)
-    print("stdout:", result.stdout)
-    print("stderr:", result.stderr)
-    if result.returncode != 0:
-        sys.exit(result.returncode)
+def _exec(command: str) -> None:
+    print(command)
+    process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+    stdout, stderr = process.communicate()
+
+    print("stdout:", stdout.decode())
+    print("stderr:", stderr.decode())
+    returncode = process.returncode
+    if returncode != 0:
+        sys.exit(returncode)
 
 
-def setup_go_module(directory, repo, version):
-    """Download go.mod and configure the Go module for struct validation.
-
-    This replaces the duplicated shell strings (kruise_format, game_format,
-    rollouts_format, rollouts_0_5_format) that previously chained wget,
-    go mod edit, go get, and go mod tidy via shell=True.
-    """
-    go_mod_url = (
-        f"https://raw.githubusercontent.com/openkruise/{repo}/{version}/go.mod"
-    )
-    go_mod_path = os.path.join(directory, "go.mod")
-
-    # Clean previous Go module files (equivalent to: rm -rf go.*)
-    for f in glob.glob(os.path.join(directory, "go.*")):
-        os.remove(f)
-
-    # Download go.mod using urllib (replaces wget dependency)
-    print(f"Downloading: {go_mod_url}")
-    urllib.request.urlretrieve(go_mod_url, go_mod_path)
-
-    # Run Go module setup commands individually with proper error handling
-    go_commands = [
-        ["go", "mod", "edit", "-module=check"],
-        ["go", "get", f"github.com/openkruise/{repo}@{version}"],
-        ["go", "mod", "edit",
-         f"-replace=github.com/openkruise/{repo}="
-         f"github.com/openkruise/{repo}@{version}"],
-        ["go", "get", "k8s.io/klog/v2"],
-        ["go", "get", "sigs.k8s.io/json"],
-        ["go", "get", "sigs.k8s.io/yaml"],
-        ["go", "mod", "tidy"],
-    ]
-    for cmd in go_commands:
-        _run(cmd, cwd=directory)
+def _download_version(_f: str, version: str) -> Tuple[int, str]:
+    cmd = _f.format(version=version)
+    print(cmd)
+    code, out = subprocess.getstatusoutput(cmd)
+    print(out)
+    if code != 0:
+        sys.exit(code)
+    return code, out
 
 
-tmp_file_path = os.path.join(tempfile.gettempdir(), 'version_struct_files.json')
+kruise_format = 'cd ./kruise && ' \
+                'rm -rf go.* && ' \
+                'wget https://raw.githubusercontent.com/openkruise/kruise/{version}/go.mod && ' \
+                'go mod edit -module=check && ' \
+                'go get github.com/openkruise/kruise@{version} && ' \
+                'go mod edit -replace=github.com/openkruise/kruise=github.com/openkruise/kruise@{version} && ' \
+                'go get k8s.io/klog/v2 && ' \
+                'go get sigs.k8s.io/json && ' \
+                'go get sigs.k8s.io/yaml && ' \
+                'go mod tidy'
+
+game_format = 'cd ./game && ' \
+              'rm -rf go.* && ' \
+              'wget https://raw.githubusercontent.com/openkruise/kruise-game/{version}/go.mod && ' \
+              'go mod edit -module=check && ' \
+              'go get github.com/openkruise/kruise-game@{version} && ' \
+              'go mod edit -replace=github.com/openkruise/kruise-game=github.com/openkruise/kruise-game@{version} && ' \
+              'go get k8s.io/klog/v2 && ' \
+              'go get sigs.k8s.io/yaml && ' \
+              'go get sigs.k8s.io/json && ' \
+              'go mod tidy'
+
+rollouts_format = 'cd ./rollouts && ' \
+                  'rm -rf go.* && ' \
+                  'wget https://raw.githubusercontent.com/openkruise/rollouts/{version}/go.mod && ' \
+                  'go mod edit -module=check && ' \
+                  'go get github.com/openkruise/rollouts@{version} && ' \
+                  'go mod edit -replace=github.com/openkruise/rollouts=github.com/openkruise/rollouts@{version} && ' \
+                  'go get k8s.io/klog/v2 && ' \
+                  'go get sigs.k8s.io/json && ' \
+                  'go get sigs.k8s.io/yaml && ' \
+                  'go mod tidy'
+rollouts_0_5_format = 'cd ./rollouts-0.5 && ' \
+                      'rm -rf go.* && ' \
+                      'wget https://raw.githubusercontent.com/openkruise/rollouts/{version}/go.mod && ' \
+                      'go mod edit -module=check && ' \
+                      'go get github.com/openkruise/rollouts@{version} && ' \
+                      'go mod edit -replace=github.com/openkruise/rollouts=github.com/openkruise/rollouts@{version} && ' \
+                      'go get k8s.io/klog/v2 && ' \
+                      'go get sigs.k8s.io/json && ' \
+                      'go get sigs.k8s.io/yaml && ' \
+                      'go mod tidy'
+
+tmp_file_path = '/tmp/files.json'
 
 
 def write_info(files):
@@ -118,45 +136,44 @@ def write_info(files):
 
 
 def handle() -> None:
-    # --- Rollouts: write_info BEFORE download (preserving original ordering) ---
     for version, files in rollouts_version_map.items():
         write_info(files)
         if version and version != 'master':
             print(version)
-            less_0_5 = any(version.startswith(v) for v in ['0.1', '0.2', '0.3', '0.4'])
+            less_0_5 = False
+            for item in ['0.1', '0.2', '0.3', '0.4']:
+                if version.startswith(item):
+                    less_0_5 = True
             if less_0_5:
-                setup_go_module('./rollouts', 'rollouts', 'v' + version)
-                _run(['go', 'run', '.', tmp_file_path], cwd='./rollouts')
+                _download_version(rollouts_format, "v" + version)
+                _exec('cd ./rollouts && go run . ' + tmp_file_path)
             else:
-                setup_go_module('./rollouts-0.5', 'rollouts', 'v' + version)
-                _run(['go', 'run', '.', tmp_file_path], cwd='./rollouts-0.5')
+                _download_version(rollouts_0_5_format, "v" + version)
+                _exec('cd ./rollouts-0.5 && go run . ' + tmp_file_path)
         else:
             print("master")
-            # Master always uses ./rollouts (not ./rollouts-0.5)
-            setup_go_module('./rollouts', 'rollouts', 'master')
-            _run(['go', 'run', '.', tmp_file_path], cwd='./rollouts')
+            _exec(rollouts_format.format(version="master"))
+            _exec('cd ./rollouts && go run . ' + tmp_file_path)
 
-    # --- Game: write_info AFTER download (preserving original ordering) ---
     for version, files in kruise_game_version_map.items():
         if version and version != 'master':
             print(version)
-            setup_go_module('./game', 'kruise-game', 'v' + version)
+            _download_version(game_format, "v" + version)
         else:
             print("master")
-            setup_go_module('./game', 'kruise-game', 'master')
+            _exec(game_format.format(version="master"))
         write_info(files)
-        _run(['go', 'run', '.', tmp_file_path], cwd='./game')
+        _exec('cd ./game && go run . ' + tmp_file_path)
 
-    # --- Kruise: write_info AFTER download (preserving original ordering) ---
     for version, files in kruise_version_map.items():
         if version and version != 'master':
             print(version)
-            setup_go_module('./kruise', 'kruise', 'v' + version)
+            _download_version(kruise_format, "v" + version)
         else:
             print("master")
-            setup_go_module('./kruise', 'kruise', 'master')
+            _exec(kruise_format.format(version="master"))
         write_info(files)
-        _run(['go', 'run', '.', tmp_file_path], cwd='./kruise')
+        _exec('cd ./kruise && go run . ' + tmp_file_path)
 
 
 if __name__ == '__main__':
