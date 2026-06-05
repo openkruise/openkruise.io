@@ -233,4 +233,4 @@ In particular, we **DO NOT** recommend that users bypass the ResourceDistributio
 
 ## Kustomize ResourceDistribution Generator
 
-ResourceDistribution Generator is a third-party plug-in of kustomize, similar to kustomize's configmap generator and secret generator. Using this plug-in, you can complete the work of reading files as data content to create ResourceDistribution. Refer to [this page](/docs/next/cli-tool/kustomize-plugin) for details.
+ResourceDistribution Generator is a third-party plug-in of kustomize, similar to kustomize's configmap generator and secret generator. Using this plug-in, you can complete the work of reading files as data content to create ResourceDistribution. Refer to [this page](../cli-tool/kustomize-plugin.md) for details.

@@ -436,7 +436,7 @@ spec:
 
 SidecarSet supports configuring sidecar container resources based on pod specifications during pod creation.
 
-For design documentation, please refer to: [proposals sidecarset dynamic resources when pod creating](https://github.com/openkruise/kruise/blob/master/docs/proposals/20250913-sidecarset-dynamic-resources-when-creating.md). Best practice: [Dynamic Resource Injection with SidecarSet](docs/best-practices/resource-policy-sidecarset.md)
+For design documentation, please refer to: [proposals sidecarset dynamic resources when pod creating](https://github.com/openkruise/kruise/blob/master/docs/proposals/20250913-sidecarset-dynamic-resources-when-creating.md). Best practice: [Dynamic Resource Injection with SidecarSet](../best-practices/resource-policy-sidecarset.md)
 
 ```yaml
 apiVersion: apps.kruise.io/v1beta1
@@ -703,8 +703,8 @@ spec:
 
 **Note:**
 - k8s 1.28 feature-gate SidecarContainers is off by default and needs to be actively turned on, k8s 1.29 is on by default.
-- If your kubernetes version < 1.28, you can use kruise [Job Sidecar Terminator](/docs/user-manuals/jobsidecarterminator)
-and [Container Launch Priority](/docs/user-manuals/containerlaunchpriority) to solve the above problem.
+- If your kubernetes version < 1.28, you can use kruise [Job Sidecar Terminator](./jobsidecarterminator.md)
+and [Container Launch Priority](./containerlaunchpriority.md) to solve the above problem.
 
 **Additionally, the current version only supports automatic injection of Sidecar Containers, and does not yet support in-place update capability.**
 

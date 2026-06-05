@@ -6,10 +6,10 @@ In-place Update is one of the key features provided by OpenKruise.
 
 Workloads that support in-place update:
 
-- [CloneSet](/docs/user-manuals/cloneset)
-- [Advanced StatefulSet](/docs/user-manuals/advancedstatefulset)
-- [Advanced DaemonSet](/docs/user-manuals/advanceddaemonset)
-- [SidecarSet](/docs/user-manuals/sidecarset)
+- [CloneSet](../user-manuals/cloneset.md)
+- [Advanced StatefulSet](../user-manuals/advancedstatefulset.md)
+- [Advanced DaemonSet](../user-manuals/advanceddaemonset.md)
+- [SidecarSet](../user-manuals/sidecarset.md)
 
 Currently `CloneSet`, `Advanced StatefulSet` and `Advanced DaemonSet` reuse the same code package [`./pkg/util/inplaceupdate`](https://github.com/openkruise/kruise/tree/master/pkg/util/inplaceupdate) and have similar behaviors of in-place update. In this article, we would like to introduce the usage and workflow of them.
 
@@ -90,7 +90,7 @@ You can see the whole workflow of in-place update below (*you may need to right 
 
 **FEATURE STATE:** Kruise v1.1.0
 
-When you in-place update multiple containers at once and the containers have different [launch priorities](/docs/user-manuals/containerlaunchpriority),
+When you in-place update multiple containers at once and the containers have different [launch priorities](../user-manuals/containerlaunchpriority.md),
 Kruise will update the containers by order according to the priorities.
 
 - For pods without container launch priorities, no guarantees of the execution order during in-place update multiple containers.
