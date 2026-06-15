@@ -313,8 +313,8 @@ spec:
 
 **注意：**
 - k8s 1.28 feature-gate SidecarContainers 默认是关闭的需要主动打开，k8s 1.29 是默认开启的。
-- 如果 K8S 版本`<1.28`，你可以使用 Kruise 提供的 [Job Sidecar Terminator](/docs/user-manuals/jobsidecarterminator)
-和 [Container Launch Priority](/docs/user-manuals/containerlaunchpriority) 来解决上述问题。
+- 如果 K8S 版本`<1.28`，你可以使用 Kruise 提供的 [Job Sidecar Terminator](./jobsidecarterminator.md)
+和 [Container Launch Priority](./containerlaunchpriority.md) 来解决上述问题。
 
 **此外，当前版本只支持 Sidecar Containers 自动注入，暂时还不支持原地升级能力。**
 
