@@ -1,0 +1,4 @@
+bs4
+markdown
+html2markdown
+language_tool_python
