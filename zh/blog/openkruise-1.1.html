@@ -10,8 +10,8 @@
 
 
 <link rel="search" type="application/opensearchdescription+xml" title="OpenKruise" href="/zh/opensearch.xml"><link rel="stylesheet" href="/zh/assets/css/styles.390099ea.css">
-<script src="/zh/assets/js/runtime~main.6c2e09a1.js" defer="defer"></script>
-<script src="/zh/assets/js/main.397b156a.js" defer="defer"></script>
+<script src="/zh/assets/js/runtime~main.7635d02c.js" defer="defer"></script>
+<script src="/zh/assets/js/main.7f47b604.js" defer="defer"></script>
 </head>
 <body class="navigation-with-keyboard">
 <svg style="display: none;"><defs>
@@ -25,7 +25,7 @@
 <p>值得注意的是，OpenKruise v1.1 已经将 Kubernetes <strong>代码依赖版本</strong>升级到 v1.22，这意味着用户可以在 CloneSet 等工作负载的 pod template 模板中使用 up to v1.22 的新字段等，
 但用户安装使用 OpenKruise 所兼容的 Kubernetes 集群版本仍然保持在 &gt;= v1.16。</p>
 <h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="1-原地升级支持容器顺序优先级">1. 原地升级支持容器顺序优先级<a href="#1-原地升级支持容器顺序优先级" class="hash-link" aria-label="Direct link to heading" title="Direct link to heading" translate="no">​</a></h3>
-<p>去年底发布的 v1.0 版本，OpenKruise 引入了<a class="" href="/zh/docs/user-manuals/containerlaunchpriority">容器启动顺序控制</a>功能，
+<p>去年底发布的 v1.0 版本，OpenKruise 引入了<a href="https://openkruise.io/docs/user-manuals/containerlaunchpriority/" target="_blank" rel="noopener noreferrer" class="">容器启动顺序控制</a>功能，
 它支持为一个 Pod 中的多个容器定义不同的权重关系，并在 Pod 创建时按照权重来控制不同容器的启动顺序。</p>
 <p>在 v1.0 中，这个功能仅仅能够作用于每个 Pod 的创建阶段。当创建完成后，如果对 Pod 中多个容器做原地升级，则这些容器都会被同时执行升级操作。</p>
 <p>最近一段时间，社区与 LinkedIn 等公司做过一些交流，获得了更多用户使用场景的输入。
@@ -34,7 +34,7 @@
 <p>因此，在 v1.1 版本中 OpenKruise 支持了按容器优先级顺序的原地升级。
 在实际使用过程中，用户无需配置任何额外参数，只要 Pod 在创建时已经带有了容器启动优先级，则不仅在 Pod 创建阶段，会保证高优先级容器先于低优先级容器启动；
 并且在<strong>单次原地升级</strong>中，如果同时升级了多个容器，会先升级高优先级容器，等待它升级启动完成后，再升级低优先级容器。</p>
-<p><strong>这里的原地升级，包括修改 image 镜像升级与修改 env from metadata 的环境变量升级，详见<a class="" href="/zh/docs/core-concepts/inplace-update">原地升级介绍</a>）</strong></p>
+<p><strong>这里的原地升级，包括修改 image 镜像升级与修改 env from metadata 的环境变量升级，详见<a href="https://openkruise.io/docs/core-concepts/inplace-update" target="_blank" rel="noopener noreferrer" class="">原地升级介绍</a>）</strong></p>
 <p>总结来说</p>
 <ul>
 <li class="">对于不存在容器启动顺序的 Pod，在多容器原地升级时没有顺序保证。</li>
