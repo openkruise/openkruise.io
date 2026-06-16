@@ -70,11 +70,13 @@ module.exports = {
                 {
                     'E2B SDK': [
                         "developer-manuals/e2b-client",
+                        "developer-manuals/e2b-client-java",
                     ],
                 },
                 {
                     'Runtime SDK': [
                         "developer-manuals/runtime-client",
+                        "developer-manuals/runtime-client-java",
                     ],
                 },
                 {
