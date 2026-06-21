@@ -61,15 +61,7 @@ jobs:
           npm i
           fi
           npm run build
-          #find ./build -type f -name "*.html" -exec sed -i 's/src="\/img\//src="https:\/\/cdn.jsdelivr.net\/gh\/openkruise\/openkruise.io@gh-pages\/img\//g' {} +
-          #find ./build -type f -name "*.html" -exec sed -i 's/src="\/zh\/img\//src="https:\/\/cdn.jsdelivr.net\/gh\/openkruise\/openkruise.io@gh-pages\/zh\/img\//g' {} +
-          #find ./build -type f -name "*.html" -exec sed -i 's/src="\/assets\//src="https:\/\/cdn.jsdelivr.net\/gh\/openkruise\/openkruise.io@gh-pages\/assets\//g' {} +
-          #find ./build -type f -name "*.html" -exec sed -i 's/src="\/zh\/assets\//src="https:\/\/cdn.jsdelivr.net\/gh\/openkruise\/openkruise.io@gh-pages\/zh\/assets\//g' {} +
-          #find ./build -type f -name "*.html" -exec sed -i 's/href="\/assets\//href="https:\/\/cdn.jsdelivr.net\/gh\/openkruise\/openkruise.io@gh-pages\/assets\//g' {} +
-          #find ./build -type f -name "*.html" -exec sed -i 's/href="\/zh\/assets\//href="https:\/\/cdn.jsdelivr.net\/gh\/openkruise\/openkruise.io@gh-pages\/zh\/assets\//g' {} +
-          #find ./build -type f -name "*.js" -exec sed -i 's/n.Z=r.p+"assets/n.Z="https:\/\/cdn.jsdelivr.net\/gh\/openkruise\/openkruise.io@gh-pages"+r.p+"assets/g' {} +
-          #find ./build -type f -name "*.js" -exec sed -i 's/r.setAttribute("rel","prefetch")/e="https:\/\/cdn.jsdelivr.net\/gh\/openkruise\/openkruise.io@gh-pages"+e;r.setAttribute("rel","prefetch")/g' {} +
-          #find ./build -type f -name "*.js" -exec sed -i 's/.src=e/.src="https:\/\/cdn.jsdelivr.net\/gh\/openkruise\/openkruise.io@gh-pages"+e/g' {} +
+
           echo "ALGOLIA_API_KEY=${{ secrets.ALGOLIA_API_KEY }}" >> .env
           echo "ALGOLIA_APP_ID=${{ secrets.ALGOLIA_APP_ID }}" >> .env          
           npm run deploy -- $(pwd) --out-dir build --skip-build true
@@ -82,9 +74,11 @@ jobs:
       - uses: actions/setup-python@42375524e23c412d93fb67b49958b491fce71c38 # v5.4.0
         with:
           python-version: '3.12'
+          cache: 'pip'
+          cache-dependency-path: '.github/workflows/requirements-typocheck.txt'
       - name: TypoCheck
         run: |
-          pip3 install bs4 markdown html2markdown language_tool_python
+          pip3 install -r .github/workflows/requirements-typocheck.txt
           python3 .github/workflows/diff.py
   struct-check:
     if: github.event_name != 'push'

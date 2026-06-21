@@ -140,10 +140,13 @@ def handle() -> None:
         write_info(files)
         if version and version != 'master':
             print(version)
+            # use exact major.minor matching instead of startswith
+            # startswith('0.1') incorrectly matches 0.10.x, 0.11.x etc.
             less_0_5 = False
-            for item in ['0.1', '0.2', '0.3', '0.4']:
-                if version.startswith(item):
-                    less_0_5 = True
+            version_parts = version.split('.')
+            if len(version_parts) >= 2:
+                major_minor = f"{version_parts[0]}.{version_parts[1]}"
+                less_0_5 = major_minor in ['0.1', '0.2', '0.3', '0.4']
             if less_0_5:
                 _download_version(rollouts_format, "v" + version)
                 _exec('cd ./rollouts && go run . ' + tmp_file_path)

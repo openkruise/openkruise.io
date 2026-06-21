@@ -6,10 +6,10 @@ title: 原地升级
 
 目前支持原地升级的 Workload：
 
-- [CloneSet](/docs/user-manuals/cloneset)
-- [Advanced StatefulSet](/docs/user-manuals/advancedstatefulset)
-- [Advanced DaemonSet](/docs/user-manuals/advanceddaemonset)
-- [SidecarSet](/docs/user-manuals/sidecarset)
+- [CloneSet](../user-manuals/cloneset.md)
+- [Advanced StatefulSet](../user-manuals/advancedstatefulset.md)
+- [Advanced DaemonSet](../user-manuals/advanceddaemonset.md)
+- [SidecarSet](../user-manuals/sidecarset.md)
 
 目前 `CloneSet`、`Advanced StatefulSet`、`Advanced DaemonSet` 是复用的同一个代码包 [`./pkg/util/inplaceupdate`](https://github.com/openkruise/kruise/tree/master/pkg/util/inplaceupdate) 并且有类似的原地升级行为。在本文中，我们会介绍它的用法和工作流程。
 
@@ -89,7 +89,7 @@ spec:
 
 **FEATURE STATE:** Kruise v1.1.0
 
-当你同时原地升级多个具有不同[启动顺序](/docs/user-manuals/containerlaunchpriority)的容器时，Kruise 会按照相同的权重顺序来逐个升级这些容器。
+当你同时原地升级多个具有不同[启动顺序](../user-manuals/containerlaunchpriority.md)的容器时，Kruise 会按照相同的权重顺序来逐个升级这些容器。
 
 - 对于不存在容器启动顺序的 Pod，在多容器原地升级时没有顺序保证。
 - 对于存在容器启动顺序的 Pod：

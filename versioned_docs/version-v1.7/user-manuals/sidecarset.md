@@ -328,8 +328,8 @@ spec:
 
 **Note:**
 - k8s 1.28 feature-gate SidecarContainers is off by default and needs to be actively turned on, k8s 1.29 is on by default.
-- If your kubernetes version < 1.28, you can use kruise [Job Sidecar Terminator](/docs/user-manuals/jobsidecarterminator)
-and [Container Launch Priority](/docs/user-manuals/containerlaunchpriority) to solve the above problem.
+- If your kubernetes version < 1.28, you can use kruise [Job Sidecar Terminator](./jobsidecarterminator.md)
+and [Container Launch Priority](./containerlaunchpriority.md) to solve the above problem.
 
 **Additionally, the current version only supports automatic injection of Sidecar Containers, and does not yet support in-place update capability.**
 

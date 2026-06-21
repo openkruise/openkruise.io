@@ -108,7 +108,7 @@ feature-gates。
 | `manager.log.level`                 | kruise-manager 日志输出级别                             | `4`                         |
 | `manager.replicas`                  | kruise-manager 的期望副本数                             | `2`                         |
 | `manager.image.repository`          | kruise-manager/kruise-daemon 镜像仓库                 | `openkruise/kruise-manager` |
-| `manager.image.tag`                 | kruise-manager/kruise-daemon 镜像版本                 | `1.7.2`                     |
+| `manager.image.tag`                 | kruise-manager/kruise-daemon 镜像版本                 | `v1.9.0`                    |
 | `manager.resources.limits.cpu`      | kruise-manager 的 limit CPU 资源                     | `200m`                      |
 | `manager.resources.limits.memory`   | kruise-manager 的 limit memory 资源                  | `512Mi`                     |
 | `manager.resources.requests.cpu`    | kruise-manager 的 request CPU 资源                   | `100m`                      |
