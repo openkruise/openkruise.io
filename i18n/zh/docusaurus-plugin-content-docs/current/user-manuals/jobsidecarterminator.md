@@ -65,6 +65,31 @@ spec:
 
 从 Kruise 1.6.0 版本开始，将忽略 Sidecar 容器退出码 `非0` 的情况，Pod Phase 状态只依赖于 Main 容器成功与否。
 
+### 通过环境变量配置退出码忽略行为
+
+**FEATURE STATE:** Kruise v1.9.0
+
+从 v1.9.0 开始，用户可以通过在 sidecar 容器上设置 `KRUISE_TERMINATE_SIDECAR_IGNORE_EXIT_CODE` 环境变量来显式控制是否忽略 sidecar 容器的非零退出码。
+
+- 如果设置为 `"true"`，将忽略 sidecar 容器的非零退出码，Pod Phase 只取决于主容器（与 v1.6.0 以来的默认行为相同）。
+- 如果设置为 `"false"`，sidecar 容器的退出码将影响 Pod Phase。非零退出码将导致 Pod Phase=Failed。
+
+```yaml
+kind: Job
+spec:
+  template:
+    spec:
+      containers:
+        - name: sidecar
+          env:
+            - name: KRUISE_TERMINATE_SIDECAR_WHEN_JOB_EXIT
+              value: "true"
+            - name: KRUISE_TERMINATE_SIDECAR_IGNORE_EXIT_CODE
+              value: "false"
+        - name: main
+... ...
+```
+
 ### 注意事项
 
 - sidecar 容器必须能够响应 `SIGTERM` 信号。当收到此信号时，`EntryPoint` 进程必须退出(即 sidecar 容器退出)，且退出码应当为 `0`。

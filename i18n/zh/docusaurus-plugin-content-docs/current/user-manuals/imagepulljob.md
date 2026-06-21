@@ -255,6 +255,14 @@ spec:
 </TabItem>
 </Tabs>
 
+### 节点侧并发控制
+
+**FEATURE STATE:** Kruise v1.9.0
+
+从 v1.9.0 开始，kruise-daemon 支持节点侧的镜像拉取并发控制。该功能限制每个节点上并发拉取镜像的数量，防止当多个 ImagePullJob 同时指向同一节点时导致资源耗尽（CPU、内存、磁盘 I/O）。
+
+并发限制可以通过 kruise-daemon 的 `--max-concurrency` 参数进行配置。默认情况下，daemon 使用 worker pool 来限制每个节点上并发的镜像拉取操作。
+
 ## ImageListPullJob
 
 **FEATURE STATE:** Kruise v1.5.0
