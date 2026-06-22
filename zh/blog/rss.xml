@@ -9,7 +9,7 @@
         <generator>https://github.com/jpmonette/feed</generator>
         <language>zh</language>
         <item>
-            <title><![CDATA[OpenKruise V1.9 版本发布：API v1beta1、Windows 支持及更多新特性]]></title>
+            <title><![CDATA[OpenKruise V1.9 版本发布：API v1beta1、定时镜像预拉取及更多新特性]]></title>
             <link>https://openkruise.io/zh/blog/openkruise-1.9</link>
             <guid>https://openkruise.io/zh/blog/openkruise-1.9</guid>
             <pubDate>Sun, 21 Jun 2026 00:00:00 GMT</pubDate>

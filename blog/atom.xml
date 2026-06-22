@@ -8,7 +8,7 @@
     <subtitle>OpenKruise Blog</subtitle>
     <icon>https://openkruise.io/img/openkruise.ico</icon>
     <entry>
-        <title type="html"><![CDATA[OpenKruise V1.9 Release, API v1beta1, Windows Support, and More]]></title>
+        <title type="html"><![CDATA[OpenKruise V1.9 Release, API v1beta1, Cron Imagepulling, and More]]></title>
         <id>https://openkruise.io/blog/openkruise-1.9</id>
         <link href="https://openkruise.io/blog/openkruise-1.9"/>
         <updated>2026-06-21T00:00:00.000Z</updated>

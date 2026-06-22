@@ -9,7 +9,7 @@
         <generator>https://github.com/jpmonette/feed</generator>
         <language>en</language>
         <item>
-            <title><![CDATA[OpenKruise V1.9 Release, API v1beta1, Windows Support, and More]]></title>
+            <title><![CDATA[OpenKruise V1.9 Release, API v1beta1, Cron Imagepulling, and More]]></title>
             <link>https://openkruise.io/blog/openkruise-1.9</link>
             <guid>https://openkruise.io/blog/openkruise-1.9</guid>
             <pubDate>Sun, 21 Jun 2026 00:00:00 GMT</pubDate>

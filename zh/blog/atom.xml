@@ -8,7 +8,7 @@
     <subtitle>OpenKruise Blog</subtitle>
     <icon>https://openkruise.io/zh/img/openkruise.ico</icon>
     <entry>
-        <title type="html"><![CDATA[OpenKruise V1.9 版本发布：API v1beta1、Windows 支持及更多新特性]]></title>
+        <title type="html"><![CDATA[OpenKruise V1.9 版本发布：API v1beta1、定时镜像预拉取及更多新特性]]></title>
         <id>https://openkruise.io/zh/blog/openkruise-1.9</id>
         <link href="https://openkruise.io/zh/blog/openkruise-1.9"/>
         <updated>2026-06-21T00:00:00.000Z</updated>
