@@ -65,7 +65,7 @@ Once specified, selector cannot be changed for a PodProbeMarker.
 - spec.probes
   - **name**: The probe name needs to be unique within the Pod and between different containers
   - **containerName**: The container that executes the probe
-  - **probe**: The API definition related to probe is consistent with the native K8S probe (currently only Exec and tcpSocket is supported). For details, please refer to: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#configure-probes
+  - **probe**: The API definition related to probe is consistent with the native K8S probe (currently supports Exec, tcpSocket, and HTTP probes). For details, please refer to: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#configure-probes
   - **markerPolicy**: According to the Probe execution result (Succeeded or Failed), patch specific Labels and Annotations to the Pod.
     - state: probe result, Succeeded or Failed
     - labels: If the result is satisfied, patch labels to the Pod
@@ -98,6 +98,33 @@ spec:
     containerName: game-server
     probe:
       tcpSocket:
+        port: 8080
+      initialDelaySeconds: 15
+      periodSeconds: 10
+```
+
+### Support HTTP Probe
+
+**FEATURE STATE:** Kruise v1.9.0
+
+Since v1.9.0, PodProbeMarker supports HTTP probes. With this configuration, the kruise-daemon will send an HTTP `GET` request to the specified path and port on the container. If the response status code is between 200 and 399 (inclusive), the probe is considered `Succeeded`; otherwise, it is considered `Failed`. For example:
+
+```yaml
+apiVersion: apps.kruise.io/v1alpha1
+kind: PodProbeMarker
+metadata:
+  name: game-server-probe
+  namespace: ns
+spec:
+  selector:
+    matchLabels:
+      app: game-server
+  probes:
+  - name: Idle
+    containerName: game-server
+    probe:
+      httpGet:
+        path: /healthz
         port: 8080
       initialDelaySeconds: 15
       periodSeconds: 10

@@ -70,8 +70,8 @@ spec:
 - spec.probes
     - **name**: probe名字，需要在Pod内是唯一的，哪怕不同的容器之间也需要唯一
     - **containerName**: 执行probe的容器
-    - **probe**: probe相关的API定义，与原生K8S probe一致（当前只支持
-      Exec）。详情请参考：https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#configure-probes
+    - **probe**: probe相关的API定义，与原生K8S probe一致（当前支持
+      Exec、tcpSocket 和 HTTP 探测）。详情请参考：https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#configure-probes
     - **markerPolicy**: 根据Probe执行结果（Succeeded或Failed），在Pod上面打特定的Labels和Annotations。
         - state: probe结果，Succeeded 或 Failed
         - labels: 如果结果满足，打 labels 到Pod上
@@ -104,6 +104,33 @@ spec:
       containerName: game-server
       probe:
         tcpSocket:
+          port: 8080
+        initialDelaySeconds: 15
+        periodSeconds: 10
+```
+
+### 支持 HTTP Probe
+
+**FEATURE STATE:** Kruise v1.9.0
+
+从 v1.9.0 开始，PodProbeMarker 支持 HTTP 探测。根据如下配置，kruise-daemon 会向容器的指定路径和端口发送 HTTP `GET` 请求。如果响应状态码在 200 到 399 之间（含），则 Probe 返回 `Succeeded`，否则返回 `Failed`。
+
+```yaml
+apiVersion: apps.kruise.io/v1alpha1
+kind: PodProbeMarker
+metadata:
+  name: game-server-probe
+  namespace: ns
+spec:
+  selector:
+    matchLabels:
+      app: game-server
+  probes:
+    - name: Idle
+      containerName: game-server
+      probe:
+        httpGet:
+          path: /healthz
           port: 8080
         initialDelaySeconds: 15
         periodSeconds: 10

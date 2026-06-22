@@ -259,6 +259,14 @@ spec:
 </TabItem>
 </Tabs>
 
+### Node-side concurrency control
+
+**FEATURE STATE:** Kruise v1.9.0
+
+Since v1.9.0, the kruise-daemon supports node-side concurrency control for image pulling. This feature limits the number of concurrent image pulls on each node, preventing resource exhaustion (CPU, memory, disk I/O) when multiple ImagePullJobs target the same node simultaneously.
+
+The concurrency limit can be configured via the `--max-concurrency` flag of kruise-daemon. By default, the daemon uses a worker pool to limit concurrent image pull operations per node.
+
 ## ImageListPullJob
 
 **FEATURE STATE:** Kruise v1.5.0
