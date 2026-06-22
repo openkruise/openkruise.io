@@ -252,11 +252,12 @@ The effect of the above configuration is that during scaling up, CloneSet will n
 
 ### Update types
 
-CloneSet provides three update types, defaults to `ReCreate`.
+CloneSet provides four update types, defaults to `ReCreate`.
 
 - `ReCreate`: controller will delete old Pods and PVCs and create new ones.
 - `InPlaceIfPossible`: controller will try to in-place update Pod instead of recreating them if possible. Current only image and other fields are supported for in-place update.
 - `InPlaceOnly`: controller will in-place update Pod instead of recreating them. With `InPlaceOnly` policy, user cannot modify any fields other than the fields that supported to in-place update.
+- `OnDelete`: **FEATURE STATE:** Kruise v1.9.0. controller will not automatically update Pods. Pods are only updated when they are manually deleted. Version tracking and ordered rolling restarts are disabled. This is useful when you want to control the update of each Pod manually.
 
 **You may need to read the [concept doc](../core-concepts/inplace-update) for more details of in-place update.**
 

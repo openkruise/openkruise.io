@@ -69,6 +69,31 @@ If the sidecar container had non-zero exit code, it would result in Pod Phase=Fa
 
 As of Kruise 1.6.0, Kruise will ignore sidecar container with non-zero exit code, and Pod Phase only depend on the success or failure of the main containers.
 
+### Configure exit code ignore behavior via environment variable
+
+**FEATURE STATE:** Kruise v1.9.0
+
+Since v1.9.0, users can explicitly control whether to ignore the sidecar container's non-zero exit code by setting the `KRUISE_TERMINATE_SIDECAR_IGNORE_EXIT_CODE` environment variable on the sidecar container.
+
+- If set to `"true"`, the sidecar container's non-zero exit code will be ignored, and Pod Phase will only depend on the main containers (same as the default behavior since v1.6.0).
+- If set to `"false"`, the sidecar container's exit code will affect Pod Phase. A non-zero exit code will result in Pod Phase=Failed.
+
+```yaml
+kind: Job
+spec:
+  template:
+    spec:
+      containers:
+        - name: sidecar
+          env:
+            - name: KRUISE_TERMINATE_SIDECAR_WHEN_JOB_EXIT
+              value: "true"
+            - name: KRUISE_TERMINATE_SIDECAR_IGNORE_EXIT_CODE
+              value: "false"
+        - name: main
+... ...
+```
+
 ### Notes
 
 - Your sidecar container must respond the `SIGTERM` signal, and the entrypoint should `exit 0` when received this signal.

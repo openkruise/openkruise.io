@@ -215,6 +215,20 @@ $ helm install kruise https://... --set featureGates="ResourcesDeletionProtectio
 
 If you want to enable all feature-gates, set the parameter as `featureGates=AllAlpha=true`.
 
+### Optional: Windows node support
+
+**FEATURE STATE:** Kruise v1.9.0
+
+Since v1.9.0, OpenKruise Daemon supports Windows nodes. This enables features such as ImagePullJob and ContainerRecreateRequest (CRR) to work on Windows nodes.
+
+To deploy kruise-daemon on Windows nodes, make sure your cluster has Windows nodes with container runtime installed, and Kruise will automatically schedule the kruise-daemon DaemonSet to Windows nodes.
+
+You can also customize the kruise-daemon image for Windows nodes using the following Helm parameter:
+
+```bash
+$ helm install kruise https://... --set daemon.windowsImage.repository=openkruise/kruise-daemon-windows --set daemon.windowsImage.tag=v1.9.0
+```
+
 ### Optional: the local image for China
 
 If you are in China and have problem to pull image from official DockerHub, you can use the registry hosted on Alibaba

@@ -240,11 +240,12 @@ spec:
 
 ### 升级类型
 
-CloneSet 提供了 3 种升级方式，默认为 `ReCreate`：
+CloneSet 提供了 4 种升级方式，默认为 `ReCreate`：
 
 - `ReCreate`: 控制器会删除旧 Pod 和它的 PVC，然后用新版本重新创建出来。
 - `InPlaceIfPossible`: 控制器会优先尝试原地升级 Pod，如果不行再采用重建升级。当前， 仅支持容器镜像等字段的原地升级。
 - `InPlaceOnly`: 控制器只允许采用原地升级。因此，用户只能修改容器镜像等字段，如果尝试修改其他字段会被 Kruise 拒绝。
+- `OnDelete`: **FEATURE STATE:** Kruise v1.9.0。控制器不会自动升级 Pod。只有在 Pod 被手动删除时才会进行更新。版本跟踪和有序滚动重启将被禁用。适用于需要手动控制每个 Pod 更新场景。
 
 **请阅读[原地升级概念](../core-concepts/inplace-update)了解更多原地升级的细节。**
 
