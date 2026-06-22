@@ -107,7 +107,7 @@ fi
 
 ![grace-deletion.png](../../static/img/kruisegame/user-manuals/gs-lifecycle-delete.png)
 
-The process of elegant delete as follow:
+The process of elegant delete as follows:
 1. The game server is running normally, and the number of players is not 0.
 2. When the number of players drops to 0, set the opsState to WaitToBeDeleted using custom service quality settings.
 3. Through the automatic scaling policy, OKG deletes the GameServer with WaitToBeDeleted opsState. Since the lifecycle hook is configured and the delete-block label will be set to true, the gs is not truly deleted but enters the PreDelete state, and the data flushing process is triggered by custom service quality.

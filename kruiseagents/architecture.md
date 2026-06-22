@@ -20,7 +20,7 @@ managing and operating sandbox instances.
 
 ### agent-runtime
 
-`agent-runtime` is a Sidecar injected into the Sandbox that provides utilty services for the sandbox,
+`agent-runtime` is a Sidecar injected into the Sandbox that provides utility services for the sandbox,
 including E2B envd-compatible command and file operations, dynamic CSI mounting, etc.
 
 ## API

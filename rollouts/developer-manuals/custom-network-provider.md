@@ -214,7 +214,7 @@ Run `go test -v ./pkg/trafficrouting/network/customNetworkProvider/` to test if 
 
 The [PR#178](https://github.com/openkruise/rollouts/pull/178)is an example for Istio VirtualService.
 
-#### Recommanded Test Case Designation
+#### Recommended Test Case Designation
 
 When designing test cases, at least the release strategies listed below are supposed to be considered:
 
@@ -367,7 +367,7 @@ type Data struct {
 }
 ```
 
-You should handle `obj` in Lua script and **must retrun an object contains expected spec, labels and annotations** of the gateway resource, a simple way is to return `obj.data`.
+You should handle `obj` in Lua script and **must return an object contains expected spec, labels and annotations** of the gateway resource, a simple way is to return `obj.data`.
 
 ```lua
 -- Lua variables are assigned by reference,
@@ -437,7 +437,7 @@ spec = obj.data.spec
 ### Add RBAC Permissions for Gateway Resources
 In order to enable Kruise Rollout to access and update the gateway resources, you need to add the RBAC permissions of the gateway resources for Kruise Rollout.
 
-It is suggested to create a new role for Kruise Rollout under kruise-rollout namesapce, and to add `get, list, patch, update, watch` permissions for gateway resource in the RBAC role. An example for Istio VirtualService and DestinationRule is shown as below:
+It is suggested to create a new role for Kruise Rollout under kruise-rollout namespace, and to add `get, list, patch, update, watch` permissions for gateway resource in the RBAC role. An example for Istio VirtualService and DestinationRule is shown as below:
 
 ```yaml
 apiVersion: rbac.authorization.k8s.io/v1

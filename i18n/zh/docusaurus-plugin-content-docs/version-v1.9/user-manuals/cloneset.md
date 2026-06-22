@@ -185,7 +185,7 @@ CloneSet 从 Kruise v0.9.0 版本后也同样支持了这个功能。
 
 原始 proposal（设计文档）在[这里](https://github.com/openkruise/kruise/blob/master/docs/proposals/20210624-cloneset-scaledown-topology-spread.md)。
 
-目前，CloneSet 支持 **按同节点打散** 和 **按 [pod topolocy spread constraints](https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/) 打散**。
+目前，CloneSet 支持 **按同节点打散** 和 **按 [pod topology spread constraints](https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/) 打散**。
 
 如果在 CloneSet template 中存在 Pod Topology Spread Constraints 规则定义，则 controller 在这个 CloneSet 缩容的时候会根据 spread constraints 规则来所打散并选择要删除的 pod。
 否则，controller 默认情况下是按同节点打散来选择要缩容的 pod。

@@ -413,7 +413,7 @@ When the player base of a particular game server declines to a certain extent an
 
 - Bulk server merging actions can be implemented by setting ReserveGameServerIds along with replicas. For example, if there are 5 game servers with IDs 0, 1, 2, 3, and 4, and you wish to delete game servers 2 and 3, then set ReserveGameServerIds to 2 and 3, and adjust replicas to 3. For more details, refer to the documentation: [GameServer-scale/gs id reserve](https://openkruise.io/kruisegame/user-manuals/gameservers-scale/#gameserver-id-reserve)
 
-- Quick deletion of a single game server can also be achieved by setting the gs's opsState to Kill. For more details, refer to the documentation: [GameServer-sacle/gs Kill](https://openkruise.io/kruisegame/user-manuals/gameservers-scale/#kill-gameserver)
+- Quick deletion of a single game server can also be achieved by setting the gs's opsState to Kill. For more details, refer to the documentation: [GameServer-scale/gs Kill](https://openkruise.io/kruisegame/user-manuals/gameservers-scale/#kill-gameserver)
 
 ## Common Questions About Managing PvE Game Servers with OKG
 

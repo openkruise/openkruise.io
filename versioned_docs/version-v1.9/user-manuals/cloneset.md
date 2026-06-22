@@ -196,7 +196,7 @@ The implicit value for this annotation for pods that don't set it is 0; negative
 
 The original proposal(design doc) is [here](https://github.com/openkruise/kruise/blob/master/docs/proposals/20210624-cloneset-scaledown-topology-spread.md).
 
-Currently, it supports **deletion by same node spread** and **deletion by [pod topolocy spread constraints](https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/)**.
+Currently, it supports **deletion by same node spread** and **deletion by [pod topology spread constraints](https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/)**.
 
 If there are Pod Topology Spread Constraints defined in CloneSet template, controller will choose pods according to spread constraints when the cloneset needs to scale down.
 Otherwise, controller will choose pods by same node spread by default when scaling down.
