@@ -17,7 +17,7 @@ Note that the in-place update workflow of `SidecarSet` is a little different fro
 
 ## What is in-place update?
 
-Once we are going to update image in a existing Pod, look at the comparation between *Recreate* and *InPlace* Update:
+Once we are going to update image in a existing Pod, look at the comparison between *Recreate* and *InPlace* Update:
 
 ![alt](/img/docs/core-concepts/inplace-update-comparation.png)
 
@@ -50,7 +50,7 @@ Take the CloneSet YAML below as an example:
 
 1. Modify `app-image:v1` image, will trigger in-place update.
 2. Modify the value of `app-config` in annotations, will trigger in-place update (Read the [Requirements](#requirements) below).
-3. Modify the two fields above together, will tigger in-place update both image and environment.
+3. Modify the two fields above together, will trigger in-place update both image and environment.
 4. Directly modify the value of `APP_NAME` in env or add a new env, will trigger recreate update.
 
 ```yaml

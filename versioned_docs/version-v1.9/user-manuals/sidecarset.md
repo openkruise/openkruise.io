@@ -286,6 +286,8 @@ spec:
     podInjectPolicy: BeforeAppContainer
     shareVolumePolicy:
       type: disabled | enabled
+    shareVolumeDevicePolicy:
+      type: disabled | enabled
     transferEnv:
     - sourceContainerName: main
       envName: PROXY_IP
@@ -333,6 +335,8 @@ spec:
     podInjectPolicy: BeforeAppContainer
     shareVolumePolicy:
       type: disabled | enabled
+    shareVolumeDevicePolicy:
+      type: disabled | enabled
     transferEnv:
     - sourceContainerName: main
       envName: PROXY_IP
@@ -355,11 +359,19 @@ spec:
 - data volume sharing
     - Share specific volumes: Use spec.volumes to define the volumes needed by Sidecar itself. See details：https://kubernetes.io/docs/concepts/storage/volumes/
     - Share pod containers volumes: If ShareVolumePolicy.type is enabled, the sidecar container will share the other container's VolumeMounts in the pod(don't contains the injected sidecar container)
+    - Share pod containers volume devices: If ShareVolumeDevicePolicy.type is enabled, the sidecar container will share the other container's VolumeDevices in the pod(don't contains the injected sidecar container). **FEATURE STATE:** Kruise v1.9.0
 - Environment variable sharing
     - Environment variables can be fetched from another container through spec.containers[x].transferenv, and the environment variable named envName from the container named sourceContainerName is copied to this container
     - sourceContainerNameFrom support downwardAPI for container name, such as `metadata.labels['<KEY>']`, `metadata.annotations['<KEY>']`
 - Injection ResourcesPolicy
     - User can configure the resource expression for sidecar container to dynamically adjust its resources based on the target container's resources by field `.spec.containers[i].resourcesPolicy` and `.spec.initContainers[i].resourcesPolicy`
+
+#### Injection Order of Sidecar Containers
+**FEATURE STATE:** Kruise v1.9.0
+
+Since v1.9.0, SidecarSet sorts both `spec.containers` and `spec.initContainers` by their name in ascending order when injecting them into Pods. This guarantees a deterministic injection order, ensuring that sidecar containers with dependencies on each other are injected in the correct sequence.
+
+For example, if a SidecarSet defines containers named `envoy`, `log-agent`, and `nginx`, they will be injected into the Pod in the order: `envoy`, `log-agent`, `nginx`.
 
 #### injection pause
 **FEATURE STATE:** Kruise v0.10.0

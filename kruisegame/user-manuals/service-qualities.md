@@ -165,7 +165,7 @@ minecraft-1   Ready   None              0     0     2m14s
 minecraft-2   Ready   None              0     0     2m14s
 ```
 
-Enter the minecraft-1 container, simulate the data process failure, and kil its corresponding process number.
+Enter the minecraft-1 container, simulate the data process failure, and kill its corresponding process number.
 
 ```bash
 kubectl exec -it minecraft-1 /bin/bash

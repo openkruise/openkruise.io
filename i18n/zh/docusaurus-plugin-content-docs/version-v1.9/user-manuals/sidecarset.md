@@ -279,6 +279,8 @@ spec:
     podInjectPolicy: BeforeAppContainer
     shareVolumePolicy:
       type: disabled | enabled
+    shareVolumeDevicePolicy:
+      type: disabled | enabled
     transferEnv:
     - sourceContainerName: main
       envName: PROXY_IP
@@ -326,6 +328,8 @@ spec:
     podInjectPolicy: BeforeAppContainer
     shareVolumePolicy:
       type: disabled | enabled
+    shareVolumeDevicePolicy:
+      type: disabled | enabled
     transferEnv:
     - sourceContainerName: main
       envName: PROXY_IP
@@ -348,11 +352,19 @@ spec:
 - 数据卷共享
     - 共享指定卷：通过 spec.volumes 来定义 sidecar 自身需要的 volume，详情请参考：https://kubernetes.io/docs/concepts/storage/volumes/
     - 共享所有卷：通过 spec.containers[i].shareVolumePolicy.type = enabled | disabled 来控制是否挂载pod应用容器的卷，常用于日志收集等 sidecar，配置为 enabled 后会把应用容器中所有挂载点注入 sidecar 同一路经下(sidecar中本身就有声明的数据卷和挂载点除外）
+    - 共享 VolumeDevice：通过 spec.containers[i].shareVolumeDevicePolicy.type = enabled | disabled 来控制是否共享 pod 应用容器的 VolumeDevices（不包含注入的 sidecar 容器）。**FEATURE STATE:** Kruise v1.9.0
 - 环境变量共享
     - 可以通过 spec.containers[i].transferEnv 来从别的容器获取环境变量，会把名为 sourceContainerName 容器中名为 envName 的环境变量拷贝到本容器
     - sourceContainerNameFrom 支持 downwardAPI 来获取容器name，比如：metadata.name, `metadata.labels['<KEY>']`, `metadata.annotations['<KEY>']`
 - 动态资源注入
     - 可以通过 `spec.containers[i].resourcesPolicy` 和 `spec.initContainers[i].resourcesPolicy` 来配置 sidecar 容器的资源，使得它能够根据目标Pod容器的资源动态调整。
+
+#### Sidecar 容器注入顺序
+**FEATURE STATE:** Kruise v1.9.0
+
+从 v1.9.0 开始，SidecarSet 在将 `spec.containers` 和 `spec.initContainers` 注入到 Pod 时，会按照容器名称的升序进行排序。这保证了确定的注入顺序，确保有依赖关系的 sidecar 容器能够按正确的顺序注入。
+
+例如，如果 SidecarSet 定义了名为 `envoy`、`log-agent` 和 `nginx` 的容器，它们将按以下顺序注入到 Pod 中：`envoy`, `log-agent`, `nginx`。
 
 #### 注入暂停
 **FEATURE STATE:** Kruise v0.10.0

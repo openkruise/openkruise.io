@@ -1958,7 +1958,7 @@ AllowNotReadyContainers
 - Configuration change supported or not: It cannot be changed during the in-place updating process.
 
 ExternalTrafficPolicyType
-- Meaning: Service LB forward type, if Local， Service LB just forward traffice to local node Pod, we can keep source IP without SNAT
+- Meaning: Service LB forward type, if Local， Service LB just forward traffic to local node Pod, we can keep source IP without SNAT
 - Value: : Local/Cluster Default value is Cluster
 - Configuration change supported or not: not. It maybe related to "IP/Port mapping relationship Fixed", recommend not to change
 

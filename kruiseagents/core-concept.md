@@ -20,5 +20,5 @@ performance, `SandboxSet` can rapidly replenish sandboxes as they are consumed.
 `SandboxTemplate` is an immutable resource that represents a revision of sandbox templates, a `SandboxSet` may contain multiple `SandboxTemplate` if its template is being changed. 
 
 ### Checkpoint
-`Checkpoint` is a snapshot of sandbox intermidiates states which may includes memory, rootfs etc. A checkpoint can be made from a running Sandbox, and can be used to clone multiple sandboxes. A checkpoint is related the SandboxTemplate of the Sandbox from which the Checkpoint is being made. 
+`Checkpoint` is a snapshot of sandbox intermediates states which may includes memory, rootfs etc. A checkpoint can be made from a running Sandbox, and can be used to clone multiple sandboxes. A checkpoint is related the SandboxTemplate of the Sandbox from which the Checkpoint is being made. 
 

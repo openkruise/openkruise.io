@@ -199,6 +199,20 @@ $ helm install kruise https://... --set featureGates="ResourcesDeletionProtectio
 
 如果你希望打开所有 feature-gate 功能，配置参数 `featureGates=AllAlpha=true`。
 
+### 可选: Windows 节点支持
+
+**FEATURE STATE:** Kruise v1.9.0
+
+从 v1.9.0 开始，OpenKruise Daemon 支持 Windows 节点。这使得 ImagePullJob 和 ContainerRecreateRequest (CRR) 等功能可以在 Windows 节点上运行。
+
+要在 Windows 节点上部署 kruise-daemon，请确保集群中已安装容器运行时的 Windows 节点，Kruise 会自动将 kruise-daemon DaemonSet 调度到 Windows 节点上。
+
+你还可以使用以下 Helm 参数为 Windows 节点自定义 kruise-daemon 镜像：
+
+```bash
+$ helm install kruise https://... --set daemon.windowsImage.repository=openkruise/kruise-daemon-windows --set daemon.windowsImage.tag=v1.9.0
+```
+
 ### 可选: 中国本地镜像
 
 如果你在中国、并且很难从官方 DockerHub 上拉镜像，那么你可以使用托管在阿里云上的镜像仓库：
