@@ -62,6 +62,46 @@ NAME   REPLICAS   AVAILABLE   UPDATEREVISION   AGE
 demo   10         10          78dd8599cf       19m
 ```
 
+## Scaling and Update Strategies
+
+`SandboxSet` provides two strategy fields to control the pace of scaling and rolling updates, helping to minimize the impact on cluster resources and service availability.
+
+### `scaleStrategy.maxUnavailable`
+
+This field limits the maximum number of sandboxes that can be **unavailable** (i.e., in the `creating` state) during **scaling operations**. It is useful when you want to avoid a sudden surge of Pod creation that could pressure the cluster.
+
+- Can be an absolute number (e.g., `5`) or a percentage string (e.g., `"20%"`).
+- Default: no limit (all new sandboxes are created simultaneously).
+
+```yaml
+spec:
+  replicas: 20
+  scaleStrategy:
+    # At most 5 sandboxes can be in the creating state at any time during scaling
+    maxUnavailable: 5
+```
+
+:::tip
+When scaling up, newly created sandboxes are launched in batches respecting this limit. For example, if `maxUnavailable: 5` and you scale from 0 to 20, sandboxes are created in groups of 5 — each new batch starts only after the previous batch becomes `available`.
+:::
+
+### `updateStrategy.maxUnavailable`
+
+This field controls the maximum number or percentage of sandboxes that can be **unavailable** during a **rolling update** (triggered by modifying `spec.template`). It determines the batch size of the rolling update.
+
+- Can be an absolute number (e.g., `5`) or a percentage string (e.g., `"20%"`).
+- Default: `"20%"`.
+
+```yaml
+spec:
+  replicas: 10
+  updateStrategy:
+    # At most 3 sandboxes can be unavailable during the rolling update
+    maxUnavailable: 3
+```
+
+For a detailed explanation of how rolling updates work, including monitoring progress and troubleshooting, refer to [Upgrade Pre-warmed Pool Sandboxes (SandboxSet)](./sandbox-update.md#upgrade-pre-warmed-pool-sandboxes-sandboxset).
+
 ## Claiming and Replenishing Warm Sandboxes
 
 You can claim an available sandbox from the warm pool in various ways, refer to [Sandbox Claim](./sandbox-claim.md).

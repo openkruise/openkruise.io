@@ -58,6 +58,46 @@ NAME   REPLICAS   AVAILABLE   UPDATEREVISION   AGE
 demo   10         10          78dd8599cf       19m
 ```
 
+## 扩容与更新策略
+
+`SandboxSet` 提供两个策略字段，用于控制扩容和滚动更新的节奏，从而尽量减少对集群资源和服务可用性的影响。
+
+### `scaleStrategy.maxUnavailable`
+
+该字段限制在 **扩容操作** 期间允许处于 **不可用** 状态（即处于 `creating` 状态）的沙箱最大数量。当你希望避免 Pod 创建突发增长对集群造成压力时，该字段非常有用。
+
+- 可以是绝对值（如 `5`）或百分比字符串（如 `"20%"`）。
+- 默认值：无限制（所有新沙箱同时创建）。
+
+```yaml
+spec:
+  replicas: 20
+  scaleStrategy:
+    # 在扩容期间，最多允许 5 个沙箱处于 creating 状态
+    maxUnavailable: 5
+```
+
+:::tip
+扩容时，新创建的沙箱会按照该限制分批启动。例如，若 `maxUnavailable: 5`，从 0 扩容到 20，沙箱会以每批 5 个的方式创建——每一批只有在上一批变为 `available` 后才会开始创建。
+:::
+
+### `updateStrategy.maxUnavailable`
+
+该字段控制在 **滚动更新** 期间（通过修改 `spec.template` 触发）允许处于 **不可用** 状态的沙箱最大数量或百分比。它决定了滚动更新的批次大小。
+
+- 可以是绝对值（如 `5`）或百分比字符串（如 `"20%"`）。
+- 默认值：`"20%"`。
+
+```yaml
+spec:
+  replicas: 10
+  updateStrategy:
+    # 在滚动更新期间，最多允许 3 个沙箱不可用
+    maxUnavailable: 3
+```
+
+关于滚动更新工作原理的详细说明，包括监控进度和故障排查，请参考 [升级预热池沙箱（SandboxSet）](./sandbox-update.md#升级预热池沙箱sandboxset)。
+
 ## 预热沙箱的获取与补充
 
 你可以通过多种方式从预热池中获取一个 available 状态的沙箱，参考 [获取沙箱](./sandbox-claim.md)。当一个沙箱被获取后，
