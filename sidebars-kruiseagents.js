@@ -68,6 +68,11 @@ module.exports = {
             items: [
                 'developer-manuals/contribution',
                 {
+                    'CLI Tools': [
+                        'developer-manuals/okactl',
+                    ],
+                },
+                {
                     'E2B SDK': [
                         "developer-manuals/e2b-client",
                         "developer-manuals/e2b-client-java",
