@@ -34,5 +34,32 @@ sandboxupdateops.agents.kruise.io                        2026-05-19T03:49:37Z
 ```
 
 ## E2B APIs
-OpenKruise Agents 提供了兼容E2B协议的API. 
+OpenKruise Agents 提供了兼容E2B协议的API.
 
+### E2B 兼容性说明
+
+> ⚠️ **重要**：`commands.run`（命令执行）和文件系统 `read/write` API 需要在 Sandbox 中注入 `agent-runtime` 组件。请确保你的
+> SandboxSet 已配置 `runtimes: [{name: agent-runtime}]`。详情请参考[运行时注入](./user-manuals/runtime-injection.md)文档。
+
+| API分类  | API                                                    | 参数兼容程度 | 说明                                        |
+|--------|--------------------------------------------------------|--------|-------------------------------------------|
+| 生命周期管理 | create                                                 | 部分兼容   | 网络访问控制、原地变配待实现                            |
+|        | get\_info                                              | 完全兼容   |                                           |
+|        | list                                                   | 完全兼容   |                                           |
+|        | kill                                                   | 完全兼容   |                                           |
+|        | pause                                                  | 完全兼容   | 考虑到容器生态的效率问题，当前 pause 的实现为异步接口            |
+|        | resume                                                 | 完全兼容   |                                           |
+|        | connect                                                | 完全兼容   |                                           |
+|        | set\_timeout                                           | 完全兼容   | 设置 Sandbox 超时时间（TTL），等价于 E2B 的 `Refresh sandbox` API |
+| 代码运行   | run\_code                                              | 完全兼容   | 主容器内需要运行e2b-code-interpreter              |
+| 命令执行   | commands.run                                           | 完全兼容   | 需要通过运行时注入agent-runtime组件                  |
+| 文件系统   | read/write                                             | 完全兼容   | 需要通过运行时注入agent-runtime组件                  |
+|        | upload\_url/download\_url                              | 不支持    | 通过预签名url上传下载待实现                           |
+| 日志     | logs                                                   | 不支持    | Sandbox 日志获取待实现                            |
+| 监控指标   | metrics                                                | 不支持    | Sandbox 监控指标获取待实现                          |
+| 网络     | network                                                | 不支持    | Sandbox 网络配置（出口规则）待实现                      |
+| 生命周期事件 | `https://api.e2b.app/events/sandboxes/{sbx.sandbox_id}` | 不支持    | 生命周期事件待实现                                 |
+| 快照管理   | snapshots                                              | 完全兼容   | 具体快照效果依赖于 Checkpoint 实现                   |
+| 模板管理   |                                                        | 部分兼容   | 模板读操作已支持， 模板写操作推荐使用容器镜像来替代               |
+| API密钥管理 | teams, api-keys                                        | 完全兼容   | OpenKruise Agents 扩展：基于团队的多租户 API 密钥管理     |
+| 卷管理    | volumes                                                | 不支持    | 持久化卷管理待实现                                 |

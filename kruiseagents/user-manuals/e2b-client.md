@@ -1,3 +1,7 @@
+---
+title: Python Client
+---
+
 # Using the E2B SDK
 
 The sandbox-manager component of OpenKruise Agents supports two E2B integration protocols: native E2B protocol and
@@ -189,29 +193,3 @@ kubectl create secret tls sandbox-manager-tls \
     patch_e2b(https=False)
     ```
 
-## E2B Compatibility
-
-> ⚠️ **Important**: The `commands.run` (command execution) and file system `read/write` APIs require the `agent-runtime` component to be injected into the Sandbox. Please ensure that your SandboxSet has configured `runtimes: [{name: agent-runtime}]`. For details, refer to the [Runtime Injection](./runtime-injection.md) documentation.
-
-| API Category         | API                                                    | Compatibility Level  | Notes                                                                                                               |
-|----------------------|--------------------------------------------------------|----------------------|---------------------------------------------------------------------------------------------------------------------|
-| Lifecycle Management | create                                                 | Partially Compatible | Network access control and resource management implementation pending                                               |
-|                      | get\_info                                              | Fully Compatible     |                                                                                                                     |
-|                      | list                                                   | Fully Compatible     |                                                                                                                     |
-|                      | kill                                                   | Fully Compatible     |                                                                                                                     |
-|                      | pause                                                  | Fully Compatible     | Due to container ecosystem efficiency considerations, current pause implementation is asynchronous                  |
-|                      | resume                                                 | Fully Compatible     |                                                                                                                     |
-|                      | connect                                                | Fully Compatible     |                                                                                                                     |
-|                      | set\_timeout                                           | Fully Compatible     | Set the sandbox timeout (TTL), equivalent to E2B's `Refresh sandbox` API                                           |
-| Code Execution       | run\_code                                              | Fully Compatible     | Requires e2b-code-interpreter running in main container                                                             |
-| Command Execution    | commands.run                                           | Fully Compatible     | Requires runtime injection of agent-runtime component                                                               |
-| File System          | read/write                                             | Fully Compatible     | Requires runtime injection of agent-runtime component                                                               |
-|                      | upload\_url/download\_url                              | Not Supported        | Upload/download via pre-signed URL implementation pending                                                           |
-| Logs                 | logs                                                   | Not Supported        | Sandbox logs retrieval implementation pending                                                                       |
-| Metrics              | metrics                                                | Not Supported        | Sandbox metrics retrieval implementation pending                                                                    |
-| Network              | network                                                | Not Supported        | Sandbox network configuration (egress rules) implementation pending                                                 |
-| Lifecycle Events     | `https://api.e2b.app/events/sandboxes/{sbx.sandbox_id}` | Not Supported        | Lifecycle events implementation pending                                                                             |
-| Snapshot Management  | snapshots                                              | Fully Compatible     | Specific snapshot behavior depends on Checkpoint implementation                                                     |
-| Template Management  |                                                        | Partially Compatible | Template read supported, template write is not supported by design, recommend using container images as alternative |
-| API Keys Management  | teams, api-keys                                        | Fully Compatible     | OpenKruise Agents extension: multi-tenant API key management with team-based access control                        |
-| Volumes              | volumes                                                | Not Supported        | Persistent volume management implementation pending                                                                 |
