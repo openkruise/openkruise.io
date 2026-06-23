@@ -34,7 +34,6 @@ module.exports = {
                 'user-manuals/checkpoint',
                 'user-manuals/sandbox-update',
                 'user-manuals/api-keys-and-teams',
-                'user-manuals/e2b-client'
             ],
         },
         {
@@ -69,6 +68,7 @@ module.exports = {
                 'developer-manuals/contribution',
                 {
                     'E2B SDK': [
+                        'user-manuals/e2b-client',
                         "developer-manuals/e2b-client",
                         "developer-manuals/e2b-client-java",
                     ],
