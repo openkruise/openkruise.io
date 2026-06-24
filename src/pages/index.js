@@ -73,8 +73,6 @@ export default function Home() {
 
       <WhatIs />
 
-      <LatestRelease />
-
       <main className={clsx('hero', styles.hero)}>
         <div className="container">
           <section className={styles.features}>
@@ -86,6 +84,8 @@ export default function Home() {
           </section>
         </div>
       </main>
+
+      <LatestRelease />
 
       <SupportersSection />
 
