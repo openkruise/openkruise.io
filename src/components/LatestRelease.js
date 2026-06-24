@@ -46,6 +46,8 @@ function parseReleaseHighlights(body) {
 }
 
 // Cache management (1-hour TTL)
+// The static JSON is baked at build time, so caching avoids re-fetching
+// the same file on every page navigation.
 function getCachedRelease() {
   try {
     const cached = localStorage.getItem('openkruise_latest_release');
@@ -89,20 +91,11 @@ function SkeletonLoader() {
   );
 }
 
-function ErrorFallback({ error }) {
-  const isRateLimited = error?.message?.startsWith('rate_limited:');
-  const resetTime = isRateLimited ? error.message.split(':')[1] : null;
-  
+function ErrorFallback() {
   return (
     <div className={styles.errorContainer}>
       <p className={styles.errorText}>
-        {isRateLimited ? (
-          <Translate values={{ time: resetTime }}>
-            {'Release information is temporarily unavailable. Please try again after {time}.'}
-          </Translate>
-        ) : (
-          <Translate>Unable to fetch latest release information.</Translate>
-        )}
+        <Translate>Unable to load latest release information.</Translate>
       </p>
       <Link
         href="https://github.com/openkruise/kruise/releases/latest"
@@ -129,32 +122,22 @@ export default function LatestRelease() {
           return;
         }
 
-        const response = await fetch(
-          'https://api.github.com/repos/openkruise/kruise/releases/latest',
-          {
-            headers: {
-              'Accept': 'application/vnd.github.v3+json',
-            },
-          }
-        );
+        // Fetch from the static JSON generated at build time.
+        // This avoids client-side GitHub API calls that hit the
+        // 60 req/hour unauthenticated rate limit.
+        const response = await fetch('/data/latest-release.json');
 
         if (!response.ok) {
-          // Handle rate limiting specifically
-          if (response.status === 403 || response.status === 429) {
-            const resetTime = response.headers.get('X-RateLimit-Reset');
-            const remaining = response.headers.get('X-RateLimit-Remaining');
-            
-            if (remaining === '0') {
-              const resetDate = resetTime 
-                ? new Date(parseInt(resetTime) * 1000).toLocaleTimeString()
-                : 'soon';
-              throw new Error(`rate_limited:${resetDate}`);
-            }
-          }
-          throw new Error(`GitHub API error: ${response.status}`);
+          throw new Error(`Failed to load release data: ${response.status}`);
         }
 
         const data = await response.json();
+
+        // If tag_name is empty, the build-time fetch failed — show fallback.
+        if (!data.tag_name) {
+          throw new Error('No release data available');
+        }
+
         cacheRelease(data);
         setRelease(data);
         setError(null);
@@ -174,7 +157,7 @@ export default function LatestRelease() {
   }
 
   if (error || !release) {
-    return <ErrorFallback error={error} />;
+    return <ErrorFallback />;
   }
 
   // Format release date
