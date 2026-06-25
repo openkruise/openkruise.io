@@ -1,3 +1,7 @@
+---
+title: Introduction
+---
+
 # Introduction
 ⭐ ***If you like OpenKruiseGame, give it a star on <a target="_blank" rel="noopener noreferrer" href="https://github.com/openkruise/kruise-game">GitHub</a>!***
 ### Overview

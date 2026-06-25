@@ -1,3 +1,7 @@
+---
+title: OpenKruiseGame简介
+---
+
 # OpenKruiseGame简介
 ⭐ ***If you like OpenKruiseGame, give it a star on <a target="_blank" rel="noopener noreferrer" href="https://github.com/openkruise/kruise-game">GitHub</a>!***
 ## 概览
