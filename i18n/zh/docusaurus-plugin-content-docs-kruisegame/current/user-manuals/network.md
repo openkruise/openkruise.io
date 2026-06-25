@@ -19,6 +19,9 @@ OKG 会集成不同云提供商的不同网络插件，用户可通过GameServer
 - AlibabaCloud-SLB-SharedPort
 - AlibabaCloud-NLB-SharedPort
 - AlibabaCloud-Multi-NLBs
+- AlibabaCloud-AutoNLBs
+- AlibabaCloud-AutoNLBs-V2
+- AlibabaCloud-AutoNLBs-V3
 - Volcengine-CLB
 - AmazonWebServices-NLB
 - TencentCloud-CLB
@@ -45,7 +48,7 @@ Kubernetes
 
 - Kubernetes-HostPort 依赖Kubernetes提供的hostPort模式。需要注意存在一些CNI插件不支持hostPort，如Terway等。
 
-
+- 自 v1.1.0 起，HostPort 插件支持跨节点端口复用。相同端口号可以同时被不同节点上的多个 Pod 使用。插件采用“最少使用”分配策略，自动选择使用次数最少的端口，避免热点集中，提高大规模部署的容量。
 
 #### 网络参数
 
@@ -1169,6 +1172,12 @@ LBHealthCheckMethod
 - 格式：“GET” 或者 “HEAD”
 - 是否支持变更：支持
 
+AllocatePolicy
+
+- 含义：多个 NLB 可用时的分配策略。
+- 格式："default"（顺序分配，溢出后使用下一个 NLB）或 "balanced"（选择可用端口最多的 NLB）。
+- 是否支持变更：支持
+
 #### 插件配置
 
 复用nlb的参数配置，默认为：
@@ -1289,6 +1298,322 @@ BlockPorts
 - 含义：NLB实例Listener禁用端口。遇到改列表下的端口号跳过不使用设计原因：https://github.com/openkruise/kruise-game/issues/174
 - 填写格式：端口1,端口2,... 如，3127,3128
 - 是否支持变更：不支持
+
+---
+
+### AlibabaCloud-AutoNLBs-V2
+
+#### 插件名称
+`AlibabaCloud-AutoNLBs-V2`
+
+#### Cloud Provider
+AlibabaCloud
+
+#### 插件说明
+AutoNLBs 的增强版本，具备有状态资源管理能力。该插件在 kruise-game 控制器内直接管理 NLB 和 EIP 云资源，支持：
+
+1. 多运营商线路 EIP 分配（BGP、BGP_PRO、ChinaTelecom 等）
+2. 预热机制，支持资源池预创建
+3. 安全防护类型配置
+4. GameServerSet 删除时可配置 NLB/EIP 保留策略
+
+#### 网络参数
+
+EipIspTypes
+- 含义：多线路接入的 EIP 运营商线路类型。
+- 格式：逗号分隔的列表。支持的值：BGP、BGP_PRO、ChinaTelecom、ChinaUnicom、ChinaMobile 等。
+- 是否支持变更：不支持
+
+MinPort
+- 含义：NLB 实例 Listener 起始端口号。
+- 格式：正整数，必填。
+- 是否支持变更：不支持
+
+MaxPort
+- 含义：NLB 实例 Listener 最大端口号。
+- 格式：正整数，必填。
+- 是否支持变更：不支持
+
+BlockPorts
+- 含义：NLB 实例 Listener 禁用端口。
+- 格式：端口1,端口2,...（如 3127,3128）
+- 是否支持变更：不支持
+
+PortProtocols
+- 含义：Pod 暴露的端口及协议。格式：port1/protocol1,port2/protocol2,... 支持的协议：TCP、UDP、TCPUDP。
+- 格式：port1/protocol1,port2/protocol2,...
+- 是否支持变更：不支持
+
+ZoneMaps
+- 含义：创建 NLB 的可用区映射配置。
+- 格式：vpc-id@zone-id1:vsw-id1,zone-id2:vsw-id2
+- 是否支持变更：不支持
+
+RetainNLBOnDelete
+- 含义：GameServerSet 删除时是否保留 NLB/EIP 资源。
+- 格式：true/false。默认值：true。
+- 是否支持变更：支持
+
+ExternalTrafficPolicyType
+- 含义：NLB 服务的外部流量策略。
+- 格式：Local 或 Cluster。
+- 是否支持变更：支持
+
+SecurityProtectionTypes
+- 含义：NLB 实例的安全防护类型。
+- 格式：安全防护类型标识字符串。
+- 是否支持变更：不支持
+
+#### 示例
+
+```yaml
+apiVersion: game.kruise.io/v1alpha1
+kind: GameServerSet
+metadata:
+  name: gs-auto-nlbs-v2
+  namespace: default
+spec:
+  replicas: 3
+  network:
+    networkType: AlibabaCloud-AutoNLBs-V2
+    networkConf:
+    - name: EipIspTypes
+      value: "BGP,BGP_PRO"
+    - name: MinPort
+      value: "30000"
+    - name: MaxPort
+      value: "32767"
+    - name: PortProtocols
+      value: "8080/TCP"
+    - name: ZoneMaps
+      value: "vpc-xxx@cn-hangzhou-h:vsw-aaa,cn-hangzhou-i:vsw-bbb"
+    - name: RetainNLBOnDelete
+      value: "true"
+  gameServerTemplate:
+    spec:
+      containers:
+        - image: registry.cn-hangzhou.aliyuncs.com/acs/minecraft-demo:1.12.2
+          name: gameserver
+```
+
+---
+
+### AlibabaCloud-AutoNLBs-V3
+
+#### 插件名称
+`AlibabaCloud-AutoNLBs-V3`
+
+#### Cloud Provider
+AlibabaCloud
+
+#### 插件说明
+基于 PortAllocation (PA) 资源的无状态网络插件。与 V2 不同，该插件不直接管理云资源，而是通过 PortAllocation CR 与 NLB Pool Operator 协作：
+
+1. **无状态架构**：插件仅向 Pod 写入注解并读取 PA Spec，所有云资源生命周期管理由 NLB Pool Operator 处理。
+2. **可扩展性**：将游戏控制器与云资源管理的职责分离。
+3. **前置条件**：需要在集群中部署 NLB Pool Operator 并预配置 NLBPool 资源。
+
+#### 前置条件
+
+使用 V3 插件前，必须部署 [AlibabaCloud Operator Charts](https://github.com/chrisliu1995/AlibabaCloud-Operator-Charts)，包含以下组件：
+- NLB Pool Operator：管理 NLBPool CR 生命周期，创建 NLB/EIP/ServerGroup/Listener 云资源，并生成 PortAllocation 资源池。
+- NLB Operator：管理单个 NLB 云资源的协调。
+- EIP Operator：管理 NLB 实例的 EIP 分配与绑定。
+
+**通过 Helm 安装：**
+
+```bash
+# 添加 chart 仓库（如使用私有 Helm 仓库）
+# 或直接从本地 chart 目录安装：
+helm install alibabacloud-operators ./chart \
+  --namespace alibabacloud-operators-system \
+  --create-namespace \
+  --set global.alibabacloud.accessKeyId=<YOUR_ACCESS_KEY_ID> \
+  --set global.alibabacloud.accessKeySecret=<YOUR_ACCESS_KEY_SECRET> \
+  --set global.alibabacloud.region=<YOUR_REGION>
+```
+
+**关键配置参数（values.yaml）：**
+
+| 参数 | 说明 | 默认值 |
+|------|------|--------|
+| `global.alibabacloud.accessKeyId` | 阿里云 AccessKey ID | `""` |
+| `global.alibabacloud.accessKeySecret` | 阿里云 AccessKey Secret | `""` |
+| `global.alibabacloud.region` | 地域（如 `cn-hangzhou`） | `"cn-hangzhou"` |
+| `components.nlb.enabled` | 启用 NLB Operator | `true` |
+| `components.eip.enabled` | 启用 EIP Operator | `true` |
+| `components.nlbPool.enabled` | 启用 NLB Pool Operator | `true` |
+
+Operator 运行后，需要创建 **NLBPool** CR 定义资源池，然后再部署游戏服。
+
+#### 架构说明
+
+```
++------------------+       annotation        +-------------------+
+|   kruise-game    | --------------------->  |       Pod         |
+| (V3 Plugin)      |  nlb-pool-name          |                   |
++------------------+                         +-------------------+
+        |                                            |
+        | read PA endpoints                          | watch
+        v                                            v
++------------------+       claim/bind        +-------------------+
+| PortAllocation   | <--------------------- | NLB Pool Operator |
+|   (PA CR)        |                         | (PA Controller)   |
++------------------+                         +-------------------+
+                                                     |
+                                                     | manage
+                                                     v
+                                             +-------------------+
+                                             | Cloud Resources   |
+                                             | NLB/EIP/SG/       |
+                                             | Listener          |
+                                             +-------------------+
+```
+
+- **kruise-game (V3 Plugin)**：无状态，仅向 Pod 写入 `alibabacloud.com/nlb-pool-name` 注解，并读取 PA 端点构建 NetworkStatus。不管理任何云资源。
+- **NLB Pool Operator (PA Controller)**：监听带有 pool 注解的 Pod，通过乐观锁认领可用 PA，管理完整的 NLB/EIP/ServerGroup/Listener 云资源生命周期。
+- **PortAllocation (PA)**：一个 PA 对应一个 Pod 的端口分配，包含端点信息（EIP 地址、Listener 端口、容器端口）。
+
+#### 完整工作流程
+
+从 GameServerSet 创建到网络就绪的完整流程：
+
+1. 用户创建 **NLBPool** CR，定义 NLB 规格（地域、VPC、可用区、端口范围、线路等）。
+2. NLB Pool Operator 预创建云资源（NLB 实例、EIP、ServerGroup、Listener），并生成一批处于 `Available` 状态的 **PortAllocation** CR。
+3. Pod 创建时，V3 插件在 `OnPodAdded` 阶段向 Pod 写入 `alibabacloud.com/nlb-pool-name` 注解。
+4. PA Controller 检测到 Pod 注解，选择一个可用 PA，通过乐观锁为该 Pod 认领（将 `alibabacloud.com/nlb-pa-claim` 注解写回 Pod）。
+5. PA Controller 将 Pod 作为后端服务器添加到对应的 ServerGroup，然后将端点信息（EIP、Listener 端口）写入 `PA.Spec.Endpoints`。
+6. 下一次 `OnPodUpdated` 循环中，V3 插件读取 PA claim 注解，获取 PA，验证绑定关系（`PA.Status.Phase == Bound`），从 `PA.Spec.Endpoints` 构建 `NetworkStatus`。
+7. GameServer 网络变为 **Ready**，外部访问地址可用。
+
+**与 V2 的对比：**
+
+| 方面 | V2 | V3 |
+|------|----|----|
+| 架构 | 有状态 | 无状态 |
+| 资源管理 | kruise-game 直接管理 | NLB Pool Operator 管理 |
+| 可扩展性 | 单控制器瓶颈 | 多层 Operator，可水平扩展 |
+| 云资源生命周期 | 按 Pod 按需创建 | 预创建资源池 |
+| 依赖 | NLB/EIP Operator | NLB Pool Operator（包含 NLB/EIP Operator） |
+| 网络隔离 | 通过删除 Service | 通过注解驱动 PA 禁用/启用 |
+
+#### NLBPool CR 示例
+
+```yaml
+apiVersion: nlbpool.alibabacloud.com/v1alpha1
+kind: NLBPool
+metadata:
+  name: my-game-pool
+  namespace: default
+spec:
+  # NLB 实例所在地域
+  region: cn-hangzhou
+  # NLB 实例所在 VPC
+  vpcId: vpc-bp1xxxxxxxxxxxxxxxxx
+  # 可用区映射（至少需要 2 个可用区）
+  zoneMaps:
+    - zone: cn-hangzhou-j
+      vswitchId: vsw-bp1xxxxxxxxxxxxxxxxx
+    - zone: cn-hangzhou-k
+      vswitchId: vsw-bp1yyyyyyyyyyyyyyyyy
+  # 网络接入线路（ISP 线路）
+  lanes:
+    - name: bgp-1
+      ispType: BGP
+  # 端口定义
+  ports:
+    - name: game
+      protocol: TCP
+      containerPort: 8080
+  # Listener 端口分配范围
+  portRange:
+    min: 30000
+    max: 30099
+  # 每个 NLB 实例的 slot 数（端口分配数）
+  slotsPerNLB: 100
+  # 保持可用的最小 NLB 实例数
+  minAvailableNLBs: 1
+  # 健康检查配置
+  healthCheck:
+    enabled: false
+```
+
+**关键字段说明：**
+- `zoneMaps`：NLB 创建至少需要 2 个可用区。
+- `lanes`：定义 ISP 线路（如 BGP、电信）。每条线路会创建一个独立的 EIP。
+- `portRange`：Listener 端口分配范围。总 slot 数 = (max - min + 1)。
+- `slotsPerNLB`：每个 NLB 实例支持的端口分配数。决定创建的 NLB 实例数量 = ceil(总slot数 / slotsPerNLB)。
+- `minAvailableNLBs`：NLB Pool Operator 确保至少有这么多 NLB 实例有可用 slot。
+
+#### 网络参数
+
+NLBPoolName
+- 含义：用于端口分配的 NLBPool CR 名称。NLBPool 必须预先创建在与 GameServerSet 相同的 namespace 中。
+- 格式：字符串，必须引用已存在的 NLBPool 资源。
+- 是否支持变更：不支持
+
+#### GameServerSet 配置示例
+
+```yaml
+apiVersion: game.kruise.io/v1alpha1
+kind: GameServerSet
+metadata:
+  name: gs-auto-nlbs-v3
+  namespace: default
+spec:
+  replicas: 3
+  network:
+    networkType: AlibabaCloud-AutoNLBs-V3
+    networkConf:
+      # 引用预先创建的 NLBPool CR
+      - name: NLBPoolName
+        value: "my-game-pool"
+  gameServerTemplate:
+    spec:
+      containers:
+        - image: registry.cn-hangzhou.aliyuncs.com/acs/minecraft-demo:1.12.2
+          name: gameserver
+          ports:
+            - containerPort: 8080
+              name: game
+              protocol: TCP
+```
+
+#### NetworkStatus 输出示例
+
+当 PA 绑定完成且端点信息已填充后，GameServer 将显示如下网络状态：
+
+```bash
+kubectl get gs gs-auto-nlbs-v3-0 -o yaml
+```
+
+```yaml
+status:
+  networkStatus:
+    currentNetworkState: Ready
+    externalAddresses:
+      - endPoint: "47.96.xx.xx/bgp-1"
+        ip: "47.96.xx.xx"
+        ports:
+          - name: game
+            port: 30000
+            protocol: TCP
+    internalAddresses:
+      - ip: "172.16.0.100"
+        ports:
+          - name: game
+            port: 8080
+            protocol: TCP
+```
+
+**字段说明：**
+- `externalAddresses[].endPoint`：格式为 `<EIP>/<线路名>`。配置多条线路时以逗号分隔（如 `47.96.xx.xx/bgp-1,47.97.xx.xx/telecom-1`）。
+- `externalAddresses[].ip`：第一条线路的 EIP 地址。
+- `externalAddresses[].ports[].port`：分配给该 Pod 的 NLB Listener 端口。
+- `internalAddresses[].ip`：Pod 的内部 IP。
+- `internalAddresses[].ports[].port`：游戏服监听的容器端口。
+
+玩家通过外部 EIP 和 Listener 端口连接（如 `47.96.xx.xx:30000`）。
 
 ---
 
@@ -1522,7 +1847,7 @@ TargetGroupBinding的CRD及控制器：https://github.com/kubernetes-sigs/aws-lo
 
 NlbARNs
 
-- 含义：填写nlb的arn，可填写多个，需要现在【AWS】中创建好nlb。
+- 含义：填写nlb的arn，支持填写多个（逗号分隔）用于多 NLB 部署。需要在 AWS 中提前创建好 nlb。
 - 填写格式：各个nlbARN用,分割。例如：arn:aws:elasticloadbalancing:us-east-1:888888888888:loadbalancer/net/aaa/3b332e6841f23870,arn:aws:elasticloadbalancing:us-east-1:000000000000:loadbalancer/net/bbb/5fe74944d794d27e
 - 是否支持变更：是
 
@@ -1549,7 +1874,12 @@ NlbHealthCheck
 
 PortProtocols
 - 含义：pod暴露的端口及协议，支持填写多个端口/协议
-- 填写格式：port1/protocol1,port2/protocol2,...（协议需大写）
+- 填写格式：port1/protocol1,port2/protocol2,...（协议需大写）。支持协议：TCP、UDP、TCPUDP（表示同时使用TCP与UDP）。
+- 是否支持变更：是
+
+AllocatePolicy
+- 含义：多 NLB 部署时的分配策略。
+- 填写格式："default"（顺序分配）或 "balanced"（选择空闲端口最多的 NLB）。默认值："default"。
 - 是否支持变更：是
 
 Fixed
@@ -1957,6 +2287,7 @@ HwCloud
 
 #### Plugin description
 - HwCloud-ELB 使用华为云负载均衡器（ELB）作为对外服务的承载实体，在此模式下，不同游戏服使用 ELB 的不同端口对外暴露，此时 ELB 只做转发，并未均衡流量。
+- 该插件同时支持华为云 EIP（弹性公网IP）访问，提供灵活的公网IP分配和绑定能力。
 - 需安装https://github.com/kubernetes-sigs/cloud-provider-huaweicloud。
 - 是否支持网络隔离：是。
 

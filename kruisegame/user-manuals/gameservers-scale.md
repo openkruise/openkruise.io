@@ -583,6 +583,42 @@ minecraft-2   Ready   None       0     0    5s
 
 OKG v1.0 minAvailable supports percentage type. When minAvailable < 1, it indicates the minimum available (opsState is None) gs ratio.
 
+#### Set the WaitToBeDeleted scale-down threshold
+
+OKG v1.1 supports the `scaleDownThreshold` parameter in ScaledObject metadata. When the number (or ratio) of WaitToBeDeleted GameServers exceeds this threshold, OKG prioritizes scale-down by removing all WTBD pods, temporarily bypassing the minAvailable guarantee.
+
+**Parameter format:**
+- Integer value (e.g. `"10"`): triggers priority scale-down when WTBD count exceeds this number
+- Decimal value (e.g. `"0.1"`): triggers when WTBD ratio (WTBD/total) exceeds this percentage
+- Empty or not configured: threshold mechanism is disabled
+
+Note: When the threshold is triggered, KEDA's `minReplicaCount` serves as the safety net for minimum pod count, not OKG's `minAvailable`.
+
+**Configuration example:**
+
+```yaml
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: minecraft
+spec:
+  scaleTargetRef:
+    name: minecraft
+    apiVersion: game.kruise.io/v1alpha1
+    kind: GameServerSet
+  pollingInterval: 30
+  minReplicaCount: 0
+  triggers:
+    - type: external
+      metricType: AverageValue
+      metadata:
+        scalerAddress: kruise-game-external-scaler.kruise-game-system:6000
+        minAvailable: "3"
+        scaleDownThreshold: "10"
+```
+
+In this example, when more than 10 GameServers are in WaitToBeDeleted state, OKG will scale down to remove all WTBD pods regardless of the minAvailable setting.
+
 ### Other Settings
 
 Kubernetes has a certain tolerance for automatic scaling behavior, which is determined by the kube-controller-manager parameter --horizontal-pod-autoscaler-tolerance, and the default is 0.1, which means that the difference between the desired replicas and the current replicas is 10% No expansion or contraction will be triggered when the value is within.

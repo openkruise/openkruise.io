@@ -33,3 +33,12 @@ OKG 默认透出游戏服相关 prometheus metrics，其中指标包括：
 - 第三行：游戏服删除优先级、更新优先级变化折线图（可根据左上角namespace与gsName筛选游戏服）
 - 第四、五行：游戏服集合中不同状态的游戏服数量变化折线图（可根据左上角namespace与gssName筛选游戏服集合）
 
+#### GameServer 就绪耗时
+
+自 v1.1.0 起，OKG 会记录 GameServer 达到 Ready 和网络 Ready 状态所需的时间：
+
+- **Ready Duration**：从 GameServer 创建到达到 Ready 状态的时间。
+- **Network Ready Duration**：从 GameServer 创建到网络就绪的时间。
+
+这些耗时信息会记录在 GameServer status 中，可用于监控制备性能和检测网络插件延迟问题。
+

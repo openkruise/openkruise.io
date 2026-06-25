@@ -36,6 +36,7 @@ module.exports = {
                 'user-manuals/network',
                 'user-manuals/lifecycle',
                 'user-manuals/gameserver-monitor',
+                'user-manuals/observability',
                 'user-manuals/game-matchmaking',
                 'user-manuals/game-dashboard',
                 'user-manuals/gameserver-scheduler',

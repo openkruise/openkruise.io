@@ -578,6 +578,42 @@ minecraft-2   Ready   None       0     0    5s
 
 OKG v1.0 minAvailable 支持百分比类型，当 minAvailable < 1 时，表示最小可用(opsState 为 None)的gs的比例应该为多少
 
+#### 设置 WaitToBeDeleted 缩容阈值
+
+OKG v1.1 支持在 ScaledObject metadata 中配置 `scaleDownThreshold` 参数。当 WaitToBeDeleted 状态的 GameServer 数量（或比例）超过该阈值时，OKG 会优先缩容所有 WTBD 状态的 Pod，临时绕过 minAvailable 保证。
+
+**参数格式：**
+- 整数值（如 `"10"`）：当 WTBD 数量超过该数值时触发优先缩容
+- 小数值（如 `"0.1"`）：当 WTBD 比例（WTBD/总数）超过该百分比时触发
+- 空值或未配置：阈值机制不生效
+
+注意：当阈值触发时，KEDA 的 `minReplicaCount` 作为 Pod 最小数量的安全网，而非 OKG 的 `minAvailable`。
+
+**配置示例：**
+
+```yaml
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: minecraft
+spec:
+  scaleTargetRef:
+    name: minecraft
+    apiVersion: game.kruise.io/v1alpha1
+    kind: GameServerSet
+  pollingInterval: 30
+  minReplicaCount: 0
+  triggers:
+    - type: external
+      metricType: AverageValue
+      metadata:
+        scalerAddress: kruise-game-external-scaler.kruise-game-system:6000
+        minAvailable: "3"
+        scaleDownThreshold: "10"
+```
+
+在此示例中，当超过 10 个 GameServer 处于 WaitToBeDeleted 状态时，OKG 将缩容删除所有 WTBD 状态的 Pod，无论 minAvailable 如何设置。
+
 ### 其他设置
 
 Kubernetes对于自动伸缩行为具备一定容忍度，该值由kube-controller-manager 参数 --horizontal-pod-autoscaler-tolerance 决定，默认为0.1，这意味着理想副本数与当前副本数的差值在10%以内时不会触发扩容或缩容。

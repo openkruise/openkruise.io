@@ -55,7 +55,7 @@ type GameServerSpec struct {
 
 ## Example
 
-Let’s take an example to see how to realize multiple status awareness of the game server through a detection script.
+Let's take an example to see how to realize multiple status awareness of the game server through a detection script.
 
 When making a container image, write a script to detect the status of the container. The sample script probe.sh will detect whether the gate process and data process exist.
 When the gate process does not exist, it outputs "gate" and exits normally; when the data process does not exist, it outputs "data" and exits normally; when there is no exception, it exits with exit code 1.
@@ -340,3 +340,132 @@ In this case, the game server controller sends the event "GameServer demo-gs-0 W
 ![DingTalk notification showing GameServer warning event](../../static/img/kruisegame/user-manuals/warning-ding.png)
 
 In addition, OpenKruiseGame will integrate the tools that are used to automatically troubleshoot and recover game servers in the future to enhance automated O&M capabilities for game servers.
+
+## Template Variable Support
+
+Since v1.1.0, the `ServiceQualityAction` fields (`opsState`, `deletionPriority`, `updatePriority`) support Go template syntax. This allows you to dynamically compute values based on the probe script's standard output, enabling more flexible and automated game server management.
+
+### Supported Template Variables
+
+| Variable | Type | Description |
+|----------|------|-------------|
+| `.Result` | string | The standard output (stdout) of the probe script, with leading/trailing whitespace trimmed |
+
+### Supported Comparison Functions
+
+The following comparison functions are available in template expressions. When both arguments are valid numeric strings, numeric comparison is performed; otherwise, lexicographic string comparison is used.
+
+| Function | Description | Example |
+|----------|-------------|---------|
+| `eq(a, b)` | Equal | `{{ if eq .Result "ready" }}...{{ end }}` |
+| `ne(a, b)` | Not equal | `{{ if ne .Result "" }}...{{ end }}` |
+| `lt(a, b)` | Less than | `{{ if lt .Result "50" }}...{{ end }}` |
+| `le(a, b)` | Less than or equal | `{{ if le .Result "100" }}...{{ end }}` |
+| `gt(a, b)` | Greater than | `{{ if gt .Result "2.0" }}...{{ end }}` |
+| `ge(a, b)` | Greater than or equal | `{{ if ge .Result "1" }}...{{ end }}` |
+
+### Use Cases
+
+#### Dynamically set opsState based on CPU load
+
+When the system load exceeds a threshold, automatically mark the game server as `Maintaining`:
+
+```yaml
+serviceQualities:
+  - name: cpu-check
+    containerName: game-server
+    permanent: false
+    exec:
+      command: ["bash", "-c", "cat /proc/loadavg | awk '{print $1}'"]
+    serviceQualityAction:
+      - state: true
+        opsState: '{{ if gt .Result "2.0" }}Maintaining{{ else }}None{{ end }}'
+```
+
+#### Mark game servers as deletable based on online player count
+
+When the number of online players is 0, mark the game server as `WaitToBeDeleted` so it gets priority during scale-down:
+
+```yaml
+serviceQualities:
+  - name: player-count
+    containerName: game-server
+    permanent: false
+    exec:
+      command: ["bash", "-c", "/opt/get_player_count.sh"]
+    serviceQualityAction:
+      - state: true
+        opsState: '{{ if eq .Result "0" }}WaitToBeDeleted{{ else }}None{{ end }}'
+```
+
+#### Dynamic deletion priority based on player count
+
+Set `deletionPriority` dynamically so that game servers with fewer players are deleted first during scale-down:
+
+```yaml
+serviceQualities:
+  - name: player-priority
+    containerName: game-server
+    permanent: false
+    exec:
+      command: ["bash", "-c", "/opt/get_player_count.sh"]
+    serviceQualityAction:
+      - state: true
+        deletionPriority: '{{ if eq .Result "0" }}100{{ else }}0{{ end }}'
+```
+
+### Complete GameServerSet Example
+
+```yaml
+apiVersion: game.kruise.io/v1alpha1
+kind: GameServerSet
+metadata:
+  name: game-with-template
+  namespace: default
+spec:
+  replicas: 3
+  updateStrategy:
+    rollingUpdate:
+      podUpdatePolicy: InPlaceIfPossible
+      maxUnavailable: 100%
+  gameServerTemplate:
+    spec:
+      containers:
+        - image: registry.cn-hangzhou.aliyuncs.com/gs-demo/gameserver:latest
+          name: game-server
+  serviceQualities:
+    - name: load-monitor
+      containerName: game-server
+      permanent: false
+      exec:
+        command: ["bash", "-c", "cat /proc/loadavg | awk '{print $1}'"]
+      serviceQualityAction:
+        # When probe succeeds (exit code 0), evaluate the template
+        - state: true
+          opsState: '{{ if gt .Result "3.0" }}HighLoad{{ else if gt .Result "1.5" }}Busy{{ else }}None{{ end }}'
+    - name: player-count
+      containerName: game-server
+      permanent: false
+      exec:
+        command: ["bash", "-c", "/opt/get_player_count.sh"]
+      serviceQualityAction:
+        - state: true
+          opsState: '{{ if eq .Result "0" }}WaitToBeDeleted{{ else }}None{{ end }}'
+          deletionPriority: '{{ if eq .Result "0" }}100{{ else }}0{{ end }}'
+```
+
+### Rendering Failure Behavior
+
+- If the template string does not contain `{{`, it is returned as-is (no rendering is attempted).
+- If the template parsing fails (e.g., syntax error), the original string is returned unchanged.
+- If the template execution fails (e.g., referencing an undefined variable), the original string is returned unchanged.
+- For `deletionPriority` and `updatePriority`, the rendered value must be a valid integer. If it is not numeric, the action is skipped and an error is logged.
+
+This fail-safe design ensures that template misconfiguration will not break existing game server states.
+
+### Notes
+
+- Template syntax follows Go's `text/template` standard. Refer to [Go template documentation](https://pkg.go.dev/text/template) for advanced usage.
+- The `.Result` value is the raw stdout from the probe script. Ensure your script outputs clean values without extra newlines or spaces.
+- Numeric comparison supports floating-point strings (e.g., `"2.5"`, `"0.01"`). Non-numeric strings fall back to lexicographic comparison.
+- When using template expressions in YAML, always quote the value with single quotes to avoid YAML parsing issues (e.g., `opsState: '{{ ... }}'`).

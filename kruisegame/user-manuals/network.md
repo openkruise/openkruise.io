@@ -20,6 +20,8 @@ OpenKruiseGame supports the following network plugins:
 - AlibabaCloud-NLB-SharedPort
 - AlibabaCloud-Multi-NLBs
 - AlibabaCloud-AutoNLBs
+- AlibabaCloud-AutoNLBs-V2
+- AlibabaCloud-AutoNLBs-V3
 - Volcengine-CLB
 - AmazonWebServices-NLB
 - TencentCloud-CLB
@@ -45,6 +47,8 @@ Kubernetes
 - This network plugin does not support network isolation.
 
 - Kubernetes-HostPort relies on the hostPort pattern provided by Kubernetes. Note that some CNI plugins exist that do not support hostPort, such as Terway.
+
+- Since v1.1.0, the HostPort plugin supports port reuse across nodes. The same port number can be used by multiple pods on different nodes simultaneously. The plugin uses a "least-used" allocation strategy that automatically selects the port with the lowest usage count, avoiding hotspot concentration and improving capacity for large-scale deployments.
 
 #### Network parameters
 
@@ -1169,6 +1173,12 @@ LBHealthCheckMethod
 - Format: "GET" or "HEAD"
 - Whether to support changes: Yes
 
+AllocatePolicy
+
+- Meaning: NLB allocation strategy when multiple NLBs are available.
+- Format: "default" (first-fit, overflow to next NLB in order) or "balanced" (select NLB with most available ports).
+- Whether to support changes: Yes
+
 #### Plugin configuration
 
 use the configuration of nlb，default is:
@@ -1289,6 +1299,322 @@ BlockPorts
 - Meaning: Disabled ports for NLB instance listener. Ports in this list are skipped and not used (design rationale: GitHub Issue #174). 
 - Format: port1,port2,... (e.g., 3127,3128)
 - Whether to support changes: No
+
+---
+
+### AlibabaCloud-AutoNLBs-V2
+
+#### Plugin name
+`AlibabaCloud-AutoNLBs-V2`
+
+#### Cloud Provider
+AlibabaCloud
+
+#### Plugin description
+An enhanced version of AutoNLBs with stateful resource management. The plugin directly manages NLB and EIP cloud resources within the kruise-game controller, supporting:
+
+1. Multi-ISP line EIP allocation (BGP, BGP_PRO, ChinaTelecom, etc.)
+2. Preheating mechanism with resource pool pre-creation
+3. Security protection type configuration
+4. Configurable NLB/EIP retention policy on GameServerSet deletion
+
+#### Network parameters
+
+EipIspTypes
+- Meaning: EIP ISP line types for multi-line access.
+- Format: Comma-separated list. Supported values: BGP, BGP_PRO, ChinaTelecom, ChinaUnicom, ChinaMobile, etc.
+- Whether to support changes: No
+
+MinPort
+- Meaning: Starting port number for NLB instance listener.
+- Format: Required positive integer.
+- Whether to support changes: No
+
+MaxPort
+- Meaning: Maximum port number for NLB instance listener.
+- Format: Required positive integer.
+- Whether to support changes: No
+
+BlockPorts
+- Meaning: Disabled ports for NLB instance listener.
+- Format: port1,port2,... (e.g., 3127,3128)
+- Whether to support changes: No
+
+PortProtocols
+- Meaning: The ports and protocols exposed by the pod. Format: port1/protocol1,port2/protocol2,... Supported protocols: TCP, UDP, TCPUDP.
+- Format: port1/protocol1,port2/protocol2,...
+- Whether to support changes: No
+
+ZoneMaps
+- Meaning: Zone mapping configuration for NLB creation.
+- Format: vpc-id@zone-id1:vsw-id1,zone-id2:vsw-id2
+- Whether to support changes: No
+
+RetainNLBOnDelete
+- Meaning: Whether to retain NLB/EIP resources when GameServerSet is deleted.
+- Format: true/false. Default: true.
+- Whether to support changes: Yes
+
+ExternalTrafficPolicyType
+- Meaning: External traffic policy for the NLB service.
+- Format: Local or Cluster.
+- Whether to support changes: Yes
+
+SecurityProtectionTypes
+- Meaning: Security protection types for NLB instances.
+- Format: Protection type identifier string.
+- Whether to support changes: No
+
+#### Example
+
+```yaml
+apiVersion: game.kruise.io/v1alpha1
+kind: GameServerSet
+metadata:
+  name: gs-auto-nlbs-v2
+  namespace: default
+spec:
+  replicas: 3
+  network:
+    networkType: AlibabaCloud-AutoNLBs-V2
+    networkConf:
+    - name: EipIspTypes
+      value: "BGP,BGP_PRO"
+    - name: MinPort
+      value: "30000"
+    - name: MaxPort
+      value: "32767"
+    - name: PortProtocols
+      value: "8080/TCP"
+    - name: ZoneMaps
+      value: "vpc-xxx@cn-hangzhou-h:vsw-aaa,cn-hangzhou-i:vsw-bbb"
+    - name: RetainNLBOnDelete
+      value: "true"
+  gameServerTemplate:
+    spec:
+      containers:
+        - image: registry.cn-hangzhou.aliyuncs.com/acs/minecraft-demo:1.12.2
+          name: gameserver
+```
+
+---
+
+### AlibabaCloud-AutoNLBs-V3
+
+#### Plugin name
+`AlibabaCloud-AutoNLBs-V3`
+
+#### Cloud Provider
+AlibabaCloud
+
+#### Plugin description
+A stateless network plugin based on PortAllocation (PA) resources. Unlike V2, this plugin does not directly manage cloud resources. Instead, it coordinates with the NLB Pool Operator through PortAllocation CRs:
+
+1. **Stateless architecture**: The plugin only writes annotations to pods and reads PA spec; all cloud resource lifecycle management is handled by the NLB Pool Operator.
+2. **Scalability**: Separates concerns between the game controller and cloud resource management.
+3. **Prerequisite**: Requires NLB Pool Operator to be deployed in the cluster with pre-configured NLBPool resources.
+
+#### Prerequisites
+
+Before using the V3 plugin, you must deploy the [AlibabaCloud Operator Charts](https://github.com/chrisliu1995/AlibabaCloud-Operator-Charts) which includes:
+- NLB Pool Operator: manages NLBPool CR lifecycle, creates NLB/EIP/ServerGroup/Listener cloud resources, and generates PortAllocation resource pools.
+- NLB Operator: manages individual NLB cloud resource reconciliation.
+- EIP Operator: manages EIP allocation and bindingfor NLB instances.
+
+**Install via Helm:**
+
+```bash
+# Add the chart repository (if using a private Helm repo)
+# Or install directly from a local chart directory:
+helm install alibabacloud-operators ./chart \
+  --namespace alibabacloud-operators-system \
+  --create-namespace \
+  --set global.alibabacloud.accessKeyId=<YOUR_ACCESS_KEY_ID> \
+  --set global.alibabacloud.accessKeySecret=<YOUR_ACCESS_KEY_SECRET> \
+  --set global.alibabacloud.region=<YOUR_REGION>
+```
+
+**Key configuration parameters (values.yaml):**
+
+| Parameter | Description | Default |
+|-----------|-------------|---------|
+| `global.alibabacloud.accessKeyId` | AlibabaCloud AccessKey ID | `""` |
+| `global.alibabacloud.accessKeySecret` | AlibabaCloud AccessKey Secret | `""` |
+| `global.alibabacloud.region` | Region (e.g., `cn-hangzhou`) | `"cn-hangzhou"` |
+| `components.nlb.enabled` | Enable NLB Operator | `true` |
+| `components.eip.enabled` | Enable EIP Operator | `true` |
+| `components.nlbPool.enabled` | Enable NLB Pool Operator | `true` |
+
+After the Operators are running, you need to create an **NLBPool** CR to define the resource pool before deploying game servers.
+
+#### Architecture
+
+```
++------------------+       annotation        +-------------------+
+|   kruise-game    | --------------------->  |       Pod         |
+| (V3 Plugin)      |  nlb-pool-name          |                   |
++------------------+                         +-------------------+
+        |                                            |
+        | read PA endpoints                          | watch
+        v                                            v
++------------------+       claim/bind        +-------------------+
+| PortAllocation   | <--------------------- | NLB Pool Operator |
+|   (PA CR)        |                         | (PA Controller)   |
++------------------+                         +-------------------+
+                                                     |
+                                                     | manage
+                                                     v
+                                             +-------------------+
+                                             | Cloud Resources   |
+                                             | NLB/EIP/SG/       |
+                                             | Listener          |
+                                             +-------------------+
+```
+
+- **kruise-game (V3 Plugin)**: Stateless, only writes `alibabacloud.com/nlb-pool-name` annotation to Pods and reads PA endpoints to build NetworkStatus. Does NOT manage any cloud resources.
+- **NLB Pool Operator (PA Controller)**: Watches Pods with pool annotations, claims available PAs via optimistic locking, manages full NLB/EIP/ServerGroup/Listener cloud resource lifecycle.
+- **PortAllocation (PA)**: One PA corresponds to one Pod's port allocation. Contains endpoint information (EIP address, listener ports, container ports).
+
+#### Workflow
+
+The complete workflow from GameServerSet creation to network ready:
+
+1. User creates an **NLBPool** CR defining NLB specifications (region, VPC, zones, port range, lanes, etc.).
+2. NLB Pool Operator pre-creates cloud resources (NLB instances, EIPs, ServerGroups, Listeners) and generates a pool of **PortAllocation** CRs in `Available` state.
+3. When a Pod is created, the V3 plugin writes `alibabacloud.com/nlb-pool-name` annotation to the Pod during `OnPodAdded`.
+4. PA Controller detects the Pod annotation, selects an available PA, and claims it for the Pod via optimistic locking (writes `alibabacloud.com/nlb-pa-claim` annotation back to the Pod).
+5. PA Controller adds the Pod as a backend server to the corresponding ServerGroup, then writes endpoint information (EIP, listener ports) to `PA.Spec.Endpoints`.
+6. On the next `OnPodUpdated` cycle, the V3 plugin reads the PA claim annotation, fetches the PA, verifies binding (`PA.Status.Phase == Bound`), and builds `NetworkStatus` from `PA.Spec.Endpoints`.
+7. GameServer network becomes **Ready** with external access addresses available.
+
+**Comparison with V2:**
+
+| Aspect | V2 | V3 |
+|--------|----|----|
+| Architecture | Stateful | Stateless |
+| Resource Management | kruise-game manages directly | NLB Pool Operator manages |
+| Scalability | Single controller bottleneck | Multi-layer Operator, horizontally scalable |
+| Cloud Resource Lifecycle | Created on demand per Pod | Pre-created resource pool |
+| Dependency | NLB/EIP Operator | NLB Pool Operator (includes NLB/EIP Operator) |
+| Network Isolation | Via Service deletion | Via annotation-driven PA disable/enable |
+
+#### NLBPool CR Example
+
+```yaml
+apiVersion: nlbpool.alibabacloud.com/v1alpha1
+kind: NLBPool
+metadata:
+  name: my-game-pool
+  namespace: default
+spec:
+  # Region where the NLB instances will be created
+  region: cn-hangzhou
+  # VPC ID for the NLB instances
+  vpcId: vpc-bp1xxxxxxxxxxxxxxxxx
+  # Zone mappings (at least 2 zones required)
+  zoneMaps:
+    - zone: cn-hangzhou-j
+      vswitchId: vsw-bp1xxxxxxxxxxxxxxxxx
+    - zone: cn-hangzhou-k
+      vswitchId: vsw-bp1yyyyyyyyyyyyyyyyy
+  # Network access lanes (ISP lines)
+  lanes:
+    - name: bgp-1
+      ispType: BGP
+  # Port definitions
+  ports:
+    - name: game
+      protocol: TCP
+      containerPort: 8080
+  # Listener port range for allocation
+  portRange:
+    min: 30000
+    max: 30099
+  # Number of slots (port allocations) per NLB instance
+  slotsPerNLB: 100
+  # Minimum available NLB instances to maintain
+  minAvailableNLBs: 1
+  # Health check configuration
+  healthCheck:
+    enabled: false
+```
+
+**Key fields:**
+- `zoneMaps`: At least 2 availability zones required for NLB creation.
+- `lanes`: Defines ISP lines (e.g., BGP, China Telecom). Each lane creates a separate EIP.
+- `portRange`: The range of listener ports to allocate. Total slots = (max - min + 1).
+- `slotsPerNLB`: How many port allocations each NLB instance supports. Determines the number of NLB instances created = ceil(totalSlots / slotsPerNLB).
+- `minAvailableNLBs`: NLB Pool Operator ensures at least this many NLB instances have available slots.
+
+#### Network parameters
+
+NLBPoolName
+- Meaning: Name of the NLBPool CR to use for port allocation. The NLBPool must be pre-created in the same namespace as the GameServerSet.
+- Format: String. Must reference an existing NLBPool resource.
+- Whether to support changes: No
+
+#### GameServerSet Example
+
+```yaml
+apiVersion: game.kruise.io/v1alpha1
+kind: GameServerSet
+metadata:
+  name: gs-auto-nlbs-v3
+  namespace: default
+spec:
+  replicas: 3
+  network:
+    networkType: AlibabaCloud-AutoNLBs-V3
+    networkConf:
+      # Reference to the pre-created NLBPool CR
+      - name: NLBPoolName
+        value: "my-game-pool"
+  gameServerTemplate:
+    spec:
+      containers:
+        - image: registry.cn-hangzhou.aliyuncs.com/acs/minecraft-demo:1.12.2
+          name: gameserver
+          ports:
+            - containerPort: 8080
+              name: game
+              protocol: TCP
+```
+
+#### NetworkStatus Output
+
+After the PA is bound and endpoints are populated, the GameServer will show network status like:
+
+```bash
+kubectl get gs gs-auto-nlbs-v3-0 -o yaml
+```
+
+```yaml
+status:
+  networkStatus:
+    currentNetworkState: Ready
+    externalAddresses:
+      - endPoint: "47.96.xx.xx/bgp-1"
+        ip: "47.96.xx.xx"
+        ports:
+          - name: game
+            port: 30000
+            protocol: TCP
+    internalAddresses:
+      - ip: "172.16.0.100"
+        ports:
+          - name: game
+            port: 8080
+            protocol: TCP
+```
+
+**Field descriptions:**
+- `externalAddresses[].endPoint`: Format is `<EIP>/<lane-name>`. When multiple lanes are configured, they are comma-separated (e.g., `47.96.xx.xx/bgp-1,47.97.xx.xx/telecom-1`).
+- `externalAddresses[].ip`: The EIP address of the first lane.
+- `externalAddresses[].ports[].port`: The NLB listener port allocated to this Pod.
+- `internalAddresses[].ip`: The Pod's internal IP.
+- `internalAddresses[].ports[].port`: The container port the game server listens on.
+
+Players connect using the external EIP and listener port (e.g., `47.96.xx.xx:30000`).
 
 ---
 
@@ -1512,7 +1838,7 @@ Official deployment documentation: https://docs.aws.amazon.com/eks/latest/usergu
 #### Network Parameters
 
 NlbARNs
-- Meaning: Fill in the ARN of the nlb, you can fill in multiple, and nlb needs to be created in AWS in advance.
+- Meaning: Fill in the ARN of the nlb. Supports multiple NLB ARNs (comma-separated) for multi-NLB deployments. NLBs need to be created in AWS in advance.
 - Format: Separate each nlbARN with a comma. For example: arn:aws:elasticloadbalancing:us-east-1:888888888888:loadbalancer/net/aaa/3b332e6841f23870,arn:aws:elasticloadbalancing:us-east-1:000000000000:loadbalancer/net/bbb/5fe74944d794d27e
 - Support for change: Yes
 
@@ -1540,7 +1866,13 @@ NlbHealthCheck
 PortProtocols
 
 - Meaning: Ports and protocols exposed by the pod, supports specifying multiple ports/protocols.
-- Format: port1/protocol1,port2/protocol2,... (protocol should be uppercase)
+- Format: port1/protocol1,port2/protocol2,... (protocol should be uppercase). Supported protocols: TCP, UDP, TCPUDP (indicating simultaneous use of TCP and UDP).
+- Support for change: Yes
+
+AllocatePolicy
+
+- Meaning: NLB allocation strategy for multi-NLB deployments.
+- Format: "default" (first-fit, sequential) or "balanced" (select NLB with most free ports). Default: "default".
 - Support for change: Yes
 
 Fixed
@@ -1932,6 +2264,8 @@ HwCloud
 #### Plugin description
 
 HwCloud-ELB enables game servers to be accessed from the Internet by using Layer 4 Load Balancer (ELB) of Huawei Cloud. ELB is a type of Server Load Balancer (SLB). HwCloud-ELB uses different ports of the same ELB instance to forward Internet traffic to different game servers. The ELB instance only forwards traffic, but does not implement load balancing.
+
+- This plugin also supports Huawei Cloud EIP (Elastic IP) for public network access, providing flexible public IP allocation and binding capabilities.
 
 - This network plugin supports network isolation.
 
