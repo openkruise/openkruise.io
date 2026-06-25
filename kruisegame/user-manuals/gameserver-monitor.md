@@ -30,3 +30,13 @@ From top to bottom, it includes:
 - Second row: line chart showing the number of GameServers in each state over time
 - Third row: line chart showing the changes in deletion and update priorities for GameServers (can be filtered by namespace and gsName in the top-left corner)
 - Fourth and fifth rows: line charts showing the number of GameServers in different states for each GameServerSet (can be filtered by namespace and gssName in the top-left corner)
+
+#### GameServer Ready Duration
+
+Since v1.1.0, OKG records the time it takes for a GameServer to become Ready and Network Ready:
+
+- **Ready Duration**: Time from GameServer creation to the Ready state.
+- **Network Ready Duration**: Time from GameServer creation to the network becoming ready.
+
+These durations are recorded in the GameServer status and can be used to monitor provisioning performance and detect network plugin latency issues.
+

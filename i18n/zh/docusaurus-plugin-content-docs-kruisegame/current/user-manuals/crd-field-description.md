@@ -319,3 +319,16 @@ type GameServerStatus struct {
     LastTransitionTime metav1.Time         `json:"lastTransitionTime,omitempty"`
 }
 ```
+
+### GameServer Labels
+
+| Label | 描述 |
+|-------|------|
+| `game.kruise.io/node-name` | 自动从 Pod.spec.nodeName 同步。支持按节点查询 GameServer。 |
+
+### GameServer Annotations
+
+| Annotation | 描述 |
+|------------|------|
+| `game.kruise.io/gs-updating-containers` | 列出当前正在进行原地更新的容器名称（逗号分隔）。 |
+

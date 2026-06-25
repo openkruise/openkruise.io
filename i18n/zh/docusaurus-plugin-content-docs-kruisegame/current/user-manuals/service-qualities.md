@@ -334,3 +334,132 @@ demo-gs-2   Ready   None         0     0
 ![](/img/kruisegame/user-manuals/warning-ding.png)
 
 此外，OKG 未来会集成游戏服自动排障/恢复工具，进一步丰富游戏服的自动化运维能力。
+
+## 模板变量支持
+
+自 v1.1.0 起，`ServiceQualityAction` 中的字段（`opsState`、`deletionPriority`、`updatePriority`）支持 Go 模板语法渲染。这允许你根据探测脚本的标准输出动态计算字段值，实现更灵活的游戏服自动化管理。
+
+### 支持的模板变量
+
+| 变量 | 类型 | 说明 |
+|------|------|------|
+| `.Result` | string | 探测脚本的标准输出（stdout），前后空白已裁剪 |
+
+### 支持的比较函数
+
+以下比较函数可在模板表达式中使用。当两个参数都是合法的数字字符串时，执行数值比较；否则按字典序进行字符串比较。
+
+| 函数 | 说明 | 示例 |
+|------|------|------|
+| `eq(a, b)` | 相等 | `{{ if eq .Result "ready" }}...{{ end }}` |
+| `ne(a, b)` | 不相等 | `{{ if ne .Result "" }}...{{ end }}` |
+| `lt(a, b)` | 小于 | `{{ if lt .Result "50" }}...{{ end }}` |
+| `le(a, b)` | 小于等于 | `{{ if le .Result "100" }}...{{ end }}` |
+| `gt(a, b)` | 大于 | `{{ if gt .Result "2.0" }}...{{ end }}` |
+| `ge(a, b)` | 大于等于 | `{{ if ge .Result "1" }}...{{ end }}` |
+
+### 使用场景
+
+#### 根据 CPU 负载动态设置 opsState
+
+当系统负载超过阈值时，自动将游戏服标记为 `Maintaining`：
+
+```yaml
+serviceQualities:
+  - name: cpu-check
+    containerName: game-server
+    permanent: false
+    exec:
+      command: ["bash", "-c", "cat /proc/loadavg | awk '{print $1}'"]
+    serviceQualityAction:
+      - state: true
+        opsState: '{{ if gt .Result "2.0" }}Maintaining{{ else }}None{{ end }}'
+```
+
+#### 根据在线玩家数决定是否标记为可删除
+
+当在线玩家数为 0 时，将游戏服标记为 `WaitToBeDeleted`，使其在缩容时优先被删除：
+
+```yaml
+serviceQualities:
+  - name: player-count
+    containerName: game-server
+    permanent: false
+    exec:
+      command: ["bash", "-c", "/opt/get_player_count.sh"]
+    serviceQualityAction:
+      - state: true
+        opsState: '{{ if eq .Result "0" }}WaitToBeDeleted{{ else }}None{{ end }}'
+```
+
+#### 根据玩家数量动态设置删除优先级
+
+动态设置 `deletionPriority`，使玩家数更少的游戏服在缩容时优先被删除：
+
+```yaml
+serviceQualities:
+  - name: player-priority
+    containerName: game-server
+    permanent: false
+    exec:
+      command: ["bash", "-c", "/opt/get_player_count.sh"]
+    serviceQualityAction:
+      - state: true
+        deletionPriority: '{{ if eq .Result "0" }}100{{ else }}0{{ end }}'
+```
+
+### 完整 GameServerSet 配置示例
+
+```yaml
+apiVersion: game.kruise.io/v1alpha1
+kind: GameServerSet
+metadata:
+  name: game-with-template
+  namespace: default
+spec:
+  replicas: 3
+  updateStrategy:
+    rollingUpdate:
+      podUpdatePolicy: InPlaceIfPossible
+      maxUnavailable: 100%
+  gameServerTemplate:
+    spec:
+      containers:
+        - image: registry.cn-hangzhou.aliyuncs.com/gs-demo/gameserver:latest
+          name: game-server
+  serviceQualities:
+    - name: load-monitor
+      containerName: game-server
+      permanent: false
+      exec:
+        command: ["bash", "-c", "cat /proc/loadavg | awk '{print $1}'"]
+      serviceQualityAction:
+        # 当探测成功（exit code 0）时，执行模板渲染
+        - state: true
+          opsState: '{{ if gt .Result "3.0" }}HighLoad{{ else if gt .Result "1.5" }}Busy{{ else }}None{{ end }}'
+    - name: player-count
+      containerName: game-server
+      permanent: false
+      exec:
+        command: ["bash", "-c", "/opt/get_player_count.sh"]
+      serviceQualityAction:
+        - state: true
+          opsState: '{{ if eq .Result "0" }}WaitToBeDeleted{{ else }}None{{ end }}'
+          deletionPriority: '{{ if eq .Result "0" }}100{{ else }}0{{ end }}'
+```
+
+### 渲染失败行为
+
+- 如果模板字符串中不包含 `{{`，则原样返回（不尝试渲染）。
+- 如果模板解析失败（如语法错误），返回原始字符串，不做任何修改。
+- 如果模板执行失败（如引用了未定义的变量），返回原始字符串，不做任何修改。
+- 对于 `deletionPriority` 和 `updatePriority` 字段，渲染结果必须是合法的整数。如果不是数字，该动作将被跳过并记录错误日志。
+
+这种安全设计确保模板配置错误不会破坏现有的游戏服状态。
+
+### 注意事项
+
+- 模板语法遵循 Go 的 `text/template` 标准。高级用法请参考 [Go 模板文档](https://pkg.go.dev/text/template)。
+- `.Result` 的值是探测脚本的原始标准输出。请确保脚本输出干净的值，不包含多余的换行符或空格。
+- 数值比较支持浮点数字符串（如 `"2.5"`、`"0.01"`）。非数值字符串将回退到字典序比较。
+- 在 YAML 中使用模板表达式时，务必使用单引号包裹值，以避免 YAML 解析问题（如 `opsState: '{{ ... }}'`）。

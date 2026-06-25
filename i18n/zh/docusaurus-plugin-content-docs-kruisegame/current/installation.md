@@ -22,13 +22,13 @@ $ helm install kruise openkruise/kruise --version 1.8.0
 ### 安装Kruise-Game
 
 ```shell
-$ helm install kruise-game openkruise/kruise-game --version 1.0.0
+$ helm install kruise-game openkruise/kruise-game --version 1.1.0
 ```
 
 ### 升级 Kruise-Game
 
 ```shell
-$ helm upgrade kruise-game openkruise/kruise-game --version 1.0.0 [--force]
+$ helm upgrade kruise-game openkruise/kruise-game --version 1.1.0 [--force]
 ```
 
 ### 可选项
@@ -49,7 +49,7 @@ $ helm upgrade kruise-game openkruise/kruise-game --version 1.0.0 [--force]
 | `kruiseGame.apiServerQpsBurst`             | kruise-game-controller-manager 每秒发送到 API server的最大突发查询数 | `10`                             |
 | `replicaCount`                             | kruise-game 的期望副本数                                      | `1`                              |
 | `image.repository`                         | kruise-game 的镜像仓库                                       | `openkruise/kruise-game-manager` |
-| `image.tag`                                | kruise-game 的镜像版本                                       | `v0.10.0`                        |
+| `image.tag`                                | kruise-game 的镜像版本                                       | `v1.1.0`                        |
 | `image.pullPolicy`                         | kruise-game 的镜像拉取策略                                     | `Always`                         |
 | `serviceAccount.annotations`               | kruise-game的serviceAccount注解                            | ` `                              |
 | `resources.limits.cpu`                     | kruise-game容器的CPU资源限制                                   | `500m`                           |
@@ -76,6 +76,14 @@ $ helm upgrade kruise-game openkruise/kruise-game --version 1.0.0 [--force]
 | `certificates.certManager.issuer.name`     | issuer 的名称                                              | `kruise-ca`                      |
 | `certificates.certManager.issuer.kind`     | issuer 类型                                               | `ClusterIssuer`                  |
 | `certificates.certManager.issuer.group`    | issuer的API group                                        | `cert-manager.io`                |
+| `kruiseGame.logging.format`                | 日志输出格式 (console/json)                                            | `console`                        |
+| `kruiseGame.logging.jsonPreset`            | JSON 日志预设 (kibana/otel)                                            | `kibana`                         |
+| `kruiseGame.logging.enableOTelLogs`        | 是否启用 OTLP 日志导出                                                | `false`                          |
+| `kruiseGame.tracing.enabled`               | 是否启用 OpenTelemetry 分布式追踪                                      | `false`                          |
+| `kruiseGame.tracing.collectorEndpoint`     | OTel Collector gRPC 端点地址                                            | `localhost:4317`                 |
+| `kruiseGame.tracing.collectorToken`        | OTLP 认证 Token                                                      | `""`                             |
+| `kruiseGame.tracing.samplingRate`          | 追踪采样率 (0.0-1.0)                                                | `1.0`                            |
+| `kruiseGame.pprof.bindAddress`             | pprof 绑定地址（空值表示禁用）                                            | `""`                             |
 
 使用 `--set key=value[,key=value]` 参数指定每个参数到 `helm install`,例如,
 

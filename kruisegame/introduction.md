@@ -33,6 +33,7 @@ OpenKruiseGame(OKG) has the following core features:
 * Automated O&M (service quality)
 * Independent of cloud service providers
 * Complex game server orchestration
+* Built-in observability (structured logging and distributed tracing)
 
 ## Users of OpenKruiseGame(OKG)
 

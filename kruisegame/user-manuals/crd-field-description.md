@@ -365,3 +365,15 @@ type GameServerStatus struct {
 }
 ```
 
+### GameServer Labels
+
+| Label | Description |
+|-------|-------------|
+| `game.kruise.io/node-name` | Automatically synced from Pod.spec.nodeName. Enables querying GameServers by node. |
+
+### GameServer Annotations
+
+| Annotation | Description |
+|------------|-------------|
+| `game.kruise.io/gs-updating-containers` | Lists containers currently undergoing InPlace update (comma-separated). |
+
