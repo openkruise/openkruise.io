@@ -172,61 +172,7 @@ spec:
 
 </Tabs>
 
-## Advanced Features
-
-The sandbox claiming functionality of `OpenKruise Agents` includes a series of advanced features that can be used
-through `E2B` and `SandboxClaim` respectively.
-
-### Sandbox Timeout
-
-You can specify a timeout when claiming a sandbox. The sandbox will be automatically deleted after reaching the timeout.
-
-<Tabs>
-  <TabItem value="E2B" label="E2B">
-
-```python
-from e2b_code_interpreter import Sandbox
-
-Sandbox.create(template="demo", timeout=600)  # timeout in seconds
-```
-
-By default, sandboxes will be automatically deleted after reaching the timeout. If you want the sandbox to never timeout
-and persist indefinitely, you can use the never-timeout extension.
-
-> `e2b.agents.kruise.io/never-timeout` is an OpenKruise Agents extension field and
-> will not be added to the Sandbox resource as metadata.
-
-```python
-from e2b_code_interpreter import Sandbox
-
-sbx = Sandbox.create(template="demo", metadata={
-    "e2b.agents.kruise.io/never-timeout": "true"
-})
-```
-
-  </TabItem>
-  <TabItem value="SandboxClaim" label="SandboxClaim">
-
-```yaml
-apiVersion: agents.kruise.io/v1alpha1
-kind: SandboxClaim
-metadata:
-  name: demo-sandbox-claim
-  namespace: default
-spec:
-  templateName: demo
-  # RFC 3339 format absolute time to delete the sandboxes claimed。
-  # It is recommended to set this field programmatically, for example: 
-  # sbc.Spec.ShutdownTime = metav1.NewTime(time.Now().Add(5 * time.Minute))
-  shutdownTime: 2026-02-06T07:33:30Z
-```
-
-  </TabItem>
-
-</Tabs>
-
-> **Auto Pause** (transitioning automatically into `paused` on expiry) has been moved to
-> [Pausing and Resuming](./pause-resume.md#auto-pause).
+## Customize Sandbox Config
 
 ### Adding Metadata
 
@@ -283,7 +229,7 @@ added to the `Sandbox` resource only.
   </TabItem>
 </Tabs>
 
-### Image Replacement
+### Change Image
 
 You can specify an image to replace the sandbox's main container image when claiming a sandbox. This is very useful in
 some reinforcement learning scenarios. The specific behavior of this feature is:
@@ -345,7 +291,7 @@ The specific behavior of this feature is:
   feature is beta and enabled by default. Kubernetes 1.27 to 1.32 can also be used if the `InPlacePodVerticalScaling`
   feature gate is enabled.
 - This feature is controlled by the `SandboxInPlaceResourceResize` feature gate, which is enabled by default.
-:::
+  :::
 
 <Tabs>
   <TabItem value="E2B" label="E2B">
@@ -384,13 +330,13 @@ spec:
   </TabItem>
 </Tabs>
 
-### Dynamic Persistent Volume Mounting
+### Ondemand Persistent Volume Mounting
 
 You can dynamically mount a PV when claiming a sandbox, specifying a separate mount volume for each sandbox. This
 capability relies on `agent-runtime` injected into the Sandbox
 and will also affect delivery efficiency to some extent.
 
-> ⚠️ To use dynamic persistent volume mounting, you must configure `csi` in the `runtimes` field of your SandboxSet. For
+> ⚠️ To use ondemand persistent volume mounting, you must configure `csi` in the `runtimes` field of your SandboxSet. For
 > details, refer to the [Runtime Injection](./runtime-injection.md) documentation.
 
 <Tabs>
@@ -470,6 +416,102 @@ Field description:
 
   </TabItem>
 </Tabs>
+
+### Environment Variables
+
+You can inject environment variables into the sandbox when claiming. These environment variables will be passed to
+`agent-runtime` for initialization. This feature requires `agent-runtime` to be enabled.
+
+> ⚠️ Note: Currently, environment variables injected through this feature only take effect for the E2B `commands.run`
+> API. They are not available as process-level environment variables in the sandbox's main container.
+
+<Tabs>
+  <TabItem value="E2B" label="E2B">
+
+```python
+from e2b_code_interpreter import Sandbox
+
+sbx = Sandbox.create(template="demo", envs={
+    "MY_ENV": "value",
+    "API_KEY": "sk-xxx"
+})
+```
+
+  </TabItem>
+  <TabItem value="SandboxClaim" label="SandboxClaim">
+
+```yaml
+apiVersion: agents.kruise.io/v1alpha1
+kind: SandboxClaim
+metadata:
+  name: demo-sandbox-claim
+  namespace: default
+spec:
+  templateName: demo
+  envVars:
+    MY_ENV: "value"
+    API_KEY: "sk-xxx"
+```
+
+  </TabItem>
+</Tabs>
+
+## Advanced Features
+
+The sandbox claiming functionality of `OpenKruise Agents` includes a series of advanced features that can be used
+through `E2B` and `SandboxClaim` respectively.
+
+### Sandbox Timeout
+
+You can specify a timeout when claiming a sandbox. The sandbox will be automatically deleted after reaching the timeout.
+
+<Tabs>
+  <TabItem value="E2B" label="E2B">
+
+```python
+from e2b_code_interpreter import Sandbox
+
+Sandbox.create(template="demo", timeout=600)  # timeout in seconds
+```
+
+By default, sandboxes will be automatically deleted after reaching the timeout. If you want the sandbox to never timeout
+and persist indefinitely, you can use the never-timeout extension.
+
+> `e2b.agents.kruise.io/never-timeout` is an OpenKruise Agents extension field and
+> will not be added to the Sandbox resource as metadata.
+
+```python
+from e2b_code_interpreter import Sandbox
+
+sbx = Sandbox.create(template="demo", metadata={
+    "e2b.agents.kruise.io/never-timeout": "true"
+})
+```
+
+  </TabItem>
+  <TabItem value="SandboxClaim" label="SandboxClaim">
+
+```yaml
+apiVersion: agents.kruise.io/v1alpha1
+kind: SandboxClaim
+metadata:
+  name: demo-sandbox-claim
+  namespace: default
+spec:
+  templateName: demo
+  # RFC 3339 format absolute time to delete the sandboxes claimed。
+  # It is recommended to set this field programmatically, for example: 
+  # sbc.Spec.ShutdownTime = metav1.NewTime(time.Now().Add(5 * time.Minute))
+  shutdownTime: 2026-02-06T07:33:30Z
+```
+
+  </TabItem>
+
+</Tabs>
+
+> **Auto Pause** (transitioning automatically into `paused` on expiry) has been moved to
+> [Pausing and Resuming](./pause-resume.md#auto-pause).
+
 
 ### Skip agent-runtime Initialization
 
@@ -570,45 +612,6 @@ sbx = Sandbox.create(template="some-template", timeout=300, metadata={
 > `e2b.agents.kruise.io/reserve-failed-sandbox-for` and `e2b.agents.kruise.io/reserve-failed-sandbox` are mutually
 > exclusive. If both are present, `reserve-failed-sandbox-for` takes precedence.
 :::
-
-### Environment Variables
-
-You can inject environment variables into the sandbox when claiming. These environment variables will be passed to
-`agent-runtime` for initialization. This feature requires `agent-runtime` to be enabled.
-
-> ⚠️ Note: Currently, environment variables injected through this feature only take effect for the E2B `commands.run`
-> API. They are not available as process-level environment variables in the sandbox's main container.
-
-<Tabs>
-  <TabItem value="E2B" label="E2B">
-
-```python
-from e2b_code_interpreter import Sandbox
-
-sbx = Sandbox.create(template="demo", envs={
-    "MY_ENV": "value",
-    "API_KEY": "sk-xxx"
-})
-```
-
-  </TabItem>
-  <TabItem value="SandboxClaim" label="SandboxClaim">
-
-```yaml
-apiVersion: agents.kruise.io/v1alpha1
-kind: SandboxClaim
-metadata:
-  name: demo-sandbox-claim
-  namespace: default
-spec:
-  templateName: demo
-  envVars:
-    MY_ENV: "value"
-    API_KEY: "sk-xxx"
-```
-
-  </TabItem>
-</Tabs>
 
 ### Wait Ready Timeout
 
