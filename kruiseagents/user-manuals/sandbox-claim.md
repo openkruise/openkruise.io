@@ -548,6 +548,29 @@ spec:
   </TabItem>
 </Tabs>
 
+:::note
+**v0.3.0+**: The E2B SDK supports a more flexible variant `e2b.agents.kruise.io/reserve-failed-sandbox-for` that accepts
+fine-grained duration values instead of a boolean:
+
+| Value             | Behavior                                                |
+|-------------------|---------------------------------------------------------|
+| `"never"`         | Do not reserve failed sandboxes (same as default)       |
+| `"forever"`       | Reserve indefinitely (same as `reserve-failed-sandbox: "true"`) |
+| `"600s"`, `"10m"` | Reserve for the specified Go duration, then auto-delete |
+
+```python
+from e2b_code_interpreter import Sandbox
+
+# Reserve a failed sandbox for 10 minutes instead of forever
+sbx = Sandbox.create(template="some-template", timeout=300, metadata={
+    "e2b.agents.kruise.io/reserve-failed-sandbox-for": "10m"
+})
+```
+
+> `e2b.agents.kruise.io/reserve-failed-sandbox-for` and `e2b.agents.kruise.io/reserve-failed-sandbox` are mutually
+> exclusive. If both are present, `reserve-failed-sandbox-for` takes precedence.
+:::
+
 ### Environment Variables
 
 You can inject environment variables into the sandbox when claiming. These environment variables will be passed to
@@ -624,3 +647,32 @@ spec:
 
   </TabItem>
 </Tabs>
+
+### Return Sandbox IP (v0.3.0+)
+
+:::note
+**v0.3.0+**: This feature is available from OpenKruise Agents v0.3.0 and requires the E2B SDK. It is not supported
+via `SandboxClaim` CRD.
+:::
+
+When claiming a sandbox, you can opt in to receiving the sandbox Pod's IP address in the create response. This is
+useful when you need to connect to the sandbox via its in-cluster IP directly, bypassing the traffic proxy.
+
+> `e2b.agents.kruise.io/return-sandbox-ip` is an OpenKruise Agents extension field and will not be added to the
+> Sandbox resource as metadata.
+
+```python
+from e2b_code_interpreter import Sandbox
+
+sbx = Sandbox.create(template="demo", metadata={
+    "e2b.agents.kruise.io/return-sandbox-ip": "true"
+})
+
+# The sandbox IP is returned in the metadata of the SandboxInfo object
+# under the key "e2b.agents.kruise.io/sandbox-ip"
+info = sbx.get_info()
+pod_ip = info.metadata.get("e2b.agents.kruise.io/sandbox-ip")
+print("Sandbox Pod IP:", pod_ip)
+```
+
+> The returned IP is the Pod IP inside the cluster. It is only routable from within the same Kubernetes cluster.

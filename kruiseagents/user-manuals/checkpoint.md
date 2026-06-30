@@ -279,6 +279,51 @@ const newSandbox = await Sandbox.create(snapshot.snapshotId)
 </TabItem>
 </Tabs>
 
+#### Sandbox Naming (v0.3.0+)
+
+:::note
+**v0.3.0+**: Custom sandbox naming is only supported when creating a sandbox from a Checkpoint (clone path).
+It is **not** available when claiming from a SandboxSet warm pool — the request will be rejected.
+:::
+
+When creating a sandbox from a Checkpoint, you can control the resulting sandbox name instead of relying on a
+randomly generated one.
+
+> `e2b.agents.kruise.io/sandbox-name` and `e2b.agents.kruise.io/sandbox-generate-name` are OpenKruise Agents
+> extension fields and will not be added to the Sandbox resource as metadata.
+
+**Explicit name:**
+
+Use `e2b.agents.kruise.io/sandbox-name` to assign a fixed name. The name must be a valid
+[Kubernetes DNS-1123 label](https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#dns-label-names)
+(at most 63 characters, lowercase alphanumeric or `-`, must start and end with an alphanumeric character).
+
+```python
+from e2b_code_interpreter import Sandbox
+
+new_sbx = Sandbox.create(template=snapshot.snapshot_id, metadata={
+    "e2b.agents.kruise.io/sandbox-name": "my-restored-sandbox"
+})
+```
+
+**Generated name:**
+
+Use `e2b.agents.kruise.io/sandbox-generate-name` to assign a name prefix. A random 5-character suffix will be
+appended automatically (e.g., `fork-` → `fork-abcde`). The prefix must end with `-` and follow the same DNS-1123
+label rules.
+
+```python
+from e2b_code_interpreter import Sandbox
+
+new_sbx = Sandbox.create(template=snapshot.snapshot_id, metadata={
+    "e2b.agents.kruise.io/sandbox-generate-name": "fork-"
+})
+# new_sbx.sandbox_id might be "default--fork-x7k9a"
+```
+
+> `sandbox-name` and `sandbox-generate-name` are **mutually exclusive**. If both are specified, the request will be
+> rejected with an error.
+
 See [Claiming Sandboxes](./sandbox-claim.md) for the full set of claim-time options.
 
 ## Checkpoint vs. SandboxTemplate / SandboxSet
