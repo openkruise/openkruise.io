@@ -81,7 +81,7 @@ function getNextVersionName() {
         id: 'rollouts',
         path: 'rollouts',
         routeBasePath: 'rollouts',
-        include: ['**/*.md'],
+        include: ['**/*.{md,mdx}'],
         sidebarPath: require.resolve('./sidebars-rollouts.js'),
         editUrl: ({locale, docPath}) => {
           if (locale !== 'en') {
@@ -99,7 +99,7 @@ function getNextVersionName() {
         id: 'kruisegame',
         path: 'kruisegame',
         routeBasePath: 'kruisegame',
-        include: ['**/*.md'],
+        include: ['**/*.{md,mdx}'],
         sidebarPath: require.resolve('./sidebars-kruisegame.js'),
         editUrl: ({locale, docPath}) => {
           if (locale !== 'en') {
@@ -117,7 +117,7 @@ function getNextVersionName() {
         id: 'kruiseagents',
         path: 'kruiseagents',
         routeBasePath: 'kruiseagents',
-        include: ['**/*.md'],
+        include: ['**/*.{md,mdx}'],
         sidebarPath: require.resolve('./sidebars-kruiseagents.js'),
         editUrl: ({locale, docPath}) => {
           if (locale !== 'en') {
