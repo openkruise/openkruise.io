@@ -150,58 +150,7 @@ spec:
 
 </Tabs>
 
-## 高级功能
-
-`OpenKruise Agents` 的沙箱获取功能包含一系列高级功能，可以分别通过 `E2B` 与 `SandboxClaim` 使用。
-
-### 沙箱超时
-
-你可以在获取沙箱时指定超时时间。沙箱在达到超时时间后，会被自动删除。
-
-<Tabs>
-  <TabItem value="E2B" label="E2B">
-
-```python
-from e2b_code_interpreter import Sandbox
-
-Sandbox.create(template="demo", timeout=600)  # timeout in seconds
-```
-
-默认情况下，沙箱在达到超时时间后会被自动删除。如果你希望沙箱永不超时、持续运行，可以使用永不超时扩展。
-> `e2b.agents.kruise.io/never-timeout` 为 OpenKruise Agents 扩展字段，
-> 不会作为元数据添加到 Sandbox 资源上。
-
-```python
-from e2b_code_interpreter import Sandbox
-
-sbx = Sandbox.create(template="demo", metadata={
-    "e2b.agents.kruise.io/never-timeout": "true"
-})
-```
-
-  </TabItem>
-  <TabItem value="SandboxClaim" label="SandboxClaim">
-
-```yaml
-apiVersion: agents.kruise.io/v1alpha1
-kind: SandboxClaim
-metadata:
-  name: demo-sandbox-claim
-  namespace: default
-spec:
-  templateName: demo
-  # RFC 3339 format absolute time to delete the sandboxes claimed。
-  # It is recommended to set this field programmatically, for example: 
-  # sbc.Spec.ShutdownTime = metav1.NewTime(time.Now().Add(5 * time.Minute))
-  shutdownTime: 2026-02-06T07:33:30Z
-```
-
-  </TabItem>
-
-</Tabs>
-
-> **自动休眠**（到期自动进入 `paused` 状态）相关用法已迁移至 [休眠与唤醒](./pause-resume.md#自动休眠auto-pause)。
-
+## 定制沙箱配置
 ### 添加元数据
 
 你可以在获取沙箱的同时，为 `Sandbox` 资源添加一些元数据（labels 或 annotations），以将多次获取的沙箱进行归类或添加一些自定义信息。
@@ -311,7 +260,7 @@ spec:
 - 原地资源调整依赖 Kubernetes 的 Pod 原地资源调整能力。建议使用 Kubernetes 1.33 及以上版本，该能力已进入 beta
   并默认开启。Kubernetes 1.27 到 1.32 也可以使用，但需要启用 `InPlacePodVerticalScaling` feature gate。
 - 该功能由 `SandboxInPlaceResourceResize` feature gate 控制，默认开启。
-:::
+  :::
 
 <Tabs>
   <TabItem value="E2B" label="E2B">
@@ -350,12 +299,12 @@ spec:
   </TabItem>
 </Tabs>
 
-### 动态挂载持久化卷
+### 按需挂载持久化卷
 
 你可以在获取沙箱时动态挂载一个 PV，为每个沙箱指定单独的挂载卷。这个能力依赖注入到 Sandbox 中的 `agent-runtime`
 ，并且也会一定程度上影响交付效率。
 
-> ⚠️ 要使用动态持久化卷挂载功能，你必须在 SandboxSet 的 `runtimes` 字段中配置 `csi`。详情请参考[运行时注入](./runtime-injection.md)文档。
+> ⚠️ 要使用按需持久化卷挂载功能，你必须在 SandboxSet 的 `runtimes` 字段中配置 `csi`。详情请参考[运行时注入](./runtime-injection.md)文档。
 
 <Tabs>
   <TabItem value="E2B" label="E2B">
@@ -433,6 +382,98 @@ spec:
 
   </TabItem>
 </Tabs>
+
+
+### 环境变量注入
+
+你可以在获取沙箱时注入环境变量。这些环境变量将传递给 `agent-runtime` 用于初始化。该功能需要启用 `agent-runtime`。
+
+> ⚠️ 注意：目前通过该功能注入的环境变量仅对 E2B 的 `commands.run` 接口生效，不会作为沙箱主容器的进程级环境变量生效。
+
+<Tabs>
+  <TabItem value="E2B" label="E2B">
+
+```python
+from e2b_code_interpreter import Sandbox
+
+sbx = Sandbox.create(template="demo", envs={
+    "MY_ENV": "value",
+    "API_KEY": "sk-xxx"
+})
+```
+
+  </TabItem>
+  <TabItem value="SandboxClaim" label="SandboxClaim">
+
+```yaml
+apiVersion: agents.kruise.io/v1alpha1
+kind: SandboxClaim
+metadata:
+  name: demo-sandbox-claim
+  namespace: default
+spec:
+  templateName: demo
+  envVars:
+    MY_ENV: "value"
+    API_KEY: "sk-xxx"
+```
+
+  </TabItem>
+</Tabs>
+
+## 高级功能
+
+`OpenKruise Agents` 的沙箱获取功能包含一系列高级功能，可以分别通过 `E2B` 与 `SandboxClaim` 使用。
+
+### 沙箱超时
+
+你可以在获取沙箱时指定超时时间。沙箱在达到超时时间后，会被自动删除。
+
+<Tabs>
+  <TabItem value="E2B" label="E2B">
+
+```python
+from e2b_code_interpreter import Sandbox
+
+Sandbox.create(template="demo", timeout=600)  # timeout in seconds
+```
+
+默认情况下，沙箱在达到超时时间后会被自动删除。如果你希望沙箱永不超时、持续运行，可以使用永不超时扩展。
+> `e2b.agents.kruise.io/never-timeout` 为 OpenKruise Agents 扩展字段，
+> 不会作为元数据添加到 Sandbox 资源上。
+
+```python
+from e2b_code_interpreter import Sandbox
+
+sbx = Sandbox.create(template="demo", metadata={
+    "e2b.agents.kruise.io/never-timeout": "true"
+})
+```
+
+  </TabItem>
+  <TabItem value="SandboxClaim" label="SandboxClaim">
+
+```yaml
+apiVersion: agents.kruise.io/v1alpha1
+kind: SandboxClaim
+metadata:
+  name: demo-sandbox-claim
+  namespace: default
+spec:
+  templateName: demo
+  # RFC 3339 format absolute time to delete the sandboxes claimed。
+  # It is recommended to set this field programmatically, for example: 
+  # sbc.Spec.ShutdownTime = metav1.NewTime(time.Now().Add(5 * time.Minute))
+  shutdownTime: 2026-02-06T07:33:30Z
+```
+
+  </TabItem>
+
+</Tabs>
+
+> **自动休眠**（到期自动进入 `paused` 状态）相关用法已迁移至 [休眠与唤醒](./pause-resume.md#自动休眠auto-pause)。
+
+
 
 ### 跳过 agent-runtime 初始化
 
@@ -531,42 +572,6 @@ sbx = Sandbox.create(template="some-template", timeout=300, metadata={
 > 若两者同时存在，`reserve-failed-sandbox-for` 优先。
 :::
 
-### 环境变量注入
-
-你可以在获取沙箱时注入环境变量。这些环境变量将传递给 `agent-runtime` 用于初始化。该功能需要启用 `agent-runtime`。
-
-> ⚠️ 注意：目前通过该功能注入的环境变量仅对 E2B 的 `commands.run` 接口生效，不会作为沙箱主容器的进程级环境变量生效。
-
-<Tabs>
-  <TabItem value="E2B" label="E2B">
-
-```python
-from e2b_code_interpreter import Sandbox
-
-sbx = Sandbox.create(template="demo", envs={
-    "MY_ENV": "value",
-    "API_KEY": "sk-xxx"
-})
-```
-
-  </TabItem>
-  <TabItem value="SandboxClaim" label="SandboxClaim">
-
-```yaml
-apiVersion: agents.kruise.io/v1alpha1
-kind: SandboxClaim
-metadata:
-  name: demo-sandbox-claim
-  namespace: default
-spec:
-  templateName: demo
-  envVars:
-    MY_ENV: "value"
-    API_KEY: "sk-xxx"
-```
-
-  </TabItem>
-</Tabs>
 
 ### 等待就绪超时
 
