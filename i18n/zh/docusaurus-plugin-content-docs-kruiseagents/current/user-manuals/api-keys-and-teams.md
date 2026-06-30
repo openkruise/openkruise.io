@@ -78,6 +78,7 @@ API Key 决定了：
 | `GET`    | `/teams`         | 列出当前用户可见的 Team                                       |
 | `GET`    | `/api-keys`      | 列出当前用户所属 Team 的所有 API Key                            |
 | `POST`   | `/api-keys`      | 为当前用户所属 Team 创建 API Key（管理员可以为其他 Team 创建）            |
+| `GET`    | `/api-keys/compatible` | 获取当前 API Key 的 E2B SDK 兼容格式（从 **v0.4.0** 起支持）   |
 | `DELETE` | `/api-keys/{id}` | 按 UUID 删除 API Key                                    |
 
 所有请求都必须带上请求头 `X-API-KEY: <your-api-key>`。
@@ -245,6 +246,102 @@ resp.raise_for_status()
 
   </TabItem>
 </Tabs>
+
+## E2B SDK Key 格式兼容性
+
+:::info 版本支持
+本节描述的兼容性功能从 **v0.4.0** 版本开始支持。
+:::
+
+### 背景
+
+从 **E2B SDK >= 2.25.0** 开始，SDK 在发送请求之前会对 API Key 进行客户端格式校验，仅接受匹配 `e2b_[0-9a-f]+`
+模式的 Key。不符合该格式的 Key——例如老版本的 UUID 格式 Key 或用户自定义的 admin Key（如 `admin-987654321`）——会在到达服务端之前
+就被 SDK **直接拒绝**。
+
+为此，`sandbox-manager` v0.4.0 引入了兼容层，将原始 Key 编码为 SDK 兼容的 `e2b_...` 格式，同时服务端的存储与鉴权语义完全不变。
+
+### 增量 Key（v0.4.0+）
+
+从 **v0.4.0** 起，`POST /api-keys` 返回的所有 API Key 已自动编码为 `e2b_[0-9a-f]+` 格式，无需任何额外操作——新 Key
+同时兼容新旧版本的 E2B SDK。
+
+### 存量 Key（v0.4.0 之前）
+
+v0.4.0 之前创建的 API Key（包括用户自定义的 admin Key）仍然完全有效。存量 Key 与新的 SDK 兼容 Key **功能上完全等价**——它们
+鉴权到的是同一份凭证，授权行为没有任何差异。你可以继续在旧版 E2B SDK（< 2.25.0）上使用存量 Key，不存在任何兼容性问题。
+
+如需在 E2B SDK >= 2.25.0 上使用存量 Key，有以下三种方式：
+
+#### 方式一：通过 API 获取兼容 Key
+
+使用现有 Key 调用新增的 `GET /api-keys/compatible` 接口，响应会返回当前凭证的 SDK 兼容 `e2b_...` 形式：
+
+<Tabs>
+  <TabItem value="curl" label="curl">
+
+```shell
+curl -sS \
+  -H "X-API-KEY: ${E2B_API_KEY}" \
+  "https://api.your.domain.com/api-keys/compatible"
+```
+
+  </TabItem>
+  <TabItem value="python" label="Python requests">
+
+```python
+import os
+import requests
+
+resp = requests.get(
+    "https://api.your.domain.com/api-keys/compatible",
+    headers={"X-API-KEY": os.environ["E2B_API_KEY"]},
+    timeout=10,
+)
+resp.raise_for_status()
+print(resp.json()["key"])  # e2b_...
+```
+
+  </TabItem>
+</Tabs>
+
+将老 Key 替换为返回的 `e2b_...` Key 即可。两种形式鉴权到的是同一份凭证。
+
+#### 方式二：通过 `keys.py` 本地转换
+
+如果不方便调用 API，可以使用
+[`keys.py`](https://github.com/openkruise/agents/blob/master/sdk/customized_e2b/kruise_agents/keys.py)
+工具在本地将存量 Key 转换为兼容格式：
+
+```python
+from keys import encode_for_e2b_sdk
+
+compatible_key = encode_for_e2b_sdk("your-legacy-key")
+print(compatible_key)  # e2b_6f6b616701...
+```
+
+> 本地转换的结果与服务端返回的编码 Key 完全一致。该转换是确定性的，不需要网络访问。
+
+#### 方式三：通过 `patch_e2b` 禁用 SDK Key 校验
+
+在使用 OpenKruise Agents 私有协议时（参见 [E2B SDK 接入文档](./e2b-client.md)），可以向 `patch_e2b` 传入
+`validate_key=False` 来完全跳过 SDK 侧的 Key 格式校验：
+
+```python
+from kruise_agents.patch_e2b import patch_e2b
+patch_e2b(https=True, validate_key=False)
+```
+
+这样存量 Key 无需转换即可直接使用。该方式仅适用于 E2B SDK >= 2.25.0。
+
+### Key 等价性
+
+存量原始 Key 与 SDK 兼容的 `e2b_...` Key **完全等价、可互换使用**：
+
+- 两种形式在服务端鉴权到的是同一份凭证。
+- 两种形式均可在 E2B SDK < 2.25.0 上正常使用（该版本不做客户端 Key 格式校验）。
+- 服务端同时接受两种形式的 `X-API-KEY` 请求头——对于 `e2b_...` 格式的 Key，服务端会透明地解码回原始 Key 后再查找存储。
+- 无需对存量 Key 做任何迁移，可以按自己的节奏逐步采用新格式。
 
 ## 错误码
 

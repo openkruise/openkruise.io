@@ -84,6 +84,7 @@ accordingly. For example `GET /api-keys` becomes `GET https://your.domain.com/kr
 | `GET`    | `/teams`              | List teams the current user can see                        |
 | `GET`    | `/api-keys`           | List API keys owned by the current user's team             |
 | `POST`   | `/api-keys`           | Create a new API key for the current user's team (or another team if admin) |
+| `GET`    | `/api-keys/compatible`| Get the E2B SDK-compatible form of the current API key (since **v0.4.0**) |
 | `DELETE` | `/api-keys/{id}`      | Delete the API key with the given UUID                     |
 
 Every request must set the header `X-API-KEY: <your-api-key>`.
@@ -252,6 +253,109 @@ resp.raise_for_status()
 
   </TabItem>
 </Tabs>
+
+## E2B SDK Key Format Compatibility
+
+:::info Version
+The compatibility features described in this section are available since **v0.4.0**.
+:::
+
+### Background
+
+Starting from **E2B SDK >= 2.25.0**, the SDK performs client-side validation on API keys before sending any request.
+Only keys matching the pattern `e2b_[0-9a-f]+` are accepted. Keys that do not match this format — such as legacy
+UUID keys or custom admin keys like `admin-987654321` — are rejected by the SDK **before** they ever reach the server.
+
+To address this, `sandbox-manager` v0.4.0 introduces a compatibility layer that encodes raw API keys into the
+SDK-compatible `e2b_...` format while keeping the server-side storage and authentication semantics completely unchanged.
+
+### New Keys (v0.4.0+)
+
+Starting from **v0.4.0**, all API keys returned by `POST /api-keys` are automatically encoded in the
+`e2b_[0-9a-f]+` format. No additional action is required — new keys work with both old and new E2B SDK versions
+out of the box.
+
+### Legacy Keys (Pre-v0.4.0)
+
+API keys created before v0.4.0 (including user-defined admin keys) remain fully valid. These legacy keys are
+**functionally equivalent** to the new SDK-compatible keys — they authenticate to the same credential and have no
+difference in authorization behavior. You can continue using legacy keys with older E2B SDK versions (< 2.25.0)
+without any compatibility issues.
+
+If you need to use legacy keys with E2B SDK >= 2.25.0, there are three options:
+
+#### Option 1: Retrieve a Compatible Key via API
+
+Call the new `GET /api-keys/compatible` endpoint with your existing key. The response returns the SDK-compatible
+`e2b_...` form of your current credential:
+
+<Tabs>
+  <TabItem value="curl" label="curl">
+
+```shell
+curl -sS \
+  -H "X-API-KEY: ${E2B_API_KEY}" \
+  "https://api.your.domain.com/api-keys/compatible"
+```
+
+  </TabItem>
+  <TabItem value="python" label="Python requests">
+
+```python
+import os
+import requests
+
+resp = requests.get(
+    "https://api.your.domain.com/api-keys/compatible",
+    headers={"X-API-KEY": os.environ["E2B_API_KEY"]},
+    timeout=10,
+)
+resp.raise_for_status()
+print(resp.json()["key"])  # e2b_...
+```
+
+  </TabItem>
+</Tabs>
+
+Replace your old key with the returned `e2b_...` key. Both forms authenticate to the same underlying credential.
+
+#### Option 2: Local Conversion via `keys.py`
+
+For environments where calling the API is not convenient, you can convert legacy keys locally using the
+[`keys.py`](https://github.com/openkruise/agents/blob/master/sdk/customized_e2b/kruise_agents/keys.py) utility:
+
+```python
+from keys import encode_for_e2b_sdk
+
+compatible_key = encode_for_e2b_sdk("your-legacy-key")
+print(compatible_key)  # e2b_6f6b616701...
+```
+
+> This produces the exact same encoded key that the server would return. The conversion is deterministic and does
+> not require network access.
+
+#### Option 3: Disable SDK Key Validation via `patch_e2b`
+
+When using the OpenKruise Agents private protocol (see [E2B SDK integration](./e2b-client.md)), you can disable
+the SDK-side key validation entirely by passing `validate_key=False` to `patch_e2b`:
+
+```python
+from kruise_agents.patch_e2b import patch_e2b
+patch_e2b(https=True, validate_key=False)
+```
+
+This skips the E2B SDK key format check so that legacy keys can be used as-is. This approach only works with
+E2B SDK >= 2.25.0.
+
+### Key Equivalence
+
+Legacy raw keys and SDK-compatible `e2b_...` keys are **fully interchangeable**:
+
+- Both forms authenticate to the same underlying credential on the server.
+- Both forms work with E2B SDK < 2.25.0 (which does not perform client-side key validation).
+- The server accepts either form in the `X-API-KEY` header — it transparently decodes `e2b_...` keys back to the
+  raw key before looking up storage.
+- No migration of existing keys is required. You can adopt the new format at your own pace.
 
 ## Error Handling
 
