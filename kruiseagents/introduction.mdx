@@ -1,0 +1,50 @@
+import SubProjectHero from '@site/src/components/SubProjectHero';
+
+<SubProjectHero
+  title="Kruise Agents"
+  tagline="AI agent workload management on Kubernetes."
+  github="https://github.com/openkruise/agents"
+  accent="#0969da"
+/>
+
+## Overview
+
+OpenKruise Agents provides best practices for managing AI agent workloads in Kubernetes. It is a sub-project of the OpenKruise workload project under the Cloud Native Computing Foundation (CNCF), specifically tailored for the AI agent domain. OpenKruise Agents accelerates AI agent deployment and makes it easily accessible to both AI algorithm scientists and infrastructure engineers.
+
+OpenKruise Agents is designed to support the following AI agent workloads:
+1. Isolated environments for diverse tool usage by AI agents
+2. Network-accessible and persistent cloud environments for research notebooks and development workspaces
+3. Reinforcement learning jobs featuring human-in-the-loop and open-world training
+4. Big data training jobs requiring rapid startup times and robust fault tolerance
+
+## Why OpenKruise Agents
+
+OpenKruise Agents delivers vendor-neutral sandboxes with the following key characteristics:
+
+1. Rapid and cost-effective resource provisioning through resource pooling and dynamic resizing
+2. Sandbox hibernation and checkpoint capabilities encompassing memory, read/write layer data, and GPU memory
+3. User identity and session management with efficient traffic routing, minimizing dependence on Kubernetes services
+4. Comprehensive API and SDK support, including both Kubernetes CRD APIs and E2B APIs
+
+## Relationship with Sig Agent-Sandbox
+
+OpenKruise Agents offers high-level APIs for sandbox management, enabling efficient resource provisioning, user management, and traffic routing. Under the hood, OpenKruise Agents includes built-in sandbox APIs and implementations, while maintaining compatibility with Sig Agent-Sandbox when available.
+
+## Contributing
+
+You are warmly welcome to hack on OpenKruise Agents. We have prepared a detailed guide [CONTRIBUTING.md](https://github.com/openkruise/agents/blob/master/CONTRIBUTING.md).
+
+## Community
+
+Active communication channels:
+
+- Slack: [OpenKruise channel](https://kubernetes.slack.com/channels/openkruise) (*English*)
+- DingTalk: Search group ID `23330762` (*Chinese*)
+- WeChat: Search user `openkruise` to be invited to the group by a bot (*Chinese*)
+- Bi-weekly community meeting (APAC, *Chinese*):
+    - Every other Thursday 19:30
+      GMT+8 (Asia/Shanghai), [Calendar](https://calendar.google.com/calendar/u/2?cid=MjdtbDZucXA2bjVpNTFyYTNpazV2dW8ybHNAZ3JvdXAuY2FsZW5kYXIuZ29vZ2xlLmNvbQ)
+    - Join meeting (DingTalk): Search group ID `23330762` (*Chinese*)
+    - [Meeting notes and agenda](https://shimo.im/docs/gXqmeQOYBehZ4vqo)
+- Bi-weekly community meeting (*English*): TBD
+    - [Meeting link (Zoom)](https://us02web.zoom.us/j/87059136652?pwd=NlI4UThFWXVRZkxIU0dtR1NINncrQT09)

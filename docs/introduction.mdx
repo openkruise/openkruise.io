@@ -1,0 +1,74 @@
+---
+title: Introduction
+slug: /
+---
+import SubProjectHero from '@site/src/components/SubProjectHero';
+
+<SubProjectHero
+  title="OpenKruise"
+  tagline="Automate application management on Kubernetes."
+  github="https://github.com/openkruise/kruise"
+  accent="var(--ifm-color-primary)"
+/>
+
+Welcome to OpenKruise!
+
+OpenKruise is an extended component suite for Kubernetes, which mainly focuses on automated management of large-scale applications, such as *deployment, upgrade, ops and availability protection*.
+
+Most features provided by OpenKruise are built primarily based on CRD extensions. They can work in pure Kubernetes clusters without any other dependencies.
+
+## Key features
+
+- **Advanced Workloads**
+
+    OpenKruise contains a set of advanced workloads, such as CloneSet, Advanced StatefulSet, Advanced DaemonSet, BroadcastJob, SidecarSet and UnitedDeployment.
+
+    They all support not only the basic features which are similar to the original Workloads in Kubernetes, but also more advanced abilities like in-place update, configurable scale/upgrade strategies, parallel operations.
+
+    In-place Update is a new methodology to update container images and even environments.
+    It only restarts the specific container with the new image and the Pod will not be recreated, which leads to much faster update process and much less side effects on other sub-systems such as scheduler, CNI or CSI.
+
+- **Advanced Day-2 Operations**
+    
+    OpenKruise also provides high-level operation features to help you manage your applications for better efficiency, better resilience and cost-saving.
+
+    These operations include image prewarming, container inplace restarts, workload distribution, pod probe & marking and many more. For example, you can use ImagePullJob to download any images on any nodes you want. Or you can even require one or more containers in a running Pod to be restarted.
+
+- **High-availability Protection**
+
+    OpenKruise also makes a lot of efforts on protecting your application availability.
+
+    It can protect your Kubernetes resources from cascade deletion, including CRD, Namespace, and almost all kinds of Workloads.
+
+    Compared to Kubernetes native PDB which only protects Pod Eviction, PodUnavailableBudget can protect Pod Deletion, Eviction, Update and many other voluntary disruption scenarios.
+
+- **Advanced Application Operations**
+
+    OpenKruise also provides many advanced operation capabilities to help you manage your applications better.
+
+    You can use ImagePullJob to pull certain images on any range of nodes, or specify one or more containers in a Pod to be restarted in-place.
+
+## Comparison
+
+### OpenKruise vs. Kubernetes
+
+Simply speaking, OpenKruise is an auxiliary extension for Kubernetes.
+
+Kubernetes itself already provides some application deployment management features, such as some [basic workloads](https://kubernetes.io/docs/concepts/workloads/).
+But for large-scale applications and clusters, these basic features are far from enough.
+
+OpenKruise can be easily installed in any Kubernetes cluster, and it makes up for the shortcomings of Kubernetes in application deployment, upgrade, protection, operations and other fields.
+
+### OpenKruise vs. Platform-as-a-Service (PaaS)
+
+OpenKruise is **not** a PaaS platform, and it **will not** provide any PaaS-level capabilities.
+
+It is a standard extension suite for Kubernetes, currently including `kruise-manager` and `kruise-daemon` components.
+PaaS platforms can use the extension capabilities provided by OpenKruise to make application deployment and management processes more powerful and efficient.
+
+## What's Next
+
+Next, we recommend you to:
+
+- Get started with [installing OpenKruise](./installation.md).
+- Learn about the [system architecture](./core-concepts/architecture.md) of OpenKruise.
