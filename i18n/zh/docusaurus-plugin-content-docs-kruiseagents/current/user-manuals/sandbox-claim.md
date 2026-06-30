@@ -509,6 +509,28 @@ spec:
   </TabItem>
 </Tabs>
 
+:::note
+**v0.3.0+**：E2B SDK 支持更灵活的变体 `e2b.agents.kruise.io/reserve-failed-sandbox-for`，接受细粒度的时间值而非布尔值：
+
+| 值                | 行为                                                |
+|-------------------|-----------------------------------------------------|
+| `"never"`         | 不保留失败沙箱（与默认行为一致）                      |
+| `"forever"`       | 永久保留（与 `reserve-failed-sandbox: "true"` 等效） |
+| `"600s"`、`"10m"` | 按指定的 Go duration 保留，到期后自动删除             |
+
+```python
+from e2b_code_interpreter import Sandbox
+
+# 保留失败沙箱 10 分钟，而非永久保留
+sbx = Sandbox.create(template="some-template", timeout=300, metadata={
+    "e2b.agents.kruise.io/reserve-failed-sandbox-for": "10m"
+})
+```
+
+> `e2b.agents.kruise.io/reserve-failed-sandbox-for` 与 `e2b.agents.kruise.io/reserve-failed-sandbox` 互斥。
+> 若两者同时存在，`reserve-failed-sandbox-for` 优先。
+:::
+
 ### 环境变量注入
 
 你可以在获取沙箱时注入环境变量。这些环境变量将传递给 `agent-runtime` 用于初始化。该功能需要启用 `agent-runtime`。
@@ -581,3 +603,28 @@ spec:
 
   </TabItem>
 </Tabs>
+
+### 返回沙箱 IP（v0.3.0+）
+
+:::note
+**v0.3.0+**：该功能从 OpenKruise Agents v0.3.0 开始提供，需要通过 E2B SDK 使用，`SandboxClaim` CRD 不支持此功能。
+:::
+
+获取沙箱时，可以选择在创建响应中获取沙箱 Pod 的 IP 地址。这在需要通过集群内 IP 直接连接沙箱、绕过流量代理的场景中非常有用。
+
+> `e2b.agents.kruise.io/return-sandbox-ip` 为 OpenKruise Agents 扩展字段，不会作为元数据添加到 Sandbox 资源上。
+
+```python
+from e2b_code_interpreter import Sandbox
+
+sbx = Sandbox.create(template="demo", metadata={
+    "e2b.agents.kruise.io/return-sandbox-ip": "true"
+})
+
+# 沙箱 IP 通过 SandboxInfo 对象的 metadata 返回，key 为 "e2b.agents.kruise.io/sandbox-ip"
+info = sbx.get_info()
+pod_ip = info.metadata.get("e2b.agents.kruise.io/sandbox-ip")
+print("沙箱 Pod IP:", pod_ip)
+```
+
+> 返回的 IP 是集群内的 Pod IP，仅在同一个 Kubernetes 集群内可路由。

@@ -260,6 +260,48 @@ const newSandbox = await Sandbox.create(snapshot.snapshotId)
 </TabItem>
 </Tabs>
 
+#### 沙箱命名（v0.3.0+）
+
+:::note
+**v0.3.0+**：自定义沙箱命名仅在从 Checkpoint 创建沙箱（克隆路径）时支持。
+从 SandboxSet 预热池获取沙箱时**不可用**——请求将被拒绝。
+:::
+
+从 Checkpoint 创建沙箱时，可以控制新沙箱的名称，而不必依赖系统自动生成的随机名称。
+
+> `e2b.agents.kruise.io/sandbox-name` 和 `e2b.agents.kruise.io/sandbox-generate-name` 为 OpenKruise Agents
+> 扩展字段，不会作为元数据添加到 Sandbox 资源上。
+
+**固定名称：**
+
+使用 `e2b.agents.kruise.io/sandbox-name` 为沙箱指定一个固定名称。名称必须是合法的
+[Kubernetes DNS-1123 标签](https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#dns-label-names)
+（最多 63 个字符，小写字母数字或 `-`，必须以字母数字开头和结尾）。
+
+```python
+from e2b_code_interpreter import Sandbox
+
+new_sbx = Sandbox.create(template=snapshot.snapshot_id, metadata={
+    "e2b.agents.kruise.io/sandbox-name": "my-restored-sandbox"
+})
+```
+
+**自动生成名称：**
+
+使用 `e2b.agents.kruise.io/sandbox-generate-name` 指定名称前缀，系统会自动追加一个 5 位的随机后缀
+（如 `fork-` → `fork-abcde`）。前缀必须以 `-` 结尾，并遵循相同的 DNS-1123 标签规则。
+
+```python
+from e2b_code_interpreter import Sandbox
+
+new_sbx = Sandbox.create(template=snapshot.snapshot_id, metadata={
+    "e2b.agents.kruise.io/sandbox-generate-name": "fork-"
+})
+# new_sbx.sandbox_id 可能是 "default--fork-x7k9a"
+```
+
+> `sandbox-name` 和 `sandbox-generate-name` **互斥**。若同时指定两者，请求将被拒绝并返回错误。
+
 完整的 claim 选项请参考 [获取沙箱](./sandbox-claim.md)。
 
 ## Checkpoint vs. SandboxTemplate / SandboxSet
