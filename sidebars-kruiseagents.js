@@ -32,6 +32,7 @@ module.exports = {
                 'user-manuals/pause-resume',
                 'user-manuals/runtime-injection',
                 'user-manuals/checkpoint',
+                'user-manuals/commit',
                 'user-manuals/sandbox-update',
                 'user-manuals/api-keys-and-teams',
             ],
