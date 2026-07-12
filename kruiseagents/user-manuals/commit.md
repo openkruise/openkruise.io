@@ -45,11 +45,26 @@ Before creating a `Commit`, make sure that:
 
 - OpenKruise Agents controller is installed and running.
 - The `Commit` CRD (`commits.agents.kruise.io`) is registered in the cluster.
-- The target Sandbox Pod is running and uses the container runtime supported by the commit job.
+- The target Sandbox Pod is running and scheduled, and the target container is managed by containerd. Its container ID in Pod status must use the `containerd://` prefix; Docker-only or CRI-O-only nodes are not supported.
+- The target node exposes the containerd socket at `/run/containerd/containerd.sock`. The commit Job mounts `/run/containerd/` from the target node and connects to this socket with nerdctl.
 - The sandbox controller is configured with `AGENT_JOB_IMAGE`, and that image contains the `commit-job` binary and `nerdctl`.
 - The target registry is reachable from the target node.
-- If the registry uses a private CA or custom TLS configuration, the node's containerd registry configuration is prepared under `/etc/containerd/certs.d`.
-- If the registry requires authentication, a Docker config Secret exists in the same namespace as the `Commit`.
+- For registry TLS verification, the commit Job uses nerdctl's default hosts directory `/etc/containerd/certs.d`, which is mounted from the target node. For a registry using a private CA, custom endpoint, or mirror configuration, prepare the corresponding `hosts.toml` and CA files under `/etc/containerd/certs.d/<registry-host>/` on every node that may run the target Sandbox Pod.
+- If the registry requires authentication, a Docker config Secret exists in the same namespace as the `Commit`, and the registry user has push permission to the destination repository.
+
+## Commit Job Image
+
+The `commit-job` binary source is under `cmd/commit-job`, with the execution logic in `pkg/controller/commit/job`. It is packaged as a standalone image by `dockerfiles/commit-job.Dockerfile`; the image contains both `/commit-job` and the `nerdctl` binary.
+
+You can build a local image with:
+
+```shell
+docker build -f dockerfiles/commit-job.Dockerfile \
+  --build-arg NERDCTL_BRANCH=v2.0.0 \
+  -t openkruise/commit-job:<version> .
+```
+
+Set the resulting image as `AGENT_JOB_IMAGE` on the sandbox controller.
 
 ## Commit CRD
 
@@ -62,11 +77,11 @@ The `Commit` resource (`agents.kruise.io/v1alpha1`, short name `cmt`) has the fo
 | `spec.image` | `string` | Required. Destination image reference to push, for example `registry.example.com/team/my-env:v1`. Immutable after creation. |
 | `spec.squashLayer` | `int32` | Optional. Reserved for future layer squash optimization. `0` means no squashing. Immutable after creation. |
 | `spec.timeoutSeconds` | `int32` | Optional. Maximum running time of the commit Job. `0` means no timeout. Immutable after creation. |
-| `spec.ttl` | `string` | Optional. How long to retain the `Commit` object after it reaches `Succeeded` or `Failed`, such as `24h` or `168h`. Unset means no auto-deletion. |
+| `spec.ttl` | `duration` | Optional. How long to retain the `Commit` object after it reaches `Succeeded` or `Failed`, such as `24h` or `168h`. Unset means no auto-deletion. |
 | `spec.registryAuth.secrets` | `[]string` | Optional. Names of `kubernetes.io/dockerconfigjson` Secrets in the same namespace. The first valid Secret is mounted into the commit Job for `nerdctl push`. |
 | `status.phase` | `string` | `Pending`, `Running`, `Succeeded`, or `Failed`. |
 | `status.commitID` | `string` | Commit identifier. Currently set to the `Commit` object name after the commit starts. |
-| `status.conditions` | `[]Condition` | Detailed condition information from the commit Job. Condition types include `CommitContainer` and `PushCommittedImage`. |
+| `status.conditions` | `[]Condition` | Detailed condition information from the commit Job. Common condition types include `CommitContainer` and `PushCommittedImage`; `PullBaseImage` is reserved for future use. |
 | `status.startTime` | `Time` | Time when the commit Job starts. |
 | `status.completionTime` | `Time` | Time when the commit reaches a terminal phase. |
 
@@ -74,7 +89,7 @@ The `Commit` resource (`agents.kruise.io/v1alpha1`, short name `cmt`) has the fo
 
 Create a `Commit` object that points to the running Sandbox Pod and the target container. If the target registry requires authentication, also reference a Docker config Secret via `spec.registryAuth.secrets`.
 
-First create the registry auth Secret in the same namespace as the `Commit`:
+First create the registry auth Secret in the same namespace as the `Commit`. The registry user configured in this Secret must have push permission to the destination image repository:
 
 ```shell
 kubectl create secret docker-registry push-secret \
