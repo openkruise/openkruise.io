@@ -5,7 +5,7 @@ title: Java Client
 ## Dependency Import
 
 This package is not yet published to Maven Central. You need to download the project
-from [client-java](https://github.com/openkruise/agents-api/tree/master/k8s/java) and manually build the JAR file.
+from [client-java](https://github.com/openkruise/agents-api/tree/master/runtime/java) and manually build the JAR file.
 
 ---
 
@@ -24,6 +24,11 @@ runtime/
 ├── filesystem/                   # Filesystem
 │   ├── Filesystem.java           # listDir / read / write / makeDir / remove / watchDir / move
 │   └── WatchHandle.java          # Directory watch handle: stop
+├── codeinterpreter/              # Code Interpreter
+│   ├── CodeInterpreter.java      # runCode / runCodeStreaming
+│   ├── Execution.java            # Execution result: results / logs / error
+│   ├── RunCodeRequest.java       # Execution request: code / language / options
+│   └── ...                       # Event types: StdoutEvent / StderrEvent / ResultEvent, etc.
 ├── utils/                        # Utilities
 │   ├── ConnectStreamReader.java  # Connect Protocol streaming response parser
 │   └── MessageStream.java        # Streaming message interface (hasNext / next / close)
@@ -84,7 +89,7 @@ try (RuntimeClient client = RuntimeClient.newFromK8s("default", "your-sandbox-na
 - kubeconfig resolution order: `KUBECONFIG` environment variable → `~/.kube/config` → in-cluster config
 
 Full
-example: [K8sDirectConnectExample.java](https://github.com/openkruise/agents-api/blob/master/k8s/java/src/main/java/io/openkruise/agents/client/examples/runtime/K8sDirectConnectExample.java)
+example: [K8sDirectConnectExample.java](https://github.com/openkruise/agents-api/blob/master/runtime/java/src/main/java/io/openkruise/agents/client/examples/K8sDirectConnectExample.java)
 
 ---
 
@@ -102,10 +107,11 @@ capabilities.
 
 ### Fields
 
-| Field      | Type         | Description              |
-|------------|--------------|--------------------------|
-| `commands` | `Commands`   | Command execution module |
-| `files`    | `Filesystem` | Filesystem module        |
+| Field             | Type              | Description              |
+|-------------------|-------------------|--------------------------|
+| `commands`        | `Commands`        | Command execution module |
+| `files`           | `Filesystem`      | Filesystem module        |
+| `codeInterpreter` | `CodeInterpreter` | Code interpreter module  |
 
 ### Methods
 
@@ -138,10 +144,46 @@ routing is involved.
 | `.headers(Map<String, String>)` | Merge multiple custom headers                                                      |
 | `.addHeader(String, String)`    | Add a single custom header                                                         |
 | `.requestTimeoutMs(long)`       | HTTP timeout (ms), defaults to 60000                                               |
+| `.sandboxPort(int)`             | envd port, defaults to 49983 (used in request header `e2b-sandbox-port`)           |
+| `.codeInterpreterPort(int)`     | Code interpreter port, defaults to 49999                                           |
+| `.urlBuilder(URLBuilder)`       | URL builder, supports E2B and Runtime modes                                        |
+| `.httpClient(OkHttpClient)`     | Custom OkHttpClient for all HTTP requests (proxy, SSL, timeout, etc.)              |
 
 ### Priority
 
 `runtimeUrl` (explicit override) > `scheme` + `domain` assembly > defaults
+
+### Custom HTTP Client
+
+You can provide a custom `OkHttpClient` to configure proxy, SSL certificates, timeouts, interceptors, etc.:
+
+```java
+import okhttp3.OkHttpClient;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
+import java.util.concurrent.TimeUnit;
+
+// Build a custom client with proxy, SSL, timeout, etc.
+OkHttpClient customClient = new OkHttpClient.Builder()
+    .proxy(new Proxy(Proxy.Type.HTTP, new InetSocketAddress("proxy.host", 8080)))
+    .connectTimeout(30, TimeUnit.SECONDS)
+    .readTimeout(120, TimeUnit.SECONDS)
+    .build();
+
+RuntimeConfig config = new RuntimeConfig.Builder()
+    .domain("sandbox-gateway.sandbox-system.svc:7788")
+    .scheme("http")
+    .httpClient(customClient)  // Use custom client
+    .build();
+
+try (RuntimeClient client = RuntimeClient.create("sandbox-id", config)) {
+    CommandResult res = client.commands.run("uname -a");
+    System.out.println(res.getStdout());
+}
+```
+
+**Note**: When an `httpClient` is provided, it will be used directly for all HTTP requests. Streaming clients will be
+derived from it with `readTimeout=0` to support long-running operations.
 
 ---
 
@@ -301,7 +343,134 @@ wh.stop();
 
 ---
 
-## 5. Exception System
+## 5. Code Interpreter
+
+Execute code inside the sandbox via `client.codeInterpreter`. Supports Python, JavaScript, TypeScript, R, Java, Bash,
+and more.
+
+### Methods
+
+| Method                                                       | Description                                                          |
+|--------------------------------------------------------------|----------------------------------------------------------------------|
+| `runCode(String code)`                                       | Execute Python code (default language)                               |
+| `runCode(String code, String language)`                      | Execute code in the specified language                               |
+| `runCode(String code, String language, RunCodeOptions)`      | Execute code (with options: working directory, env vars, etc.)       |
+| `runCode(RunCodeRequest request)`                            | Execute code (full request object)                                   |
+| `runCodeStreaming(RunCodeRequest, Consumer<ExecutionEvent>)` | Stream code execution, event-by-event callback (low memory usage)    |
+| `createCodeContext(String cwd, String language)`             | Create a code execution context (set working directory and language) |
+| `removeCodeContext(String contextId)`                        | Remove the specified code execution context                          |
+| `listCodeContexts()`                                         | List all code execution contexts                                     |
+
+### RunCodeOptions
+
+```java
+RunCodeOptions opts = new RunCodeOptions()
+    .setCwd("/tmp")                              // working directory
+    .setEnvVars(Map.of("DEBUG", "true"))         // environment variables
+    .setTimeoutMs(30000L)                        // timeout (ms)
+    .setContextId("context-id");                 // use specified context (mutually exclusive with language)
+```
+
+### Context (Code Execution Context)
+
+Context maintains an isolated code execution environment, each with its own working directory and language.
+
+| Field      | Type     | Description          |
+|------------|----------|----------------------|
+| `id`       | `String` | Context ID           |
+| `language` | `String` | Programming language |
+| `cwd`      | `String` | Working directory    |
+
+**Note**: When using Context, the `language` parameter of `runCode()` is ignored (the server requires `context_id` and
+`language` to be mutually exclusive).
+
+### Execution (Result)
+
+| Field            | Type             | Description                                       |
+|------------------|------------------|---------------------------------------------------|
+| `results`        | `List<Result>`   | List of execution results (text/html/image, etc.) |
+| `logs`           | `Logs`           | Log output (stdout/stderr)                        |
+| `error`          | `ExecutionError` | Execution error (if any)                          |
+| `executionCount` | `Integer`        | Execution count                                   |
+
+### Result (Output Format)
+
+Supports multiple output formats, similar to Jupyter notebook:
+
+| Field        | Type                  | Description         |
+|--------------|-----------------------|---------------------|
+| `text`       | `String`              | Plain text output   |
+| `html`       | `String`              | HTML output         |
+| `markdown`   | `String`              | Markdown            |
+| `png`        | `String` (base64)     | PNG image           |
+| `jpeg`       | `String` (base64)     | JPEG image          |
+| `svg`        | `String`              | SVG graphic         |
+| `json`       | `Map<String, Object>` | JSON data           |
+| `mainResult` | `boolean`             | Whether main result |
+
+### Examples
+
+```java
+// Execute Python code
+Execution result = client.codeInterpreter.runCode("print('Hello from Python!')");
+for (String line : result.getLogs().getStdout()) {
+    System.out.println(line);
+}
+
+// Execute JavaScript code
+Execution jsResult = client.codeInterpreter.runCode(
+    "console.log('Hello from JS!');",
+    RunCodeLanguage.JAVASCRIPT.getValue()
+);
+
+// Execute with options (environment variables)
+RunCodeOptions opts = new RunCodeOptions()
+    .setEnvVars(Map.of("API_KEY", "secret"));
+Execution result2 = client.codeInterpreter.runCode(
+    "import os; print(os.environ.get('API_KEY'))",
+    RunCodeLanguage.PYTHON.getValue(),
+    opts
+);
+
+// Use Context to set working directory
+Context ctx = client.codeInterpreter.createCodeContext("/tmp", "python");
+System.out.println("Context created: " + ctx);
+
+RunCodeOptions ctxOpts = new RunCodeOptions()
+    .setContextId(ctx.getId());
+Execution ctxResult = client.codeInterpreter.runCode(
+    "import os; print('CWD:', os.getcwd())",
+    RunCodeLanguage.PYTHON.getValue(),
+    ctxOpts
+);
+
+// Clean up Context
+client.codeInterpreter.removeCodeContext(ctx.getId());
+
+// List all Contexts
+List<Context> contexts = client.codeInterpreter.listCodeContexts();
+for (Context c : contexts) {
+    System.out.println(c);
+}
+
+// Get main result text
+String mainText = result2.getText();
+System.out.println("Main result: " + mainText);
+
+// Streaming execution (event-by-event processing)
+RunCodeRequest request = new RunCodeRequest("for i in range(5): print(i)", "python");
+client.codeInterpreter.runCodeStreaming(request, event -> {
+    if (event instanceof StdoutEvent) {
+        System.out.print(((StdoutEvent) event).getText());
+    } else if (event instanceof ErrorEvent) {
+        System.err.println("Error: " + ((ErrorEvent) event).getError());
+    }
+});
+```
+
+---
+
+## 6. Exception System
 
 | Exception Class         | Description                                                                    |
 |-------------------------|--------------------------------------------------------------------------------|
@@ -310,7 +479,7 @@ wh.stop();
 
 ---
 
-## 6. Resource Management
+## 7. Resource Management
 
 `RuntimeClient` implements `AutoCloseable`. `close()` releases:
 

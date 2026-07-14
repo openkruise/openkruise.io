@@ -4,7 +4,7 @@ title: Java 客户端
 
 ## 依赖导入
 
-该包暂未发布到 Maven Central，需要从 [client-java](https://github.com/openkruise/agents-api/tree/master/k8s/java)
+该包暂未发布到 Maven Central，需要从 [e2b/java](https://github.com/openkruise/agents-api/tree/master/e2b/java)
 手动下载项目并打包成 JAR 文件使用。
 
 ---
@@ -31,7 +31,7 @@ try (sandbox) {
 }
 ```
 
-完整示例：[生命周期管理](https://github.com/openkruise/agents-api/blob/master/k8s/java/src/main/java/io/openkruise/agents/client/examples/e2b/SandboxApiManagerExample.java) | [命令操作](https://github.com/openkruise/agents-api/blob/master/k8s/java/src/main/java/io/openkruise/agents/client/examples/e2b/SandboxCommandsExample.java) | [文件操作](https://github.com/openkruise/agents-api/blob/master/k8s/java/src/main/java/io/openkruise/agents/client/examples/e2b/SandboxFilesExample.java)
+完整示例：[生命周期管理](https://github.com/openkruise/agents-api/blob/master/e2b/java/src/main/java/io/openkruise/agents/client/examples/SandboxApiManagerExample.java) | [命令操作](https://github.com/openkruise/agents-api/blob/master/e2b/java/src/main/java/io/openkruise/agents/client/examples/SandboxCommandsExample.java) | [文件操作](https://github.com/openkruise/agents-api/blob/master/e2b/java/src/main/java/io/openkruise/agents/client/examples/SandboxFilesExample.java) | [代码解释器](https://github.com/openkruise/agents-api/blob/master/e2b/java/src/main/java/io/openkruise/agents/client/examples/SandboxCodeInterpreterExample.java)
 
 ---
 
@@ -103,6 +103,7 @@ api.kill(id);
 | `sandboxID`          | Sandbox ID                  |
 | `commands`           | 命令执行模块（`Commands`）          |
 | `files`              | 文件系统模块（`Filesystem`）        |
+| `codeInterpreter`    | 代码解释器模块（`CodeInterpreter`）  |
 | `getSandboxURL()`    | Sandbox envd URL            |
 | `getConfig()`        | 连接配置                        |
 | `getRuntimeClient()` | 底层 `RuntimeClient`          |
@@ -310,20 +311,22 @@ wh.stop();
 
 ### Builder 方法
 
-| 方法                              | 说明                                   |
-|---------------------------------|--------------------------------------|
-| `.apiKey(String)`               | API Key，写入请求头 `X-API-Key`            |
-| `.accessToken(String)`          | Access Token，写入请求头 `X-Access-Token`  |
-| `.domain(String)`               | 域名，默认 `your.domain.com`              |
-| `.scheme(String)`               | URL scheme，默认 `https`                |
-| `.protocol(Protocol)`           | 路由协议，默认 `Protocol.NATIVE`            |
-| `.apiURL(String)`               | **最高优先级**：直接覆盖 API base URL          |
-| `.sandboxBaseURL(String)`       | **最高优先级**：直接覆盖 sandbox envd base URL |
-| `.requestTimeoutMs(long)`       | HTTP 请求超时（毫秒），默认 60000               |
-| `.port(int)`                    | envd 端口，默认 49983                     |
-| `.debug(boolean)`               | 调试模式，kill/setTimeout 跳过实际调用          |
-| `.headers(Map<String, String>)` | 自定义请求头                               |
-| `.addHeader(String, String)`    | 添加单个自定义请求头                           |
+| 方法                              | 说明                                        |
+|---------------------------------|-------------------------------------------|
+| `.apiKey(String)`               | API Key，写入请求头 `X-API-Key`                 |
+| `.accessToken(String)`          | Access Token，写入请求头 `X-Access-Token`       |
+| `.domain(String)`               | 域名，默认 `your.domain.com`                   |
+| `.scheme(String)`               | URL scheme，默认 `https`                     |
+| `.protocol(Protocol)`           | 路由协议，默认 `Protocol.NATIVE`                 |
+| `.apiURL(String)`               | **最高优先级**：直接覆盖 API base URL               |
+| `.sandboxBaseURL(String)`       | **最高优先级**：直接覆盖 sandbox envd base URL      |
+| `.requestTimeoutMs(long)`       | HTTP 请求超时（毫秒），默认 60000                    |
+| `.port(int)`                    | envd 端口，默认 49983                          |
+| `.codeInterpreterPort(int)`     | 代码解释器端口，默认 49999                          |
+| `.debug(boolean)`               | 调试模式，kill/setTimeout 跳过实际调用               |
+| `.headers(Map<String, String>)` | 自定义请求头                                    |
+| `.addHeader(String, String)`    | 添加单个自定义请求头                                |
+| `.httpClient(OkHttpClient)`     | 自定义 OkHttpClient，用于所有 HTTP 请求（代理、SSL、超时等） |
 
 ### 优先级
 
@@ -337,3 +340,182 @@ Builder 构造时自动读取以下环境变量作为默认值，之后可通过
 |---------------|------------|
 | `E2B_API_KEY` | 默认 API Key |
 | `E2B_DOMAIN`  | 默认域名       |
+
+### 自定义 HTTP 客户端
+
+你可以提供自定义的 `OkHttpClient` 来配置代理、SSL 证书、超时、拦截器等：
+
+```java
+import okhttp3.OkHttpClient;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
+import java.util.concurrent.TimeUnit;
+
+// 构建自定义客户端，配置代理、SSL、超时等
+OkHttpClient customClient = new OkHttpClient.Builder()
+    .proxy(new Proxy(Proxy.Type.HTTP, new InetSocketAddress("proxy.host", 8080)))
+    .connectTimeout(30, TimeUnit.SECONDS)
+    .readTimeout(120, TimeUnit.SECONDS)
+    .build();
+
+ConnectionConfig config = new ConnectionConfig.Builder()
+    .httpClient(customClient)  // 使用自定义客户端
+    .build();
+
+SandboxApi api = new SandboxApi(config);
+Sandbox sandbox = api.create("code-interpreter");
+```
+
+**注意**：当提供 `httpClient` 时，它将直接用于所有 HTTP 请求（包括控制面 API 调用和数据面 Runtime 连接）。
+
+---
+
+## 六、代码解释器（CodeInterpreter）
+
+通过 `sandbox.codeInterpreter` 在沙箱内执行代码。支持 Python、JavaScript、TypeScript、R、Java、Bash 等多种语言。
+
+### 方法一览
+
+| 方法                                                           | 说明                    |
+|--------------------------------------------------------------|-----------------------|
+| `runCode(String code)`                                       | 执行 Python 代码（默认语言）    |
+| `runCode(String code, String language)`                      | 执行指定语言的代码             |
+| `runCode(String code, String language, RunCodeOptions)`      | 执行代码（带选项：工作目录、环境变量等）  |
+| `runCode(RunCodeRequest request)`                            | 执行代码（完整请求对象）          |
+| `runCodeStreaming(RunCodeRequest, Consumer<ExecutionEvent>)` | 流式执行代码，逐事件回调          |
+| `createCodeContext(String cwd, String language)`             | 创建代码执行上下文（可设置工作目录和语言） |
+| `removeCodeContext(String contextId)`                        | 删除指定的代码执行上下文          |
+| `listCodeContexts()`                                         | 列出所有代码执行上下文           |
+
+### RunCodeOptions
+
+```java
+RunCodeOptions opts = new RunCodeOptions()
+    .setCwd("/tmp")                              // 工作目录
+    .setEnvVars(Map.of("DEBUG", "true"))         // 环境变量
+    .setTimeoutMs(30000L)                        // 超时时间（毫秒）
+    .setContextId("context-id");                 // 使用指定的上下文（与 language 互斥）
+```
+
+### Context（代码执行上下文）
+
+Context 用于维护独立的代码执行环境，每个 Context 有自己的工作目录和语言环境。
+
+| 字段         | 类型       | 说明     |
+|------------|----------|--------|
+| `id`       | `String` | 上下文 ID |
+| `language` | `String` | 编程语言   |
+| `cwd`      | `String` | 工作目录   |
+
+**注意**：使用 Context 时，`runCode()` 的 `language` 参数会被忽略（服务端要求 `context_id` 和 `language` 互斥）。
+
+### Execution（执行结果）
+
+| 字段               | 类型               | 说明                          |
+|------------------|------------------|-----------------------------|
+| `results`        | `List<Result>`   | 执行结果列表（text/html/image 等格式） |
+| `logs`           | `Logs`           | 日志输出（stdout/stderr）         |
+| `error`          | `ExecutionError` | 执行错误（如有）                    |
+| `executionCount` | `Integer`        | 执行次数                        |
+
+### Result（结果格式）
+
+支持多种输出格式，类似 Jupyter notebook：
+
+| 字段           | 类型                    | 说明       |
+|--------------|-----------------------|----------|
+| `text`       | `String`              | 纯文本输出    |
+| `html`       | `String`              | HTML 输出  |
+| `markdown`   | `String`              | Markdown |
+| `png`        | `String` (base64)     | PNG 图片   |
+| `jpeg`       | `String` (base64)     | JPEG 图片  |
+| `svg`        | `String`              | SVG 图形   |
+| `json`       | `Map<String, Object>` | JSON 数据  |
+| `mainResult` | `boolean`             | 是否为主结果   |
+
+### 示例
+
+```java
+// 执行 Python 代码
+Execution result = sandbox.codeInterpreter.runCode("print('Hello from Python!')");
+for (String line : result.getLogs().getStdout()) {
+    System.out.println(line);
+}
+
+// 执行 JavaScript 代码
+Execution jsResult = sandbox.codeInterpreter.runCode(
+    "console.log('Hello from JS!');",
+    RunCodeLanguage.JAVASCRIPT.getValue()
+);
+
+// 带选项执行（环境变量）
+RunCodeOptions opts = new RunCodeOptions()
+    .setEnvVars(Map.of("API_KEY", "secret"));
+Execution result2 = sandbox.codeInterpreter.runCode(
+    "import os; print(os.environ.get('API_KEY'))",
+    RunCodeLanguage.PYTHON.getValue(),
+    opts
+);
+
+// 使用 Context 设置工作目录
+Context ctx = sandbox.codeInterpreter.createCodeContext("/tmp", "python");
+System.out.println("Context created: " + ctx);
+
+RunCodeOptions ctxOpts = new RunCodeOptions()
+    .setContextId(ctx.getId());
+Execution ctxResult = sandbox.codeInterpreter.runCode(
+    "import os; print('CWD:', os.getcwd())",
+    RunCodeLanguage.PYTHON.getValue(),
+    ctxOpts
+);
+
+// 清理 Context
+sandbox.codeInterpreter.removeCodeContext(ctx.getId());
+
+// 列出所有 Context
+List<Context> contexts = sandbox.codeInterpreter.listCodeContexts();
+for (Context c : contexts) {
+    System.out.println(c);
+}
+
+// 获取主结果文本
+String mainText = result2.getText();
+System.out.println("Main result: " + mainText);
+
+// 流式执行（逐事件处理）
+RunCodeRequest request = new RunCodeRequest("for i in range(5): print(i)", "python");
+sandbox.codeInterpreter.runCodeStreaming(request, event -> {
+    if (event instanceof StdoutEvent) {
+        System.out.print(((StdoutEvent) event).getText());
+    } else if (event instanceof ErrorEvent) {
+        System.err.println("Error: " + ((ErrorEvent) event).getError());
+    }
+});
+```
+
+完整示例：[SandboxCodeInterpreterExample.java](https://github.com/openkruise/agents-api/blob/master/e2b/java/src/main/java/io/openkruise/agents/client/examples/SandboxCodeInterpreterExample.java)
+
+---
+
+## 七、K8s 直连模式
+
+绕过 E2B 控制面，直接连接 K8s 集群内的 sandbox：
+
+```java
+import io.openkruise.agents.client.runtime.*;
+
+RuntimeConfig config = new RuntimeConfig.Builder()
+    .runtimeUrl("http://localhost:49983")
+    .runtimeToken("your-token")
+    .build();
+
+RuntimeClient client = RuntimeClient.create("sandbox-id", config);
+
+// 命令执行和文件操作
+CommandResult res = client.commands.run("echo hello");
+client.files.writeText("/tmp/test.txt", "Hello!");
+
+client.close(); // 关闭连接 + 释放线程池
+```
+
+参见 Runtime 层文档：[Runtime 客户端](./runtime-client-java.md)
