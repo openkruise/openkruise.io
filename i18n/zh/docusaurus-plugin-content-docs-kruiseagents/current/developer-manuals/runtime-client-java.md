@@ -4,7 +4,7 @@ title: Java 客户端
 
 ## 依赖导入
 
-该包暂未发布到 Maven Central，需要从 [client-java](https://github.com/openkruise/agents-api/tree/master/k8s/java)
+该包暂未发布到 Maven Central，需要从 [client-java](https://github.com/openkruise/agents-api/tree/master/runtime/java)
 手动下载项目并打包成 JAR 文件使用。
 
 ---
@@ -24,6 +24,11 @@ runtime/
 ├── filesystem/                   # 文件系统
 │   ├── Filesystem.java           # listDir / read / write / makeDir / remove / watchDir / move
 │   └── WatchHandle.java          # 目录监听句柄：stop
+├── codeinterpreter/              # 代码解释器
+│   ├── CodeInterpreter.java      # runCode / runCodeStreaming
+│   ├── Execution.java            # 执行结果：results / logs / error
+│   ├── RunCodeRequest.java       # 执行请求：code / language / options
+│   └── ...                       # 事件类型：StdoutEvent / StderrEvent / ResultEvent 等
 ├── utils/                        # 工具类
 │   ├── ConnectStreamReader.java  # Connect Protocol 流式响应解析
 │   └── MessageStream.java        # 流式消息接口（hasNext / next / close）
@@ -81,7 +86,7 @@ try (RuntimeClient client = RuntimeClient.newFromK8s("default", "your-sandbox-na
 - `sandboxID` 格式为 `namespace--name`（双横线连接）
 - kubeconfig 解析顺序：`KUBECONFIG` 环境变量 → `~/.kube/config` → in-cluster config
 
-完整示例：[K8sDirectConnectExample.java](https://github.com/openkruise/agents-api/blob/master/k8s/java/src/main/java/io/openkruise/agents/client/examples/runtime/K8sDirectConnectExample.java)
+完整示例：[K8sDirectConnectExample.java](https://github.com/openkruise/agents-api/blob/master/runtime/java/src/main/java/io/openkruise/agents/client/examples/K8sDirectConnectExample.java)
 
 ---
 
@@ -98,10 +103,11 @@ try (RuntimeClient client = RuntimeClient.newFromK8s("default", "your-sandbox-na
 
 ### 字段
 
-| 字段         | 类型           | 说明     |
-|------------|--------------|--------|
-| `commands` | `Commands`   | 命令执行模块 |
-| `files`    | `Filesystem` | 文件系统模块 |
+| 字段                | 类型                | 说明      |
+|-------------------|-------------------|---------|
+| `commands`        | `Commands`        | 命令执行模块  |
+| `files`           | `Filesystem`      | 文件系统模块  |
+| `codeInterpreter` | `CodeInterpreter` | 代码解释器模块 |
 
 ### 方法
 
@@ -133,10 +139,45 @@ try (RuntimeClient client = RuntimeClient.newFromK8s("default", "your-sandbox-na
 | `.headers(Map<String, String>)` | 合并多个自定义 headers                             |
 | `.addHeader(String, String)`    | 添加单个自定义 header                              |
 | `.requestTimeoutMs(long)`       | HTTP 超时（毫秒），默认 60000                        |
+| `.sandboxPort(int)`             | envd 端口，默认 49983（用于请求头 `e2b-sandbox-port`）  |
+| `.codeInterpreterPort(int)`     | 代码解释器端口，默认 49999                            |
+| `.urlBuilder(URLBuilder)`       | URL 构建器，支持 E2B 和 Runtime 模式                 |
+| `.httpClient(OkHttpClient)`     | 自定义 OkHttpClient，用于所有 HTTP 请求（代理、SSL、超时等）   |
 
 ### 优先级
 
 `runtimeUrl`（显式覆盖） > `scheme` + `domain` 拼装 > 默认值
+
+### 自定义 HTTP 客户端
+
+你可以提供自定义的 `OkHttpClient` 来配置代理、SSL 证书、超时、拦截器等：
+
+```java
+import okhttp3.OkHttpClient;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
+import java.util.concurrent.TimeUnit;
+
+// 构建自定义客户端，配置代理、SSL、超时等
+OkHttpClient customClient = new OkHttpClient.Builder()
+    .proxy(new Proxy(Proxy.Type.HTTP, new InetSocketAddress("proxy.host", 8080)))
+    .connectTimeout(30, TimeUnit.SECONDS)
+    .readTimeout(120, TimeUnit.SECONDS)
+    .build();
+
+RuntimeConfig config = new RuntimeConfig.Builder()
+    .domain("sandbox-gateway.sandbox-system.svc:7788")
+    .scheme("http")
+    .httpClient(customClient)  // 使用自定义客户端
+    .build();
+
+try (RuntimeClient client = RuntimeClient.create("sandbox-id", config)) {
+    CommandResult res = client.commands.run("uname -a");
+    System.out.println(res.getStdout());
+}
+```
+
+**注意**：当提供 `httpClient` 时，它将直接用于所有 HTTP 请求。流式客户端会基于它派生，并设置 `readTimeout=0` 以支持长时间运行的操作。
 
 ---
 
@@ -294,7 +335,132 @@ wh.stop();
 
 ---
 
-## 五、异常体系
+## 五、代码解释器（CodeInterpreter）
+
+通过 `client.codeInterpreter` 在沙箱内执行代码。支持 Python、JavaScript、TypeScript、R、Java、Bash 等多种语言。
+
+### 方法一览
+
+| 方法                                                           | 说明                    |
+|--------------------------------------------------------------|-----------------------|
+| `runCode(String code)`                                       | 执行 Python 代码（默认语言）    |
+| `runCode(String code, String language)`                      | 执行指定语言的代码             |
+| `runCode(String code, String language, RunCodeOptions)`      | 执行代码（带选项：工作目录、环境变量等）  |
+| `runCode(RunCodeRequest request)`                            | 执行代码（完整请求对象）          |
+| `runCodeStreaming(RunCodeRequest, Consumer<ExecutionEvent>)` | 流式执行代码，逐事件回调（低内存占用）   |
+| `createCodeContext(String cwd, String language)`             | 创建代码执行上下文（可设置工作目录和语言） |
+| `removeCodeContext(String contextId)`                        | 删除指定的代码执行上下文          |
+| `listCodeContexts()`                                         | 列出所有代码执行上下文           |
+
+### RunCodeOptions
+
+```java
+RunCodeOptions opts = new RunCodeOptions()
+    .setCwd("/tmp")                              // 工作目录
+    .setEnvVars(Map.of("DEBUG", "true"))         // 环境变量
+    .setTimeoutMs(30000L)                        // 超时时间（毫秒）
+    .setContextId("context-id");                 // 使用指定的上下文（与 language 互斥）
+```
+
+### Context（代码执行上下文）
+
+Context 用于维护独立的代码执行环境，每个 Context 有自己的工作目录和语言环境。
+
+| 字段         | 类型       | 说明     |
+|------------|----------|--------|
+| `id`       | `String` | 上下文 ID |
+| `language` | `String` | 编程语言   |
+| `cwd`      | `String` | 工作目录   |
+
+**注意**：使用 Context 时，`runCode()` 的 `language` 参数会被忽略（服务端要求 `context_id` 和 `language` 互斥）。
+
+### Execution（执行结果）
+
+| 字段               | 类型               | 说明                          |
+|------------------|------------------|-----------------------------|
+| `results`        | `List<Result>`   | 执行结果列表（text/html/image 等格式） |
+| `logs`           | `Logs`           | 日志输出（stdout/stderr）         |
+| `error`          | `ExecutionError` | 执行错误（如有）                    |
+| `executionCount` | `Integer`        | 执行次数                        |
+
+### Result（结果格式）
+
+支持多种输出格式，类似 Jupyter notebook：
+
+| 字段           | 类型                    | 说明       |
+|--------------|-----------------------|----------|
+| `text`       | `String`              | 纯文本输出    |
+| `html`       | `String`              | HTML 输出  |
+| `markdown`   | `String`              | Markdown |
+| `png`        | `String` (base64)     | PNG 图片   |
+| `jpeg`       | `String` (base64)     | JPEG 图片  |
+| `svg`        | `String`              | SVG 图形   |
+| `json`       | `Map<String, Object>` | JSON 数据  |
+| `mainResult` | `boolean`             | 是否为主结果   |
+
+### 示例
+
+```java
+// 执行 Python 代码
+Execution result = client.codeInterpreter.runCode("print('Hello from Python!')");
+for (String line : result.getLogs().getStdout()) {
+    System.out.println(line);
+}
+
+// 执行 JavaScript 代码
+Execution jsResult = client.codeInterpreter.runCode(
+    "console.log('Hello from JS!');",
+    RunCodeLanguage.JAVASCRIPT.getValue()
+);
+
+// 带选项执行（环境变量）
+RunCodeOptions opts = new RunCodeOptions()
+    .setEnvVars(Map.of("API_KEY", "secret"));
+Execution result2 = client.codeInterpreter.runCode(
+    "import os; print(os.environ.get('API_KEY'))",
+    RunCodeLanguage.PYTHON.getValue(),
+    opts
+);
+
+// 使用 Context 设置工作目录
+Context ctx = client.codeInterpreter.createCodeContext("/tmp", "python");
+System.out.println("Context created: " + ctx);
+
+RunCodeOptions ctxOpts = new RunCodeOptions()
+    .setContextId(ctx.getId());
+Execution ctxResult = client.codeInterpreter.runCode(
+    "import os; print('CWD:', os.getcwd())",
+    RunCodeLanguage.PYTHON.getValue(),
+    ctxOpts
+);
+
+// 清理 Context
+client.codeInterpreter.removeCodeContext(ctx.getId());
+
+// 列出所有 Context
+List<Context> contexts = client.codeInterpreter.listCodeContexts();
+for (Context c : contexts) {
+    System.out.println(c);
+}
+
+// 获取主结果文本
+String mainText = result2.getText();
+System.out.println("Main result: " + mainText);
+
+// 流式执行（逐事件处理）
+RunCodeRequest request = new RunCodeRequest("for i in range(5): print(i)", "python");
+client.codeInterpreter.runCodeStreaming(request, event -> {
+    if (event instanceof StdoutEvent) {
+        System.out.print(((StdoutEvent) event).getText());
+    } else if (event instanceof ErrorEvent) {
+        System.err.println("Error: " + ((ErrorEvent) event).getError());
+    }
+});
+```
+
+---
+
+## 六、异常体系
 
 | 异常类                     | 说明                            |
 |-------------------------|-------------------------------|
@@ -303,7 +469,7 @@ wh.stop();
 
 ---
 
-## 六、资源管理
+## 七、资源管理
 
 `RuntimeClient` 实现 `AutoCloseable`，`close()` 会释放：
 

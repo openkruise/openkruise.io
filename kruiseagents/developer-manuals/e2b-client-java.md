@@ -5,7 +5,7 @@ title: Java Client
 ## Dependency Import
 
 This package is not yet published to Maven Central. You need to download the project
-from [client-java](https://github.com/openkruise/agents-api/tree/master/k8s/java) and manually build the JAR file.
+from [client-java](https://github.com/openkruise/agents-api/tree/master/e2b/java) and manually build the JAR file.
 
 ---
 
@@ -32,7 +32,7 @@ try (sandbox) {
 ```
 
 Full
-examples: [Lifecycle Management](https://github.com/openkruise/agents-api/blob/master/k8s/java/src/main/java/io/openkruise/agents/client/examples/e2b/SandboxApiManagerExample.java) | [Command Operations](https://github.com/openkruise/agents-api/blob/master/k8s/java/src/main/java/io/openkruise/agents/client/examples/e2b/SandboxCommandsExample.java) | [File Operations](https://github.com/openkruise/agents-api/blob/master/k8s/java/src/main/java/io/openkruise/agents/client/examples/e2b/SandboxFilesExample.java)
+examples: [Lifecycle Management](https://github.com/openkruise/agents-api/blob/master/e2b/java/src/main/java/io/openkruise/agents/client/examples/SandboxApiManagerExample.java) | [Command Operations](https://github.com/openkruise/agents-api/blob/master/e2b/java/src/main/java/io/openkruise/agents/client/examples/SandboxCommandsExample.java) | [File Operations](https://github.com/openkruise/agents-api/blob/master/e2b/java/src/main/java/io/openkruise/agents/client/examples/SandboxFilesExample.java) | [Code Interpreter](https://github.com/openkruise/agents-api/blob/master/e2b/java/src/main/java/io/openkruise/agents/client/examples/SandboxCodeInterpreterExample.java)
 
 ---
 
@@ -104,6 +104,7 @@ api.kill(id);
 | `sandboxID`          | Sandbox ID                                     |
 | `commands`           | Command execution module (`Commands`)          |
 | `files`              | Filesystem module (`Filesystem`)               |
+| `codeInterpreter`    | Code interpreter module (`CodeInterpreter`)    |
 | `getSandboxURL()`    | Sandbox envd URL                               |
 | `getConfig()`        | Connection config                              |
 | `getRuntimeClient()` | Underlying `RuntimeClient`                     |
@@ -313,20 +314,22 @@ Connection behavior is determined by two orthogonal dimensions: **Scheme** and *
 
 ### Builder Methods
 
-| Method                          | Description                                                    |
-|---------------------------------|----------------------------------------------------------------|
-| `.apiKey(String)`               | API Key, set in request header `X-API-Key`                     |
-| `.accessToken(String)`          | Access Token, set in request header `X-Access-Token`           |
-| `.domain(String)`               | Domain, defaults to `your.domain.com`                          |
-| `.scheme(String)`               | URL scheme, defaults to `https`                                |
-| `.protocol(Protocol)`           | Routing protocol, defaults to `Protocol.NATIVE`                |
-| `.apiURL(String)`               | **Highest priority**: directly overrides API base URL          |
-| `.sandboxBaseURL(String)`       | **Highest priority**: directly overrides sandbox envd base URL |
-| `.requestTimeoutMs(long)`       | HTTP request timeout (ms), defaults to 60000                   |
-| `.port(int)`                    | envd port, defaults to 49983                                   |
-| `.debug(boolean)`               | Debug mode; kill/setTimeout skip actual calls                  |
-| `.headers(Map<String, String>)` | Custom request headers                                         |
-| `.addHeader(String, String)`    | Add a single custom request header                             |
+| Method                          | Description                                                            |
+|---------------------------------|------------------------------------------------------------------------|
+| `.apiKey(String)`               | API Key, set in request header `X-API-Key`                             |
+| `.accessToken(String)`          | Access Token, set in request header `X-Access-Token`                   |
+| `.domain(String)`               | Domain, defaults to `your.domain.com`                                  |
+| `.scheme(String)`               | URL scheme, defaults to `https`                                        |
+| `.protocol(Protocol)`           | Routing protocol, defaults to `Protocol.NATIVE`                        |
+| `.apiURL(String)`               | **Highest priority**: directly overrides API base URL                  |
+| `.sandboxBaseURL(String)`       | **Highest priority**: directly overrides sandbox envd base URL         |
+| `.requestTimeoutMs(long)`       | HTTP request timeout (ms), defaults to 60000                           |
+| `.port(int)`                    | envd port, defaults to 49983                                           |
+| `.codeInterpreterPort(int)`     | Code interpreter port, defaults to 49999                               |
+| `.debug(boolean)`               | Debug mode; kill/setTimeout skip actual calls                          |
+| `.headers(Map<String, String>)` | Custom request headers                                                 |
+| `.addHeader(String, String)`    | Add a single custom request header                                     |
+| `.httpClient(OkHttpClient)`     | Custom OkHttpClient for all HTTP requests (proxy, SSL, timeouts, etc.) |
 
 ### Priority
 
@@ -342,3 +345,186 @@ overridden by Builder methods:
 |---------------|-----------------|
 | `E2B_API_KEY` | Default API Key |
 | `E2B_DOMAIN`  | Default domain  |
+
+### Custom HTTP Client
+
+You can provide a custom `OkHttpClient` to configure proxy, SSL certificates, timeouts, interceptors, etc.:
+
+```java
+import okhttp3.OkHttpClient;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
+import java.util.concurrent.TimeUnit;
+
+// Build custom client with proxy, SSL, timeouts, etc.
+OkHttpClient customClient = new OkHttpClient.Builder()
+    .proxy(new Proxy(Proxy.Type.HTTP, new InetSocketAddress("proxy.host", 8080)))
+    .connectTimeout(30, TimeUnit.SECONDS)
+    .readTimeout(120, TimeUnit.SECONDS)
+    .build();
+
+ConnectionConfig config = new ConnectionConfig.Builder()
+    .httpClient(customClient)  // Use custom client
+    .build();
+
+SandboxApi api = new SandboxApi(config);
+Sandbox sandbox = api.create("code-interpreter");
+```
+
+**Note**: When `httpClient` is provided, it is used directly for all HTTP requests (both control plane API calls and
+data plane Runtime connections).
+
+---
+
+## 6. Code Interpreter (CodeInterpreter)
+
+Execute code inside the sandbox via `sandbox.codeInterpreter`. Supports Python, JavaScript, TypeScript, R, Java, Bash,
+and more.
+
+### Methods
+
+| Method                                                       | Description                                      |
+|--------------------------------------------------------------|--------------------------------------------------|
+| `runCode(String code)`                                       | Execute Python code (default language)           |
+| `runCode(String code, String language)`                      | Execute code in specified language               |
+| `runCode(String code, String language, RunCodeOptions)`      | Execute code with options (cwd, env vars, etc.)  |
+| `runCode(RunCodeRequest request)`                            | Execute code (full request object)               |
+| `runCodeStreaming(RunCodeRequest, Consumer<ExecutionEvent>)` | Stream code execution, event-by-event callback   |
+| `createCodeContext(String cwd, String language)`             | Create code execution context (set cwd/language) |
+| `removeCodeContext(String contextId)`                        | Remove specified code execution context          |
+| `listCodeContexts()`                                         | List all code execution contexts                 |
+
+### RunCodeOptions
+
+```java
+RunCodeOptions opts = new RunCodeOptions()
+    .setCwd("/tmp")                              // Working directory
+    .setEnvVars(Map.of("DEBUG", "true"))         // Environment variables
+    .setTimeoutMs(30000L)                        // Timeout (milliseconds)
+    .setContextId("context-id");                 // Use specified context (mutually exclusive with language)
+```
+
+### Context (Code Execution Context)
+
+Context maintains an independent code execution environment. Each Context has its own working directory and language.
+
+| Field      | Type     | Description |
+|------------|----------|-------------|
+| `id`       | `String` | Context ID  |
+| `language` | `String` | Language    |
+| `cwd`      | `String` | Working dir |
+
+**Note**: When using Context, the `language` parameter in `runCode()` is ignored (server requires `context_id` and
+`language` to be mutually exclusive).
+
+### Execution (Result)
+
+| Field            | Type             | Description                                       |
+|------------------|------------------|---------------------------------------------------|
+| `results`        | `List<Result>`   | List of execution results (text/html/image, etc.) |
+| `logs`           | `Logs`           | Log output (stdout/stderr)                        |
+| `error`          | `ExecutionError` | Execution error (if any)                          |
+| `executionCount` | `Integer`        | Execution count                                   |
+
+### Result (Output Format)
+
+Supports multiple output formats, similar to Jupyter notebook:
+
+| Field        | Type                  | Description       |
+|--------------|-----------------------|-------------------|
+| `text`       | `String`              | Plain text output |
+| `html`       | `String`              | HTML output       |
+| `markdown`   | `String`              | Markdown          |
+| `png`        | `String` (base64)     | PNG image         |
+| `jpeg`       | `String` (base64)     | JPEG image        |
+| `svg`        | `String`              | SVG graphic       |
+| `json`       | `Map<String, Object>` | JSON data         |
+| `mainResult` | `boolean`             | Is main result    |
+
+### Examples
+
+```java
+// Execute Python code
+Execution result = sandbox.codeInterpreter.runCode("print('Hello from Python!')");
+for (String line : result.getLogs().getStdout()) {
+    System.out.println(line);
+}
+
+// Execute JavaScript code
+Execution jsResult = sandbox.codeInterpreter.runCode(
+    "console.log('Hello from JS!');",
+    RunCodeLanguage.JAVASCRIPT.getValue()
+);
+
+// Execute with options (environment variables)
+RunCodeOptions opts = new RunCodeOptions()
+    .setEnvVars(Map.of("API_KEY", "secret"));
+Execution result2 = sandbox.codeInterpreter.runCode(
+    "import os; print(os.environ.get('API_KEY'))",
+    RunCodeLanguage.PYTHON.getValue(),
+    opts
+);
+
+// Use Context to set working directory
+Context ctx = sandbox.codeInterpreter.createCodeContext("/tmp", "python");
+System.out.println("Context created: " + ctx);
+
+RunCodeOptions ctxOpts = new RunCodeOptions()
+    .setContextId(ctx.getId());
+Execution ctxResult = sandbox.codeInterpreter.runCode(
+    "import os; print('CWD:', os.getcwd())",
+    RunCodeLanguage.PYTHON.getValue(),
+    ctxOpts
+);
+
+// Clean up Context
+sandbox.codeInterpreter.removeCodeContext(ctx.getId());
+
+// List all Contexts
+List<Context> contexts = sandbox.codeInterpreter.listCodeContexts();
+for (Context c : contexts) {
+    System.out.println(c);
+}
+
+// Get main result text
+String mainText = result2.getText();
+System.out.println("Main result: " + mainText);
+
+// Streaming execution (event-by-event processing)
+RunCodeRequest request = new RunCodeRequest("for i in range(5): print(i)", "python");
+sandbox.codeInterpreter.runCodeStreaming(request, event -> {
+    if (event instanceof StdoutEvent) {
+        System.out.print(((StdoutEvent) event).getText());
+    } else if (event instanceof ErrorEvent) {
+        System.err.println("Error: " + ((ErrorEvent) event).getError());
+    }
+});
+```
+
+Full
+example: [SandboxCodeInterpreterExample.java](https://github.com/openkruise/agents-api/blob/master/e2b/java/src/main/java/io/openkruise/agents/client/examples/SandboxCodeInterpreterExample.java)
+
+---
+
+## 7. K8s Direct Connect Mode
+
+Connect directly to a sandbox in a K8s cluster, bypassing the E2B control plane:
+
+```java
+import io.openkruise.agents.client.runtime.*;
+
+RuntimeConfig config = new RuntimeConfig.Builder()
+    .runtimeUrl("http://localhost:49983")
+    .runtimeToken("your-token")
+    .build();
+
+RuntimeClient client = RuntimeClient.create("sandbox-id", config);
+
+// Commands and file operations
+CommandResult res = client.commands.run("echo hello");
+client.files.writeText("/tmp/test.txt", "Hello!");
+
+client.close(); // Close connection + release thread pool
+```
+
+See Runtime layer docs: [Runtime Client](./runtime-client-java.md)
