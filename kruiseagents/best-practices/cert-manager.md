@@ -15,8 +15,13 @@ the [official documentation](https://cert-manager.io/docs/installation/) for ins
 
 ## Step 2: Automatic Certificate Management with cert-manager
 
-1. Replace "*.your.domain.com" and "your.domain.com" in [cert-manager.yaml](https://github.com/openkruise/agents/blob/master/docs/best-practices/cert-manager.yaml) with your domain.
-2. Add the configuration to the Kubernetes cluster: `kubectl apply -f cert-manager.yaml`
+1. Choose an example:
+   - For one domain, replace `your.domain.com` and `*.your.domain.com` in
+     [cert-manager.yaml](https://github.com/openkruise/agents/blob/master/docs/best-practices/cert-manager.yaml).
+   - For multiple domains, replace the entries under `dnsNames` in
+     [cert-manager-multi-domain.yaml](https://github.com/openkruise/agents/blob/master/docs/best-practices/cert-manager-multi-domain.yaml).
+     Include both the base and wildcard name for every native E2B domain.
+2. Apply the selected configuration, for example: `kubectl apply -f cert-manager-multi-domain.yaml`.
 
 ## Step 3: Verify Certificate Status
 
