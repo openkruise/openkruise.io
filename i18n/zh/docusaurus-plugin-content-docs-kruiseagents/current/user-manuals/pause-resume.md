@@ -49,7 +49,8 @@ await sbx.betaPause()
 注意事项：
 
 - 对非 `running` 状态的沙箱执行 pause 会返回 `409 Conflict`。
-- 休眠期间沙箱 **不会** 被自动删除——空闲超时计时会在休眠期间被关闭。
+- 休眠沙箱的存活时间与运行态 timeout 分开控制。`sandbox-manager` 默认使用 `forever` 休眠保留策略；如需设置更短的
+  保留窗口，请参考[保留休眠沙箱](#保留休眠沙箱)。
 
 </TabItem>
 <TabItem value="CRD" label="Kubernetes CRD">
@@ -143,6 +144,85 @@ spec:
 </TabItem>
 </Tabs>
 
+## 保留休眠沙箱
+
+`reserve-paused-sandbox-duration` 用于控制一个带 timeout 的 Sandbox 在 **实际执行 pause 转换后** 继续保留多久。
+Sandbox 休眠时，OpenKruise Agents 会按下面的方式重新计算 `spec.shutdownTime`：
+
+```text
+pause 转换执行时间 + reserve-paused-sandbox-duration
+```
+
+该值必须是正数 [Go duration](https://pkg.go.dev/time#ParseDuration)，例如 `30m`、`2h` 或 `168h`。特殊值
+`forever` 表示内置的 **100 年** 保留窗口，并不是真正无限期的 deadline。`0`、负数以及 `1d` 都是非法值
+（`time.ParseDuration` 不支持 `d` 单位）。
+
+该策略只会重新计算已有的 timeout。通过 `never-timeout` 扩展创建的 Sandbox 没有 `shutdownTime`，休眠保留策略不会
+为其创建 deadline。
+
+<Tabs>
+<TabItem value="E2B" label="E2B SDK">
+
+创建时通过 `e2b.agents.kruise.io/reserve-paused-sandbox-duration` metadata 扩展设置持久化保留策略。
+该策略同时适用于自动休眠和后续的手动休眠：
+
+```python
+from e2b_code_interpreter import Sandbox
+
+sbx = Sandbox.create(
+    template="demo",
+    timeout=600,
+    lifecycle={"on_timeout": "pause", "auto_resume": False},
+    metadata={
+        "e2b.agents.kruise.io/reserve-paused-sandbox-duration": "2h",
+    },
+)
+```
+
+手动 pause 时，可以通过 `x-e2b-kruise-reserve-paused-sandbox-duration` 请求头覆盖持久化值。
+当该请求实际执行 running → paused 转换时，成功接受的覆盖值会持久化，供后续 pause 操作继续使用：
+
+```python
+sbx.pause(
+    headers={
+        "x-e2b-kruise-reserve-paused-sandbox-duration": "30m",
+    }
+)
+```
+
+取值优先级为 **pause 请求头 → 已持久化策略 → `forever` 默认值**。创建 metadata 或 pause 请求头包含非法值时，
+`sandbox-manager` 会返回 `400 Bad Request`。由 manager 创建且未显式设置该值的 Sandbox 使用 `forever`，并将其
+持久化到内部注解 `agents.kruise.io/reserve-paused-sandbox-duration`。
+
+</TabItem>
+<TabItem value="CRD" label="Kubernetes CRD">
+
+使用控制器自动休眠时，添加 `agents.kruise.io/reserve-paused-sandbox-duration` 注解，并同时设置
+`spec.pauseTime` 和 `spec.shutdownTime`。该注解会让控制器先执行已经到期的 pause，再把 `shutdownTime` 改为
+pause 转换执行时间加上保留窗口：
+
+```yaml
+apiVersion: agents.kruise.io/v1alpha1
+kind: Sandbox
+metadata:
+  name: my-sandbox
+  namespace: default
+  annotations:
+    agents.kruise.io/reserve-paused-sandbox-duration: "2h"
+spec:
+  pauseTime: "2026-05-13T10:00:00Z"
+  shutdownTime: "2026-05-13T10:00:00Z"
+```
+
+直接使用 CRD 的路径不会在注解缺失时应用默认策略：没有该注解，控制器就不会重新计算 `shutdownTime`。
+如果显式存在的注解值非法，控制器会记录错误，并在本次自动休眠中使用 `forever` 对应的 100 年窗口，但不会改写非法注解。
+
+控制器只会在 `spec.pauseTime` 触发自动休眠时解析该注解。直接 patch `spec.paused: true` **不会** 据此计算保留窗口；
+通过 CRD 手动休眠时，请在同一个 patch 中写入期望的绝对时间 `spec.shutdownTime`。
+
+</TabItem>
+</Tabs>
+
 ## 唤醒沙箱
 
 E2B SDK 侧 **推荐** 使用 `Sandbox.connect(...)`——它会隐式地唤醒一个休眠中的沙箱，同时刷新其 timeout。遗留的 `resume` 端点仅出于向后兼容而保留，新代码不应再使用。
@@ -195,6 +275,7 @@ kubectl patch sbx my-sandbox -n default --type=merge \
 | 到 timeout 时自动触发 pause                     | ✅ `lifecycle.on_timeout='pause'` | ❌                                       |
 | 在绝对时间点自动触发 pause                      | ❌                                | ✅ `spec.pauseTime`                      |
 | 自动唤醒（auto-resume）                         | ❌ 暂不支持                        | ❌ 暂不支持                               |
+| 配置进入 paused 后的删除时间                    | ✅ 创建 metadata 或 pause 请求头    | ✅ 自动休眠使用注解；手动休眠写 `spec.shutdownTime` |
 | 唤醒的同时设置 / 刷新 timeout                   | ✅ `Sandbox.connect(id, timeout=...)` | ✅ 同一次 patch 中写 `spec.shutdownTime` / `spec.pauseTime` |
 | 运行态下对 timeout 的只延长（extend-only）保护  | ✅                                | ❌ 用户写入值可缩短                    |
 | 观察 paused / running 状态                      | 通过 SDK 响应                     | `status.phase`（`Paused` / `Running`）   |
@@ -204,6 +285,7 @@ kubectl patch sbx my-sandbox -n default --type=merge \
 ## 注意事项
 
 - **连接会断开。** 休眠时 Pod 被冻结，所有活动连接（WebSocket / PTY / 命令流）都会断开，客户端需要在唤醒后重连。
-- **休眠期间的生命周期。** 休眠中的沙箱不会因为空闲超时而被自动删除，自动删除由 `spec.shutdownTime` 独立控制。
+- **休眠期间的生命周期。** 运行态 timeout 不会在休眠后原样继续倒计时；自动删除由 `spec.shutdownTime` 控制，
+  休眠保留策略可以基于 pause 转换执行时间重新计算它。
 - **旧版 SDK。** 遗留的 `POST /sandboxes/{sandboxID}/resume` 端点仅为旧版 SDK 兼容保留。新代码一律使用 `Sandbox.connect(...)`。
 - **状态保留取决于平台。** 跨休眠/唤醒是否保留内存状态依赖具体的运行时平台。如果你需要显式的内存 + 文件系统快照、并且希望能克隆出全新沙箱，请使用 [快照管理](./checkpoint.md)。

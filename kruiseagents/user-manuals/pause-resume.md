@@ -62,7 +62,9 @@ await sbx.betaPause()
 Notes:
 
 - Pausing a sandbox that is not in `running` state returns `409 Conflict`.
-- Paused sandboxes are kept indefinitely — the auto-shutdown timer is disabled while paused.
+- The lifetime of a paused sandbox is controlled separately from its running timeout. `sandbox-manager` uses the
+  `forever` paused-retention policy by default; you can configure a shorter window as described in
+  [Retaining a Paused Sandbox](#retaining-a-paused-sandbox).
 
 </TabItem>
 <TabItem value="CRD" label="Kubernetes CRD">
@@ -164,6 +166,91 @@ spec:
 </TabItem>
 </Tabs>
 
+## Retaining a Paused Sandbox
+
+`reserve-paused-sandbox-duration` controls how long a timed Sandbox is retained **after its pause transition is
+applied**. When the Sandbox pauses, OpenKruise Agents recalculates `spec.shutdownTime` as:
+
+```text
+pause transition time + reserve-paused-sandbox-duration
+```
+
+The value must be a positive [Go duration](https://pkg.go.dev/time#ParseDuration), such as `30m`, `2h`, or `168h`.
+The special value `forever` selects the built-in **100-year** retention window; it does not create a truly infinite
+deadline. Values such as `0`, negative durations, and `1d` are invalid (`time.ParseDuration` does not support a `d`
+unit).
+
+This policy only recalculates an existing timeout. A Sandbox created with the `never-timeout` extension has no
+`shutdownTime`, so paused retention does not introduce one.
+
+<Tabs>
+<TabItem value="E2B" label="E2B SDK">
+
+Set the persisted retention policy at creation time with the
+`e2b.agents.kruise.io/reserve-paused-sandbox-duration` metadata extension. It applies to auto-pause and to later
+manual pauses:
+
+```python
+from e2b_code_interpreter import Sandbox
+
+sbx = Sandbox.create(
+    template="demo",
+    timeout=600,
+    lifecycle={"on_timeout": "pause", "auto_resume": False},
+    metadata={
+        "e2b.agents.kruise.io/reserve-paused-sandbox-duration": "2h",
+    },
+)
+```
+
+To override the persisted value for a manual pause, pass the
+`x-e2b-kruise-reserve-paused-sandbox-duration` request header. The accepted override is persisted for subsequent
+pause operations when that request performs the running-to-paused transition:
+
+```python
+sbx.pause(
+    headers={
+        "x-e2b-kruise-reserve-paused-sandbox-duration": "30m",
+    }
+)
+```
+
+The resolution order is **pause request header → persisted policy → `forever` default**. If the creation metadata
+or pause header contains an invalid value, `sandbox-manager` returns `400 Bad Request`. Manager-created Sandboxes
+without an explicit value use `forever`, which is persisted as the internal
+`agents.kruise.io/reserve-paused-sandbox-duration` annotation.
+
+</TabItem>
+<TabItem value="CRD" label="Kubernetes CRD">
+
+For controller-driven auto-pause, add the `agents.kruise.io/reserve-paused-sandbox-duration` annotation and set both
+`spec.pauseTime` and `spec.shutdownTime`. The annotation tells the controller to let the due pause run before
+deletion and then replace `shutdownTime` with the pause transition time plus the retention window:
+
+```yaml
+apiVersion: agents.kruise.io/v1alpha1
+kind: Sandbox
+metadata:
+  name: my-sandbox
+  namespace: default
+  annotations:
+    agents.kruise.io/reserve-paused-sandbox-duration: "2h"
+spec:
+  pauseTime: "2026-05-13T10:00:00Z"
+  shutdownTime: "2026-05-13T10:00:00Z"
+```
+
+The direct CRD path intentionally has no default-when-absent policy: without the annotation, the controller does not
+recalculate `shutdownTime`. If an explicitly present annotation is invalid, the controller logs the error and uses
+the `forever` 100-year window for that auto-pause without rewriting the invalid annotation.
+
+The annotation is evaluated when `spec.pauseTime` triggers auto-pause. It does **not** calculate a retention window
+for a direct `spec.paused: true` patch; for a manual CRD pause, write the desired absolute `spec.shutdownTime` in the
+same patch.
+
+</TabItem>
+</Tabs>
+
 ## Resuming a Sandbox
 
 The recommended interface on the E2B SDK side is `Sandbox.connect(...)` — it implicitly resumes a paused sandbox and
@@ -222,6 +309,7 @@ kubectl patch sbx my-sandbox -n default --type=merge \
 | Auto-pause when the timeout expires                                  | ✅ `lifecycle.on_timeout='pause'` | ❌                                |
 | Auto-pause at a specific absolute time                               | ❌                             | ✅ `spec.pauseTime`                   |
 | Auto-resume a paused sandbox                                         | ❌ not yet supported           | ❌ not yet supported                  |
+| Configure deletion after entering paused                            | ✅ creation metadata or pause header | ✅ annotation for auto-pause; write `spec.shutdownTime` for a manual pause |
 | Set / refresh the sandbox timeout together with resume               | ✅ `Sandbox.connect(id, timeout=...)` | ✅ write `spec.shutdownTime` / `spec.pauseTime` in the same patch |
 | Extend-only guard on timeout refresh while running                   | ✅                             | ❌ user-written value may shorten    |
 | Observe paused/running state                                         | via SDK response              | `status.phase` (`Paused` / `Running`)|
@@ -233,8 +321,8 @@ declarative / GitOps control over the paused/running bit plus absolute schedulin
 
 - **Connection drop.** The Pod is frozen on pause; all active streams (WebSocket / PTY / command streams) disconnect.
   Clients must reconnect after resume.
-- **Timeout during pause.** Paused sandboxes are not auto-deleted by the idle timeout. Auto-delete is controlled
-  separately by `spec.shutdownTime`.
+- **Timeout during pause.** The running timeout does not continue counting down unchanged after pause. Auto-delete is
+  controlled by `spec.shutdownTime`, which paused retention can recalculate from the pause transition time.
 - **Old SDKs.** The legacy `POST /sandboxes/{sandboxID}/resume` endpoint is kept for old SDK compatibility only. New
   code should always use `Sandbox.connect(...)`.
 - **State-preservation caveats.** Whether memory is preserved across pause/resume depends on the runtime platform.
