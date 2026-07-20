@@ -431,6 +431,88 @@ Notes:
   initialized.
 - If `--e2b-key-storage=mysql` is set but the DSN or pepper is empty, `sandbox-manager` fails fast at startup.
 
+### Migrate from `secret` to `mysql`
+
+Use
+[`migrate_secret_keys_to_mysql.py`](https://github.com/openkruise/agents/blob/master/hack/migrate_secret_keys_to_mysql.py)
+to export the `e2b-key-store` Secret as MySQL DDL and upsert statements. The generated SQL creates the `teams` and
+`team_api_keys` tables and migrates team metadata, API key metadata, quotas, and HMAC-SHA256 key hashes. It never
+writes plaintext API keys to the SQL file. Legacy keys without team metadata are assigned to the `admin` team.
+
+The script requires Python 3 and `kubectl`. Before migration, ensure the current Kubernetes context can read the
+source Secret and that the MySQL database already exists and is reachable with the `mysql` client.
+
+:::warning Credential continuity
+Use exactly the same `E2B_KEY_HASH_PEPPER` when generating the SQL and running `sandbox-manager` in MySQL mode.
+Changing the pepper makes every migrated API key fail authentication. Also keep `--e2b-admin-key` set to the same
+admin key used before migration; MySQL backend initialization reconciles the admin row to this startup value.
+:::
+
+1. Schedule a maintenance window and prevent API key create/delete operations until the cutover is verified. The
+   script exports a snapshot, so changes made after the export are not included. Back up the source Secret and any
+   non-empty target database. The Secret contains plaintext credentials encoded with base64; store its backup in a
+   restricted, encrypted location.
+
+   ```shell
+   umask 077
+   kubectl -n sandbox-system get secret e2b-key-store -o yaml \
+     > /secure/path/e2b-key-store-backup.yaml
+   ```
+
+2. From a checkout of the `openkruise/agents` repository, validate every Secret entry without generating SQL:
+
+   ```shell
+   python3 hack/migrate_secret_keys_to_mysql.py \
+     --namespace sandbox-system \
+     --dry-run
+   ```
+
+   Validation aborts if an entry is malformed, its Secret data key does not match the API key UUID, raw keys are
+   duplicated, or team names and UUIDs conflict. Fix the source data before continuing; the script does not skip
+   invalid entries.
+
+3. Generate the migration SQL with the durable pepper that the MySQL backend will use:
+
+   ```shell
+   export E2B_KEY_HASH_PEPPER='<durable-secret>'
+
+   python3 hack/migrate_secret_keys_to_mysql.py \
+     --namespace sandbox-system \
+     --output /secure/path/e2b_key_migration.sql
+   ```
+
+   The default source Secret is `e2b-key-store`. Use `--secret-name` for a different name. By default, the script
+   uses the well-known admin team UUID `550e8400-e29b-41d4-a716-446655449999`. The `--admin-team-uid` option changes
+   the UUID written by the exporter, but the current `sandbox-manager` reconciles the admin team to the well-known
+   UUID at startup, so keep the default for a normal cutover. `--output -` writes SQL to stdout, and `--quiet`
+   suppresses success messages.
+
+4. Review the generated SQL, then import it into the target database:
+
+   ```shell
+   mysql --host=mysql.example.com --user=e2b --password e2b \
+     < /secure/path/e2b_key_migration.sql
+   ```
+
+5. Switch `sandbox-manager` to the MySQL backend. Because the generated SQL already creates the schema, schema
+   auto-migration can be disabled:
+
+   ```shell
+   export E2B_KEY_STORAGE_DSN='e2b:secretpwd@tcp(mysql.example.com:3306)/e2b?charset=utf8mb4&parseTime=True&loc=Local'
+   export E2B_KEY_HASH_PEPPER='<same-durable-secret-used-for-export>'
+
+   sandbox-manager \
+     --e2b-enable-auth=true \
+     --e2b-admin-key='<same-admin-key-used-before-migration>' \
+     --e2b-key-storage=mysql \
+     --e2b-key-storage-disable-schema-auto-update=true
+   ```
+
+6. Verify both the existing admin key and representative tenant keys against `/teams` or `/api-keys`, then re-enable
+   key mutations. Keep the original `e2b-key-store` Secret until the cutover is accepted. Switching back to `secret`
+   restores only the snapshot in that Secret; keys created or deleted in MySQL after cutover are not synchronized
+   back automatically.
+
 ### Choosing a Backend
 
 | Scenario                                              | Recommended Backend |
