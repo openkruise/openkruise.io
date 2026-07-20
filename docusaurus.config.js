@@ -3,6 +3,14 @@ const lightTheme = themes.github;
 const darkTheme = themes.dracula;
 const versions = require('./versions.json');
 
+const contentExclude = [
+  '**/_*.{js,jsx,ts,tsx,md,mdx}',
+  '**/_*/**',
+  '**/*.test.{js,jsx,ts,tsx}',
+  '**/__tests__/**',
+  '**/AGENTS.md',
+];
+
 function getNextVersionName() {
   const expectedPrefix = 'v1.';
 
@@ -36,6 +44,7 @@ function getNextVersionName() {
       /** @type {import('@docusaurus/preset-classic').Options} */
       ({
         docs: {
+          exclude: contentExclude,
           sidebarPath: require.resolve('./sidebars.js'),
           editUrl: function ({
             locale,
@@ -60,12 +69,16 @@ function getNextVersionName() {
           },
         },
         blog: {
+          exclude: contentExclude,
           blogSidebarTitle: 'All posts',
           blogSidebarCount: 'ALL',
           showReadingTime: true,
           // Please change this to your repo.
           editUrl:
             'https://github.com/openkruise/openkruise.io/edit/master/',
+        },
+        pages: {
+          exclude: contentExclude,
         },
         theme: {
           customCss: require.resolve('./src/css/custom.css'),
@@ -82,6 +95,7 @@ function getNextVersionName() {
         path: 'rollouts',
         routeBasePath: 'rollouts',
         include: ['**/*.{md,mdx}'],
+        exclude: contentExclude,
         sidebarPath: require.resolve('./sidebars-rollouts.js'),
         editUrl: ({locale, docPath}) => {
           if (locale !== 'en') {
@@ -100,6 +114,7 @@ function getNextVersionName() {
         path: 'kruisegame',
         routeBasePath: 'kruisegame',
         include: ['**/*.{md,mdx}'],
+        exclude: contentExclude,
         sidebarPath: require.resolve('./sidebars-kruisegame.js'),
         editUrl: ({locale, docPath}) => {
           if (locale !== 'en') {
@@ -118,6 +133,7 @@ function getNextVersionName() {
         path: 'kruiseagents',
         routeBasePath: 'kruiseagents',
         include: ['**/*.{md,mdx}'],
+        exclude: contentExclude,
         sidebarPath: require.resolve('./sidebars-kruiseagents.js'),
         editUrl: ({locale, docPath}) => {
           if (locale !== 'en') {
