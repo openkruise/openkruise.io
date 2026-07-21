@@ -55,8 +55,11 @@ npm run build
 
 Before finishing, inspect the changed-file list for missing bilingual counterparts and address warnings introduced by the change. Run relevant `.github/workflows/` checks when changing consistency tooling.
 
+The `struct-check` CI job (`.github/workflows/version_struct_check.py`, Python 3.10 + Go) extracts every YAML example from the docs, groups them by `apiVersion`, downloads the matching Go struct definitions from the OpenKruise `kruise`, `kruise-game`, and `rollouts` repos, and validates that the YAML fields match the actual struct fields.
+
 ## Safeguards
 
 - Do not edit `.docusaurus/`, `build/`, backup lockfiles, or generated content.
+- Do not edit `versioned_docs/` or `versioned_sidebars/` directly unless backporting a fix to a released version.
 - Use npm; update `package-lock.json` only when dependencies change. Never commit credentials or `.env` files.
 - Commit only when asked, using `git commit -s`.
