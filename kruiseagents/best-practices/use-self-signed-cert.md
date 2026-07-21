@@ -25,14 +25,19 @@ $ bash generate-certificates.sh --help
 Usage: generate-certificates.sh [OPTIONS]
 
 Options:
-  -d, --domain DOMAIN     Specify certificate domain (default: your.domain.com)
+  -d, --domain DOMAIN     Add a base domain; may be specified multiple times
+                          DOMAIN and *.DOMAIN will both be added
   -o, --output DIR        Specify output directory (default: .)
   -D, --days DAYS         Specify certificate validity days (default: 365)
+      --ca-key PATH       Reuse an existing CA private key
+      --ca-cert PATH      Reuse the matching existing CA certificate; it must
+                          be authorized to sign and valid for --days
   -h, --help              Show this help message
 
 Examples:
-  generate-certificates.sh -d myapp.your.domain.com
-  generate-certificates.sh --domain api.your.domain.com --days 730
+  generate-certificates.sh -d example1.com -d example2.com
+  generate-certificates.sh --domain example1.com --domain example2.com --days 730
+  generate-certificates.sh -d example.com --ca-key ca-key.pem --ca-cert ca-cert.pem
 ```
 
 After completing certificate generation, you will obtain the following files:
@@ -42,8 +47,14 @@ After completing certificate generation, you will obtain the following files:
 - ca-fullchain.pem: CA certificate public key
 - ca-privkey.pem: CA certificate private key
 
-This script generates both single-domain (your.domain) and wildcard (*.your.domain) certificates, compatible with both
-native E2B protocol and OpenKruise customized E2B protocol.
+For every base domain passed with `--domain`, the script adds both the base domain and its wildcard name to the
+certificate SANs. For example, `-d example1.com -d example2.com` covers `example1.com`, `*.example1.com`,
+`example2.com`, and `*.example2.com`. This supports multiple native and private E2B endpoints served by the same
+`sandbox-manager`.
+
+By default, each run creates a new CA. To issue another server certificate from the same trust root, pass the existing
+CA key and certificate together with `--ca-key` and `--ca-cert`. The CA must be valid for the requested lifetime and
+authorized to sign certificates.
 
 ## Step 2: Install Certificates
 

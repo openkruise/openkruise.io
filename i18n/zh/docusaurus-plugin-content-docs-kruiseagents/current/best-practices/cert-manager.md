@@ -13,8 +13,14 @@
 
 ## 步骤二：通过 cert-manager 自动管理证书
 
-1. 将 [cert-manager.yaml](https://github.com/openkruise/agents/blob/master/docs/best-practices/cert-manager.yaml) 中的 "*.your.domain.com" 与 "your.domain.com" 替换为你的域名。
-2. 将配置添加到 Kubernetes 集群中：`kubectl apply -f cert-manager.yaml`
+1. 选择合适的示例：
+   - 使用单个域名时，替换
+     [cert-manager.yaml](https://github.com/openkruise/agents/blob/master/docs/best-practices/cert-manager.yaml) 中的
+     `your.domain.com` 与 `*.your.domain.com`。
+   - 使用多个域名时，替换
+     [cert-manager-multi-domain.yaml](https://github.com/openkruise/agents/blob/master/docs/best-practices/cert-manager-multi-domain.yaml)
+     的 `dnsNames` 列表。对于每个原生 E2B 域名，都需要同时包含基础域名与通配符域名。
+2. 将选定的配置添加到 Kubernetes 集群中，例如：`kubectl apply -f cert-manager-multi-domain.yaml`。
 
 ## 步骤三：验证证书状态
 

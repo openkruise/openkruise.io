@@ -414,6 +414,83 @@ sandbox-manager \
 - 当鉴权关闭（`--e2b-enable-auth=false`）时，上述参数与环境变量都会被忽略，Key 存储后端不会被初始化。
 - 当 `--e2b-key-storage=mysql` 但 DSN 或 pepper 为空时，`sandbox-manager` 会在启动时 fail fast。
 
+### 从 `secret` 迁移到 `mysql`
+
+使用
+[`migrate_secret_keys_to_mysql.py`](https://github.com/openkruise/agents/blob/master/hack/migrate_secret_keys_to_mysql.py)
+可将 `e2b-key-store` Secret 导出为 MySQL DDL 和 upsert 语句。生成的 SQL 会创建 `teams` 与 `team_api_keys`
+表，并迁移 Team 元数据、API Key 元数据、配额及 HMAC-SHA256 Key 哈希；SQL 文件中不会写入明文 API Key。
+缺少 Team 元数据的旧 Key 会归入 `admin` Team。
+
+脚本依赖 Python 3 和 `kubectl`。迁移前请确认当前 Kubernetes context 可以读取源 Secret，并且 MySQL 数据库已经创建，
+可通过 `mysql` 客户端连接。
+
+:::warning 凭证连续性
+生成 SQL 和以 MySQL 模式运行 `sandbox-manager` 时，必须使用完全相同的 `E2B_KEY_HASH_PEPPER`。更换 pepper 会导致
+所有已迁移的 API Key 鉴权失败。同时，`--e2b-admin-key` 必须继续使用迁移前的 admin Key；MySQL 后端初始化时会根据该启动参数
+校准 admin 记录。
+:::
+
+1. 安排维护窗口，在切换验证完成前停止创建和删除 API Key。脚本导出的是一个快照，导出后的变更不会包含在 SQL 中。
+   请备份源 Secret；如果目标数据库不为空，也要先备份数据库。Secret 中包含仅经过 base64 编码的明文凭证，备份必须存放在
+   访问受限的加密位置。
+
+   ```shell
+   umask 077
+   kubectl -n sandbox-system get secret e2b-key-store -o yaml \
+     > /secure/path/e2b-key-store-backup.yaml
+   ```
+
+2. 在 `openkruise/agents` 仓库的 checkout 中先校验所有 Secret 条目，不生成 SQL：
+
+   ```shell
+   python3 hack/migrate_secret_keys_to_mysql.py \
+     --namespace sandbox-system \
+     --dry-run
+   ```
+
+   如果条目格式错误、Secret data key 与 API Key UUID 不一致、原始 Key 重复，或者 Team Name 与 UUID 冲突，校验会直接失败。
+   请先修复源数据再继续；脚本不会跳过无效条目。
+
+3. 使用 MySQL 后端后续将长期使用的 pepper 生成迁移 SQL：
+
+   ```shell
+   export E2B_KEY_HASH_PEPPER='<durable-secret>'
+
+   python3 hack/migrate_secret_keys_to_mysql.py \
+     --namespace sandbox-system \
+     --output /secure/path/e2b_key_migration.sql
+   ```
+
+   默认源 Secret 为 `e2b-key-store`，如名称不同可通过 `--secret-name` 指定。脚本默认使用约定的 admin Team UUID
+   `550e8400-e29b-41d4-a716-446655449999`。`--admin-team-uid` 可以修改导出器写入的 UUID，但当前
+   `sandbox-manager` 启动时会将 admin Team 校准为上述约定 UUID，因此常规切换应保留默认值。`--output -` 可将 SQL
+   写入标准输出，`--quiet` 可关闭成功提示。
+
+4. 检查生成的 SQL，然后将其导入目标数据库：
+
+   ```shell
+   mysql --host=mysql.example.com --user=e2b --password e2b \
+     < /secure/path/e2b_key_migration.sql
+   ```
+
+5. 将 `sandbox-manager` 切换到 MySQL 后端。生成的 SQL 已创建 Schema，因此可以关闭 Schema 自动迁移：
+
+   ```shell
+   export E2B_KEY_STORAGE_DSN='e2b:secretpwd@tcp(mysql.example.com:3306)/e2b?charset=utf8mb4&parseTime=True&loc=Local'
+   export E2B_KEY_HASH_PEPPER='<same-durable-secret-used-for-export>'
+
+   sandbox-manager \
+     --e2b-enable-auth=true \
+     --e2b-admin-key='<same-admin-key-used-before-migration>' \
+     --e2b-key-storage=mysql \
+     --e2b-key-storage-disable-schema-auto-update=true
+   ```
+
+6. 使用原有 admin Key 和有代表性的租户 Key 分别访问 `/teams` 或 `/api-keys`，验证通过后再恢复 Key 的创建和删除。
+   在确认切换成功前请保留原始 `e2b-key-store` Secret。切回 `secret` 只能恢复该 Secret 中的快照；切换后在 MySQL 中创建或
+   删除的 Key 不会自动同步回 Secret。
+
 ### 后端选型建议
 
 | 场景                                           | 推荐后端                                                       |

@@ -23,14 +23,19 @@ $ bash generate-certificates.sh --help
 Usage: generate-certificates.sh [OPTIONS]
 
 Options:
-  -d, --domain DOMAIN     Specify certificate domain (default: your.domain.com)
+  -d, --domain DOMAIN     Add a base domain; may be specified multiple times
+                          DOMAIN and *.DOMAIN will both be added
   -o, --output DIR        Specify output directory (default: .)
   -D, --days DAYS         Specify certificate validity days (default: 365)
+      --ca-key PATH       Reuse an existing CA private key
+      --ca-cert PATH      Reuse the matching existing CA certificate; it must
+                          be authorized to sign and valid for --days
   -h, --help              Show this help message
 
 Examples:
-  generate-certificates.sh -d myapp.your.domain.com
-  generate-certificates.sh --domain api.your.domain.com --days 730
+  generate-certificates.sh -d example1.com -d example2.com
+  generate-certificates.sh --domain example1.com --domain example2.com --days 730
+  generate-certificates.sh -d example.com --ca-key ca-key.pem --ca-cert ca-cert.pem
 ```
 
 完成证书生成后，您会得到以下文件：
@@ -40,7 +45,12 @@ Examples:
 - ca-fullchain.pem：CA 证书公钥
 - ca-privkey.pem：CA 证书私钥
 
-该脚本会同时生成单域名（your.domain）与泛域名（*.your.domain）证书，兼容原生 E2B 协议与 OpenKruise 定制 E2B 协议。
+对于通过 `--domain` 传入的每个基础域名，脚本都会将该域名及其通配符域名加入证书 SAN。例如，
+`-d example1.com -d example2.com` 生成的证书会覆盖 `example1.com`、`*.example1.com`、`example2.com` 和
+`*.example2.com`，可供同一个 `sandbox-manager` 服务多个原生协议或私有协议 E2B 入口。
+
+默认情况下，每次执行都会创建新的 CA。如果需要使用同一信任根签发新的服务器证书，请同时通过 `--ca-key` 和
+`--ca-cert` 传入已有的 CA 私钥与证书。该 CA 必须在所请求的有效期内保持有效，并具备证书签发权限。
 
 ## 步骤二：安装证书
 

@@ -18,16 +18,31 @@ OpenKruise Agents 的 sandbox-manager 组件支持两种 E2B 接入协议：原�
 | api.your.domain.com              | your.domain.com/kruise/api              | 
 | \<port\>-\<sid\>.your.domain.com | your.domain.com/kruise/\<sid\>/\<port\> |
 
-## 关于 E2B_DOMAIN 环境变量的重要说明
+## 配置 E2B 域名
 
-**非常重要**：sandbox-manager 的 `E2B_DOMAIN` 环境变量必须与客户端设置相同。
-您可以使用 `kubectl edit deploy -n sandbox-system sandbox-manager` 编辑你的 deployment 修改服务端环境变量。
+基于域名接入的客户端需要配置 `E2B_DOMAIN`。服务端 `sandbox-manager` 支持两种域名模式：
 
-### 如何配置服务端（sandbox-manager）的 E2B_DOMAIN
+- **动态解析（未传入参数时的默认模式）**：当 `--e2b-domain` 为空时，`sandbox-manager` 根据每个请求的 HTTP `Host`
+  推导响应域名。原生协议请求会移除主机名开头的 `api.`，私有协议请求则保留完整主机名。因此，同一个
+  `sandbox-manager` 可以服务多个域名。
+- **静态覆盖**：当 `--e2b-domain` 非空时，服务端会原样返回该值并忽略请求主机名。所有客户端都通过同一个域名访问
+  `sandbox-manager` 时，可以使用此模式。
 
-#### 方法 1：通过 Helm 配置（推荐）
+例如，在动态解析模式下，配置了 `E2B_DOMAIN=example1.com` 和 `E2B_DOMAIN=example2.com` 的客户端可以共用
+同一个 `sandbox-manager`。发往 `api.example1.com` 的请求会得到 `example1.com` 下的 Sandbox 地址，发往
+`api.example2.com` 的请求则会得到 `example2.com` 下的地址。
 
-在通过 Helm 安装或升级 Sandbox Manager 时，您可以使用 `e2b.domain` 参数来设置 `E2B_DOMAIN`：
+:::note
+动态解析使用 HTTP `Host` 请求头，不信任 `X-Forwarded-Host`。请配置各级反向代理，使其保留 `Host`，或将 `Host`
+重写为客户端所使用的公网访问地址。
+:::
+
+### 配置服务端
+
+默认部署清单使用动态解析，不传递 `--e2b-domain`。如果 Helm Chart 或已有 Deployment 设置了域名，请将其清空
+（例如使用 `--set-string e2b.domain=""`），或移除 `--e2b-domain` 参数以启用动态解析。
+
+如果需要在通过 Helm 安装或升级 Sandbox Manager 时保留静态域名，请显式设置 `e2b.domain`：
 
 ```bash
 helm install agents-sandbox-manager openkruise/agents-sandbox-manager \
@@ -37,11 +52,9 @@ helm install agents-sandbox-manager openkruise/agents-sandbox-manager \
   --set ingress.className=<your-ingress-class>
 ```
 
-#### 方法 2：通过手动 Patch 配置
+配置静态覆盖时，该值必须与客户端的 `E2B_DOMAIN` 相同。
 
-您可以在运行 `make deploy-sandbox-manager` 之前通过编辑以下文件来配置服务端的 E2B_DOMAIN：
-
-### 如何配置客户端（E2B SDK）的 E2B_DOMAIN
+### 配置客户端
 
 您可以通过设置环境变量来配置客户端的 E2B_DOMAIN：
 
@@ -55,14 +68,23 @@ export E2B_DOMAIN=your.domain.com
 
 对于 Ingress 网关不使用默认 HTTP 端口（80 或 443）的场景。例如，如果域名是 `your.domain.com:8080`：
 
-- 客户端：设置环境变量 `E2B_DOMAIN=your.domain.com:8080`
-- 服务端：
-    - 在
-      [configuration_patch.yaml](https://github.com/openkruise/agents/blob/master/config/sandbox-manager/configuration_patch.yaml)
-      中，**保留端口**，将 E2B Domain 设置为 `your.domain.com:8080`
-    - 在
-      [ingress_patch.yaml](https://github.com/openkruise/agents/blob/master/config/sandbox-manager/ingress_patch.yaml)
-      中，**不要保留端口**，将 `replace.with.your.domain` 替换为 `your.domain.com`
+- 客户端：设置 `E2B_DOMAIN=your.domain.com:8080`。
+- 服务端使用动态解析时，会自动保留请求主机名中的端口。
+- 服务端使用静态覆盖时，设置 `--e2b-domain=your.domain.com:8080`。
+- Ingress 的主机名规则使用不带端口的 `your.domain.com`。
+
+#### 2. 多域名
+
+如果需要通过多个域名暴露同一个 `sandbox-manager`：
+
+1. 保持 `--e2b-domain` 为空，启用服务端动态解析。
+2. 为每个公网入口配置 DNS 和 Ingress 路由。原生协议使用默认的基于主机名的路由时，需要配置 `api.<domain>` 与
+   `*.<domain>`；使用私有协议时，需要配置基础域名。
+3. 准备覆盖所有入口的证书。[自签名证书](../best-practices/use-self-signed-cert.md)与
+   [cert-manager](../best-practices/cert-manager.md) 指南均提供了多域名示例。
+4. 将每个客户端的 `E2B_DOMAIN` 设置为该客户端实际连接的域名。
+
+此场景不要设置静态 `--e2b-domain`，因为静态值会覆盖所有请求主机名。
 
 ## 如何安装证书
 
@@ -88,7 +110,7 @@ kubectl create secret tls sandbox-manager-tls \
 
 1. 客户端配置环境变量：
     ```shell
-    # sandbox-manager 容器的 E2B_DOMAIN 环境变量应设置为相同值
+    # 如果服务端配置了静态 E2B 域名，其值必须与客户端相同
     export E2B_DOMAIN=your.domain.com
     export E2B_API_KEY=<your-api-key>
     ```
@@ -102,7 +124,7 @@ kubectl create secret tls sandbox-manager-tls \
 
 1. 客户端配置环境变量：
     ```shell
-    # sandbox-manager 容器的 E2B_DOMAIN 环境变量应设置为相同值
+    # 如果服务端配置了静态 E2B 域名，其值必须与客户端相同
     export E2B_DOMAIN=your.domain.com
     export E2B_API_KEY=<your-api-key>
     ```
@@ -114,20 +136,23 @@ kubectl create secret tls sandbox-manager-tls \
 3. 在您的 DNS 提供商处将单个域名 `your.domain.com` 解析到 sandbox-manager 的 ingress 端点
 4. 安装单个域名证书 `your.domain.com`
 
-### 3. 使用 E2B URL 参数实现集群内访问
+### 3. 使用 E2B URL 参数实现集群外访问
 
-> 通过 E2B SDK 原生支持的 URL 参数直接连接集群内的 sandbox-manager，无需域名、证书或私有协议 patch。要求 `e2b >= 2.7.0`。
+> 通过 E2B SDK 原生支持的 URL 参数从集群外直接访问 `sandbox-manager` 和 `sandbox-gateway`，无需通配符 DNS 或
+> 私有协议 patch。要求 `e2b >= 2.7.0`。
 
-1. 确保客户端（agent）和 sandbox-manager 在同一集群中。
-2. 客户端配置环境变量：
+1. 准备两个公网域名，并将其分别路由到对应的 Ingress 端点：
+   - `api.your.domain.com`：路由到 `sandbox-manager` 的控制面域名。`api.` 前缀是固定的，不能替换为其他子域名。
+   - `gateway.your.domain.com`：路由到 `sandbox-gateway` 的数据面域名。该域名可以使用任意子域名，推荐使用
+     `gateway`。
+2. 安装同时覆盖 `api.your.domain.com` 和 `gateway.your.domain.com` 的 TLS 证书。
+3. 配置客户端环境变量：
     ```shell
-    export E2B_API_URL="http://sandbox-manager.sandbox-system.svc.cluster.local:8080"
-    # 如果未安装外置的流量网关 sandbox-gateway，可以将下方 service 替换为 sandbox-manager
-    # 以继续使用 sandbox-manager 内置的流量代理（不推荐）
-    export E2B_SANDBOX_URL="http://sandbox-gateway.sandbox-system.svc.cluster.local:7788"
+    export E2B_API_URL="https://api.your.domain.com"
+    export E2B_SANDBOX_URL="https://gateway.your.domain.com"
     export E2B_API_KEY=<your-api-key>
     ```
-3. 使用 E2B SDK 创建 Sandbox，无需额外 patch：
+4. 使用 E2B SDK 创建 Sandbox，无需额外 patch：
     ```python
     from e2b import Sandbox
 
@@ -137,7 +162,22 @@ kubectl create secret tls sandbox-manager-tls \
     sandbox.kill()
     ```
 
-> ⚠️ **限制说明**：上层库 `e2b-code-interpreter` 和 `e2b-desktop` 的以下扩展功能不读取 `E2B_API_URL` / `E2B_SANDBOX_URL` 环境变量，因此不支持此接入方式：
+:::tip 集群内配置
+当客户端、`sandbox-manager` 和 `sandbox-gateway` 位于同一集群时，可以直接使用 Kubernetes Service 地址，
+好处是无需配置公网 DNS 解析：
+
+```shell
+export E2B_API_URL="http://sandbox-manager.sandbox-system.svc.cluster.local:8080"
+export E2B_SANDBOX_URL="http://sandbox-gateway.sandbox-system.svc.cluster.local:7788"
+export E2B_API_KEY=<your-api-key>
+```
+
+如果未安装外置的 `sandbox-gateway`，可以将 `E2B_SANDBOX_URL` 改为使用 `sandbox-manager`，继续使用其内置
+流量代理，但不推荐这种方式。
+:::
+
+> ⚠️ **限制说明**：上层库 `e2b-code-interpreter` 和 `e2b-desktop` 的以下扩展功能不读取 `E2B_API_URL` /
+> `E2B_SANDBOX_URL` 环境变量，因此不支持这种 URL 参数接入方式：
 >
 > **e2b-code-interpreter：**
 > - `Sandbox.run_code`
@@ -157,7 +197,7 @@ kubectl create secret tls sandbox-manager-tls \
 1. 确保客户端（agent）和 sandbox-manager 在同一集群中。
 2. 客户端配置环境变量：
     ```shell
-    # sandbox-manager 容器的 E2B_DOMAIN 环境变量应设置为相同值
+    # 如果服务端配置了静态 E2B 域名，其值必须与客户端相同
     export E2B_DOMAIN=sandbox-manager.sandbox-system.svc.cluster.local
     export E2B_API_KEY=<your-api-key>
     ```
@@ -171,7 +211,7 @@ kubectl create secret tls sandbox-manager-tls \
 
 1. 客户端配置环境变量：
     ```shell
-    # sandbox-manager 容器的 E2B_DOMAIN 环境变量应设置为相同值
+    # 如果服务端配置了静态 E2B 域名，其值必须与客户端相同
     export E2B_DOMAIN=localhost
     export E2B_API_KEY=<your-api-key>
     ```
