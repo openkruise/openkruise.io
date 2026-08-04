@@ -342,25 +342,10 @@ and will also affect delivery efficiency to some extent.
 <Tabs>
   <TabItem value="E2B" label="E2B">
 
-> The following extension keys are OpenKruise Agents extension fields and will not be added to the Sandbox resource as
+> The following extension key is an OpenKruise Agents extension field and will not be added to the Sandbox resource as
 > metadata.
 
-**Single volume mount:**
-
-```python
-from e2b_code_interpreter import Sandbox
-
-sbx = Sandbox.create(template="some-template", timeout=300, metadata={
-    "e2b.agents.kruise.io/csi-volume-name": "oss-pv-test",
-    "e2b.agents.kruise.io/csi-mount-point": "/data",
-    # Optional: specify a sub path within the persistent volume
-    "e2b.agents.kruise.io/csi-subpath": "sub/dir"
-})
-```
-
-**Multiple volumes mount:**
-
-To mount multiple volumes at once, use the `e2b.agents.kruise.io/csi-volume-config` extension with a JSON array:
+Use the `e2b.agents.kruise.io/csi-volume-config` extension with a JSON array to declare one or more volume mounts:
 
 ```python
 import json
@@ -378,12 +363,12 @@ sbx = Sandbox.create(template="some-template", timeout=300, metadata={
 
 Parameter description:
 
-| Extension Key                            | Description                                   | Required           |
-|------------------------------------------|-----------------------------------------------|--------------------|
-| `e2b.agents.kruise.io/csi-volume-name`   | Persistent volume name                        | Yes (single mount) |
-| `e2b.agents.kruise.io/csi-mount-point`   | Mount target path in container                | Yes (single mount) |
-| `e2b.agents.kruise.io/csi-subpath`       | Sub path within the persistent volume         | No                 |
-| `e2b.agents.kruise.io/csi-volume-config` | JSON array of mount configs (for multi-mount) | Yes (multi mount)  |
+| Field       | Description                                   | Required |
+|-------------|-----------------------------------------------|----------|
+| `pvName`    | Persistent volume name                        | Yes      |
+| `mountPath` | Mount target path in container                | Yes      |
+| `subPath`   | Sub path within the persistent volume         | No       |
+| `readOnly`  | Whether to mount as read-only                 | No       |
 
   </TabItem>
   <TabItem value="SandboxClaim" label="SandboxClaim">

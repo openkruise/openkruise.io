@@ -11,6 +11,10 @@
     "message": "用户手册",
     "description": "The label for category 'User Manuals' in sidebar 'kruiseagents'"
   },
+  "sidebar.kruiseagents.category.Storage Management": {
+    "message": "存储管理",
+    "description": "The label for category 'Storage Management' in sidebar 'kruiseagents'"
+  },
   "sidebar.kruiseagents.category.Best Practices": {
     "message": "最佳实践",
     "description": "The label for category 'Best Practices' in sidebar 'kruiseagents'"

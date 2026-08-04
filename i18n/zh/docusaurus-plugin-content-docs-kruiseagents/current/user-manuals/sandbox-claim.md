@@ -311,22 +311,7 @@ spec:
 
 > 以下扩展字段为 OpenKruise Agents 扩展字段，不会作为元数据添加到 Sandbox 资源上。
 
-**单卷挂载：**
-
-```python
-from e2b_code_interpreter import Sandbox
-
-sbx = Sandbox.create(template="some-template", timeout=300, metadata={
-    "e2b.agents.kruise.io/csi-volume-name": "oss-pv-test",
-    "e2b.agents.kruise.io/csi-mount-point": "/data",
-    # 可选：指定持久化卷中的子路径
-    "e2b.agents.kruise.io/csi-subpath": "sub/dir"
-})
-```
-
-**多卷挂载：**
-
-如果需要同时挂载多个卷，可以使用 `e2b.agents.kruise.io/csi-volume-config` 扩展字段，传入 JSON 数组：
+请使用 `e2b.agents.kruise.io/csi-volume-config` 扩展字段，并以 JSON 数组格式声明一个或多个卷挂载：
 
 ```python
 import json
@@ -344,12 +329,12 @@ sbx = Sandbox.create(template="some-template", timeout=300, metadata={
 
 参数说明：
 
-| 扩展字段                                     | 说明                   | 是否必填    |
-|------------------------------------------|----------------------|---------|
-| `e2b.agents.kruise.io/csi-volume-name`   | 持久化卷名称               | 是（单卷挂载） |
-| `e2b.agents.kruise.io/csi-mount-point`   | 容器内挂载目标路径            | 是（单卷挂载） |
-| `e2b.agents.kruise.io/csi-subpath`       | 持久化卷中的子路径            | 否       |
-| `e2b.agents.kruise.io/csi-volume-config` | JSON 数组格式的挂载配置（多卷挂载） | 是（多卷挂载） |
+| 字段 | 说明 | 是否必填 |
+| --- | --- | --- |
+| `pvName` | 持久化卷名称 | 是 |
+| `mountPath` | 容器内挂载目标路径 | 是 |
+| `subPath` | 持久化卷中的子路径 | 否 |
+| `readOnly` | 是否以只读方式挂载 | 否 |
 
   </TabItem>
   <TabItem value="SandboxClaim" label="SandboxClaim">

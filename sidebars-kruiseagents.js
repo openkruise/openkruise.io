@@ -34,6 +34,15 @@ module.exports = {
                 'user-manuals/checkpoint',
                 'user-manuals/sandbox-update',
                 'user-manuals/api-keys-and-teams',
+                {
+                    type: 'category',
+                    label: 'Storage Management',
+                    collapsed: false,
+                    items: [
+                        'user-manuals/volume-claim-template',
+                        'user-manuals/ondemand-volume-mount',
+                    ],
+                },
             ],
         },
         {
