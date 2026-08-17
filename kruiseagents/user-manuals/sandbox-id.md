@@ -10,7 +10,7 @@ from the Kubernetes namespace and name of the underlying `Sandbox` CR; an option
 ID** can be enabled so that newly delivered sandboxes receive a short, stable identifier that fits
 comfortably into DNS-based E2B hostnames.
 
-Short Sandbox IDs are available since **v0.7.0**. For how legacy IDs behave before and after
+Short Sandbox IDs are available since **v0.6.0**. For how legacy IDs behave before and after
 enabling the feature, see [Legacy ID Compatibility](#legacy-id-compatibility).
 
 ## Legacy Sandbox IDs
