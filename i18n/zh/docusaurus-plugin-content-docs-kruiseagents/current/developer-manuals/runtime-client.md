@@ -78,7 +78,7 @@ func main() {
 **关键说明：**
 
 - `NewFromK8s` 查询 Sandbox CR 并从 annotation `agents.kruise.io/runtime-access-token` 提取 `runtimeToken`
-- `sandboxID` 格式为 `namespace--name`（双横线连接）
+- `sandboxID` 格式为 `namespace--name`（双横线连接）。若集群启用了[短 Sandbox ID](../user-manuals/sandbox-id.md)，请改用分配给沙箱的不透明短 ID
 - kubeconfig 解析顺序：`KUBECONFIG` 环境变量 → `~/.kube/config` → in-cluster config
 
 完整的演示可参考：[运行时客户端示例](https://github.com/openkruise/agents-api/blob/master/examples/runtime-example/main.go)

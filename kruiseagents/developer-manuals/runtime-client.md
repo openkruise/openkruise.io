@@ -80,7 +80,9 @@ func main() {
 
 - `NewFromK8s` queries the Sandbox CR and extracts `runtimeToken` from the annotation
   `agents.kruise.io/runtime-access-token`
-- `sandboxID` format is `namespace--name` (connected by double hyphens)
+- `sandboxID` format is `namespace--name` (connected by double hyphens). When the cluster has
+  [short Sandbox IDs](../user-manuals/sandbox-id.md) enabled, use the opaque short ID assigned to
+  the sandbox instead
 - kubeconfig resolution order: `KUBECONFIG` environment variable → `~/.kube/config` → in-cluster config
 
 For a complete demo,
