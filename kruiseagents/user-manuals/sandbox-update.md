@@ -23,84 +23,9 @@ OpenKruise Agents supports two upgrade scenarios:
 
 ## Upgrade Pre-warmed Pool Sandboxes (SandboxSet)
 
-### How It Works
+Idle sandboxes in a warm pool are upgraded by modifying the SandboxSet template, which triggers a rolling update of the pool. Note that the controller continuously writes the warm pool's state back to the SandboxSet object, so replica count changes must go through the `scale` subresource, and template changes must be submitted as patches instead of full-object updates.
 
-When you modify the `spec.template` field of a SandboxSet, the controller detects the template change and performs a **rolling update** of the sandboxes in the pool. The controller:
-
-1. Computes a new `updateRevision` hash from the updated template.
-2. Deletes old-revision sandboxes in batches (respecting `maxUnavailable`).
-3. Creates new sandboxes with the updated template to maintain the desired replica count.
-
-During **scale-up**, newly created sandboxes use the latest template. During **scale-down**, sandboxes with the old revision are removed first.
-
-### Configuration
-
-```yaml
-apiVersion: agents.kruise.io/v1alpha1
-kind: SandboxSet
-metadata:
-  name: my-sandbox-pool
-  namespace: default
-spec:
-  replicas: 10
-  updateStrategy:
-    # Maximum number or percentage of sandboxes that can be unavailable during the update.
-    # Can be an absolute number (e.g., 5) or a percentage (e.g., "10%").
-    # Default: "20%"
-    maxUnavailable: "20%"
-  template:
-    spec:
-      containers:
-        - name: sandbox
-          image: my-registry/sandbox-image:v2   # Update the image version here
-          resources:
-            requests:
-              cpu: "1"
-              memory: "512Mi"
-            limits:
-              cpu: "2"
-              memory: "1Gi"
-```
-
-To trigger an upgrade, simply update any field under `spec.template` (e.g., container image, resources, environment variables) and apply the change:
-
-```bash
-kubectl apply -f sandboxset.yaml
-```
-
-### Monitoring Progress
-
-Check the SandboxSet status to monitor the rolling update:
-
-```bash
-kubectl get sandboxset my-sandbox-pool -o wide
-```
-
-Example output:
-
-```
-NAME              REPLICAS   AVAILABLE   UPDATEDREPLICAS   UPDATEDAVAILABLEREPLICAS   UPDATEREVISION   AGE
-my-sandbox-pool   10         8           6                 5                          a1b2c3d4         30m
-```
-
-| Field | Description |
-|---|---|
-| `REPLICAS` | Total number of sandboxes (creating + available + running + paused) |
-| `AVAILABLE` | Number of sandboxes ready to be claimed |
-| `UPDATEDREPLICAS` | Number of sandboxes that have been updated to the latest revision |
-| `UPDATEDAVAILABLEREPLICAS` | Number of updated sandboxes that are available |
-| `UPDATEREVISION` | Hash of the current desired template version |
-
-The rolling update is complete when `UPDATEDAVAILABLEREPLICAS` equals the desired `REPLICAS` count.
-
-You can also inspect individual sandbox revisions:
-
-```bash
-kubectl get sandboxes -l agents.kruise.io/sandbox-template=my-sandbox-pool -o custom-columns=\
-NAME:.metadata.name,\
-PHASE:.status.phase,\
-REVISION:.status.updateRevision
-```
+For the complete instructions, including how to use the `scale` subresource and patch-based updates, refer to [Upgrading Pre-warmed Pool Sandboxes](./warmpool-management.md#upgrading-pre-warmed-pool-sandboxes) in [Warm Pool Management](./warmpool-management.md).
 
 ## Upgrade Claimed Sandboxes (SandboxUpdateOps)
 

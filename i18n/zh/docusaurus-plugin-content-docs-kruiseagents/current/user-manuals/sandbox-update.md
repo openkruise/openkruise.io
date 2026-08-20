@@ -23,84 +23,9 @@ OpenKruise Agents 支持两种升级场景：
 
 ## 升级预热池沙箱（SandboxSet）
 
-### 工作原理
+预热池中的空闲沙箱通过修改 SandboxSet 模板进行升级，模板变更会触发池内沙箱的滚动升级。需要注意的是，控制器会持续将预热池的状态写回 SandboxSet 对象，因此修改副本数必须通过 `scale` 子资源进行，模板变更也必须以 patch 的方式提交，而不是整体更新。
 
-当你修改 SandboxSet 的 `spec.template` 字段时，控制器会检测到模板变更并对池中的沙箱执行 **滚动升级**。控制器会：
-
-1. 根据更新后的模板计算出新的 `updateRevision` 哈希。
-2. 按批次删除旧版本的沙箱（遵循 `maxUnavailable` 限制）。
-3. 使用更新后的模板创建新的沙箱，以维持期望的副本数。
-
-在 **扩容** 时，新创建的沙箱会使用最新的模板。在 **缩容** 时，会优先移除旧版本的沙箱。
-
-### 配置
-
-```yaml
-apiVersion: agents.kruise.io/v1alpha1
-kind: SandboxSet
-metadata:
-  name: my-sandbox-pool
-  namespace: default
-spec:
-  replicas: 10
-  updateStrategy:
-    # 在升级过程中允许不可用的沙箱最大数量或百分比。
-    # 可以是绝对值（如 5）或百分比（如 "10%"）。
-    # 默认值："20%"
-    maxUnavailable: "20%"
-  template:
-    spec:
-      containers:
-        - name: sandbox
-          image: my-registry/sandbox-image:v2   # 在此处更新镜像版本
-          resources:
-            requests:
-              cpu: "1"
-              memory: "512Mi"
-            limits:
-              cpu: "2"
-              memory: "1Gi"
-```
-
-要触发升级，只需更新 `spec.template` 下的任意字段（如容器镜像、资源、环境变量），然后应用变更：
-
-```bash
-kubectl apply -f sandboxset.yaml
-```
-
-### 监控进度
-
-通过查看 SandboxSet 状态来监控滚动升级：
-
-```bash
-kubectl get sandboxset my-sandbox-pool -o wide
-```
-
-输出示例：
-
-```
-NAME              REPLICAS   AVAILABLE   UPDATEDREPLICAS   UPDATEDAVAILABLEREPLICAS   UPDATEREVISION   AGE
-my-sandbox-pool   10         8           6                 5                          a1b2c3d4         30m
-```
-
-| 字段 | 说明 |
-|---|---|
-| `REPLICAS` | 沙箱总数（创建中 + 可用 + 运行中 + 已暂停） |
-| `AVAILABLE` | 可被认领的沙箱数量 |
-| `UPDATEDREPLICAS` | 已更新到最新版本的沙箱数量 |
-| `UPDATEDAVAILABLEREPLICAS` | 已更新且可用的沙箱数量 |
-| `UPDATEREVISION` | 当前期望模板版本的哈希值 |
-
-当 `UPDATEDAVAILABLEREPLICAS` 等于期望的 `REPLICAS` 数量时，滚动升级即告完成。
-
-你也可以查看单个沙箱的版本：
-
-```bash
-kubectl get sandboxes -l agents.kruise.io/sandbox-template=my-sandbox-pool -o custom-columns=\
-NAME:.metadata.name,\
-PHASE:.status.phase,\
-REVISION:.status.updateRevision
-```
+完整的操作说明（包括如何使用 `scale` 子资源和以 patch 方式更新），请参考 [预热池管理](./warmpool-management.md) 中的 [升级预热池沙箱](./warmpool-management.md#升级预热池沙箱)。
 
 ## 升级已认领沙箱（SandboxUpdateOps）
 
