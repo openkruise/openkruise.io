@@ -38,19 +38,17 @@ $ helm upgrade kruise openkruise/kruise --set featureGates="TemplateNoDefaults=t
 but offers many enhancements such as InPlace Update, Batch Release, etc.** Please refer to the documentation [CloneSet](https://openkruise.io/docs/user-manuals/cloneset).
 This article provides a helloworld http service [demo](https://github.com/zmberg/samples/tree/hello_world/helloworld), It contains Helm Charts, and the cloneSet configuration is shown below:
 ```yaml
-apiVersion: apps.kruise.io/v1alpha1
+apiVersion: apps.kruise.io/v1beta1
 kind: CloneSet
 metadata:
   name: helloworld-server
   labels:
     app: helloworld-server
 spec:
+  replicas: 2
   updateStrategy:
     # CloneSet will try to in-place update Pod instead of recreating them if possible
     type: InPlaceIfPossible
-    # Batch release, currently updating only one Pod
-    partition: 1
-  replicas: 2
   selector:
     matchLabels:
       app: helloworld-server
