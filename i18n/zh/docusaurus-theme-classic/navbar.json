@@ -15,6 +15,10 @@
     "message": "采用者",
     "description": "Navbar item with label Adopters"
   },
+  "item.label.Compatibility": {
+    "message": "Kubernetes 兼容性",
+    "description": "Navbar item with label Compatibility"
+  },
   "logo.alt": {
     "message": "OpenKruise",
     "description": "The alt text of navbar logo"

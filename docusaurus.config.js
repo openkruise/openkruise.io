@@ -211,6 +211,7 @@ function getNextVersionName() {
             activeBasePath: 'kruiseagents',
           },
           {to: '/blog', label: 'Blog', position: 'left'},
+          {to: '/compatibility', label: 'Compatibility', position: 'left'},
           {to: '/adopters', label: 'Adopters', position: 'left'},
           {
             type: 'localeDropdown',
