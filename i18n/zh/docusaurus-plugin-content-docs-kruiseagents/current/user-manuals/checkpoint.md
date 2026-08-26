@@ -147,6 +147,20 @@ checkpoint-code-demo-02    Creating    10s
 $ kubectl get cp -l agents.kruise.io/sandbox-name=code-interpreter-28rvn
 ```
 
+E2B 快照请求进入 `Succeeded` 阶段后，sandbox-manager 还会尝试把底层驱动 ID 从 `status.checkpointId` 复制到
+`agents.kruise.io/checkpoint-id` label。通过该 label 可以直接找到对应的 Checkpoint，无需逐个检查资源状态：
+
+```shell
+$ kubectl get cp -n default -l agents.kruise.io/checkpoint-id=<checkpoint-id>
+```
+
+该 label 按尽力而为原则写入。即使 label 更新失败，Checkpoint 仍然可用，E2B API 也仍会返回其 snapshot ID。
+如果通过 label 没有查到结果，请直接检查 `status.checkpointId`：
+
+```shell
+$ kubectl get cp -n default -o custom-columns=NAME:.metadata.name,CHECKPOINT_ID:.status.checkpointId
+```
+
 </TabItem>
 <TabItem value="E2B" label="E2B SDK">
 
