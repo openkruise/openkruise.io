@@ -162,6 +162,21 @@ through the E2B API; can be set manually on CRD-created ones):
 $ kubectl get cp -l agents.kruise.io/sandbox-name=code-interpreter-28rvn
 ```
 
+After an E2B snapshot request reaches `Succeeded`, sandbox-manager also attempts to copy the backing driver ID from
+`status.checkpointId` to the `agents.kruise.io/checkpoint-id` label. You can use this label to find the corresponding
+Checkpoint without inspecting every resource's status:
+
+```shell
+$ kubectl get cp -n default -l agents.kruise.io/checkpoint-id=<checkpoint-id>
+```
+
+This label is written on a best-effort basis. A Checkpoint remains usable and the E2B API still returns its snapshot ID
+if the label update fails. If the label query returns no result, inspect `status.checkpointId` directly:
+
+```shell
+$ kubectl get cp -n default -o custom-columns=NAME:.metadata.name,CHECKPOINT_ID:.status.checkpointId
+```
+
 </TabItem>
 <TabItem value="E2B" label="E2B SDK">
 
