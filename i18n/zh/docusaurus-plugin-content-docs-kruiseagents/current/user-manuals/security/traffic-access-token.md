@@ -9,7 +9,7 @@ title: 流量访问令牌轮换
 签发替换令牌，并通过定制 E2B 客户端补丁自动刷新令牌。
 
 该能力仅适用于 JWT 流量令牌。旧版不透明令牌仍可使用，但不支持基于过期时间自动刷新。API Key 和 Traffic JWT 的
-配置方法请参见 [API Key 与团队管理](./api-keys-and-teams.md)。
+配置方法请参见 [API Key 与团队管理](../api-keys-and-teams.md)。
 
 ## 客户端要求
 

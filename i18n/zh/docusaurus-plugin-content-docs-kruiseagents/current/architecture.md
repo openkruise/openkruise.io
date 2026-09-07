@@ -43,7 +43,7 @@ OpenKruise Agents 提供了兼容E2B协议的API.
 
 | API分类  | API                                                    | 参数兼容程度 | 说明                                        |
 |--------|--------------------------------------------------------|--------|-------------------------------------------|
-| 生命周期管理 | create                                                 | 部分兼容   | 网络访问控制、原地变配待实现                            |
+| 生命周期管理 | create                                                 | 部分兼容   | 网络访问控制已支持，参见[E2B 网络访问控制](./user-manuals/security/e2b-network-controls.md)。原地变配待实现 |
 |        | get\_info                                              | 完全兼容   |                                           |
 |        | list                                                   | 完全兼容   |                                           |
 |        | kill                                                   | 完全兼容   |                                           |
@@ -57,7 +57,7 @@ OpenKruise Agents 提供了兼容E2B协议的API.
 |        | upload\_url/download\_url                              | 不支持    | 通过预签名url上传下载待实现                           |
 | 日志     | logs                                                   | 不支持    | Sandbox 日志获取待实现                            |
 | 监控指标   | metrics                                                | 不支持    | Sandbox 监控指标获取待实现                          |
-| 网络     | network                                                | 不支持    | Sandbox 网络配置（出口规则）待实现                      |
+| 网络     | network                                                | 部分兼容   | 已支持 `allowOut`、`denyOut` 和 `rules`；`egressProxy` 和 `maskRequestHost` 会被拒绝。参见[E2B 网络访问控制](./user-manuals/security/e2b-network-controls.md)。 |
 | 生命周期事件 | `https://api.e2b.app/events/sandboxes/{sbx.sandbox_id}` | 不支持    | 生命周期事件待实现                                 |
 | 快照管理   | snapshots                                              | 完全兼容   | 具体快照效果依赖于 Checkpoint 实现                   |
 | 模板管理   |                                                        | 部分兼容   | 模板读操作已支持， 模板写操作推荐使用容器镜像来替代               |

@@ -10,7 +10,7 @@ Agents can return the token expiration time, issue a replacement token, and refr
 customized E2B client patch.
 
 This feature applies only to JWT traffic tokens. Legacy opaque tokens remain usable but have no expiration-based
-refresh behavior. For API-key and Traffic JWT setup, see [API Keys and Teams](./api-keys-and-teams.md).
+refresh behavior. For API-key and Traffic JWT setup, see [API Keys and Teams](../api-keys-and-teams.md).
 
 ## Client Requirements
 
