@@ -100,7 +100,7 @@ sbx = Sandbox.create(
     timeout=600,  # 10 分钟；到期后进入 paused，而不是被删除
     lifecycle={
         "on_timeout": "pause",
-        "auto_resume": False,  # 见下方说明
+        "auto_resume": True,
     },
 )
 ```
@@ -113,12 +113,13 @@ const sandbox = await Sandbox.create({
   timeoutMs: 10 * 60 * 1000, // 10 分钟；到期后进入 paused
   lifecycle: {
     onTimeout: 'pause',
-    autoResume: false, // 见下方说明
+    autoResume: true,
   },
 })
 ```
 
-> ⚠️ **当前 OpenKruise Agents 尚未实现 `auto_resume`。** 即使将其显式设为 `true`，休眠中的沙箱也 **不会** 被自动唤醒；客户端仍需在需要时显式调用 `Sandbox.connect(sandbox_id, ...)`（见下一节）。建议显式写为 `false` 以表明语义。
+启用 `auto_resume` 后，经 `sandbox-gateway` 路由的访问请求会先唤醒休眠中的 Sandbox，再转发请求。Gateway
+配置必须启用 `enable-wake-on-traffic`，否则访问请求不会唤醒 Sandbox。
 
 </TabItem>
 <TabItem value="CRD" label="Kubernetes CRD">
@@ -143,6 +144,28 @@ spec:
 
 </TabItem>
 </Tabs>
+
+## 收到访问流量时自动唤醒
+
+流量唤醒适用于自动休眠后需要在下一次数据面访问时恢复的 Sandbox。E2B 的 `auto_resume` 选项会保存为
+`spec.autoPausePolicy.resume.onIngressTraffic`：
+
+```yaml
+apiVersion: agents.kruise.io/v1alpha1
+kind: Sandbox
+metadata:
+  name: my-sandbox
+  namespace: default
+spec:
+  autoPausePolicy:
+    resume:
+      onIngressTraffic:
+        pauseTimeout: 5m
+```
+
+当 `pauseTimeout` 为正数且 Sandbox 已使用自动休眠时，流量唤醒成功后会从唤醒时刻重新计时，并在该时长后再次
+休眠。省略该字段时，Sandbox 会持续运行，直到再次被休眠或删除。并发请求会共享同一次恢复操作；触发请求会等待
+Sandbox 就绪，如果恢复超时则请求失败，客户端应按自身的幂等策略决定是否重试。
 
 ## 保留休眠沙箱
 
@@ -274,7 +297,7 @@ kubectl patch sbx my-sandbox -n default --type=merge \
 | 唤醒休眠中的沙箱                                | ✅ `Sandbox.connect(id, ...)`     | ✅ `spec.paused: false`                  |
 | 到 timeout 时自动触发 pause                     | ✅ `lifecycle.on_timeout='pause'` | ❌                                       |
 | 在绝对时间点自动触发 pause                      | ❌                                | ✅ `spec.pauseTime`                      |
-| 自动唤醒（auto-resume）                         | ❌ 暂不支持                        | ❌ 暂不支持                               |
+| 收到访问流量时自动唤醒                         | ✅ `lifecycle.auto_resume=true`    | ✅ `spec.autoPausePolicy.resume.onIngressTraffic` |
 | 配置进入 paused 后的删除时间                    | ✅ 创建 metadata 或 pause 请求头    | ✅ 自动休眠使用注解；手动休眠写 `spec.shutdownTime` |
 | 唤醒的同时设置 / 刷新 timeout                   | ✅ `Sandbox.connect(id, timeout=...)` | ✅ 同一次 patch 中写 `spec.shutdownTime` / `spec.pauseTime` |
 | 运行态下对 timeout 的只延长（extend-only）保护  | ✅                                | ❌ 用户写入值可缩短                    |

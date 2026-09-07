@@ -245,18 +245,21 @@ spec:
 
 ### 资源调整
 
-你可以在获取沙箱时指定资源调整配置。当前仅支持调整沙箱主容器的 CPU request 和 limit，也可以在同一次 claim
-中同时指定镜像替换和 CPU 调整。
+你可以在获取沙箱时指定资源调整配置，支持调整主容器的 CPU 和内存 request、limit，也可以在同一次 claim
+中同时指定镜像替换和资源调整。
 
 该功能的具体行为是：
 
 - 如果从 SandboxSet 预热池中获取，将会对运行中的 Sandbox Pod 执行原地资源调整。
-- 如果基于 SandboxSet 创建，将会直接以指定的 CPU 资源创建新的 Sandbox。
+- 如果基于 SandboxSet 创建，将会直接以指定的资源创建新的 Sandbox。
 
 :::note
-- 当前仅支持调整 CPU，内存和其他资源会被忽略。
+- 仅支持 CPU 和内存，其他资源会被拒绝。
+- 内存只能增加，低于当前值的目标会被拒绝。
 - 仅调整主容器。
 - 调整前后不能改变 Pod QoS class，否则本次 claim 会被拒绝。
+- 当主容器的 `resizePolicy` 配置了 `resourceName: memory` 和 `restartPolicy: RestartContainer` 时，调整内存可能
+  重启主容器。
 - 原地资源调整依赖 Kubernetes 的 Pod 原地资源调整能力。建议使用 Kubernetes 1.33 及以上版本，该能力已进入 beta
   并默认开启。Kubernetes 1.27 到 1.32 也可以使用，但需要启用 `InPlacePodVerticalScaling` feature gate。
 - 该功能由 `SandboxInPlaceResourceResize` feature gate 控制，默认开启。
@@ -265,15 +268,17 @@ spec:
 <Tabs>
   <TabItem value="E2B" label="E2B">
 
-> `e2b.agents.kruise.io/cpu-request` 和 `e2b.agents.kruise.io/cpu-limit` 为 OpenKruise Agents 扩展字段，不会作为元数据添加到
-> Sandbox 资源上。
+> 下列 `cpu-request`、`cpu-limit`、`memory-request` 和 `memory-limit` 均为 OpenKruise Agents 扩展字段，不会作为
+> 元数据添加到 Sandbox 资源上。
 
 ```python
 from e2b_code_interpreter import Sandbox
 
 sbx = Sandbox.create(template="some-template", metadata={
     "e2b.agents.kruise.io/cpu-request": "1000m",
-    "e2b.agents.kruise.io/cpu-limit": "2"
+    "e2b.agents.kruise.io/cpu-limit": "2",
+    "e2b.agents.kruise.io/memory-request": "2Gi",
+    "e2b.agents.kruise.io/memory-limit": "2Gi"
 })
 ```
 
@@ -292,8 +297,10 @@ spec:
     resources:
       requests:
         cpu: "1000m"
+        memory: "2Gi"
       limits:
         cpu: "2"
+        memory: "2Gi"
 ```
 
   </TabItem>

@@ -117,7 +117,7 @@ sbx = Sandbox.create(
     timeout=600,  # 10 minutes; on expiry go to paused instead of being killed
     lifecycle={
         "on_timeout": "pause",
-        "auto_resume": False,  # see note below
+        "auto_resume": True,
     },
 )
 ```
@@ -130,14 +130,14 @@ const sandbox = await Sandbox.create({
   timeoutMs: 10 * 60 * 1000, // 10 minutes; on expiry go to paused
   lifecycle: {
     onTimeout: 'pause',
-    autoResume: false, // see note below
+    autoResume: true,
   },
 })
 ```
 
-> ⚠️ **`auto_resume` is not yet implemented in OpenKruise Agents.** Even if you set it to `true`, a paused sandbox
-> will **not** be woken up automatically; clients must still call `Sandbox.connect(sandbox_id, ...)` explicitly when
-> they need it (see the next section). Set it to `false` to make the semantics explicit.
+With `auto_resume` enabled, an incoming request routed through `sandbox-gateway` resumes a paused sandbox before the
+request is forwarded. The gateway configuration must enable `enable-wake-on-traffic`; otherwise the request does not
+wake the sandbox.
 
 </TabItem>
 <TabItem value="CRD" label="Kubernetes CRD">
@@ -165,6 +165,29 @@ spec:
 
 </TabItem>
 </Tabs>
+
+## Waking on Ingress Traffic
+
+Wake-on-traffic is useful for auto-paused sandboxes that should become available again on the next data-plane request.
+The E2B `auto_resume` option is persisted as `spec.autoPausePolicy.resume.onIngressTraffic`:
+
+```yaml
+apiVersion: agents.kruise.io/v1alpha1
+kind: Sandbox
+metadata:
+  name: my-sandbox
+  namespace: default
+spec:
+  autoPausePolicy:
+    resume:
+      onIngressTraffic:
+        pauseTimeout: 5m
+```
+
+When `pauseTimeout` is positive and the sandbox already uses auto-pause, a successful traffic wake schedules the next
+pause for that duration after the wake. Omit it to leave the resumed sandbox running until another pause or deletion.
+Concurrent requests share the same resume operation. The triggering request waits for the sandbox to become ready and
+fails if resume times out; clients should retry failed requests according to their normal idempotency policy.
 
 ## Retaining a Paused Sandbox
 
@@ -308,7 +331,7 @@ kubectl patch sbx my-sandbox -n default --type=merge \
 | Resume a paused sandbox                                              | ✅ `Sandbox.connect(id, ...)`  | ✅ `spec.paused: false`               |
 | Auto-pause when the timeout expires                                  | ✅ `lifecycle.on_timeout='pause'` | ❌                                |
 | Auto-pause at a specific absolute time                               | ❌                             | ✅ `spec.pauseTime`                   |
-| Auto-resume a paused sandbox                                         | ❌ not yet supported           | ❌ not yet supported                  |
+| Auto-resume a paused sandbox on ingress traffic                      | ✅ `lifecycle.auto_resume=true` | ✅ `spec.autoPausePolicy.resume.onIngressTraffic` |
 | Configure deletion after entering paused                            | ✅ creation metadata or pause header | ✅ annotation for auto-pause; write `spec.shutdownTime` for a manual pause |
 | Set / refresh the sandbox timeout together with resume               | ✅ `Sandbox.connect(id, timeout=...)` | ✅ write `spec.shutdownTime` / `spec.pauseTime` in the same patch |
 | Extend-only guard on timeout refresh while running                   | ✅                             | ❌ user-written value may shorten    |
