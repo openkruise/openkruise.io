@@ -30,6 +30,8 @@ module.exports = {
                 'user-manuals/warmpool-management',
                 'user-manuals/sandbox-claim',
                 'user-manuals/sandbox-id',
+                'user-manuals/traffic-access-token',
+                'user-manuals/e2b-network-controls',
                 'user-manuals/pause-resume',
                 'user-manuals/runtime-injection',
                 'user-manuals/checkpoint',
