@@ -97,7 +97,7 @@ kubectl apply -f pool-autoscaler.yaml
 kubectl get poolautoscaler sandbox-pool-autoscaler -n default
 ```
 
-`minReplicas` and `maxReplicas` are always enforced: every replica count computed by any policy is clamped into this range. The values of `targetAvailable`, `tolerance`, and `minReplicas` together determine whether an idle pool can shrink to `minReplicas`; see [Capacity Policy Parameters and Scale-Down Reachability](#capacity-policy-parameters-and-scale-down-reachability).
+`minReplicas` and `maxReplicas` are always enforced: every replica count computed by any policy is clamped into this range. The values of `targetAvailable`, `tolerance`, and `minReplicas` together determine whether an idle pool can shrink to `minReplicas`; see [Capacity Policy Parameters Tuning Guide](#capacity-policy-parameters-tuning-guide).
 
 ### Step 3: Verify with E2B Business Traffic
 
@@ -288,12 +288,17 @@ Scale-up throttling is the SandboxSet's startup protection: when too many Sandbo
 
 The SandboxSet's `spec.scaleStrategy.maxUnavailable` doubles as the startup budget; when unset it defaults to the current replica count (equivalent to 100%, i.e. no cap on concurrent scale-up). Note this is a different field from `updateStrategy.maxUnavailable` (for rolling updates, default 20%). Sandboxes in the creating phase occupy the budget through two counters:
 
-- **Failed**: Ready condition is `False` with reason `StartContainerFailed` or `PodCreateFailed` — a definitive startup failure (container startup failure, image/config errors, create API failures, etc.).
-- **TimedOut**: stuck in Creating/ResourcePending longer than 50 seconds (the built-in pending timeout) without becoming Ready.
+- **Failed**: Ready condition is `False` with reason `StartContainerFailed`, `PodCreateFailed`, or `Unschedulable` — a definitive startup failure (container startup failure, image/config errors, create API failures, scheduling failures such as insufficient node capacity or provider schedule errors, etc.).
+- **TimedOut**: stuck in Creating/ResourcePending longer than the pending timeout (default 50 seconds) without becoming Ready.
 
 When `Failed + TimedOut >= startup budget`, the SandboxSet writes:
 
 ```yaml
+apiVersion: agents.kruise.io/v1alpha1
+kind: SandboxSet
+metadata:
+  name: sandbox-pool
+  namespace: default
 status:
   conditions:
     - type: ScalingLimited
@@ -348,7 +353,7 @@ The SandboxSet recreates a new instance automatically; if the configuration is n
 
 - **Mostly TimedOut**: the underlying creation speed cannot keep up with the scaling rhythm. Lower the SandboxSet's `scaleStrategy.maxUnavailable` to reduce the per-batch creation volume, or contact the cluster administrator to evaluate underlying supply capacity.
 
-## Capacity Policy Parameters and Scale-Down Reachability
+## Capacity Policy Parameters Tuning Guide
 
 The capacity policy computes lower and upper watermarks from "target + tolerance":
 
@@ -421,9 +426,9 @@ Cron policy validation rules (at most 20 entries, unique names, valid five-field
 | Field | Description |
 | --- | --- |
 | `spec.scaleTargetRef` | Reference to the managed SandboxSet; `kind` must be `SandboxSet`, and the target must be in the same namespace as the PoolAutoscaler. |
-| `spec.minReplicas` / `spec.maxReplicas` | Lower and upper bounds of the pool. `maxReplicas` must be greater than 0, and `minReplicas` must not exceed `maxReplicas`. The capacity policy must be able to shrink an idle pool to `minReplicas`; see [Capacity Policy Parameters and Scale-Down Reachability](#capacity-policy-parameters-and-scale-down-reachability). |
-| `spec.capacityPolicy.targetAvailable` | Target available Sandbox count, as an absolute number or percentage, e.g. `10`, `"60%"`. Percentages are based on the recent average replica count; a percentage target requires `minReplicas: 1` or greater. Values must jointly satisfy scale-down reachability with `tolerance` and `minReplicas`; see [Capacity Policy Parameters and Scale-Down Reachability](#capacity-policy-parameters-and-scale-down-reachability). |
-| `spec.capacityPolicy.tolerance` | Allowed deviation from the target, as an absolute number or percentage; defaults to `10%` when unset. For example, with target 10 and tolerance 2: scale up below 8, scale down above 12. Resolution rules and reachability constraints: see [Capacity Policy Parameters and Scale-Down Reachability](#capacity-policy-parameters-and-scale-down-reachability). |
+| `spec.minReplicas` / `spec.maxReplicas` | Lower and upper bounds of the pool. `maxReplicas` must be greater than 0, and `minReplicas` must not exceed `maxReplicas`. The capacity policy must be able to shrink an idle pool to `minReplicas`; see [Capacity Policy Parameters Tuning Guide](#capacity-policy-parameters-tuning-guide). |
+| `spec.capacityPolicy.targetAvailable` | Target available Sandbox count, as an absolute number or percentage, e.g. `10`, `"60%"`. Percentages are based on the recent average replica count; a percentage target requires `minReplicas: 1` or greater. Values must jointly satisfy scale-down reachability with `tolerance` and `minReplicas`; see [Capacity Policy Parameters Tuning Guide](#capacity-policy-parameters-tuning-guide). |
+| `spec.capacityPolicy.tolerance` | Allowed deviation from the target, as an absolute number or percentage; defaults to `10%` when unset. For example, with target 10 and tolerance 2: scale up below 8, scale down above 12. Resolution rules and reachability constraints: see [Capacity Policy Parameters Tuning Guide](#capacity-policy-parameters-tuning-guide). |
 | `spec.capacityPolicy.scaleUp.stabilizationWindowSeconds` | Interval between consecutive scale-ups. Explicit values must be within 60 to 3600 seconds; defaults to 60 seconds. |
 | `spec.capacityPolicy.scaleDown.stabilizationWindowSeconds` | Interval between consecutive scale-downs. Explicit values must be within 60 to 3600 seconds; defaults to 300 seconds. |
 | `spec.cronPolicies` | List of scheduled policies, at most 20, webhook-validated: `name` is required and unique within the list; `schedule` is required and must be a valid five-field cron expression (minute hour day month weekday); `timeZone` is optional and must be a valid timezone (e.g. `Asia/Shanghai`) when set; `targetReplicas` must be `>= 0` and is clamped to `maxReplicas` when exceeded. |

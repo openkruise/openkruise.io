@@ -101,6 +101,10 @@ spec:
 When scaling up, newly created sandboxes are launched in batches respecting this limit. For example, if `maxUnavailable: 5` and you scale from 0 to 20, sandboxes are created in groups of 5 — each new batch starts only after the previous batch becomes `available`.
 :::
 
+Besides pacing physical creation, this field also doubles as the **startup budget** for the SandboxSet's startup protection: sandboxes that fail definitively to start (Ready condition `False` with reason `StartContainerFailed`, `PodCreateFailed`, or `Unschedulable`) or that stay stuck in Creating/ResourcePending past the pending timeout (default 50 seconds) occupy the budget. When such sandboxes exhaust the budget, the SandboxSet reports `ScalingLimited=True` with reason `StartupBudgetExhausted` in `status.conditions`, and controllers such as [PoolAutoscaler](./poolautoscaler.md) pause further scale-up until the budget recovers. Scale-down is never affected by this field.
+
+For the trigger conditions, recovery behavior, and troubleshooting of this startup protection, see [Failure Scenario: Scale-Up Throttling, Trigger and Recovery](./poolautoscaler.md#failure-scenario-scale-up-throttling-trigger-and-recovery) in the PoolAutoscaler manual.
+
 ## Upgrading Pre-warmed Pool Sandboxes
 
 When you modify the `spec.template` field of a SandboxSet, the controller detects the template change and performs a **rolling update** of the sandboxes in the pool.

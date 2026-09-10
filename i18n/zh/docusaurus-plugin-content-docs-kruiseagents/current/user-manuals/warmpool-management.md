@@ -97,6 +97,10 @@ spec:
 扩容时，新创建的沙箱会按照该限制分批启动。例如，若 `maxUnavailable: 5`，从 0 扩容到 20，沙箱会以每批 5 个的方式创建——每一批只有在上一批变为 `available` 后才会开始创建。
 :::
 
+除了控制物理创建节奏，该字段还兼任 SandboxSet 启动保护的**启动预算**：启动确定性失败的沙箱（Ready condition 为 `False` 且 reason 为 `StartContainerFailed`、`PodCreateFailed` 或 `Unschedulable`）、以及长期停留在 Creating/ResourcePending 且超过 Pending 超时阈值（默认 50 秒）的沙箱，都会占用该预算。当此类沙箱耗尽预算时，SandboxSet 会在 `status.conditions` 中上报 `ScalingLimited=True`（reason 为 `StartupBudgetExhausted`），[PoolAutoscaler](./poolautoscaler.md) 等控制器会暂停继续扩容，直到预算恢复。缩容不受该字段影响。
+
+该启动保护的触发条件、恢复方式与排查步骤，见 PoolAutoscaler 手册中的[异常场景：扩容限流的触发与恢复](./poolautoscaler.md#异常场景扩容限流的触发与恢复)。
+
 ## 升级预热池沙箱
 
 当你修改 SandboxSet 的 `spec.template` 字段时，控制器会检测到模板变更并对池中的沙箱执行 **滚动升级**。

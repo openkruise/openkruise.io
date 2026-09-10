@@ -97,7 +97,7 @@ kubectl apply -f pool-autoscaler.yaml
 kubectl get poolautoscaler sandbox-pool-autoscaler -n default
 ```
 
-`minReplicas` 和 `maxReplicas` 始终生效，所有策略计算出的副本数都会被限制在这个范围内。`targetAvailable`、`tolerance` 和 `minReplicas` 的取值共同决定空闲预热池能否收缩到 `minReplicas`，配置规则见[容量策略参数与缩容可达性](#容量策略参数与缩容可达性)。
+`minReplicas` 和 `maxReplicas` 始终生效，所有策略计算出的副本数都会被限制在这个范围内。`targetAvailable`、`tolerance` 和 `minReplicas` 的取值共同决定空闲预热池能否收缩到 `minReplicas`，配置规则见[容量策略参数调优指南](#容量策略参数调优指南)。
 
 ### 步骤三：使用 E2B 业务流量验证
 
@@ -288,12 +288,17 @@ spec:
 
 SandboxSet 的 `spec.scaleStrategy.maxUnavailable` 同时作为启动预算；未设置时默认为当前副本数（相当于 100%，即不限制并发扩容量）。注意它与 `updateStrategy.maxUnavailable`（滚动更新用，默认 20%）是不同字段。处于创建阶段的 Sandbox 按以下两类计数占用预算：
 
-- **Failed**：Ready condition 为 `False` 且 reason 为 `StartContainerFailed` 或 `PodCreateFailed`，即明确的启动失败（容器启动失败、镜像/配置错误、创建 API 失败等）。
-- **TimedOut**：长期停留在 Creating/ResourcePending 状态、创建时间超过 50 秒（内置的 Pending 超时阈值）仍未 Ready。
+- **Failed**：Ready condition 为 `False` 且 reason 为 `StartContainerFailed`、`PodCreateFailed` 或 `Unschedulable`，即明确的启动失败（容器启动失败、镜像/配置错误、创建 API 失败、调度失败如节点资源不足或底层调度错误等）。
+- **TimedOut**：长期停留在 Creating/ResourcePending 状态、创建时间超过 Pending 超时阈值（默认 50 秒）仍未 Ready。
 
 当 `Failed + TimedOut >= 启动预算` 时，SandboxSet 写入：
 
 ```yaml
+apiVersion: agents.kruise.io/v1alpha1
+kind: SandboxSet
+metadata:
+  name: sandbox-pool
+  namespace: default
 status:
   conditions:
     - type: ScalingLimited
@@ -348,7 +353,7 @@ SandboxSet 会自动重建新实例；若配置未修复，新实例仍会失败
 
 - **TimedOut 为主**：底层创建速度跟不上扩容节奏。可调小 SandboxSet 的 `scaleStrategy.maxUnavailable` 降低单批创建量，或联系集群管理员评估底层供给能力。
 
-## 容量策略参数与缩容可达性
+## 容量策略参数调优指南
 
 容量策略根据“目标值 + 容差”计算上下水位：
 
@@ -421,9 +426,9 @@ Cron 策略的校验规则（最多 20 条、name 唯一、五段合法 Cron 表
 | 字段 | 说明 |
 | --- | --- |
 | `spec.scaleTargetRef` | 待管理的 SandboxSet 引用；`kind` 必须为 `SandboxSet`，目标与 PoolAutoscaler 必须位于同一 namespace。 |
-| `spec.minReplicas` / `spec.maxReplicas` | 预热池副本下限和上限。`maxReplicas` 必须大于 0，`minReplicas` 不能大于 `maxReplicas`。容量策略需能将空闲预热池收缩到 `minReplicas`，取值约束见[容量策略参数与缩容可达性](#容量策略参数与缩容可达性)。 |
-| `spec.capacityPolicy.targetAvailable` | 目标可用 Sandbox 数，可填绝对值或百分比，例如 `10`、`"60%"`。百分比以近期平均副本数为基准；使用百分比时必须设置 `minReplicas: 1` 或更大。取值需与 `tolerance`、`minReplicas` 共同满足缩容可达性规则，详见[容量策略参数与缩容可达性](#容量策略参数与缩容可达性)。 |
-| `spec.capacityPolicy.tolerance` | 目标允许偏差，可填绝对值或百分比；未设置时默认为 `10%`。例如目标为 10、偏差为 2 时，低于 8 扩容、高于 12 缩容。解析方式与缩容可达性约束见[容量策略参数与缩容可达性](#容量策略参数与缩容可达性)。 |
+| `spec.minReplicas` / `spec.maxReplicas` | 预热池副本下限和上限。`maxReplicas` 必须大于 0，`minReplicas` 不能大于 `maxReplicas`。容量策略需能将空闲预热池收缩到 `minReplicas`，取值约束见[容量策略参数调优指南](#容量策略参数调优指南)。 |
+| `spec.capacityPolicy.targetAvailable` | 目标可用 Sandbox 数，可填绝对值或百分比，例如 `10`、`"60%"`。百分比以近期平均副本数为基准；使用百分比时必须设置 `minReplicas: 1` 或更大。取值需与 `tolerance`、`minReplicas` 共同满足缩容可达性规则，详见[容量策略参数调优指南](#容量策略参数调优指南)。 |
+| `spec.capacityPolicy.tolerance` | 目标允许偏差，可填绝对值或百分比；未设置时默认为 `10%`。例如目标为 10、偏差为 2 时，低于 8 扩容、高于 12 缩容。解析方式与缩容可达性约束见[容量策略参数调优指南](#容量策略参数调优指南)。 |
 | `spec.capacityPolicy.scaleUp.stabilizationWindowSeconds` | 连续扩容间隔。显式设置范围为 60 到 3600 秒，不设置时默认 60 秒。 |
 | `spec.capacityPolicy.scaleDown.stabilizationWindowSeconds` | 连续缩容间隔。显式设置范围为 60 到 3600 秒，默认 300 秒。 |
 | `spec.cronPolicies` | 定时策略列表，最多 20 条，Webhook 校验：`name` 必填且同一列表内唯一；`schedule` 必填且必须是合法的五段 Cron 表达式（分 时 日 月 星期）；`timeZone` 可选，设置时必须是合法时区（如 `Asia/Shanghai`）；`targetReplicas` 必须大于等于 0，超过 `maxReplicas` 时会被限制在 `maxReplicas`。 |
