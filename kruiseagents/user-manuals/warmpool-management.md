@@ -58,8 +58,8 @@ it through the `kubectl get` command:
 
 ```shell
 $ kubectl get sbs -n default
-NAME   REPLICAS   AVAILABLE   UPDATEREVISION   AGE
-demo   10         10          78dd8599cf       19m
+NAME   REPLICAS   AVAILABLE   UPDATEDREPLICAS   UPDATEDAVAILABLEREPLICAS   UPDATEREVISION   AGE
+demo   10         10          10                10                         78dd8599cf       19m
 ```
 
 ## Scaling the Warm Pool
@@ -84,7 +84,7 @@ Do not scale by issuing a full-object `Update` from a client — on a busy Sandb
 
 ### `scaleStrategy.maxUnavailable`
 
-This field limits the maximum number of sandboxes that can be **unavailable** (i.e., in the `creating` state) during **scaling operations**. It is useful when you want to avoid a sudden surge of Pod creation that could pressure the cluster.
+This field caps the number of sandboxes created **per batch** during scale-up, and doubles as the **startup budget** of the SandboxSet's scale-up protection. It is useful when you want to avoid a sudden surge of Pod creation that could pressure the cluster.
 
 - Can be an absolute number (e.g., `5`) or a percentage string (e.g., `"20%"`).
 - Default: no limit (all new sandboxes are created simultaneously).
@@ -93,15 +93,15 @@ This field limits the maximum number of sandboxes that can be **unavailable** (i
 spec:
   replicas: 20
   scaleStrategy:
-    # At most 5 sandboxes can be in the creating state at any time during scaling
+    # At most 5 sandboxes are created per batch during scale-up
     maxUnavailable: 5
 ```
 
 :::tip
-When scaling up, newly created sandboxes are launched in batches respecting this limit. For example, if `maxUnavailable: 5` and you scale from 0 to 20, sandboxes are created in groups of 5 — each new batch starts only after the previous batch becomes `available`.
+When scaling up, new sandboxes are created in batches of at most this limit. The next batch is issued once the controller observes the previous batch; sandboxes still in the `creating` state do not hold back further batches, so a healthy pool ramps up without waiting for each batch to become `available`.
 :::
 
-Besides pacing physical creation, this field also doubles as the **startup budget** for the SandboxSet's startup protection: sandboxes that fail definitively to start (Ready condition `False` with reason `StartContainerFailed`, `PodCreateFailed`, or `Unschedulable`) or that stay stuck in Creating/ResourcePending past the pending timeout (default 50 seconds) occupy the budget. When such sandboxes exhaust the budget, the SandboxSet reports `ScalingLimited=True` with reason `StartupBudgetExhausted` in `status.conditions`, and controllers such as [PoolAutoscaler](./poolautoscaler.md) pause further scale-up until the budget recovers. Scale-down is never affected by this field.
+A sandbox only occupies the startup budget when it is definitively failing to start: its Ready condition is `False` with reason `StartContainerFailed`, `PodCreateFailed`, or `Unschedulable`, or it stays stuck in Creating/ResourcePending past the pending timeout (default 50 seconds). Healthy `creating` sandboxes do not consume the budget. When failing sandboxes exhaust the budget, the SandboxSet reports `ScalingLimited=True` with reason `StartupBudgetExhausted` in `status.conditions`, and controllers such as [PoolAutoscaler](./poolautoscaler.md) pause further scale-up until the budget recovers. Scale-down is never affected by this field.
 
 For the trigger conditions, recovery behavior, and troubleshooting of this startup protection, see [Failure Scenario: Scale-Up Throttling, Trigger and Recovery](./poolautoscaler.md#failure-scenario-scale-up-throttling-trigger-and-recovery) in the PoolAutoscaler manual.
 
@@ -205,7 +205,7 @@ my-sandbox-pool   10         8           6                 5                    
 
 | Field | Description |
 |---|---|
-| `REPLICAS` | Total number of sandboxes (creating + available + running + paused) |
+| `REPLICAS` | Total number of pool sandboxes (creating + available); sandboxes claimed by agents are not counted |
 | `AVAILABLE` | Number of sandboxes ready to be claimed |
 | `UPDATEDREPLICAS` | Number of sandboxes that have been updated to the latest revision |
 | `UPDATEDAVAILABLEREPLICAS` | Number of updated sandboxes that are available |
