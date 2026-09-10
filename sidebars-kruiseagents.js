@@ -28,6 +28,7 @@ module.exports = {
             collapsed: false,
             items: [
                 'user-manuals/warmpool-management',
+                'user-manuals/poolautoscaler',
                 'user-manuals/sandbox-claim',
                 'user-manuals/sandbox-id',
                 {

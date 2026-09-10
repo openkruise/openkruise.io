@@ -54,8 +54,8 @@ spec:
 
 ```shell
 $ kubectl get sbs -n default
-NAME   REPLICAS   AVAILABLE   UPDATEREVISION   AGE
-demo   10         10          78dd8599cf       19m
+NAME   REPLICAS   AVAILABLE   UPDATEDREPLICAS   UPDATEDAVAILABLEREPLICAS   UPDATEREVISION   AGE
+demo   10         10          10                10                         78dd8599cf       19m
 ```
 
 ## 预热池扩缩容
@@ -80,7 +80,7 @@ kubectl scale sbs demo --replicas=5 -n default
 
 ### `scaleStrategy.maxUnavailable`
 
-该字段限制在 **扩容操作** 期间允许处于 **不可用** 状态（即处于 `creating` 状态）的沙箱最大数量。当你希望避免 Pod 创建突发增长对集群造成压力时，该字段非常有用。
+该字段限制扩容时**单批**创建的沙箱数量，并兼任 SandboxSet 扩容保护的**启动预算**。当你希望避免 Pod 创建突发增长对集群造成压力时，该字段非常有用。
 
 - 可以是绝对值（如 `5`）或百分比字符串（如 `"20%"`）。
 - 默认值：无限制（所有新沙箱同时创建）。
@@ -89,13 +89,17 @@ kubectl scale sbs demo --replicas=5 -n default
 spec:
   replicas: 20
   scaleStrategy:
-    # 在扩容期间，最多允许 5 个沙箱处于 creating 状态
+    # 扩容时每批最多创建 5 个沙箱
     maxUnavailable: 5
 ```
 
 :::tip
-扩容时，新创建的沙箱会按照该限制分批启动。例如，若 `maxUnavailable: 5`，从 0 扩容到 20，沙箱会以每批 5 个的方式创建——每一批只有在上一批变为 `available` 后才会开始创建。
+扩容时，新沙箱以不超过该限制的批次创建。控制器观测到上一批后即发出下一批；处于 `creating` 状态的沙箱不会阻塞后续批次，因此健康的预热池无需等待每批变为 `available` 即可持续扩容。
 :::
+
+只有确定性启动失败的沙箱才会占用启动预算：其 Ready condition 为 `False` 且 reason 为 `StartContainerFailed`、`PodCreateFailed` 或 `Unschedulable`，或长期停留在 Creating/ResourcePending 且超过 Pending 超时阈值（默认 50 秒）。健康的 `creating` 沙箱不消耗预算。当失败沙箱耗尽预算时，SandboxSet 会在 `status.conditions` 中上报 `ScalingLimited=True`（reason 为 `StartupBudgetExhausted`），[PoolAutoscaler](./poolautoscaler.md) 等控制器会暂停继续扩容，直到预算恢复。缩容不受该字段影响。
+
+该启动保护的触发条件、恢复方式与排查步骤，见 PoolAutoscaler 手册中的[异常场景：扩容限流的触发与恢复](./poolautoscaler.md#异常场景扩容限流的触发与恢复)。
 
 ## 升级预热池沙箱
 
@@ -197,7 +201,7 @@ my-sandbox-pool   10         8           6                 5                    
 
 | 字段 | 说明 |
 |---|---|
-| `REPLICAS` | 沙箱总数（创建中 + 可用 + 运行中 + 已暂停） |
+| `REPLICAS` | 预热池内沙箱总数（创建中 + 可用）；已被 Agent 领取的沙箱不计入 |
 | `AVAILABLE` | 可被认领的沙箱数量 |
 | `UPDATEDREPLICAS` | 已更新到最新版本的沙箱数量 |
 | `UPDATEDAVAILABLEREPLICAS` | 已更新且可用的沙箱数量 |
