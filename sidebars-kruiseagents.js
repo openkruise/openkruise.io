@@ -32,6 +32,7 @@ module.exports = {
                     label: 'Sandbox Lifecycle Management',
                     collapsed: false,
                     items: [
+                        'user-manuals/sandbox-claim',
                         'user-manuals/pause-resume',
                         'user-manuals/sandbox-update',
                         'user-manuals/commit',
@@ -46,7 +47,6 @@ module.exports = {
                     items: [
                         'user-manuals/warmpool-management',
                         'user-manuals/poolautoscaler',
-                        'user-manuals/sandbox-claim',
                     ],
                 },
                 {
