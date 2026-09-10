@@ -1,31 +1,31 @@
 # Warm Pool Autoscaling
 
-PoolAutoscaler automatically adjusts the size of a warm pool. Based on the number of unclaimed available Sandboxes and user-configured Cron schedules, it modifies the `spec.replicas` of a SandboxSet: replenishing the pool when available Sandboxes run low, shrinking it when too many sit idle, and pre-warming ahead of known peaks.
+PoolAutoscaler automatically adjusts the size of a warm pool. Based on the number of unclaimed Sandboxes and user-configured Cron schedules, it modifies the `spec.replicas` of a SandboxSet: replenishing the pool when available Sandboxes run low, shrinking it when too many sit idle, and pre-warming ahead of known peaks.
 
 Unlike CPU- or QPS-based autoscaling, PoolAutoscaler does not collect business metrics or predict traffic. It only manages warm pool capacity; the business lifecycle of a claimed Sandbox is still handled by the Agent Sandbox service. For warm pool fundamentals, see [Warm Pool Management](./warmpool-management.md).
 
 ## Background and Use Cases
 
-This capability fits the following scenarios:
+This capability is suited to the following scenarios:
 
 - **Fluctuating request volume**: for example, users create, use, and release Sandboxes through the E2B API, and you always want a certain number of available instances on hand to reduce claim latency.
-- **Predictable peak hours**: for example, before workday mornings, scheduled tasks, or events, the pool can be pre-warmed at a specified time.
-- **Both traffic types coexist**: capacity policy replenishes the pool day to day, while Cron policies set the warm-up size for known peaks.
+- **Predictable peak hours**: for example, ahead of weekday mornings, scheduled tasks, or events, the pool can be pre-warmed at a specified time.
+- **Both traffic types coexist**: capacity policy replenishes the pool day-to-day, while Cron policies set the warm-up target for known peaks.
 
 ## Prerequisites and Limitations
 
 Before you begin, confirm that:
 
 1. `agent-sandbox-controller` is installed at a version that supports PoolAutoscaler: newer versions enable it by default with no extra configuration; older versions require the startup flag `--feature-gates=PoolAutoscaler=true` (see [Installation](../installation.md)).
-2. A SandboxSet to manage has been created following [Warm Pool Management](./warmpool-management.md), and the SandboxSet controller is running normally.
+2. A target SandboxSet has been created following [Warm Pool Management](./warmpool-management.md), and the SandboxSet controller is running normally.
 3. Within a namespace, a SandboxSet can be managed by at most one PoolAutoscaler.
 4. At least one policy is configured: `capacityPolicy` or `cronPolicies`.
 
-PoolAutoscaler only modifies `spec.replicas` of the target SandboxSet. Do not let HPA, AHPA, scripts, or other controllers write the same field concurrently; it does not create or delete Pods directly either.
+PoolAutoscaler only modifies `spec.replicas` of the target SandboxSet. Do not let HPA, AHPA, scripts, or other controllers write the same field concurrently. PoolAutoscaler also does not create or delete Pods directly.
 
 ## Scenario 1: Replenish the Pool by Available Capacity
 
-This scenario suits businesses whose request volume is hard to predict but that need consistently low claim latency. For example, the business continuously creates Sandboxes through the E2B API, runs code or commands, and releases them when done. Each claim consumes an available Sandbox in the pool; the capacity policy replenishes unclaimed instances accordingly.
+This scenario suits businesses whose request volume is hard to predict but that need consistently low claim latency. For example, the business continuously creates Sandboxes through the E2B API, runs code or commands, and releases them when done. Each claim consumes an available Sandbox in the pool; the capacity policy replenishes the pool accordingly.
 
 ### Step 1: Create the Warm Pool via SandboxSet
 
@@ -38,23 +38,21 @@ metadata:
   name: sandbox-pool        # SandboxSet name, referenced by PoolAutoscaler later; change as needed
   namespace: default        # deployment namespace; PoolAutoscaler must live in the same namespace
 spec:
-  replicas: 2               # initial pool size; taken over by PoolAutoscaler once applied, keep it small to save cost
+  replicas: 2               # initial pool size; the PoolAutoscaler takes over once applied, so keep it small to reduce cost
   runtimes:
     - name: agent-runtime   # injects the envd-compatible runtime required by E2B code execution / files / commands
   template:
     spec:
       containers:
         - name: sandbox
-          image: <your-agent-sandbox-image>   # MUST REPLACE: an Agent Sandbox runtime image pullable in-cluster
+          image: <your-agent-sandbox-image>   # MUST REPLACE: an Agent Sandbox runtime image that can be pulled in-cluster
           resources:
-            requests:         # scheduling requests, affecting per-instance cost and placeable node range
+            requests:         # scheduling requests, affecting per-instance cost and schedulable node range
               cpu: "1"
               memory: 1Gi
-            limits:           # resource limits; tune to your runtime — too large wastes warm-up cost, too small breaks startup
+            limits:           # resource limits; tune to your runtime — too large wastes warm-up cost, too small causes startup to fail
               cpu: "1"
               memory: 1Gi
-      nodeSelector:
-        type: virtual-kubelet  # ACS clusters pin scheduling to the virtual node; replace with your node selector or remove for self-managed clusters
 ```
 
 :::note
@@ -68,7 +66,7 @@ kubectl get sandboxset sandbox-pool -n default
 
 ### Step 2: Configure the PoolAutoscaler
 
-The following policy maintains the pool proportionally: the target availability ratio is 50% with the default 10% tolerance, so it scales up when the recent average availability drops below 40%, scales down above 60%, and makes no change in between. Percentage watermarks stretch with pool size, suiting workloads with fluctuating load.
+The following policy maintains the pool proportionally: the target availability ratio is 50% with the default 10% tolerance, so it scales up when the recent average availability drops below 40%, scales down above 60%, and makes no change in between. Percentage watermarks stretch with pool size, suited to fluctuating workloads.
 
 ```yaml
 apiVersion: agents.kruise.io/v1alpha1
@@ -82,14 +80,14 @@ spec:
     kind: SandboxSet              # only SandboxSet is supported
     name: sandbox-pool            # the SandboxSet created in Step 1
   minReplicas: 2                 # pool lower bound; percentage targets must satisfy scale-down reachability, see below
-  maxReplicas: 50                 # pool upper bound; set per peak concurrency and cluster capacity
+  maxReplicas: 50                 # pool upper bound; set based on peak concurrency and cluster capacity
   capacityPolicy:
     targetAvailable: "50%"        # target ratio of available (unclaimed) Sandboxes to replicas, stretching with pool size
-    # tolerance defaults to 10% when unset, combining with the target into a no-op zone of 40%~60%
+    # tolerance defaults to 10% when unset, combining with the target into a no-action range of 40% to 60%
     scaleUp:
-      stabilizationWindowSeconds: 60    # minimum interval between consecutive scale-ups; smaller refills faster but scales more aggressively
+      stabilizationWindowSeconds: 60    # minimum interval between consecutive scale-ups; a smaller value refills the pool faster but scales more aggressively
     scaleDown:
-      stabilizationWindowSeconds: 300   # minimum interval between consecutive scale-downs; longer avoids recycling the pool on nightly dips
+      stabilizationWindowSeconds: 300   # minimum interval between consecutive scale-downs; a longer value avoids recycling the pool during nightly dips
 ```
 
 ```bash
@@ -97,7 +95,7 @@ kubectl apply -f pool-autoscaler.yaml
 kubectl get poolautoscaler sandbox-pool-autoscaler -n default
 ```
 
-`minReplicas` and `maxReplicas` are always enforced: every replica count computed by any policy is clamped into this range. The values of `targetAvailable`, `tolerance`, and `minReplicas` together determine whether an idle pool can shrink to `minReplicas`; see [Capacity Policy Parameters and Scale-Down Reachability](#capacity-policy-parameters-and-scale-down-reachability).
+`minReplicas` and `maxReplicas` are always enforced: every replica count computed by any policy is clamped to this range. The values of `targetAvailable`, `tolerance`, and `minReplicas` together determine whether an idle pool can shrink to `minReplicas`; see [Capacity Policy Parameters and Scale-Down Reachability](#capacity-policy-parameters-and-scale-down-reachability).
 
 ### Step 3: Verify with E2B Business Traffic
 
@@ -225,13 +223,13 @@ kubectl get sandboxset sandbox-pool -n default -o yaml
 kubectl describe poolautoscaler sandbox-pool-autoscaler -n default
 ```
 
-Focus on `status.currentReplicas`, `status.desiredReplicas`, `status.currentCapacity.available`, and `status.conditions`. These are observations from the most recent reconcile and may briefly lag the SandboxSet's live state.
+Focus on `status.currentReplicas`, `status.desiredReplicas`, `status.currentCapacity.available`, and `status.conditions`. These reflect the most recent reconciliation and may briefly lag the SandboxSet's live state.
 
 The capacity policy decides based on the average availability over a recent observation period, smoothing out transient fluctuation. The first scale action executes immediately; subsequent actions follow the stabilization windows: scale-up defaults to a 60-second interval, scale-down to 300 seconds, both adjustable via `stabilizationWindowSeconds` (see [Parameter Validation Constraints](#parameter-validation-constraints)). The default scale-up interval already includes a safety margin for the pending timeout; when a larger value is configured, the configured value wins.
 
-When the SandboxSet's current-generation `ScalingLimited=True`, PoolAutoscaler pauses further scale-up, avoiding raising the target while the startup budget is exhausted by startup failures or pending timeouts; scale-down is unaffected. The creation concurrency of in-flight Sandboxes is controlled by the SandboxSet — PoolAutoscaler does not manage Pods directly. For trigger conditions, recovery, and troubleshooting of the limiter, see [Failure Scenario: Scale-Up Throttling, Trigger and Recovery](#failure-scenario-scale-up-throttling-trigger-and-recovery).
+When the SandboxSet's current-generation `ScalingLimited` condition is `True`, PoolAutoscaler pauses further scale-up. This avoids raising the target while the startup budget is exhausted due to startup failures or pending timeouts. Scale-down is unaffected. The creation concurrency of in-flight Sandboxes is controlled by the SandboxSet — PoolAutoscaler does not manage Pods directly. For trigger conditions, recovery, and troubleshooting of the limiter, see [Failure Scenario: Scale-Up Throttling, Trigger and Recovery](#failure-scenario-scale-up-throttling-trigger-and-recovery).
 
-Tuning advice: start small — lower `minReplicas`, `maxReplicas`, and longer scale-down intervals — then adjust gradually based on startup success rate, claim latency, and warm-up cost. To temporarily observe or take over manually, suspend autoscaling (resume by setting `false` or removing the field):
+Tuning advice: start small — use lower `minReplicas` and `maxReplicas` and a longer scale-down interval — then adjust gradually based on startup success rate, claim latency, and warm-up cost. To temporarily observe or take manual control, suspend autoscaling (resume by setting `false` or removing the field):
 
 ```bash
 kubectl patch poolautoscaler sandbox-pool-autoscaler -n default \
@@ -248,7 +246,7 @@ kubectl delete poolautoscaler sandbox-pool-autoscaler -n default
 
 ## Scenario 2: Pre-Warm on a Schedule
 
-This scenario suits businesses with well-known peak hours, for example heavy environment creation before 09:00 on workdays. A Cron policy sets the pool target directly ahead of the peak, instead of waiting for available instances to run out first.
+This scenario suits businesses with well-known peak hours, for example heavy sandbox creation ahead of 09:00 on workdays. A Cron policy sets the pool target directly ahead of the peak, instead of waiting for available instances to be depleted.
 
 The following example sets the pool to 30 replicas at 08:30 on workdays and back to 5 at 20:00:
 
@@ -263,7 +261,7 @@ spec:
     apiVersion: agents.kruise.io/v1alpha1
     kind: SandboxSet            # only SandboxSet is supported
     name: sandbox-pool          # MUST REPLACE: the created SandboxSet name
-  minReplicas: 2               # platform lower bound; Cron targets are clamped into this range too
+  minReplicas: 2               # platform lower bound; Cron targets are clamped to this range too
   maxReplicas: 50              # platform upper bound; must cover the largest targetReplicas across cron policies
   cronPolicies:
     - name: weekday-peak        # policy name, unique within the same PoolAutoscaler
@@ -276,19 +274,19 @@ spec:
       targetReplicas: 5
 ```
 
-`cronPolicies` uses five-field cron expressions: minute, hour, day of month, month, day of week. When `timeZone` is unset, the controller manager's timezone applies. When triggered, Cron takes priority over the capacity policy and is not subject to the capacity stabilization windows; the final replica count is still clamped by `minReplicas` and `maxReplicas`, and scale-up is equally subject to the SandboxSet startup protection (see [Failure Scenario: Scale-Up Throttling, Trigger and Recovery](#failure-scenario-scale-up-throttling-trigger-and-recovery)).
+The `cronPolicies` field uses five-field cron expressions: minute, hour, day of month, month, day of week. When `timeZone` is unset, the controller manager's timezone applies. When triggered, Cron takes priority over the capacity policy and is not subject to the capacity stabilization windows; the final replica count is still clamped to `minReplicas` and `maxReplicas`, and scale-up is also subject to the SandboxSet startup protection (see [Failure Scenario: Scale-Up Throttling, Trigger and Recovery](#failure-scenario-scale-up-throttling-trigger-and-recovery)).
 
-When both are configured, the capacity policy replenishes the pool while no Cron policy is triggered, and the Cron target wins when one triggers. Cron policies set the target replica count directly, unconstrained by capacity watermarks or scale-down reachability, but they still respect scale-up throttling: raising the target while the SandboxSet startup budget is exhausted is likewise blocked until the budget recovers.
+When both are configured, the capacity policy replenishes the pool while no Cron policy is triggered, and the Cron target wins when one triggers. Cron policies set the target replica count directly, unconstrained by capacity watermarks or scale-down reachability, but they still respect scale-up throttling: raising the target while the SandboxSet startup budget is exhausted is also blocked until the budget recovers.
 
 ## Failure Scenario: Scale-Up Throttling, Trigger and Recovery
 
-Scale-up throttling is the SandboxSet's startup protection: when too many Sandboxes are failing to start or pending for a long time at once, further replica increases are paused to avoid creating more instances that cannot start in a broken state. PoolAutoscaler reads this signal and pauses scale-up.
+Scale-up throttling is the SandboxSet's startup protection: when too many Sandboxes are failing to start or pending for too long simultaneously, further replica increases are paused to avoid creating more instances that cannot start in a broken state. PoolAutoscaler reads this signal and pauses scale-up.
 
 ### What Triggers Throttling
 
-The SandboxSet's `spec.scaleStrategy.maxUnavailable` doubles as the startup budget; when unset it defaults to the current replica count (equivalent to 100%, i.e. no cap on concurrent scale-up). Note this is a different field from `updateStrategy.maxUnavailable` (for rolling updates, default 20%). Sandboxes in the creating phase occupy the budget through two counters:
+The SandboxSet's `spec.scaleStrategy.maxUnavailable` doubles as the startup budget; when unset it defaults to the current replica count (equivalent to 100%, i.e. no cap on concurrent scale-up). Note that this is a different field from `updateStrategy.maxUnavailable` (for rolling updates, default 20%). Sandboxes in the Creating phase are counted against the budget using two counters:
 
-- **Failed**: Ready condition is `False` with reason `StartContainerFailed` or `PodCreateFailed` — a definitive startup failure (container startup failure, image/config errors, create API failures, etc.).
+- **Failed**: Ready condition is `False` with reason `StartContainerFailed` or `PodCreateFailed` — a definitive startup failure (container startup failure, image/config errors, Pod creation API failures, etc.).
 - **TimedOut**: stuck in Creating/ResourcePending longer than 50 seconds (the built-in pending timeout) without becoming Ready.
 
 When `Failed + TimedOut >= startup budget`, the SandboxSet writes:
@@ -306,18 +304,18 @@ and emits a Warning-level `ScalingLimited` event. On detecting this condition, P
 
 - Pauses scale-up: `status.desiredReplicas` stops rising even when availability is below the lower watermark; while waiting, it periodically emits Normal-level `ScaleBlocked` events.
 - Leaves scale-down unaffected: upper-watermark scale-downs proceed as usual.
-- Fails open: only an explicit `True` reported against the SandboxSet's current generation blocks scaling; a missing, stale, or `Unknown` condition is treated as no signal so upgrades and first-time reconciles do not stall scale-up.
+- The controller fails open: only an explicit `True` reported against the SandboxSet's current generation blocks scaling; a missing, stale, or `Unknown` condition is treated as no signal so upgrades and first-time reconciles do not stall scale-up.
 
-Note the two same-named conditions: this `ScalingLimited` lives in the **SandboxSet** status and means the startup budget is exhausted; the PoolAutoscaler's own `ScalingLimited` (see the CRD field reference) means the desired replica count hit the `minReplicas`/`maxReplicas` bound — different semantics.
+Note the two same-named conditions: this `ScalingLimited` exists in the **SandboxSet** status and means the startup budget is exhausted; the PoolAutoscaler's own `ScalingLimited` (see the CRD field reference) means the desired replica count has hit the `minReplicas`/`maxReplicas` bound — different semantics.
 
 ### How Throttling Recovers
 
-Recovery needs no manual intervention; the budget frees automatically once either happens:
+Recovery needs no manual intervention; the budget is freed automatically once either happens:
 
-- A failed Sandbox is deleted (manually or by the business side), or its Pod returns to Running with Ready flipped to `True`;
+- A failed Sandbox is deleted (manually or by the business side), or its Pod returns to Running and its Ready condition flips to `True`;
 - A pending-timed-out Sandbox finishes starting and enters Running, or is deleted.
 
-When `Failed + TimedOut` falls back below the budget, the SandboxSet's next reconcile flips `ScalingLimited` back to `False`, and PoolAutoscaler resumes scale-up and keeps replenishing the pool.
+When `Failed + TimedOut` falls back below the budget, the SandboxSet's next reconciliation flips `ScalingLimited` back to `False`, and PoolAutoscaler resumes scale-up and keeps replenishing the pool.
 
 ### Troubleshooting
 
@@ -332,13 +330,13 @@ kubectl get events -n default --field-selector involvedObject.name=sandbox-pool
 # List Sandboxes in the pool and their status
 kubectl get sandbox -n default -l agents.kruise.io/sandbox-pool=sandbox-pool
 
-# Inspect the Ready condition of a failed instance for the concrete reason
+# Inspect the Ready condition of a failed instance for the specific reason
 kubectl get sandbox <name> -n default -o jsonpath='{.status.conditions[?(@.type=="Ready")]}'
 ```
 
-Triage by the counters in `message`:
+Triage based on the counters in `message`:
 
-- **Mostly Failed**: usually image pull failures, resource misconfiguration, or quota exhaustion. Check the failed Sandbox's Ready condition message for the concrete reason, fix the SandboxSet configuration, then delete the failed instance:
+- **Mostly Failed**: usually image pull failures, resource misconfiguration, or quota exhaustion. Check the failed Sandbox's Ready condition message for the specific reason, fix the SandboxSet configuration, then delete the failed instance:
 
 ```bash
 kubectl delete sandbox <name> -n default
@@ -346,7 +344,7 @@ kubectl delete sandbox <name> -n default
 
 The SandboxSet recreates a new instance automatically; if the configuration is not fixed, the new instance fails again and re-triggers throttling.
 
-- **Mostly TimedOut**: the underlying creation speed cannot keep up with the scaling rhythm. Lower the SandboxSet's `scaleStrategy.maxUnavailable` to reduce the per-batch creation volume, or contact the cluster administrator to evaluate underlying supply capacity.
+- **Mostly TimedOut**: the underlying creation speed cannot keep up with the scaling rate. Lower the SandboxSet's `scaleStrategy.maxUnavailable` to reduce the per-batch creation volume, or contact the cluster administrator to evaluate underlying supply capacity.
 
 ## Capacity Policy Parameters and Scale-Down Reachability
 
@@ -383,13 +381,13 @@ Common configurations and their effects:
 | 1 | `"100%"` | any (incl. `0`) | `>= replicas` | Availability at most equals replicas, never exceeds the upper watermark; idle pool never shrinks |
 | 4 | `"70%"` | `"10%"` | 4 | Can shrink from 5 to 4 replicas |
 
-Scenario 1 demonstrates the percentage-target style: watermarks stretch with pool size, fitting fluctuating workloads. For a fixed-size pool, switch to an absolute target with `tolerance: 0`, keeping `minReplicas` no smaller than the target. Either way, verify `minReplicas` against the rules above.
+Scenario 1 demonstrates the percentage-target style: watermarks stretch with pool size, suited to fluctuating workloads. For a fixed-size pool, switch to an absolute target with `tolerance: 0`, keeping `minReplicas` no smaller than the target. Either way, verify `minReplicas` against the rules above.
 
-If the pool sits above `minReplicas` for a long time and `status.conditions` shows no anomaly, the rules above are usually unmet: lower `targetAvailable` or `tolerance`, or raise `minReplicas`, then watch whether `status.desiredReplicas` and `status.currentCapacity.available` converge.
+If the pool remains above `minReplicas` for a long time and `status.conditions` shows no anomaly, the rules above are usually not met: lower `targetAvailable` or `tolerance`, or raise `minReplicas`, then watch whether `status.desiredReplicas` and `status.currentCapacity.available` converge.
 
 ## Parameter Validation Constraints
 
-On create or update, the webhook validates the following rules; violations are rejected (HTTP 422) with the concrete reason.
+On create or update, the webhook validates the following rules; violations are rejected (HTTP 422) with the specific reason.
 
 ### General Constraints
 
@@ -407,14 +405,14 @@ On create or update, the webhook validates the following rules; violations are r
 | Field | Constraint |
 | --- | --- |
 | `targetAvailable` | An absolute value must be `>= 0` and `<= maxReplicas` (beyond that the target can never be reached); a percentage must be of the form `"<number>%"` with the number in 0 to 100. |
-| Percentage `targetAvailable` | Must come with `minReplicas >= 1`; otherwise all watermarks resolve to 0 on an empty pool and the pool cannot bootstrap itself. |
+| Percentage `targetAvailable` | Requires `minReplicas >= 1`; otherwise all watermarks resolve to 0 on an empty pool and the pool cannot bootstrap itself. |
 | `tolerance` | Same format constraints as `targetAvailable`; and must be **less than** `targetAvailable` (statically decidable when both are percentages or both are absolute), otherwise the lower watermark is clamped to 0 and scale-up never triggers. For an absolute target with a percentage tolerance, the tolerance percentage must be below 100%. |
 | `scaleUp.stabilizationWindowSeconds` | Defaults to 60 seconds when unset; explicit values must be between 60 and 3600 seconds. |
 | `scaleDown.stabilizationWindowSeconds` | Defaults to 300 seconds when unset; explicit values must be between 60 and 3600 seconds. |
 
 Scale-down reachability is not a hard validation in the current version, but a bad configuration leaves the pool unable to shrink to `minReplicas`; verify against the rules in [Ensure an Idle Pool Can Shrink to minReplicas](#ensure-an-idle-pool-can-shrink-to-minreplicas).
 
-Cron policy validation rules (at most 20 entries, unique names, valid five-field cron expressions, valid timezones, `targetReplicas >= 0`) are annotated in the CRD field reference below and are not repeated here.
+Cron policy validation rules (at most 20 entries, unique names, valid five-field cron expressions, valid timezones, `targetReplicas >= 0`) are documented in the CRD field reference below and are not repeated here.
 
 ## CRD Field Reference
 
@@ -426,7 +424,7 @@ Cron policy validation rules (at most 20 entries, unique names, valid five-field
 | `spec.capacityPolicy.tolerance` | Allowed deviation from the target, as an absolute number or percentage; defaults to `10%` when unset. For example, with target 10 and tolerance 2: scale up below 8, scale down above 12. Resolution rules and reachability constraints: see [Capacity Policy Parameters and Scale-Down Reachability](#capacity-policy-parameters-and-scale-down-reachability). |
 | `spec.capacityPolicy.scaleUp.stabilizationWindowSeconds` | Interval between consecutive scale-ups. Explicit values must be within 60 to 3600 seconds; defaults to 60 seconds. |
 | `spec.capacityPolicy.scaleDown.stabilizationWindowSeconds` | Interval between consecutive scale-downs. Explicit values must be within 60 to 3600 seconds; defaults to 300 seconds. |
-| `spec.cronPolicies` | List of scheduled policies, at most 20, webhook-validated: `name` is required and unique within the list; `schedule` is required and must be a valid five-field cron expression (minute hour day month weekday); `timeZone` is optional and must be a valid timezone (e.g. `Asia/Shanghai`) when set; `targetReplicas` must be `>= 0` and is clamped to `maxReplicas` when exceeded. |
+| `spec.cronPolicies` | List of scheduled policies. At most 20 entries are allowed; validation is enforced by the webhook: `name` is required and unique within the list; `schedule` is required and must be a valid five-field cron expression (minute hour day month weekday); `timeZone` is optional and must be a valid timezone (e.g. `Asia/Shanghai`) when set; `targetReplicas` must be `>= 0` and is clamped to `maxReplicas` when exceeded. |
 | `spec.suspend` | Set to `true` to suspend further autoscaling; existing Sandboxes are not deleted. Resume by setting `false` or removing the field. |
 | `status.currentReplicas` | The most recently observed replica count of the target SandboxSet. |
 | `status.desiredReplicas` | The most recently computed desired replica count. |

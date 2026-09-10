@@ -53,8 +53,6 @@ spec:
             limits:           # 资源上限；按实际运行时需要调整，过大浪费预热成本，过小影响启动
               cpu: "1"
               memory: 1Gi
-      nodeSelector:
-        type: virtual-kubelet  # ACS 场景固定调度到虚拟节点；自建集群请替换为实际节点选择器或删除
 ```
 
 :::note
