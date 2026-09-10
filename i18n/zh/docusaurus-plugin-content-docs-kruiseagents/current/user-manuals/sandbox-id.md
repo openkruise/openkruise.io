@@ -37,6 +37,8 @@ prod-aae57hpxaaqac
 `Sandbox` CR 上：
 
 ```yaml
+apiVersion: agents.kruise.io/v1alpha1
+kind: Sandbox
 metadata:
   labels:
     agents.kruise.io/sandbox-id: aae57hpxaaqac
@@ -185,6 +187,11 @@ kubectl get sbx -A -l agents.kruise.io/sandbox-id=<sandbox-id>
   `sandboxResource=<namespace>/<name>`。
 
 未找到和未授权的响应不会泄露 namespace 或名称。
+
+## Checkpoint 与分页
+
+- [Checkpoint](./checkpoint.md) 在创建时会记录源沙箱当时的 ID。如果该沙箱之后被回收并再次交付，已有 Checkpoint 会保留此前交付的 ID，新的 Checkpoint 会记录新的 ID；历史记录不会被改写。
+- 沙箱列表仅将解析后的 ID 作为分页中的不透明唯一性组成部分。两次列表请求之间发生身份切换时，这个组成部分可能会变化，与其他可变的列表状态一致。
 
 ## 上线与回滚
 
