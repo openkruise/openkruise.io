@@ -18,6 +18,8 @@ OpenKruise Agents 允许将运行中的沙箱 **休眠**（pause），使其停�
 
 休眠 / 唤醒是 **一对一** 的：整个 pause → resume 过程中，沙箱 ID 保持不变。若需要「快照后克隆多个新沙箱」这种一对多的工作流，请参考 [快照管理](./checkpoint.md)。
 
+如需在 `SandboxSet` 层面进行自动化生命周期管理——休眠策略、基于空闲状态的自动休眠、定时唤醒以及入站流量唤醒——请参考[自动休眠与唤醒](./auto-pause-resume.md)。
+
 ## 工作原理（简述）
 
 1. **休眠（Pause）**：冻结沙箱 Pod。所有活动的 WebSocket / PTY / 命令流连接都会断开，客户端需要在唤醒后重连。
@@ -311,4 +313,4 @@ kubectl patch sbx my-sandbox -n default --type=merge \
 - **休眠期间的生命周期。** 运行态 timeout 不会在休眠后原样继续倒计时；自动删除由 `spec.shutdownTime` 控制，
   休眠保留策略可以基于 pause 转换执行时间重新计算它。
 - **旧版 SDK。** 遗留的 `POST /sandboxes/{sandboxID}/resume` 端点仅为旧版 SDK 兼容保留。新代码一律使用 `Sandbox.connect(...)`。
-- **状态保留取决于平台。** 跨休眠/唤醒是否保留内存状态依赖具体的运行时平台。如果你需要显式的内存 + 文件系统快照、并且希望能克隆出全新沙箱，请使用 [快照管理](./checkpoint.md)。
+- **状态保留取决于平台。** 跨休眠/唤醒是否保留内存状态依赖具体的运行时平台。若需控制休眠过程中文件系统的保留内容，可在 `SandboxSet` 上配置休眠策略（参见[休眠策略](./auto-pause-resume.md#休眠策略)）。如果你需要显式的内存 + 文件系统快照、并且希望能克隆出全新沙箱，请使用 [快照管理](./checkpoint.md)。

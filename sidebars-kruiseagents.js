@@ -34,6 +34,7 @@ module.exports = {
                     items: [
                         'user-manuals/sandbox-claim',
                         'user-manuals/pause-resume',
+                        'user-manuals/auto-pause-resume',
                         'user-manuals/sandbox-update',
                         'user-manuals/commit',
                         'user-manuals/runtime-injection',

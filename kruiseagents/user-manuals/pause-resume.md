@@ -28,6 +28,9 @@ Two parallel interfaces are provided, both acting on the same underlying `Sandbo
 Pause/Resume is one-to-one: the sandbox ID stays the same across the pause → resume cycle. If you need a one-to-many
 "snapshot and fork" workflow, see [Snapshot Management](./checkpoint.md).
 
+For `SandboxSet`-level automatic lifecycle management — pause strategies, idle-based auto-pause, scheduled wake-up, and
+wake-up on inbound traffic — see [Automatic Pause and Resume](./auto-pause-resume.md).
+
 ## How It Works (summary)
 
 1. **Pause** freezes the sandbox Pod. Active WebSocket / PTY / command-stream connections are dropped; clients must
@@ -348,6 +351,7 @@ declarative / GitOps control over the paused/running bit plus absolute schedulin
   controlled by `spec.shutdownTime`, which paused retention can recalculate from the pause transition time.
 - **Old SDKs.** The legacy `POST /sandboxes/{sandboxID}/resume` endpoint is kept for old SDK compatibility only. New
   code should always use `Sandbox.connect(...)`.
-- **State-preservation caveats.** Whether memory is preserved across pause/resume depends on the runtime platform.
-  If you need explicit memory + filesystem snapshots that can also be cloned into brand-new sandboxes, use
-  [Snapshot Management](./checkpoint.md) instead.
+- **State-preservation caveats.** Whether memory is preserved across pause/resume depends on the runtime platform. To
+  control what the filesystem preserves across pause, configure a pause strategy on the `SandboxSet` (see
+  [Pause Strategies](./auto-pause-resume.md#pause-strategies)). If you need explicit memory + filesystem snapshots
+  that can also be cloned into brand-new sandboxes, use [Snapshot Management](./checkpoint.md) instead.
