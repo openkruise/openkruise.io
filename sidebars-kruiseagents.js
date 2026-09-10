@@ -27,29 +27,43 @@ module.exports = {
             label: 'User Manuals',
             collapsed: false,
             items: [
-                'user-manuals/warmpool-management',
-                'user-manuals/poolautoscaler',
-                'user-manuals/sandbox-claim',
-                'user-manuals/sandbox-id',
+                {
+                    type: 'category',
+                    label: 'Sandbox Lifecycle Management',
+                    collapsed: false,
+                    items: [
+                        'user-manuals/sandbox-claim',
+                        'user-manuals/pause-resume',
+                        'user-manuals/sandbox-update',
+                        'user-manuals/commit',
+                        'user-manuals/runtime-injection',
+                        'user-manuals/sandbox-id',
+                    ],
+                },
+                {
+                    type: 'category',
+                    label: 'Warm Pool Management',
+                    collapsed: true,
+                    items: [
+                        'user-manuals/warmpool-management',
+                        'user-manuals/poolautoscaler',
+                    ],
+                },
                 {
                     type: 'category',
                     label: 'Security',
-                    collapsed: false,
+                    collapsed: true,
                     items: [
                         'user-manuals/security/traffic-access-token',
                         'user-manuals/security/e2b-network-controls',
                     ],
                 },
-                'user-manuals/pause-resume',
-                'user-manuals/runtime-injection',
                 'user-manuals/checkpoint',
-                'user-manuals/commit',
-                'user-manuals/sandbox-update',
                 'user-manuals/api-keys-and-teams',
                 {
                     type: 'category',
                     label: 'Storage Management',
-                    collapsed: false,
+                    collapsed: true,
                     items: [
                         'user-manuals/volume-claim-template',
                         'user-manuals/ondemand-volume-mount',

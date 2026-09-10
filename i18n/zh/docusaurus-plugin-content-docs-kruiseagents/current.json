@@ -11,6 +11,14 @@
     "message": "用户手册",
     "description": "The label for category 'User Manuals' in sidebar 'kruiseagents'"
   },
+  "sidebar.kruiseagents.category.Sandbox Lifecycle Management": {
+    "message": "沙箱生命周期管理",
+    "description": "The label for category 'Sandbox Lifecycle Management' in sidebar 'kruiseagents'"
+  },
+  "sidebar.kruiseagents.category.Warm Pool Management": {
+    "message": "预热池管理",
+    "description": "The label for category 'Warm Pool Management' in sidebar 'kruiseagents'"
+  },
   "sidebar.kruiseagents.category.Security": {
     "message": "安全",
     "description": "The label for category 'Security' in sidebar 'kruiseagents'"
