@@ -33,7 +33,7 @@ cd hack/calculator-helper/validator && go build -o validator
 Once you've verified the expression is correct, you can apply it to your SidecarSet:
 
 ```yaml
-apiVersion: apps.kruise.io/v1alpha1
+apiVersion: apps.kruise.io/v1beta1
 kind: SidecarSet
 spec:
   containers:

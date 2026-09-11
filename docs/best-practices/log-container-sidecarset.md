@@ -89,7 +89,7 @@ metadata:
 
 FileBeat SidecarSet Configuration, as follows:
 ```yaml
-apiVersion: apps.kruise.io/v1alpha1
+apiVersion: apps.kruise.io/v1beta1
 kind: SidecarSet
 metadata:
   name: filebeat-sidecarset
@@ -211,7 +211,7 @@ This feature relies on the ability of [Kruise InPlace Update](https://openkruise
 However, upgrading sidecar independently comes with a risk, if the sidecar upgrade process fails, it will make Pod Not Ready and potentially affects the business, so SidecarSet itself provides rich progressive delivery capability to mitigate the risk.
 Refer to [Kruise SidecarSet](https://openkruise.io/zh/docs/next/user-manuals/sidecarset#sidecar%E6%9B%B4%E6%96%B0%E7%AD%96%E7%95%A5), as follows:
 ```yaml
-apiVersion: apps.kruise.io/v1alpha1
+apiVersion: apps.kruise.io/v1beta1
 kind: SidecarSet
 metadata:
   name: sidecarset
