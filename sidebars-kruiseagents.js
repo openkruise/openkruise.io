@@ -98,6 +98,14 @@ module.exports = {
         },
         {
             type: 'category',
+            label: 'Blog & Video',
+            collapsed: false,
+            items: [
+                'blog-video/community-resources',
+            ],
+        },
+        {
+            type: 'category',
             label: 'Developer Manuals',
             collapsed: true,
             items: [
