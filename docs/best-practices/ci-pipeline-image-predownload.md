@@ -28,7 +28,7 @@ DevOps is an extension of CI/CD, and CI/CD is the core foundation of DevOps. Wit
 - Install Kubernetes Cluster, Since v1.0.0 (alpha/beta), OpenKruise requires Kubernetes version >= 1.16.
 - Install Tekton, Reference [Official Documents](https://tekton.dev/docs/getting-started/)。
 Tekton is a Google open source Kubernetes native framework for creating continuous integration and continuous deployment/delivery (CI/CD) systems.
-- Helm installation of OpenKruise, Since v0.9.0, Reference [Install OpenKruise](https://openkruise.io/zh/docs/installation)。
+- Helm installation of OpenKruise, Since v0.9.0, Reference [Install OpenKruise](https://openkruise.io/docs/installation).
 
 ### Build-Test-Docker Push
 **1. Git Repo: This article provides a helloworld http service [demo](https://github.com/zmberg/samples/tree/hello_world/helloworld), It contains Code, Dockerfile, and Unit Test, as follows:**

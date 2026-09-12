@@ -205,7 +205,7 @@ spec:
 
 ### 房间服自动减少
 
-在状态管理一节中，我们也有所提到，opsState为WaitToBeDeleted的GameServer将会自动被OKG回收。这样一来，只要业务决定了自身不再提供服务了，通过自定义服务质量设置WaitToBeDeleted即可。关于缩容策略的具体的配置可以参考 [https://openkruise.io/zh/kruisegame/user-manuals/gameservers-scale#使用示例](https://openkruise.io/zh/kruisegame/user-manuals/gameservers-scale#%E4%BD%BF%E7%94%A8%E7%A4%BA%E4%BE%8B)
+在状态管理一节中，我们也有所提到，opsState为WaitToBeDeleted的GameServer将会自动被OKG回收。这样一来，只要业务决定了自身不再提供服务了，通过自定义服务质量设置WaitToBeDeleted即可。关于缩容策略的具体的配置可以参考 [游戏服伸缩](https://openkruise.io/zh/kruisegame/user-manuals/gameservers-scale#缩容策略)
 
 ### 房间服自动增加
 
