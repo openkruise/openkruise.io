@@ -337,13 +337,13 @@ spec:
   </TabItem>
 </Tabs>
 
-### Ondemand Persistent Volume Mounting
+### On-demand Persistent Volume Mounting
 
 You can dynamically mount a PV when claiming a sandbox, specifying a separate mount volume for each sandbox. This
 capability relies on `agent-runtime` injected into the Sandbox
 and will also affect delivery efficiency to some extent.
 
-> ⚠️ To use ondemand persistent volume mounting, you must configure `csi` in the `runtimes` field of your SandboxSet. For
+> ⚠️ To use on-demand persistent volume mounting, you must configure `csi` in the `runtimes` field of your SandboxSet. For
 > details, refer to the [Runtime Injection](./runtime-injection.md) documentation.
 
 <Tabs>
