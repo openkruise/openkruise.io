@@ -206,9 +206,9 @@ status:
 
 ![k8s log sidecar](/img/docs/best-practices/update-sidecarset.gif)
 
-该特性依赖Kruise原地升级的能力实现，详情参考文档：[Kruise原地升级](https://openkruise.io/zh/docs/next/core-concepts/inplace-update/)。
+该特性依赖Kruise原地升级的能力实现，详情参考文档：[Kruise原地升级](https://openkruise.io/zh/docs/core-concepts/inplace-update/)。
 不过独立升级sidecar容器也存在一定的风险性，如果sidecar容器升级过程中失败，则将导致Pod Not Ready，进而影响业务，因此SidecarSet本身提供了非常丰富的灰度发布能力来尽量规避该风险，
-详情参考文档：[Kruise SidecarSet](https://openkruise.io/zh/docs/next/user-manuals/sidecarset#sidecar%E6%9B%B4%E6%96%B0%E7%AD%96%E7%95%A5)，如下：
+详情参考文档：[Kruise SidecarSet](https://openkruise.io/zh/docs/user-manuals/sidecarset#sidecar更新策略)，如下：
 ```yaml
 apiVersion: apps.kruise.io/v1alpha1
 kind: SidecarSet
@@ -229,7 +229,7 @@ spec:
         # or any other labels where a small number of pods can be selected
         deploy-env: canary
 ```
-**另外，如果是类似于ServiceMesh Envoy Mesh类容器则需要借助于SidecarSet热升级特性**，详情请参考：[SidecarSet热升级](https://openkruise.io/zh/docs/next/user-manuals/sidecarset#sidecar%E7%83%AD%E5%8D%87%E7%BA%A7%E7%89%B9%E6%80%A7)。
+**另外，如果是类似于ServiceMesh Envoy Mesh类容器则需要借助于SidecarSet热升级特性**，详情请参考：[SidecarSet热升级](https://openkruise.io/zh/docs/user-manuals/sidecarset#sidecar热升级特性)。
 
 ### Argo-cd部署SidecarSet（Optional）
 如果使用Argo-cd发布Kruise SidecarSet，则需要配置 [SidecarSet Custom CRD Health Checks](https://argo-cd.readthedocs.io/en/stable/operator-manual/health/#custom-health-checks)。

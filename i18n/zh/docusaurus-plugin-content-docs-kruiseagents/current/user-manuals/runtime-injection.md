@@ -11,7 +11,7 @@ SandboxSet、SandboxClaim、SandboxTemplate 或 Sandbox）中配置 `runtimes` �
 | 注入类型              | `runtimes.name` | 说明                                                                    |
 |-------------------|-----------------|-----------------------------------------------------------------------|
 | **Agent Runtime** | `agent-runtime` | 注入 `agent-runtime`（兼容 envd）组件，提供 E2B 命令执行（`commands.run`）、文件系统读写等高级功能 |
-| **CSI 挂载**        | `csi`           | 注入 CSI 挂载 sidecar，支持[动态持久化卷挂载](./sandbox-claim.md#动态挂载持久化卷)           |
+| **CSI 挂载**        | `csi`           | 注入 CSI 挂载 sidecar，支持[按需挂载持久化卷](./sandbox-claim.md#按需挂载持久化卷)           |
 
 ## 工作机制
 
@@ -133,7 +133,7 @@ spec:
 
 在以下场景下，你应当配置 `csi` 注入：
 
-- 需要使用[动态持久化卷挂载](./sandbox-claim.md#动态挂载持久化卷)功能，在获取沙箱时将 PV 挂载到沙箱中
+- 需要使用[按需挂载持久化卷](./sandbox-claim.md#按需挂载持久化卷)功能，在获取沙箱时将 PV 挂载到沙箱中
 
 > `csi` 注入通常与 `agent-runtime` 注入一起使用。
 
