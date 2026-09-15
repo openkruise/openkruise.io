@@ -74,6 +74,14 @@ module.exports = {
         },
         {
             type: 'category',
+            label: 'Operator Manuals',
+            collapsed: true,
+            items: [
+                'operator-manuals/metrics',
+            ],
+        },
+        {
+            type: 'category',
             label: 'Best Practices',
             collapsed: false,
             items: [
