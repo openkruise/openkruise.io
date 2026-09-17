@@ -3,7 +3,8 @@
 This document describes how to upgrade sandboxes managed by OpenKruise Agents, including both **pre-warmed pool sandboxes** (managed by SandboxSet) and **claimed sandboxes** (already allocated to users).
 
 :::info Version
-All features described in this document are available since **v0.3.0**.
+The base upgrade flow (SandboxSet rolling update and SandboxUpdateOps recreate upgrade) is available since **v0.3.0**.
+Upgrading paused sandboxes (`stateFilter`) and the `CheckpointRestore` upgrade mode require **v0.6.0**.
 :::
 
 ## Overview
@@ -128,6 +129,94 @@ spec:
 - `timeoutSeconds`: Maximum time (in seconds) to wait for the hook to complete. Default is 60 seconds.
 - The `exec.command` runs inside the sandbox via the agent-runtime (envd) interface.
 
+### Patch Capabilities
+
+The `spec.patch` field is applied to each selected sandbox as a
+[Strategic Merge Patch](https://kubernetes.io/docs/tasks/manage-kubernetes-objects/update-api-object-kubectl-patch/).
+It supports the following operations:
+
+- **Update**: change existing fields, such as a container image or environment variables.
+- **Add**: introduce new fields, such as an additional volume or volume mount.
+- **Delete**: remove a list item (e.g. a volume or mount) by marking it with `$patch: delete` and its merge key.
+
+```yaml
+apiVersion: agents.kruise.io/v1alpha1
+kind: SandboxUpdateOps
+metadata:
+  name: patch-demo
+  namespace: default
+spec:
+  patch:
+    spec:
+      containers:
+        - name: sandbox
+          image: my-registry/sandbox-image:v2   # update
+          env:
+            - name: LOG_LEVEL                    # add
+              value: debug
+      volumes:
+        - name: legacy-cache                     # delete
+          $patch: delete
+```
+
+### Upgrade Modes
+
+:::info Version
+The `CheckpointRestore` mode is available since **v0.6.0**.
+:::
+
+`spec.updateStrategy.type` selects how each sandbox is upgraded:
+
+| Mode | Description | Constraints |
+|---|---|---|
+| `Recreate` (default) | Deletes the old pod and creates a new one. **Does not** preserve rootfs, memory, or IP. | Standard upgrade; use lifecycle hooks to back up and restore data. |
+| `CheckpointRestore` | Takes a checkpoint of the rootfs before the upgrade and restores it afterwards, preserving filesystem state. | **Cannot** change the business container image. Only supports updating sidecar versions (via annotation) or non-image fields (env, resources, volumes). |
+
+:::warning
+Changing the business container image while using `CheckpointRestore` causes the rootfs to be lost. Use `CheckpointRestore` only for sidecar or non-image field updates; use `Recreate` when the business image must change.
+:::
+
+**Example: sidecar update with CheckpointRestore**
+
+```yaml
+apiVersion: agents.kruise.io/v1alpha1
+kind: SandboxUpdateOps
+metadata:
+  name: upgrade-sidecar
+  namespace: default
+spec:
+  updateStrategy:
+    type: CheckpointRestore
+  patch:
+    metadata:
+      annotations:
+        # Bump this value to trigger a sidecar version update
+        agents.kruise.io/upgrade-sidecar: "20260714"
+```
+
+### Upgrading Paused Sandboxes
+
+:::info Version
+Upgrading paused sandboxes is available since **v0.6.0**.
+:::
+
+By default, a SandboxUpdateOps only upgrades sandboxes in the `Running` state. To include paused sandboxes, add
+`Paused` to `spec.stateFilter.states`. The controller wakes each paused sandbox, upgrades it, and then re-pauses it if
+`spec.paused` remains `true` on the sandbox.
+
+```yaml
+apiVersion: agents.kruise.io/v1alpha1
+kind: SandboxUpdateOps
+metadata:
+  name: upgrade-with-paused
+  namespace: default
+spec:
+  stateFilter:
+    states:
+      - Running
+      - Paused
+```
+
 ### Applying the Upgrade
 
 ```bash
@@ -188,6 +277,13 @@ The `Upgrading` condition indicates the current stage:
 Example condition during upgrade:
 
 ```yaml
+apiVersion: agents.kruise.io/v1alpha1
+kind: Sandbox
+metadata:
+  name: my-sandbox
+  namespace: default
+spec:
+  paused: false
 status:
   phase: Upgrading
   conditions:
@@ -277,7 +373,21 @@ If backup is not needed, remove the `lifecycle` section from the SandboxUpdateOp
 
 ### Rollback
 
-To rollback a failed upgrade:
+Two rollback paths are available:
+
+- **Recommended (when a checkpoint exists)**: if a `Checkpoint` was taken before the upgrade (for example, in
+  `CheckpointRestore` mode), clone the sandbox from that Checkpoint to restore the previous state. See
+  [Snapshot Management](./checkpoint.md#creating-a-sandbox-from-a-checkpoint).
+- **Recreate with the original config**: create a new SandboxUpdateOps whose `patch` reverts to the original
+  image/configuration.
+
+:::tip
+On any retry that runs **after** the pod has already been rebuilt (for example, recovering from an `UpgradePodFailed` or
+`PostUpgradeFailed` state), remove the `preUpgrade` hook so the backup step is not executed again. Keep only the
+`postUpgrade` hook if restoration is still needed.
+:::
+
+To rollback by recreating with the original config:
 
 1. Delete the current SandboxUpdateOps:
    ```bash
@@ -292,9 +402,6 @@ To rollback a failed upgrade:
      name: rollback-sandboxes
      namespace: default
    spec:
-     selector:
-       matchLabels:
-         agents.kruise.io/sandbox-template: my-sandbox-pool
      patch:
        spec:
          containers:
@@ -319,6 +426,11 @@ To rollback a failed upgrade:
 You can pause an ongoing SandboxUpdateOps to stop it from upgrading additional sandboxes:
 
 ```yaml
+apiVersion: agents.kruise.io/v1alpha1
+kind: SandboxUpdateOps
+metadata:
+  name: upgrade-my-sandboxes
+  namespace: default
 spec:
   paused: true
 ```
