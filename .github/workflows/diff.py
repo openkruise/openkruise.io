@@ -30,8 +30,8 @@ try:
     if os.path.exists(dict_path):
         with open(dict_path, 'r', encoding='utf8') as f:
             pre_dict = set(json.loads(f.read()))
-except Exception:
-    pass
+except Exception as e:
+    log(f"Warning: failed to load pre_dict.json: {e}")
 
 
 def log(*args) -> None:
