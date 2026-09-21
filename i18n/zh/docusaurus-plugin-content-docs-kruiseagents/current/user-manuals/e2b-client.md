@@ -18,6 +18,45 @@ OpenKruise Agents 的 sandbox-manager 组件支持两种 E2B 接入协议：原�
 | api.your.domain.com              | your.domain.com/kruise/api              | 
 | \<port\>-\<sid\>.your.domain.com | your.domain.com/kruise/\<sid\>/\<port\> |
 
+## 安装 Python SDK patch
+
+下文的私有协议接入方式需要安装 `kruise-agents` Python 包。该包通过内存 monkey-patch 修改 E2B SDK，使其使用
+OpenKruise 私有协议（不会修改磁盘上的 E2B 代码）。前置要求：
+
+- Python 3.9 及以上
+- `e2b>=2.8.0`
+- `e2b-code-interpreter>=2.4.1`
+
+从 `agents-api` 仓库安装，并从 [releases 页面](https://github.com/openkruise/agents-api/releases) 选择版本 tag 固定版本。Python SDK 自 `v0.6.0-alpha2` 起提供（可替换为您需要的版本）：
+
+```bash
+pip install git+https://github.com/openkruise/agents-api.git@v0.6.0-alpha2#subdirectory=e2b/python
+```
+
+或从源码安装：
+
+```bash
+git clone https://github.com/openkruise/agents-api.git
+cd e2b/python
+pip install -e .
+```
+
+### `patch_e2b` 的作用
+
+在程序启动时调用一次 `patch_e2b`，之后再创建或连接任何 Sandbox。它会重写 SDK 构建的所有 URL：
+
+| 流量 | E2B 原生协议 | patch 后 |
+|---|---|---|
+| 管理 API（create / kill / pause 等） | `https://api.<E2B_DOMAIN>` | `<scheme>://<E2B_DOMAIN>/kruise/api` |
+| Sandbox 数据面（envd gRPC 与 HTTP、Jupyter） | `https://<port>-<sid>.<E2B_DOMAIN>` | `<scheme>://<E2B_DOMAIN>/kruise/<sid>/<port>` |
+
+`<scheme>` 默认为 `https`，传入 `https=False` 时为 `http`。`https=False` 还会将 sandbox 的 envd 和 Jupyter 基础 URL
+强制为纯 HTTP，适用于无证书场景（集群内 Service 地址、`kubectl port-forward`）。
+
+官方 E2B SDK 会在本地校验 API key 格式，只接受 `e2b_` 前缀的 key，而 OpenKruise Agents 的 key 是裸 UUID 或
+admin key。向 `patch_e2b` 传入 `validate_key=False` 可跳过本地格式校验（要求 `e2b>=2.25.0`），实际鉴权由服务端
+`sandbox-manager` 完成。其他方式（例如使用 `encode_for_e2b_sdk` 包装 key）参见 [API Keys 与 Teams](./api-keys-and-teams.md)。
+
 ## 配置 E2B 域名
 
 基于域名接入的客户端需要配置 `E2B_DOMAIN`。服务端 `sandbox-manager` 支持两种域名模式：
@@ -224,3 +263,20 @@ export E2B_API_KEY=<your-api-key>
     from kruise_agents.patch_e2b import patch_e2b
     patch_e2b(https=False)
     ```
+
+## Traffic JWT 刷新
+
+对于启用 Traffic JWT 认证的 Sandbox，独立的 `patch_traffic_access_token` patch 会将 token 保存在内存中，并在
+过期前自动刷新：
+
+```python
+from kruise_agents.patch_e2b import patch_e2b
+from kruise_agents.patch_traffic_token import patch_traffic_access_token
+
+patch_e2b(https=False)
+patch_traffic_access_token()
+```
+
+该 patch 要求 Python 3.10 及以上、`e2b>=2.35.0,<2.38.0`、`e2b-code-interpreter>=2.9.0,<2.10.0`。缩短 token
+有效期或升级 `sandbox-manager` 时的部署顺序很重要，具体要求、显式刷新与 rollout 行为参见
+[流量访问令牌轮换](./security/traffic-access-token.md)。

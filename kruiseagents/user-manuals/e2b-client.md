@@ -21,6 +21,49 @@ Comparison between private protocol and native protocol:
 | api.your.domain.com              | your.domain.com/kruise/api              | 
 | \<port\>-\<sid\>.your.domain.com | your.domain.com/kruise/\<sid\>/\<port\> |
 
+## Install the Python SDK patch
+
+The private protocol integration methods below require the `kruise-agents` Python package, which patches the E2B SDK in
+memory to use the OpenKruise private protocol (no E2B code is modified on disk). Requirements:
+
+- Python 3.9 or newer
+- `e2b>=2.8.0`
+- `e2b-code-interpreter>=2.4.1`
+
+Install it from the `agents-api` repository and pin a version tag from the
+[releases page](https://github.com/openkruise/agents-api/releases). The Python SDK is available starting from
+`v0.6.0-alpha2` (replace it with the version you need):
+
+```bash
+pip install git+https://github.com/openkruise/agents-api.git@v0.6.0-alpha2#subdirectory=e2b/python
+```
+
+Or install from source:
+
+```bash
+git clone https://github.com/openkruise/agents-api.git
+cd e2b/python
+pip install -e .
+```
+
+### What `patch_e2b` does
+
+Call `patch_e2b` once at startup, before creating or connecting any Sandbox. It rewrites every URL the SDK builds:
+
+| Traffic | E2B native protocol | After patch_e2b |
+|---|---|---|
+| Management API (create / kill / pause / ...) | `https://api.<E2B_DOMAIN>` | `<scheme>://<E2B_DOMAIN>/kruise/api` |
+| Sandbox data plane (envd gRPC and HTTP, Jupyter) | `https://<port>-<sid>.<E2B_DOMAIN>` | `<scheme>://<E2B_DOMAIN>/kruise/<sid>/<port>` |
+
+`<scheme>` is `https` by default and `http` when `https=False`. Setting `https=False` also forces the sandbox envd and
+Jupyter base URLs to plain HTTP, which is what certificate-less setups need (in-cluster Service URLs,
+`kubectl port-forward`).
+
+Official E2B SDKs validate the API key format locally and only accept `e2b_`-prefixed keys, while OpenKruise Agents keys
+are plain UUIDs or admin keys. Pass `validate_key=False` to `patch_e2b` to skip the local format check (requires
+`e2b>=2.25.0`); authentication itself happens server-side on `sandbox-manager`. Alternatives such as wrapping the key
+with `encode_for_e2b_sdk` are described in [API Keys and Teams](./api-keys-and-teams.md).
+
 ## Configure E2B domains
 
 Domain-based client integrations set `E2B_DOMAIN`. On the server, `sandbox-manager` supports two domain modes:
@@ -235,3 +278,21 @@ using its built-in traffic proxy, although this is not recommended.
     from kruise_agents.patch_e2b import patch_e2b
     patch_e2b(https=False)
     ```
+
+## Traffic JWT refresh
+
+For Sandboxes protected by Traffic JWT authentication, the independent `patch_traffic_access_token` patch keeps the
+token in memory and refreshes it before expiration:
+
+```python
+from kruise_agents.patch_e2b import patch_e2b
+from kruise_agents.patch_traffic_token import patch_traffic_access_token
+
+patch_e2b(https=False)
+patch_traffic_access_token()
+```
+
+It requires Python 3.10 or newer, `e2b>=2.35.0,<2.38.0`, and `e2b-code-interpreter>=2.9.0,<2.10.0`. Deployment order
+matters when shortening token validity or upgrading `sandbox-manager`; see
+[Traffic Access Token Rotation](./security/traffic-access-token.md) for requirements, explicit refresh, and rollout
+behavior.

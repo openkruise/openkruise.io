@@ -10,9 +10,10 @@ title: Go 客户端
 require github.com/openkruise/agents-api <tag>
 ```
 
-| 包       | 导入路径                                   | 定位                                                                                                    |
-|---------|----------------------------------------|-------------------------------------------------------------------------------------------------------|
-| **e2b** | `github.com/openkruise/agents-api/e2b` | **管理客户端（Management Client）**：Sandbox 生命周期管理（Create / Connect / Pause / Kill）+ 容器内操作（Commands / Files） |
+| 包           | 导入路径                                     | 定位                                                                                                        |
+|-------------|------------------------------------------|-------------------------------------------------------------------------------------------------------|
+| **e2b**     | `github.com/openkruise/agents-api/e2b`   | **管理客户端（Management Client）**：Sandbox 生命周期管理（Create / Connect / Pause / Kill）+ 容器内操作（Commands / Files / CodeInterpreter） |
+| **runtime** | `github.com/openkruise/agents-api/runtime` | **运行时客户端（Runtime Client）**：直接与 sandbox 内的 runtime 服务通信（被 `e2b` 内部使用，也可单独引入）       |
 
 ---
 
@@ -58,6 +59,9 @@ func main() {
 	fmt.Println(res.Stdout)
 
 	sb.Files.MakeDir(ctx, "/tmp/demo")
+
+	exec, _ := sb.CodeInterpreter.RunCode(ctx, "import math\nmath.sqrt(16)")
+	fmt.Println(exec.Text()) // 4
 }
 ```
 
@@ -100,6 +104,7 @@ func main() {
 | `WithProtocol(p Protocol)`            | 路由协议，默认 `ProtocolNative`                          |
 | `WithAPIURL(url string)`              | **最高优先级**：直接覆盖 API base URL，绕过 Protocol/Domain 拼装 |
 | `WithSandboxBaseURL(url string)`      | **最高优先级**：直接覆盖 sandbox envd base URL              |
+| `WithCodeInterpreterPort(port int)`   | code-interpreter 服务端口，默认 49999                      |
 | `WithRequestTimeout(d time.Duration)` | HTTP 请求超时，默认 60s                                  |
 
 #### 优先级
@@ -170,10 +175,11 @@ e2b.WithConfig(e2b.WithAPIKey("xxx"), e2b.WithDomain("example.com")),
 | `Kill(ctx) (bool, error)`              | 销毁                       |
 | `Close(ctx) error`                     | `Kill` 的别名，方便 `defer` 使用 |
 
-`Sandbox` 暴露两个子模块：
+`Sandbox` 暴露三个子模块：
 
 - `sb.Commands` — 命令执行（`*Commands`）
 - `sb.Files` — 文件系统（`*Filesystem`）
+- `sb.CodeInterpreter` — 代码执行（`*runtime.CodeInterpreter`）
 
 ---
 
@@ -315,3 +321,110 @@ sb.Files.WriteText(ctx, "/tmp/hello.txt", "Hello, World!")
 content, _ := sb.Files.ReadText(ctx, "/tmp/hello.txt")
 fmt.Println(content) // Hello, World!
 ```
+
+---
+
+## 代码执行（CodeInterpreter）
+
+通过 `sb.CodeInterpreter` 在 sandbox 内执行代码。它对接 code-interpreter 服务（独立端口，默认 49999），消费 NDJSON
+事件流：每一行是一个 JSON 事件（stdout、stderr、result、error 等）。
+
+> 被执行代码抛出的错误**不会**以 Go error 形式返回，而是通过 `Execution.Error` 报告；
+> 只有传输层错误（HTTP 状态码、网络、ctx 取消）才会产生 Go error。
+
+### 方法
+
+| 方法                                                                     | 说明                                                              |
+|------------------------------------------------------------------------------|--------------------------------------------------------------------------|
+| `RunCode(ctx, code, opts...) (*Execution, error)`                        | **阻塞执行**：等待事件流结束，聚合所有事件到 `Execution`；回调实时触发 |
+| `RunCodeStreaming(ctx, code, opts...) error`                             | **纯流式**：事件到达即处理，不缓冲全部输出，适合大规模执行的内存优化 |
+| `CreateContext(ctx, cwd, language) (*Context, error)`                    | 创建隔离的执行上下文；空值回退到 `/home/user` 和 `python`               |
+| `RemoveContext(ctx, contextID) error`                                   | 删除指定 ID 的上下文                                    |
+| `ListContexts(ctx) ([]*Context, error)`                                 | 列出 sandbox 内所有执行上下文                              |
+
+`RunCodeOpts` 字段
+
+```go
+type RunCodeOpts struct {
+	Language  string            // "python"（默认）、"javascript"、"typescript"、"r"、"java"、"bash"；设置 ContextID 时忽略
+	Cwd       string            // 工作目录；空值使用服务端默认
+	Envs      map[string]string // 执行时的环境变量
+	Timeout   time.Duration     // 服务端执行超时；零值使用服务端默认
+	ContextID string            // 在已有上下文中执行（通过 CreateContext 创建）
+
+	OnStdout  func(StdoutEvent)      // 每个 stdout 事件到达时触发
+	OnStderr  func(StderrEvent)      // 每个 stderr 事件到达时触发
+	OnResult  func(*Result)          // 每个 result 到达时触发
+	OnError   func(*ExecutionError)  // 被执行代码抛错时触发
+	OnEvent   func(ExecutionEvent)   // 每个流事件都触发
+}
+```
+
+`Execution`
+
+```go
+type Execution struct {
+	Results        []*Result       // 按到达顺序的可展示结果（text、html、png、json 等）
+	Logs           Logs            // 按到达顺序的 Stdout / Stderr 分块
+	Error          *ExecutionError // 被执行代码抛出的错误，成功时为 nil
+	ExecutionCount int             // 当前上下文中的历史执行次数
+}
+
+// Text() 返回主结果的文本，没有时返回 ""
+func (e *Execution) Text() string
+```
+
+`Result` 对应 Jupyter notebook 单元格输出，提供多种表示（`Text`、`HTML`、`Markdown`、`SVG`、`PNG`、`JPEG`、`PDF`、
+`LaTeX`、`JSON`、`Javascript` 等）；只有被执行代码产生的格式会被填充。
+
+### 上下文
+
+使用相同 `ContextID` 执行的代码跨多次运行共享状态（变量、import）。通过 `CreateContext(ctx, cwd, language)`
+创建，将其 `ID` 传入 `RunCodeOpts.ContextID`。设置 `ContextID` 时 `Language` 被忽略，因为上下文已固定语言。
+
+### 示例
+
+```go
+// 1. 阻塞执行并聚合结果（Python 为默认语言）
+exec, err := sb.CodeInterpreter.RunCode(ctx, "import math\nmath.sqrt(16)")
+if err != nil {
+	log.Fatal(err) // 仅传输层错误
+}
+fmt.Println(exec.Text())           // 4
+for _, r := range exec.Results {
+	fmt.Println(r.Formats())        // 例如 ["text"]
+}
+if exec.Error != nil {
+	fmt.Println(exec.Error.Name)    // 例如 "ValueError"
+}
+
+// 2. 选项 + 流式回调（JavaScript）
+exec, err = sb.CodeInterpreter.RunCode(ctx, "console.log('js hello, ' + process.env.GREETING)", runtime.RunCodeOpts{
+	Language: runtime.LanguageJavaScript,
+	Envs:     map[string]string{"GREETING": "from Go SDK"},
+	Timeout:  30 * time.Second,
+	OnStdout: func(e runtime.StdoutEvent) { fmt.Printf("[stdout] %s", e.Text) },
+})
+
+// 3. 纯流式不聚合（低内存）
+err = sb.CodeInterpreter.RunCodeStreaming(ctx, "for i in range(3):\n    print(f'line {i}')", runtime.RunCodeOpts{
+	OnStdout: func(e runtime.StdoutEvent) { fmt.Printf("[stream] %s", e.Text) },
+})
+
+// 4. 上下文生命周期：状态跨运行保留
+ctxObj, _ := sb.CodeInterpreter.CreateContext(ctx, "/home/user/proj", runtime.LanguagePython)
+sb.CodeInterpreter.RunCode(ctx, "counter = 40", runtime.RunCodeOpts{ContextID: ctxObj.ID})
+exec, _ = sb.CodeInterpreter.RunCode(ctx, "counter + 2", runtime.RunCodeOpts{ContextID: ctxObj.ID})
+fmt.Println(exec.Text()) // 42
+
+contexts, _ := sb.CodeInterpreter.ListContexts(ctx)
+sb.CodeInterpreter.RemoveContext(ctx, ctxObj.ID)
+```
+
+完整的演示可参考：[运行时客户端示例](https://github.com/openkruise/agents-api/blob/master/examples/runtime-example/main.go)
+
+### 端口路由
+
+code-interpreter 服务监听独立端口（默认 49999，可通过 `WithCodeInterpreterPort` 配置）。
+**Native** 和 **Private** 协议下端口嵌入 sandbox URL；当通过 `WithSandboxBaseURL` 覆盖 sandbox base URL 时，
+端口改为通过 `e2b-sandbox-port` 请求头路由。
