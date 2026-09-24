@@ -197,25 +197,33 @@ func main() {
 
 ### E2B / 私有协议客户端
 
-转发 `sandbox-manager`，并在补丁中关闭 TLS：
+将数据面转发到 `sandbox-gateway` 的本地 80 端口，并保留一个 `sandbox-manager` 转发用于控制面，使 `create`、`connect`、
+`kill` 仍能解析。通过 `E2B_API_URL` 和 `E2B_SANDBOX_URL` 将两个平面指向各自的本地地址（参见
+[使用 E2B SDK](./e2b-client.md#3-使用-e2b-url-参数实现集群外访问)）：
 
 ```shell
-export E2B_DOMAIN=localhost
 export E2B_API_KEY=<your-api-key>
+# 控制面（create / connect / kill）-> sandbox-manager
+export E2B_API_URL="http://localhost:8080"
+# 数据面（命令 / 文件 / 服务端口）-> sandbox-gateway
+export E2B_SANDBOX_URL="http://localhost"
 
-sudo kubectl port-forward services/sandbox-manager 80:7788 -n sandbox-system
+kubectl port-forward services/sandbox-manager 8080:8080 -n sandbox-system
+sudo kubectl port-forward services/sandbox-gateway 80:7788 -n sandbox-system
 ```
 
 ```python
-from kruise_agents.patch_e2b import patch_e2b
-patch_e2b(https=False)   # 本地代理不走 TLS
-
-from e2b_code_interpreter import Sandbox
+from e2b import Sandbox
 
 sbx = Sandbox.create(template="code-interpreter")
-print(sbx.run_code("print('hello')"))
+print(sbx.commands.run("echo hello").stdout)   # 数据面经由转发后的 gateway
 sbx.kill()
 ```
+
+:::note
+上层库 `e2b-code-interpreter` 和 `e2b-desktop` 不读取 `E2B_API_URL` / `E2B_SANDBOX_URL`，因此该本地调试配置请使用基础
+`e2b` Sandbox。
+:::
 
 ### Runtime SDK 客户端
 

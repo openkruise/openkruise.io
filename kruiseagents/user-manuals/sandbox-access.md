@@ -210,25 +210,33 @@ certificate.
 
 ### E2B / private-protocol clients
 
-Forward `sandbox-manager` and disable TLS in the patch:
+Forward the data plane to `sandbox-gateway` on local port 80, and keep a `sandbox-manager` forward for the control
+plane so `create`, `connect`, and `kill` still resolve. Point the two planes at their local addresses with
+`E2B_API_URL` and `E2B_SANDBOX_URL` (see [Using the E2B SDK](./e2b-client.md#3-external-access-using-e2b-url-parameters)):
 
 ```shell
-export E2B_DOMAIN=localhost
 export E2B_API_KEY=<your-api-key>
+# Control plane (create / connect / kill) -> sandbox-manager
+export E2B_API_URL="http://localhost:8080"
+# Data plane (commands / files / service ports) -> sandbox-gateway
+export E2B_SANDBOX_URL="http://localhost"
 
-sudo kubectl port-forward services/sandbox-manager 80:7788 -n sandbox-system
+kubectl port-forward services/sandbox-manager 8080:8080 -n sandbox-system
+sudo kubectl port-forward services/sandbox-gateway 80:7788 -n sandbox-system
 ```
 
 ```python
-from kruise_agents.patch_e2b import patch_e2b
-patch_e2b(https=False)   # no TLS through the local proxy
-
-from e2b_code_interpreter import Sandbox
+from e2b import Sandbox
 
 sbx = Sandbox.create(template="code-interpreter")
-print(sbx.run_code("print('hello')"))
+print(sbx.commands.run("echo hello").stdout)   # data plane via the forwarded gateway
 sbx.kill()
 ```
+
+:::note
+The upper-level `e2b-code-interpreter` and `e2b-desktop` libraries do not read `E2B_API_URL` / `E2B_SANDBOX_URL`, so
+use the base `e2b` Sandbox for this local-debugging setup.
+:::
 
 ### Runtime SDK clients
 
