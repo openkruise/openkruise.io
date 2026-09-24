@@ -33,6 +33,7 @@ module.exports = {
                     collapsed: false,
                     items: [
                         'user-manuals/sandbox-claim',
+                        'user-manuals/sandbox-access',
                         'user-manuals/pause-resume',
                         'user-manuals/auto-pause-resume',
                         'user-manuals/sandbox-update',
