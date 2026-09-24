@@ -76,7 +76,7 @@ module.exports = {
         {
             type: 'category',
             label: 'Best Practices',
-            collapsed: false,
+            collapsed: true,
             items: [
                 'best-practices/running-e2b-for-code-interpreter',
                 'best-practices/running-e2b-for-desktop',
