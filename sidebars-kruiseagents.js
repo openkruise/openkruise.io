@@ -56,6 +56,7 @@ module.exports = {
                     collapsed: true,
                     items: [
                         'user-manuals/security/traffic-access-token',
+                        'user-manuals/security/traffic-access-control',
                         'user-manuals/security/e2b-network-controls',
                     ],
                 },
