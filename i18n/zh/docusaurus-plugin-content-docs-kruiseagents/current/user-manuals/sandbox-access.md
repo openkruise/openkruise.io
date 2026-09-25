@@ -36,6 +36,8 @@ OpenKruise Agents 将入方向流量拆分为**控制面**和**数据面**，从
 - **数据面**承载真正的命令、文件、代码执行以及自定义服务流量。`sandbox-gateway` 将每个请求路由到目标 Sandbox，默认
   转发到监听 `49983` 端口的 `agent-runtime`（envd）sidecar。命令和文件操作需要注入 `agent-runtime`，参见
   [Runtime 注入](./runtime-injection.md)。
+- 当控制面请求到达 `sandbox-gateway` 时，它会将请求转发给 `sandbox-manager`。因此 gateway Service 可以作为两个平面在
+  `7788` 端口上的单一入口。
 
 ### 数据面路由
 
@@ -197,19 +199,17 @@ func main() {
 
 ### E2B / 私有协议客户端
 
-将数据面转发到 `sandbox-gateway` 的本地 80 端口，并保留一个 `sandbox-manager` 转发用于控制面，使 `create`、`connect`、
-`kill` 仍能解析。通过 `E2B_API_URL` 和 `E2B_SANDBOX_URL` 将两个平面指向各自的本地地址（参见
+`sandbox-gateway` 会将控制面请求转发给 `sandbox-manager`，因此只转发 gateway Service 即可覆盖两个平面。通过
+`E2B_API_URL` 和 `E2B_SANDBOX_URL` 将两个平面指向同一个本地地址（参见
 [使用 E2B SDK](./e2b-client.md#3-使用-e2b-url-参数实现集群外访问)）：
 
 ```shell
 export E2B_API_KEY=<your-api-key>
-# 控制面（create / connect / kill）-> sandbox-manager
-export E2B_API_URL="http://localhost:8080"
-# 数据面（命令 / 文件 / 服务端口）-> sandbox-gateway
-export E2B_SANDBOX_URL="http://localhost"
+# 一次转发覆盖两个平面：gateway 会将管控流量转发给 sandbox-manager。
+export E2B_API_URL="http://localhost:7788"
+export E2B_SANDBOX_URL="http://localhost:7788"
 
-kubectl port-forward services/sandbox-manager 8080:8080 -n sandbox-system
-sudo kubectl port-forward services/sandbox-gateway 80:7788 -n sandbox-system
+kubectl port-forward services/sandbox-gateway 7788:7788 -n sandbox-system
 ```
 
 ```python
@@ -227,7 +227,7 @@ sbx.kill()
 
 ### Runtime SDK 客户端
 
-转发 `sandbox-gateway`，并让客户端指向本地地址：
+同一条转发同样适用；让客户端指向本地地址即可：
 
 ```shell
 kubectl port-forward services/sandbox-gateway 7788:7788 -n sandbox-system

@@ -39,6 +39,8 @@ never interrupts traffic that is already flowing to running Sandboxes.
   routes each request to the target Sandbox and, by default, to the `agent-runtime` (envd) sidecar listening on port
   `49983`. Commands and file operations require `agent-runtime` to be injected; see
   [Runtime Injection](./runtime-injection.md).
+- When control-plane requests arrive at `sandbox-gateway`, it forwards them to `sandbox-manager`. The gateway Service
+  therefore works as a single entrypoint for both planes on port `7788`.
 
 ### Routing on the data plane
 
@@ -210,19 +212,17 @@ certificate.
 
 ### E2B / private-protocol clients
 
-Forward the data plane to `sandbox-gateway` on local port 80, and keep a `sandbox-manager` forward for the control
-plane so `create`, `connect`, and `kill` still resolve. Point the two planes at their local addresses with
-`E2B_API_URL` and `E2B_SANDBOX_URL` (see [Using the E2B SDK](./e2b-client.md#3-external-access-using-e2b-url-parameters)):
+`sandbox-gateway` forwards control-plane requests to `sandbox-manager`, so forwarding the gateway Service alone covers
+both planes. Point the E2B URL parameters at the single local address (see
+[Using the E2B SDK](./e2b-client.md#3-external-access-using-e2b-url-parameters)):
 
 ```shell
 export E2B_API_KEY=<your-api-key>
-# Control plane (create / connect / kill) -> sandbox-manager
-export E2B_API_URL="http://localhost:8080"
-# Data plane (commands / files / service ports) -> sandbox-gateway
-export E2B_SANDBOX_URL="http://localhost"
+# One forward covers both planes: the gateway passes control traffic to sandbox-manager.
+export E2B_API_URL="http://localhost:7788"
+export E2B_SANDBOX_URL="http://localhost:7788"
 
-kubectl port-forward services/sandbox-manager 8080:8080 -n sandbox-system
-sudo kubectl port-forward services/sandbox-gateway 80:7788 -n sandbox-system
+kubectl port-forward services/sandbox-gateway 7788:7788 -n sandbox-system
 ```
 
 ```python
@@ -240,7 +240,7 @@ use the base `e2b` Sandbox for this local-debugging setup.
 
 ### Runtime SDK clients
 
-Forward `sandbox-gateway` and point the client at the local address:
+The same forward works here; point the client at the local address:
 
 ```shell
 kubectl port-forward services/sandbox-gateway 7788:7788 -n sandbox-system
