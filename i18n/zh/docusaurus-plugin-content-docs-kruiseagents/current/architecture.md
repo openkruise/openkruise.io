@@ -63,11 +63,11 @@ OpenKruise Agents 提供了兼容E2B协议的API.
 
 | API分类  | API                                                    | 参数兼容程度 | 说明                                        |
 |--------|--------------------------------------------------------|--------|-------------------------------------------|
-| 生命周期管理 | create                                                 | 部分兼容   | 网络访问控制已支持，参见[E2B 网络访问控制](./user-manuals/security/e2b-network-controls.md)。原地变配待实现 |
+| 生命周期管理 | create                                                 | 部分兼容   | 网络访问控制已支持，参见[E2B 网络访问控制](./user-manuals/security/e2b-network-controls.md)。MCP 对接功能待实现 |
 |        | get\_info                                              | 完全兼容   |                                           |
 |        | list                                                   | 完全兼容   |                                           |
 |        | kill                                                   | 完全兼容   |                                           |
-|        | pause                                                  | 完全兼容   | 考虑到容器生态的效率问题，当前 pause 的实现为异步接口            |
+|        | pause                                                  | 完全兼容   | pause 为同步接口，请求会阻塞直到 Sandbox 进入 Paused 状态            |
 |        | resume                                                 | 完全兼容   |                                           |
 |        | connect                                                | 完全兼容   |                                           |
 |        | set\_timeout                                           | 完全兼容   | 设置 Sandbox 超时时间（TTL），等价于 E2B 的 `Refresh sandbox` API |
