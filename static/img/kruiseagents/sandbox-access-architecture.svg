@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 344" role="img" aria-labelledby="title">
+  <title id="title">Inbound traffic architecture: control plane through sandbox-manager, data plane through sandbox-gateway</title>
+  <style>
+    .sans { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+    .rowlabel { font-size: 14px; font-weight: 600; fill: #334155; }
+    .boxtext { font-size: 13px; fill: #0f172a; }
+    .boxtext-sm { font-size: 12px; fill: #0f172a; }
+    .edgelabel { font-size: 12px; fill: #475569; }
+    .box { fill: #ffffff; stroke: #94a3b8; stroke-width: 1.2; }
+    .boxclient { fill: #e2e8f0; stroke: #94a3b8; stroke-width: 1.2; }
+    .flow { stroke: #475569; stroke-width: 1.6; fill: none; }
+    .dash { stroke: #64748b; stroke-width: 1.4; fill: none; stroke-dasharray: 5 4; }
+  </style>
+  <defs>
+    <marker id="arw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#475569"/>
+    </marker>
+    <marker id="arwD" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#64748b"/>
+    </marker>
+  </defs>
+
+  <rect x="0" y="0" width="980" height="344" rx="14" fill="#f8fafc" stroke="#e2e8f0"/>
+
+  <!-- Control plane row -->
+  <text class="sans rowlabel" x="28" y="44">Control plane (management)</text>
+  <rect class="boxclient" x="28" y="64" width="150" height="56" rx="8"/>
+  <text class="sans boxtext" x="103" y="96" text-anchor="middle">E2B / Runtime SDK</text>
+  <line class="flow" x1="178" y1="92" x2="244" y2="92" marker-end="url(#arw)"/>
+  <rect class="box" x="248" y="64" width="180" height="56" rx="8"/>
+  <text class="mono boxtext" x="338" y="96" text-anchor="middle">api.&lt;domain&gt;</text>
+  <line class="flow" x1="428" y1="92" x2="494" y2="92" marker-end="url(#arw)"/>
+  <rect class="box" x="498" y="64" width="170" height="56" rx="8"/>
+  <text class="mono boxtext" x="583" y="96" text-anchor="middle">sandbox-manager</text>
+  <line class="flow" x1="668" y1="92" x2="734" y2="92" marker-end="url(#arw)"/>
+  <rect class="box" x="738" y="64" width="214" height="56" rx="8"/>
+  <text class="sans boxtext" x="845" y="96" text-anchor="middle">Kubernetes API</text>
+
+  <!-- Data plane row -->
+  <text class="sans rowlabel" x="28" y="236">Data plane (into the Sandbox)</text>
+  <rect class="boxclient" x="28" y="256" width="150" height="56" rx="8"/>
+  <text class="sans boxtext" x="103" y="288" text-anchor="middle">E2B / Runtime SDK</text>
+  <line class="flow" x1="178" y1="284" x2="224" y2="284" marker-end="url(#arw)"/>
+  <rect class="box" x="228" y="256" width="240" height="56" rx="8"/>
+  <text class="mono boxtext-sm" x="348" y="288" text-anchor="middle">&lt;port&gt;-&lt;sandboxID&gt;.&lt;domain&gt;</text>
+  <line class="flow" x1="468" y1="284" x2="534" y2="284" marker-end="url(#arw)"/>
+  <rect class="box" x="538" y="256" width="170" height="56" rx="8"/>
+  <text class="mono boxtext" x="623" y="288" text-anchor="middle">sandbox-gateway</text>
+  <line class="flow" x1="708" y1="284" x2="734" y2="284" marker-end="url(#arw)"/>
+  <rect class="box" x="738" y="256" width="214" height="56" rx="8"/>
+  <text class="mono boxtext-sm" x="845" y="278" text-anchor="middle">agent-runtime (envd)</text>
+  <text class="mono boxtext-sm" x="845" y="298" text-anchor="middle">:49983</text>
+
+  <!-- Vertical relationships between the planes -->
+  <line class="dash" x1="560" y1="120" x2="560" y2="252" marker-end="url(#arwD)"/>
+  <text class="sans edgelabel" x="548" y="184" text-anchor="end">delivers / looks up Sandbox</text>
+  <line class="dash" x1="640" y1="256" x2="640" y2="124" marker-end="url(#arwD)"/>
+  <text class="sans edgelabel" x="652" y="208">forwards control-plane requests</text>
+</svg>
