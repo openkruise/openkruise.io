@@ -22,15 +22,7 @@ OpenKruise Agents 将入方向流量拆分为**控制面**和**数据面**，从
 | 控制面 | `sandbox-manager` | E2B/MCP 管理 API：create、kill、pause、resume、connect、list、API Key | `api.<domain>` | `<domain>/kruise/api` |
 | 数据面 | `sandbox-gateway` | 将流量代理进运行中的 Sandbox（envoy filter） | `<port>-<sandboxID>.<domain>` | `<domain>/kruise/<sandboxID>/<port>` |
 
-```text
-                          控制面（管理）
-   E2B / Runtime SDK ───────► api.<domain> ──► sandbox-manager ──► Kubernetes API
-                                                     │
-                                                     │ 交付 / 查询 Sandbox
-                                                     ▼
-                          数据面（进入 Sandbox）
-   E2B / Runtime SDK ───► <port>-<sandboxID>.<domain> ──► sandbox-gateway ──► agent-runtime (envd) : 49983
-```
+![入方向流量架构：控制面经由 sandbox-manager，数据面经由 sandbox-gateway](/img/kruiseagents/sandbox-access-architecture-zh.svg)
 
 - **控制面**使用 [API Key](./api-keys-and-teams.md) 鉴权，返回 Sandbox 地址及其数据面凭证。
 - **数据面**承载真正的命令、文件、代码执行以及自定义服务流量。`sandbox-gateway` 将每个请求路由到目标 Sandbox，默认

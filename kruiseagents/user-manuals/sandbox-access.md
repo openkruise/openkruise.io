@@ -23,15 +23,7 @@ never interrupts traffic that is already flowing to running Sandboxes.
 | Control | `sandbox-manager` | E2B/MCP management APIs: create, kill, pause, resume, connect, list, API keys | `api.<domain>` | `<domain>/kruise/api` |
 | Data | `sandbox-gateway` | Proxies traffic into a running Sandbox (envoy filter) | `<port>-<sandboxID>.<domain>` | `<domain>/kruise/<sandboxID>/<port>` |
 
-```text
-                          Control plane (management)
-   E2B / Runtime SDK ───────► api.<domain> ──► sandbox-manager ──► Kubernetes API
-                                                     │
-                                                     │ delivers / looks up Sandbox
-                                                     ▼
-                          Data plane (into the Sandbox)
-   E2B / Runtime SDK ───► <port>-<sandboxID>.<domain> ──► sandbox-gateway ──► agent-runtime (envd) : 49983
-```
+![Inbound traffic architecture: the control plane goes through sandbox-manager, the data plane through sandbox-gateway](/img/kruiseagents/sandbox-access-architecture.svg)
 
 - The **control plane** authenticates with an [API key](./api-keys-and-teams.md) and returns the Sandbox address and
   its data-plane credentials.
