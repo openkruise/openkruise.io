@@ -38,5 +38,9 @@
   "sidebar.kruiseagents.category.Blog & Video": {
     "message": "博客与视频",
     "description": "The label for category 'Blog & Video' in sidebar 'kruiseagents'"
+  },
+  "sidebar.kruiseagents.category.User Cases": {
+    "message": "用户案例",
+    "description": "The label for category 'User Cases' in sidebar 'kruiseagents'"
   }
 }

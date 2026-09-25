@@ -1,4 +1,4 @@
-# Sandbox ID
+# 沙箱 ID
 
 OpenKruise Agents 中的每个沙箱都通过 **Sandbox ID** 来标识。默认情况下，ID 由底层 `Sandbox` CR 的 Kubernetes namespace
 和名称拼接而成。此外，还可以启用可选的 **短 Sandbox ID**：新交付的沙箱会获得一个短小且稳定的标识符，避免因过长而无法放入 E2B
