@@ -10,9 +10,10 @@ Add the `agents-api` dependency in your `go.mod`: [View Versions](https://github
 require github.com/openkruise/agents-api <tag>
 ```
 
-| Package | Import Path                            | Description                                                                                                                        |
-|---------|----------------------------------------|------------------------------------------------------------------------------------------------------------------------------------|
-| **e2b** | `github.com/openkruise/agents-api/e2b` | **Management Client**: Sandbox lifecycle management (Create / Connect / Pause / Kill) + in-container operations (Commands / Files) |
+| Package     | Import Path                              | Description                                                                                                                             |
+|-------------|------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------|
+| **e2b**     | `github.com/openkruise/agents-api/e2b`   | **Management Client**: Sandbox lifecycle management (Create / Connect / Pause / Kill) + in-container operations (Commands / Files / CodeInterpreter) |
+| **runtime** | `github.com/openkruise/agents-api/runtime` | **Runtime Client**: talks directly to the in-sandbox runtime service (used by `e2b` under the hood; can be imported standalone)         |
 
 ---
 
@@ -58,6 +59,9 @@ func main() {
 	fmt.Println(res.Stdout)
 
 	sb.Files.MakeDir(ctx, "/tmp/demo")
+
+	exec, _ := sb.CodeInterpreter.RunCode(ctx, "import math\nmath.sqrt(16)")
+	fmt.Println(exec.Text()) // 4
 }
 ```
 
@@ -103,6 +107,7 @@ Applied via `e2b.NewConnectionConfig(opts...)` or embedded in `Create/Connect` w
 | `WithProtocol(p Protocol)`            | Routing protocol, defaults to `ProtocolNative`                                           |
 | `WithAPIURL(url string)`              | **Highest priority**: directly overrides API base URL, bypasses Protocol/Domain assembly |
 | `WithSandboxBaseURL(url string)`      | **Highest priority**: directly overrides sandbox envd base URL                           |
+| `WithCodeInterpreterPort(port int)`   | Code-interpreter service port, defaults to 49999                                          |
 | `WithRequestTimeout(d time.Duration)` | HTTP request timeout, defaults to 60s                                                    |
 
 #### Priority
@@ -174,10 +179,11 @@ e2b.WithConfig(e2b.WithAPIKey("xxx"), e2b.WithDomain("example.com")),
 | `Kill(ctx) (bool, error)`              | Destroys the sandbox                     |
 | `Close(ctx) error`                     | Alias for `Kill`, convenient for `defer` |
 
-`Sandbox` exposes two sub-modules:
+`Sandbox` exposes three sub-modules:
 
 - `sb.Commands` — Command execution (`*Commands`)
 - `sb.Files` — Filesystem (`*Filesystem`)
+- `sb.CodeInterpreter` — Code execution (`*runtime.CodeInterpreter`)
 
 ---
 
@@ -321,3 +327,112 @@ sb.Files.WriteText(ctx, "/tmp/hello.txt", "Hello, World!")
 content, _ := sb.Files.ReadText(ctx, "/tmp/hello.txt")
 fmt.Println(content) // Hello, World!
 ```
+
+---
+
+## Code Execution (CodeInterpreter)
+
+Execute code inside the sandbox via `sb.CodeInterpreter`. It talks to the code-interpreter service (its own port,
+49999 by default) and consumes an NDJSON event stream: each line is one JSON event (stdout, stderr, result, error, ...).
+
+> An error raised by the executed code is **not** returned as a Go error: it is reported via `Execution.Error`.
+> Only transport-level failures (HTTP status, network, ctx cancellation) produce a Go error.
+
+### Methods
+
+| Method                                                                       | Description                                                              |
+|------------------------------------------------------------------------------|--------------------------------------------------------------------------|
+| `RunCode(ctx, code, opts...) (*Execution, error)`                            | **Blocking execution**: waits for the stream to finish, aggregates all events into `Execution`; callbacks fire in real time |
+| `RunCodeStreaming(ctx, code, opts...) error`                                 | **Pure streaming**: processes events as they arrive without buffering the whole output, keeping memory usage low for large executions |
+| `CreateContext(ctx, cwd, language) (*Context, error)`                        | Creates an isolated execution context; empty values fall back to `/home/user` and `python` |
+| `RemoveContext(ctx, contextID) error`                                        | Removes the context with the given ID                                    |
+| `ListContexts(ctx) ([]*Context, error)`                                      | Lists all execution contexts in the sandbox                              |
+
+`RunCodeOpts` Fields
+
+```go
+type RunCodeOpts struct {
+	Language  string            // "python" (default), "javascript", "typescript", "r", "java", "bash"; ignored when ContextID is set
+	Cwd       string            // Working directory; empty means the service default
+	Envs      map[string]string // Environment variables for the execution
+	Timeout   time.Duration     // Server-side execution timeout; zero means the service default
+	ContextID string            // Execute inside an existing context (created via CreateContext)
+
+	OnStdout  func(StdoutEvent)      // Invoked for every stdout event as it arrives
+	OnStderr  func(StderrEvent)      // Invoked for every stderr event as it arrives
+	OnResult  func(*Result)          // Invoked for every result as it arrives
+	OnError   func(*ExecutionError)  // Invoked when the executed code raises an error
+	OnEvent   func(ExecutionEvent)   // Invoked for every stream event
+}
+```
+
+`Execution`
+
+```go
+type Execution struct {
+	Results        []*Result       // Displayable results in arrival order (text, html, png, json, ...)
+	Logs           Logs            // Stdout / Stderr chunks in arrival order
+	Error          *ExecutionError // Error raised by the executed code, nil on success
+	ExecutionCount int             // Number of prior executions in the current context
+}
+
+// Text() returns the text of the main result, or "" when there is none
+func (e *Execution) Text() string
+```
+
+`Result` mirrors a Jupyter notebook cell output and exposes multiple representations (`Text`, `HTML`, `Markdown`, `SVG`,
+`PNG`, `JPEG`, `PDF`, `LaTeX`, `JSON`, `Javascript`, ...); only the formats produced by the executed code are populated.
+
+### Contexts
+
+Code executed with the same `ContextID` shares state (variables, imports) across runs. Create one via
+`CreateContext(ctx, cwd, language)` and pass its `ID` in `RunCodeOpts.ContextID`. When `ContextID` is set, `Language` is
+ignored because the context already pins the language.
+
+### Examples
+
+```go
+// 1. Blocking execution with aggregated results (Python is the default language)
+exec, err := sb.CodeInterpreter.RunCode(ctx, "import math\nmath.sqrt(16)")
+if err != nil {
+	log.Fatal(err) // transport-level failure only
+}
+fmt.Println(exec.Text())           // 4
+for _, r := range exec.Results {
+	fmt.Println(r.Formats())        // e.g. ["text"]
+}
+if exec.Error != nil {
+	fmt.Println(exec.Error.Name)    // e.g. "ValueError"
+}
+
+// 2. Options + streaming callbacks (JavaScript)
+exec, err = sb.CodeInterpreter.RunCode(ctx, "console.log('js hello, ' + process.env.GREETING)", runtime.RunCodeOpts{
+	Language: runtime.LanguageJavaScript,
+	Envs:     map[string]string{"GREETING": "from Go SDK"},
+	Timeout:  30 * time.Second,
+	OnStdout: func(e runtime.StdoutEvent) { fmt.Printf("[stdout] %s", e.Text) },
+})
+
+// 3. Pure streaming without aggregation (low memory)
+err = sb.CodeInterpreter.RunCodeStreaming(ctx, "for i in range(3):\n    print(f'line {i}')", runtime.RunCodeOpts{
+	OnStdout: func(e runtime.StdoutEvent) { fmt.Printf("[stream] %s", e.Text) },
+})
+
+// 4. Context lifecycle: state persists across runs
+ctxObj, _ := sb.CodeInterpreter.CreateContext(ctx, "/home/user/proj", runtime.LanguagePython)
+sb.CodeInterpreter.RunCode(ctx, "counter = 40", runtime.RunCodeOpts{ContextID: ctxObj.ID})
+exec, _ = sb.CodeInterpreter.RunCode(ctx, "counter + 2", runtime.RunCodeOpts{ContextID: ctxObj.ID})
+fmt.Println(exec.Text()) // 42
+
+contexts, _ := sb.CodeInterpreter.ListContexts(ctx)
+sb.CodeInterpreter.RemoveContext(ctx, ctxObj.ID)
+```
+
+For a complete demo,
+see: [Runtime Client Example](https://github.com/openkruise/agents-api/blob/master/examples/runtime-example/main.go)
+
+### Port Routing
+
+The code-interpreter service listens on its own port (49999 by default, configurable via `WithCodeInterpreterPort`).
+Under the **Native** and **Private** protocols the port is embedded in the sandbox URL; when the sandbox base URL is
+overridden with `WithSandboxBaseURL`, the port is routed through the `e2b-sandbox-port` header instead.
