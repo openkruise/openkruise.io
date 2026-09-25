@@ -10,8 +10,8 @@
 
 
 <link rel="search" type="application/opensearchdescription+xml" title="OpenKruise" href="/opensearch.xml"><link rel="stylesheet" href="/assets/css/styles.032df39c.css">
-<script src="/assets/js/runtime~main.4bc199dd.js" defer="defer"></script>
-<script src="/assets/js/main.010e073a.js" defer="defer"></script>
+<script src="/assets/js/runtime~main.3d75d1b6.js" defer="defer"></script>
+<script src="/assets/js/main.2747bba8.js" defer="defer"></script>
 </head>
 <body class="navigation-with-keyboard">
 <svg style="display: none;"><defs>
@@ -48,7 +48,7 @@
 <table><thead><tr><th>CRD</th><th>Short Name</th><th>Role</th></tr></thead><tbody><tr><td><code>Sandbox</code></td><td><code>sbx</code></td><td>Core resource representing a specific sandbox instance (typically backed by a Pod), supporting advanced lifecycle operations such as Create/Delete/Pause/Resume/Lifecycle</td></tr><tr><td><code>SandboxSet</code></td><td><code>sbs</code></td><td>Workload that manages a batch of homogeneous Sandboxes (analogous to ReplicaSet for Pods), primarily responsible for <strong>maintaining the warm pool</strong> and <strong>serving as the Sandbox template</strong></td></tr><tr><td><code>SandboxTemplate</code></td><td>—</td><td>Immutable template version snapshot. SandboxSet derives a SandboxTemplate when the template changes, used for version tracing</td></tr><tr><td><code>SandboxClaim</code></td><td><code>sbc</code></td><td>A &quot;claim request&quot; issued against a SandboxSet — <strong>claims</strong> an unused Sandbox from the warm pool and performs post-processing such as in-place image replacement, dynamic storage mounting, and in-place VPA CPU resizing</td></tr><tr><td><code>Checkpoint</code></td><td><code>cp</code></td><td>Runtime state snapshot of a Sandbox (memory + rootfs), which can be used to fork multiple new instances</td></tr><tr><td><code>SandboxUpdateOps</code></td><td><code>suo</code></td><td><strong>New in v0.3.0</strong>, batch upgrade operations targeting &quot;claimed&quot; Sandboxes</td></tr></tbody></table>
 <p>The data flow connects as follows: Platform administrators define a <code>SandboxSet</code> → the controller maintains a certain number of <code>Sandboxes</code> in <code>available</code> state within the warm pool → Agents claim Sandboxes via the E2B SDK or <code>SandboxClaim</code> CR → claimed Sandboxes can be Paused/Resumed, Checkpointed, or upgraded via SandboxUpdateOps, and are eventually reclaimed upon completion or timeout.</p>
 <h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="14-architecture-overview">1.4 Architecture Overview<a href="#14-architecture-overview" class="hash-link" aria-label="Direct link to 1.4 Architecture Overview" title="Direct link to 1.4 Architecture Overview" translate="no">​</a></h3>
-<p><img decoding="async" loading="lazy" alt="alt" src="/assets/images/architecture-27966d7d5de03fa931a5c23cbd846e38.png" width="1532" height="1146" class="img_ev3q"></p>
+<p><img decoding="async" loading="lazy" alt="alt" src="/assets/images/architecture-9f18f2b791a27901fddaa6eabfeb6b6b.png" width="3200" height="3200" class="img_ev3q"></p>
 <p>OpenKruise Agents has a clear separation between the control plane and data plane, consisting of four components:</p>
 <ul>
 <li class=""><strong>sandbox-manager</strong>: A stateless backend service that exposes E2B API and MCP API externally, serving as the entry point for SDKs and external Agent frameworks;</li>

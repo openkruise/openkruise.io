@@ -10,8 +10,8 @@
 
 
 <link rel="search" type="application/opensearchdescription+xml" title="OpenKruise" href="/zh/opensearch.xml"><link rel="stylesheet" href="/zh/assets/css/styles.032df39c.css">
-<script src="/zh/assets/js/runtime~main.df2c0d82.js" defer="defer"></script>
-<script src="/zh/assets/js/main.cc3c81da.js" defer="defer"></script>
+<script src="/zh/assets/js/runtime~main.994e56a4.js" defer="defer"></script>
+<script src="/zh/assets/js/main.2e80d5d0.js" defer="defer"></script>
 </head>
 <body class="navigation-with-keyboard">
 <svg style="display: none;"><defs>
@@ -136,7 +136,7 @@
 <table><thead><tr><th>CRD</th><th>短名</th><th>角色定位</th></tr></thead><tbody><tr><td><code>Sandbox</code></td><td><code>sbx</code></td><td>核心资源，代表一个具体的沙箱实例（背后通常对应一个 Pod），承载 Create/Delete/Pause/Resume/Lifecycle 等高级生命周期操作</td></tr><tr><td><code>SandboxSet</code></td><td><code>sbs</code></td><td>管理一批同构 Sandbox 的工作负载（类比 ReplicaSet 之于 Pod），核心职责是<strong>维护预热池</strong>和<strong>作为 Sandbox 模板</strong></td></tr><tr><td><code>SandboxTemplate</code></td><td>—</td><td>不可变的模板版本快照。SandboxSet 在 template 变更时会派生 SandboxTemplate，用于版本追溯</td></tr><tr><td><code>SandboxClaim</code></td><td><code>sbc</code></td><td>用户对 SandboxSet 发起的&quot;领取请求&quot;——从预热池中<strong>认领</strong>一个未使用的 Sandbox，并完成 原地变更镜像、动态存储挂载、原地VPA CPU等后置处理</td></tr><tr><td><code>Checkpoint</code></td><td><code>cp</code></td><td>Sandbox 的运行时状态快照（memory + rootfs），可用于 Fork 出多个新实例</td></tr><tr><td><code>SandboxUpdateOps</code></td><td><code>suo</code></td><td><strong>v0.3.0 新增</strong>，面向&quot;已被认领&quot;的 Sandbox 批量执行升级操作</td></tr></tbody></table>
 <p>数据流串联如下：平台管理员定义 <code>SandboxSet</code> → 控制器维护一定数量的 <code>Sandbox</code> 在预热池中处于 <code>available</code> 状态 → Agent 通过 E2B SDK 或 <code>SandboxClaim</code> CR 认领 Sandbox → 认领后的 Sandbox 可被 Pause/Resume、做 Checkpoint、被 SandboxUpdateOps 升级，最终在使用完毕或超时后回收。</p>
 <h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="14-整体架构">1.4 整体架构<a href="#14-整体架构" class="hash-link" aria-label="Direct link to heading" title="Direct link to heading" translate="no">​</a></h3>
-<p><img decoding="async" loading="lazy" alt="alt" src="/zh/assets/images/architecture-27966d7d5de03fa931a5c23cbd846e38.png" width="1532" height="1146" class="img_ev3q"></p>
+<p><img decoding="async" loading="lazy" alt="alt" src="/zh/assets/images/architecture-9f18f2b791a27901fddaa6eabfeb6b6b.png" width="3200" height="3200" class="img_ev3q"></p>
 <p>OpenKruise Agents 在控制面和数据面做了清晰拆分，由四个组件构成：</p>
 <ul>
 <li class=""><strong>sandbox-manager</strong>：无状态后端服务，对外提供 E2B API 和 MCP API，是 SDK / 外部 Agent 框架的接入入口；</li>
