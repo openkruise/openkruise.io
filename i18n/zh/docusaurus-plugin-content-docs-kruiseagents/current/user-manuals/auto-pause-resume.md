@@ -15,7 +15,8 @@ import TabItem from '@theme/TabItem';
 - 已创建 `SandboxSet`，且沙箱已被 Agent 认领。参见[温池管理](./warmpool-management.md)和[沙箱认领](./sandbox-claim.md)。
 - 探针驱动的自动休眠与定时唤醒要求 `sandbox-controller` 已开启 `AutoPauseController` 特性门控（Feature Gate）。
 - 入站流量唤醒仅对经由 [Sandbox Gateway](../architecture.md#sandbox-gateway) 路由到沙箱的请求生效，且网关需启用
-  `enable-wake-on-traffic` 配置。
+  `enable-wake-on-traffic` 配置。其 `wake-timeout-seconds`（默认 `60`）限定网关等待沙箱就绪的时长，超时后请求以
+  `503 sandbox wake failed` 失败。这两个配置项均作用于网关，不能按沙箱单独设置。
 
 ## 休眠策略
 
@@ -325,7 +326,8 @@ Controller 不会自动识别或转换毫秒级时间戳。
 
 ## 根据入站流量自动唤醒
 
-休眠中的沙箱也可以通过入站请求自动唤醒。该能力仅对经由 Sandbox Gateway 路由到沙箱的流量生效。
+休眠中的沙箱也可以通过入站请求自动唤醒。该能力仅对经由 Sandbox Gateway 路由到沙箱的流量生效，且仅对已被认领的沙箱生效：
+仍归属于 `SandboxSet` 的温池沙箱不会被识别为休眠状态，对其发起的请求会返回 `502 healthy sandbox not found`，而不会触发唤醒。
 
 <Tabs>
 <TabItem value="E2B" label="E2B SDK">
@@ -344,7 +346,7 @@ sandbox = Sandbox.create(
     },
 )
 
-# 获取指定端口的沙箱访问地址
+# 获取沙箱内 3000 端口上服务的访问地址
 host = sandbox.get_host(3000)
 print(f"https://{host}")
 ```
@@ -352,8 +354,8 @@ print(f"https://{host}")
 沙箱在超时后自动休眠。休眠期间，向沙箱访问地址发送请求会触发自动唤醒，无需先调用 `Sandbox.connect()`。唤醒后将从唤醒
 时刻重新按创建时的 `timeout` 计算自动休眠倒计时；小于 5 分钟的正值按 5 分钟处理。
 
-当前 `auto_resume` 仅支持通过沙箱访问地址发起的入站流量自动唤醒。`sandbox.commands`、`sandbox.files` 等 SDK 操作不会
-直接触发自动唤醒；如需执行此类操作，请先调用 `Sandbox.connect(...)`。
+`sandbox.commands.run(...)`、`sandbox.files.write(...)` 等 SDK 操作同样经由网关访问沙箱，因此也会唤醒处于休眠状态的
+沙箱，无需事先调用 `Sandbox.connect(...)`。
 
 </TabItem>
 <TabItem value="CRD" label="SandboxSet CRD">
@@ -363,18 +365,40 @@ print(f"https://{host}")
 ```yaml
 apiVersion: agents.kruise.io/v1alpha1
 kind: SandboxSet
+metadata:
+  name: agent-sandbox-pool
+  namespace: default
 spec:
+  replicas: 4
   autoPausePolicy:
     resume:
       onIngressTraffic:
         pauseTimeout: 5m
+  template:
+    spec:
+      containers:
+        - name: sandbox
+          image: <YOUR_IMAGE>
 ```
 
 `pauseTimeout` 用于在流量唤醒后重新设置基于超时时间的自动休眠倒计时。该值仅对已配置 `spec.pauseTime` 的沙箱生效；
 未配置或取值不大于 0 时，不会重新设置倒计时。小于 5 分钟的正值按 5 分钟处理。
 
+`spec.autoPausePolicy` 会原样复制到由该 `SandboxSet` 创建的每个 `Sandbox`，因此无需为单个沙箱再配置一份。它同时是
+`SandboxSet` Revision 哈希的组成部分：修改该字段会滚动更新尚未被认领的温池沙箱，而已认领的沙箱仍保留创建时的策略。
+
+该配置本身不会触发休眠：需配合 `autoPausePolicy.pause`、`spec.pauseTime` 或手动休眠，沙箱才会进入 `paused` 状态。
+
 </TabItem>
 </Tabs>
+
+无论采用哪种配置方式，发往休眠沙箱的请求都具备以下两个行为：
+
+- **请求必须通过鉴权。** 网关在判断是否需要唤醒之前先完成鉴权，因此缺少有效 API Key 或访问令牌的请求会被拒绝并返回
+  `401`，沙箱保持休眠状态。
+- **唤醒成功不代表触发请求成功。** 请求可能返回 `503 upstream connect error`（沙箱内目标端口上的服务尚未开始监听），
+  也可能在沙箱正在进入 `paused` 状态时返回 `503 sandbox wake failed`。遇到此类失败时，请先查看
+  `Sandbox.status.phase` 再判断沙箱是否丢失，并按自身的幂等策略重试。
 
 关于客户端如何解析沙箱访问地址和域名，请参考 [E2B Client](./e2b-client.md)。关于在单个 `Sandbox` CR 上配置流量唤醒，
 以及并发请求共享同一次恢复操作的行为，请参考[休眠与唤醒](./pause-resume.md#收到访问流量时自动唤醒)。

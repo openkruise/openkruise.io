@@ -25,7 +25,9 @@ timeout-based auto-pause — see [Pausing and Resuming](./pause-resume.md).
   `sandbox-controller`.
 - Inbound-traffic wake-up only takes effect for requests routed to the sandbox through the
   [Sandbox Gateway](../architecture.md#sandbox-gateway), and the gateway must be configured with
-  `enable-wake-on-traffic` enabled.
+  `enable-wake-on-traffic` enabled. Its `wake-timeout-seconds` (default `60`) bounds how long the gateway waits for
+  the sandbox to become ready before failing the request with `503 sandbox wake failed`. Both flags are gateway-level,
+  not per-sandbox.
 
 ## Pause Strategies
 
@@ -359,7 +361,9 @@ happens at `2026-09-04T18:00:00+08:00`, whose Unix timestamp is `1788516000`, th
 ## Auto Wake on Inbound Traffic
 
 A paused sandbox can also be woken up automatically by inbound requests. This capability only applies to agent
-traffic routed through the Sandbox Gateway.
+traffic routed through the Sandbox Gateway, and only to sandboxes that have been claimed: a warm sandbox still owned
+by its `SandboxSet` is never reported as paused, so requests to it fail with `502 healthy sandbox not found` instead
+of waking it.
 
 <Tabs>
 <TabItem value="E2B" label="E2B SDK">
@@ -378,18 +382,17 @@ sandbox = Sandbox.create(
     },
 )
 
-# Get the sandbox hostname for a given port
+# Get the access address for a service running on port 3000 inside the sandbox
 host = sandbox.get_host(3000)
 print(f"https://{host}")
 ```
 
-The sandbox pauses automatically after the timeout. While it is paused, sending a request to its hostname wakes it
-up — no `Sandbox.connect()` call is needed first. After the wake-up, the auto-pause countdown restarts from the
+The sandbox pauses automatically after the timeout. While it is paused, sending a request to its access address wakes
+it up — no `Sandbox.connect()` call is needed first. After the wake-up, the auto-pause countdown restarts from the
 wake-up moment using the `timeout` set at creation; positive values smaller than 5 minutes are treated as 5 minutes.
 
-`auto_resume` currently only wakes the sandbox on inbound traffic addressed to the sandbox hostname. SDK operations
-such as `sandbox.commands` or `sandbox.files` do not trigger the wake-up; call `Sandbox.connect(...)` first for
-those.
+SDK operations such as `sandbox.commands.run(...)` or `sandbox.files.write(...)` also reach the sandbox through the
+gateway, so they wake a paused sandbox too — `Sandbox.connect(...)` is not required beforehand.
 
 </TabItem>
 <TabItem value="CRD" label="SandboxSet CRD">
@@ -399,19 +402,44 @@ Configure `spec.autoPausePolicy.resume.onIngressTraffic`:
 ```yaml
 apiVersion: agents.kruise.io/v1alpha1
 kind: SandboxSet
+metadata:
+  name: agent-sandbox-pool
+  namespace: default
 spec:
+  replicas: 4
   autoPausePolicy:
     resume:
       onIngressTraffic:
         pauseTimeout: 5m
+  template:
+    spec:
+      containers:
+        - name: sandbox
+          image: <YOUR_IMAGE>
 ```
 
 `pauseTimeout` re-arms the timeout-based auto-pause countdown after a traffic wake-up. It only applies to sandboxes
 with `spec.pauseTime` configured; if it is unset or not greater than 0, the countdown is not reset. Positive values
 smaller than 5 minutes are treated as 5 minutes.
 
+`spec.autoPausePolicy` is copied verbatim to every `Sandbox` created from the `SandboxSet`, so a sandbox does not need
+its own copy of the policy. It is also part of the `SandboxSet` revision hash: changing it rolls the unclaimed warm
+sandboxes, while sandboxes that have already been claimed keep the policy they were created with.
+
+This configuration alone does not pause anything: pair it with `autoPausePolicy.pause`, `spec.pauseTime`, or a manual
+pause so that sandboxes actually reach `paused`.
+
 </TabItem>
 </Tabs>
+
+Regardless of how the wake-up is configured, two behaviors apply to any request sent to a paused sandbox:
+
+- **The request must be authorized.** The gateway authenticates before it considers waking a sandbox, so a request
+  without a valid API key or access token is rejected with `401` and the sandbox stays paused.
+- **The wake-up can succeed while the triggering request fails.** The request may return `503 upstream connect error`
+  because the in-sandbox service on the target port is not listening yet, or `503 sandbox wake failed` when the request
+  arrives while the sandbox is still transitioning into `paused`. Check `Sandbox.status.phase` before treating such a
+  failure as a lost sandbox, and retry according to your normal idempotency policy.
 
 For how clients resolve sandbox hostnames and domains, see [E2B Client](./e2b-client.md). For configuring traffic
 wake-up on an individual `Sandbox` CR, and for how concurrent requests share one resume operation, see
