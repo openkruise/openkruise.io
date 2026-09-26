@@ -1,0 +1,1 @@
+"use strict";(globalThis.webpackChunkopenkruise_io=globalThis.webpackChunkopenkruise_io||[]).push([[7089],{37089:(e,i,r)=>{r.d(i,{createArchitectureServices:()=>s.S});var s=r(45796);r(4954)}}]);
