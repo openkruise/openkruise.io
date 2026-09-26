@@ -47,10 +47,11 @@ Before creating a `Commit`, make sure that:
 - The `Commit` CRD (`commits.agents.kruise.io`) is registered in the cluster.
 - The target Sandbox Pod is running and scheduled, and the target container is managed by containerd. Its container ID in Pod status must use the `containerd://` prefix; Docker-only or CRI-O-only nodes are not supported.
 - The target node exposes the containerd socket at `/run/containerd/containerd.sock`. The commit Job mounts `/run/containerd/` from the target node and connects to this socket with nerdctl.
-- The sandbox controller is configured with `AGENT_JOB_IMAGE`, and that image contains the `commit-job` binary and `nerdctl`.
+- The sandbox controller is configured with `AGENT_JOB_IMAGE`, and that image contains the `commit-job` binary and `nerdctl`. The commit Job Pod is created without any `imagePullSecrets`, so this image must be pullable by the target node directly: either public, pre-loaded on the node, or available through node-level registry credentials. A private or missing `commit-job` image leaves the Job Pod stuck in `ErrImagePull`.
 - The target registry is reachable from the target node.
 - For registry TLS verification, the commit Job uses nerdctl's default hosts directory `/etc/containerd/certs.d`, which is mounted from the target node. For a registry using a private CA, custom endpoint, or mirror configuration, prepare the corresponding `hosts.toml` and CA files under `/etc/containerd/certs.d/<registry-host>/` on every node that may run the target Sandbox Pod.
 - If the registry requires authentication, a Docker config Secret exists in the same namespace as the `Commit`, and the registry user has push permission to the destination repository.
+- The `Commit`, the target Sandbox Pod, and the registry auth Secret must all be in the same namespace. The controller resolves the target Pod and the auth Secret in the `Commit`'s own namespace, so a `Commit` cannot reference a Pod or Secret in another namespace.
 
 ## Commit Job Image
 
@@ -73,7 +74,7 @@ The `Commit` resource (`agents.kruise.io/v1alpha1`, short name `cmt`) has the fo
 | Field | Type | Description |
 |---|---|---|
 | `spec.podName` | `string` | Required. Name of the target Sandbox Pod. Immutable after creation. |
-| `spec.containerName` | `string` | Required. Name of the container whose filesystem should be committed. Immutable after creation. |
+| `spec.containerName` | `string` | Required. Name of the container, inside the target Pod, whose filesystem should be committed. This is the in-Pod container name (list it with `kubectl get pod <pod> -o jsonpath='{.spec.containers[*].name}'`), not the Sandbox or image name. Immutable after creation. |
 | `spec.image` | `string` | Required. Destination image reference to push, for example `registry.example.com/team/my-env:v1`. Immutable after creation. |
 | `spec.squashLayer` | `int32` | Optional. Reserved for future layer squash optimization. `0` means no squashing. Immutable after creation. |
 | `spec.timeoutSeconds` | `int32` | Optional. Maximum running time of the commit Job. `0` means no timeout. Immutable after creation. |
@@ -81,19 +82,19 @@ The `Commit` resource (`agents.kruise.io/v1alpha1`, short name `cmt`) has the fo
 | `spec.registryAuth.secrets` | `[]string` | Optional. Names of `kubernetes.io/dockerconfigjson` Secrets in the same namespace. The first valid Secret is mounted into the commit Job for `nerdctl push`. |
 | `status.phase` | `string` | `Pending`, `Running`, `Succeeded`, or `Failed`. |
 | `status.commitID` | `string` | Commit identifier. Currently set to the `Commit` object name after the commit starts. |
-| `status.conditions` | `[]Condition` | Detailed condition information from the commit Job. Common condition types include `CommitContainer` and `PushCommittedImage`; `PullBaseImage` is reserved for future use. |
+| `status.conditions` | `[]Condition` | Best-effort condition information derived from the commit Job Pod's exit code. Condition types include `CommitContainer` and `PushCommittedImage`; `PullBaseImage` is reserved for future use. Conditions are captured once when the Job reaches a terminal state and may be empty even after a successful commit, so treat `status.phase` as the authoritative result signal. |
 | `status.startTime` | `Time` | Time when the commit Job starts. |
 | `status.completionTime` | `Time` | Time when the commit reaches a terminal phase. |
 
 ## Creating a Commit
 
-Create a `Commit` object that points to the running Sandbox Pod and the target container. If the target registry requires authentication, also reference a Docker config Secret via `spec.registryAuth.secrets`.
+Create a `Commit` object that points to the running Sandbox Pod and the target container. The `Commit`, the target Pod, and the registry auth Secret must all be in the same namespace. If the target registry requires authentication, also reference a Docker config Secret via `spec.registryAuth.secrets`.
 
 First create the registry auth Secret in the same namespace as the `Commit`. The registry user configured in this Secret must have push permission to the destination image repository:
 
 ```shell
 kubectl create secret docker-registry push-secret \
-  -n sandbox-system \
+  -n default \
   --docker-server=registry.example.com \
   --docker-username=<username> \
   --docker-password=<password>
@@ -106,7 +107,7 @@ apiVersion: agents.kruise.io/v1alpha1
 kind: Commit
 metadata:
   name: commit-demo-01
-  namespace: sandbox-system
+  namespace: default
 spec:
   podName: code-interpreter-28rvn
   containerName: workspace
@@ -138,7 +139,7 @@ If `registryAuth` is not set or no valid Secret is found, the commit Job attempt
 Use the short name `cmt` to list Commit objects:
 
 ```shell
-kubectl get cmt -n sandbox-system
+kubectl get cmt -n default
 ```
 
 Example output:
@@ -152,16 +153,16 @@ commit-demo-auth   Succeeded   168h   2m
 Watch one Commit in detail:
 
 ```shell
-kubectl get cmt commit-demo-01 -n sandbox-system -o yaml
+kubectl get cmt commit-demo-01 -n default -o yaml
 ```
 
 Check the phase directly:
 
 ```shell
-kubectl get cmt commit-demo-01 -n sandbox-system -o jsonpath='{.status.phase}'
+kubectl get cmt commit-demo-01 -n default -o jsonpath='{.status.phase}'
 ```
 
-Once `status.phase` becomes `Succeeded`, the target image has been committed and pushed successfully.
+Once `status.phase` becomes `Succeeded`, the target image has been committed and pushed successfully. `status.phase` is the authoritative result signal; `status.conditions` is best-effort and may be empty even after a successful commit.
 
 ## Failure Handling
 
@@ -171,6 +172,7 @@ A `Commit` moves to `Failed` when the controller or commit Job cannot complete t
 |---|---|---|---|
 | `Commit` fails quickly | - | Target Pod does not exist or is being deleted | Verify `spec.podName` and namespace. |
 | Job generation fails | - | Target container is not found in Pod status, Pod is not scheduled, or `AGENT_JOB_IMAGE` is empty | Check `spec.containerName`, Pod status, and controller environment variables. |
+| Commit stuck in `Running`, Job Pod in `ErrImagePull` | - | `AGENT_JOB_IMAGE` is set but points to an image the target node cannot pull (wrong tag, missing, or private without node-level credentials). The Job is created normally, so the Commit does not fail until `timeoutSeconds` elapses, and never fails on its own when `timeoutSeconds` is `0` | Verify the `AGENT_JOB_IMAGE` reference and that the node can pull it; run `kubectl describe pod` on the commit Job Pod to see the pull error |
 | Image commit fails | `CommitContainer` | `nerdctl commit` failed on the target node | Check job Pod logs and containerd access on the target node. |
 | Image push fails | `PushCommittedImage` | Registry authentication, authorization, DNS, network, or TLS configuration problem | Check registry Secret, node network, and `/etc/containerd/certs.d`. |
 | Job times out | - | `spec.timeoutSeconds` is too small for the image size or network speed | Increase `timeoutSeconds` or leave it as `0`. |
@@ -178,9 +180,9 @@ A `Commit` moves to `Failed` when the controller or commit Job cannot complete t
 You can inspect the generated Job and its Pod logs for more details:
 
 ```shell
-kubectl get job -n sandbox-system -l agents.kruise.io/commit-name=commit-demo-01
-kubectl get pod -n sandbox-system -l agents.kruise.io/commit-name=commit-demo-01
-kubectl logs -n sandbox-system -l agents.kruise.io/commit-name=commit-demo-01
+kubectl get job -n default -l agents.kruise.io/commit-name=commit-demo-01
+kubectl get pod -n default -l agents.kruise.io/commit-name=commit-demo-01
+kubectl logs -n default -l agents.kruise.io/commit-name=commit-demo-01
 ```
 
 ## Cleaning Up
@@ -188,7 +190,7 @@ kubectl logs -n sandbox-system -l agents.kruise.io/commit-name=commit-demo-01
 Delete the `Commit` object manually:
 
 ```shell
-kubectl delete cmt commit-demo-01 -n sandbox-system
+kubectl delete cmt commit-demo-01 -n default
 ```
 
 Or set `spec.ttl` so the controller automatically removes the `Commit` object after it reaches a terminal phase:
