@@ -13,6 +13,27 @@ fields `allow_out`, `deny_out`, and `rules` into the camelCase `allowOut`, `deny
 two forms describe the same policy. See [Python Client](../e2b-client.md) for SDK installation and for connecting the
 client to `sandbox-manager`.
 
+## Prerequisites
+
+The rules below are enforced by the TrafficProxy data plane, so the target Sandbox must run the `traffic-proxy`
+runtime. Declare it on the Sandbox, or on the SandboxTemplate or SandboxSet it derives from, as described in
+[Enroll a Sandbox](./traffic-access-control.md#enroll-a-sandbox):
+
+```yaml
+spec:
+  runtimes:
+    - name: traffic-proxy
+```
+
+For pooled Sandboxes, declare the runtime in the template. A sidecar cannot be injected when a Sandbox is claimed
+from the pool, so a pool whose template omits `traffic-proxy` produces Sandboxes that never enforce these rules.
+
+:::caution
+Without the `traffic-proxy` runtime, `sandbox-manager` still accepts and stores the `network` and `security-rules`
+configurations, and the create and update calls return success. The rules are **not enforced** — outbound traffic that
+should have been denied still succeeds. Confirm the sidecar is running before relying on these controls.
+:::
+
 ## Create with Network Rules
 
 The `network` object accepts L4 reachability lists and per-domain L7 transforms:

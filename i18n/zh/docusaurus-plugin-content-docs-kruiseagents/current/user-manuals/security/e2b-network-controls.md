@@ -12,6 +12,27 @@ E2B 创建和网络更新 API 可以限制出站目标，并按域名设置或�
 和 `rules` 序列化为 API 使用的驼峰命名 `allowOut`、`denyOut` 和 `rules`，因此两种写法描述的是同一套策略。SDK 安装
 以及客户端连接 `sandbox-manager` 的方式见 [Python 客户端](../e2b-client.md)。
 
+## 前置条件
+
+下文规则由 TrafficProxy 数据面执行，因此目标 Sandbox 必须运行 `traffic-proxy` 运行时。请按
+[接入 Sandbox](./traffic-access-control.md#接入-sandbox) 的说明，在 Sandbox，或在其派生来源 SandboxTemplate、
+SandboxSet 上声明该运行时：
+
+```yaml
+spec:
+  runtimes:
+    - name: traffic-proxy
+```
+
+对于池化 Sandbox，请在模板中声明该运行时。从预热池领取 Sandbox 时无法注入 Sidecar，因此如果模板未声明
+`traffic-proxy`，该预热池产出的 Sandbox 将始终不会执行这些规则。
+
+:::caution
+缺少 `traffic-proxy` 运行时时，`sandbox-manager` 仍会接受并保存 `network` 与 `security-rules` 配置，创建和更新
+调用也会返回成功。但这些规则**不会生效**——本应被拒绝的出站流量仍然可以成功。在依赖这些访问控制之前，请先确认
+Sidecar 已正常运行。
+:::
+
 ## 创建时配置网络规则
 
 `network` 对象同时支持四层可达性列表和按域名生效的七层请求转换：

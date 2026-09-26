@@ -12,6 +12,26 @@ Kubernetes Secret 中解析凭证，并在匹配的出站请求离开集群前�
 注入由平台管理员通过 `SecurityProfile`（命名空间级）或 `GlobalSecurityProfile`（集群级）配置。两者共用相同的
 `tokenTransformation` 动作和相同的、基于 Secret 的凭证来源。
 
+## 前置条件
+
+凭证注入由 TrafficProxy 数据面中的出口代理执行，因此目标 Sandbox 必须运行 `traffic-proxy` 运行时。请按
+[接入 Sandbox](./traffic-access-control.md#接入-sandbox) 的说明，在 Sandbox，或在其派生来源 SandboxTemplate、
+SandboxSet 上声明该运行时：
+
+```yaml
+spec:
+  runtimes:
+    - name: traffic-proxy
+```
+
+对于池化 Sandbox，请在模板中声明该运行时。从预热池领取 Sandbox 时无法注入 Sidecar，因此如果模板未声明
+`traffic-proxy`，该预热池产出的 Sandbox 将始终不会生效注入。
+
+:::caution
+缺少 `traffic-proxy` 运行时时，出站请求会完全绕过出口代理：`SecurityProfile` 不会被应用，占位请求头会原样离开
+Sandbox，上游调用会因鉴权失败而被拒绝。在依赖凭证注入之前，请先确认 Sidecar 已正常运行。
+:::
+
 ## 工作原理
 
 1. 管理员将上游凭证保存在一个 Kubernetes Secret 中。
