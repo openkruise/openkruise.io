@@ -89,7 +89,7 @@ docker build -f dockerfiles/commit-job.Dockerfile \
 
 ```shell
 kubectl create secret docker-registry push-secret \
-  -n sandbox-system \
+  -n default \
   --docker-server=registry.example.com \
   --docker-username=<username> \
   --docker-password=<password>
@@ -102,7 +102,7 @@ apiVersion: agents.kruise.io/v1alpha1
 kind: Commit
 metadata:
   name: commit-demo-01
-  namespace: sandbox-system
+  namespace: default
 spec:
   podName: code-interpreter-28rvn
   containerName: workspace
@@ -134,7 +134,7 @@ nerdctl push <image>
 使用缩写 `cmt` 查看 Commit 对象：
 
 ```shell
-kubectl get cmt -n sandbox-system
+kubectl get cmt -n default
 ```
 
 示例输出：
@@ -148,13 +148,13 @@ commit-demo-auth   Succeeded   168h   2m
 查看单个 Commit 详情：
 
 ```shell
-kubectl get cmt commit-demo-01 -n sandbox-system -o yaml
+kubectl get cmt commit-demo-01 -n default -o yaml
 ```
 
 直接查看 phase：
 
 ```shell
-kubectl get cmt commit-demo-01 -n sandbox-system -o jsonpath='{.status.phase}'
+kubectl get cmt commit-demo-01 -n default -o jsonpath='{.status.phase}'
 ```
 
 当 `status.phase` 变为 `Succeeded` 后，表示目标镜像已提交并推送成功。`status.phase` 是权威的结果信号；`status.conditions` 为尽力而为的信息，即使 commit 成功也可能为空。
@@ -175,9 +175,9 @@ kubectl get cmt commit-demo-01 -n sandbox-system -o jsonpath='{.status.phase}'
 可以查看生成的 Job 及其 Pod 日志获取更多信息：
 
 ```shell
-kubectl get job -n sandbox-system -l agents.kruise.io/commit-name=commit-demo-01
-kubectl get pod -n sandbox-system -l agents.kruise.io/commit-name=commit-demo-01
-kubectl logs -n sandbox-system -l agents.kruise.io/commit-name=commit-demo-01
+kubectl get job -n default -l agents.kruise.io/commit-name=commit-demo-01
+kubectl get pod -n default -l agents.kruise.io/commit-name=commit-demo-01
+kubectl logs -n default -l agents.kruise.io/commit-name=commit-demo-01
 ```
 
 ## 清理 Commit
@@ -185,7 +185,7 @@ kubectl logs -n sandbox-system -l agents.kruise.io/commit-name=commit-demo-01
 手动删除 `Commit` 对象：
 
 ```shell
-kubectl delete cmt commit-demo-01 -n sandbox-system
+kubectl delete cmt commit-demo-01 -n default
 ```
 
 也可以设置 `spec.ttl`，让 controller 在 `Commit` 进入终态后自动删除该对象：

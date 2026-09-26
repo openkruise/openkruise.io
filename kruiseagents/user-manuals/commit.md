@@ -94,7 +94,7 @@ First create the registry auth Secret in the same namespace as the `Commit`. The
 
 ```shell
 kubectl create secret docker-registry push-secret \
-  -n sandbox-system \
+  -n default \
   --docker-server=registry.example.com \
   --docker-username=<username> \
   --docker-password=<password>
@@ -107,7 +107,7 @@ apiVersion: agents.kruise.io/v1alpha1
 kind: Commit
 metadata:
   name: commit-demo-01
-  namespace: sandbox-system
+  namespace: default
 spec:
   podName: code-interpreter-28rvn
   containerName: workspace
@@ -139,7 +139,7 @@ If `registryAuth` is not set or no valid Secret is found, the commit Job attempt
 Use the short name `cmt` to list Commit objects:
 
 ```shell
-kubectl get cmt -n sandbox-system
+kubectl get cmt -n default
 ```
 
 Example output:
@@ -153,13 +153,13 @@ commit-demo-auth   Succeeded   168h   2m
 Watch one Commit in detail:
 
 ```shell
-kubectl get cmt commit-demo-01 -n sandbox-system -o yaml
+kubectl get cmt commit-demo-01 -n default -o yaml
 ```
 
 Check the phase directly:
 
 ```shell
-kubectl get cmt commit-demo-01 -n sandbox-system -o jsonpath='{.status.phase}'
+kubectl get cmt commit-demo-01 -n default -o jsonpath='{.status.phase}'
 ```
 
 Once `status.phase` becomes `Succeeded`, the target image has been committed and pushed successfully. `status.phase` is the authoritative result signal; `status.conditions` is best-effort and may be empty even after a successful commit.
@@ -180,9 +180,9 @@ A `Commit` moves to `Failed` when the controller or commit Job cannot complete t
 You can inspect the generated Job and its Pod logs for more details:
 
 ```shell
-kubectl get job -n sandbox-system -l agents.kruise.io/commit-name=commit-demo-01
-kubectl get pod -n sandbox-system -l agents.kruise.io/commit-name=commit-demo-01
-kubectl logs -n sandbox-system -l agents.kruise.io/commit-name=commit-demo-01
+kubectl get job -n default -l agents.kruise.io/commit-name=commit-demo-01
+kubectl get pod -n default -l agents.kruise.io/commit-name=commit-demo-01
+kubectl logs -n default -l agents.kruise.io/commit-name=commit-demo-01
 ```
 
 ## Cleaning Up
@@ -190,7 +190,7 @@ kubectl logs -n sandbox-system -l agents.kruise.io/commit-name=commit-demo-01
 Delete the `Commit` object manually:
 
 ```shell
-kubectl delete cmt commit-demo-01 -n sandbox-system
+kubectl delete cmt commit-demo-01 -n default
 ```
 
 Or set `spec.ttl` so the controller automatically removes the `Commit` object after it reaches a terminal phase:
