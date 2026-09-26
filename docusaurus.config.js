@@ -38,6 +38,11 @@ function getNextVersionName() {
   projectName: 'openkruise.io',
   trailingSlash: false,
 
+  markdown: {
+    mermaid: true,
+  },
+  themes: ['@docusaurus/theme-mermaid'],
+
   presets: [
     [
       '@docusaurus/preset-classic',
