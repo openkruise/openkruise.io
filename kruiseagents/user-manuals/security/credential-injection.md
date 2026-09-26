@@ -13,6 +13,27 @@ Injection is configured by the platform administrator through a `SecurityProfile
 `GlobalSecurityProfile` (cluster-scoped). Both share the same `tokenTransformation` action and the same Secret-based
 credential source.
 
+## Prerequisites
+
+Credential injection is enforced by the egress proxy in the TrafficProxy data plane, so the target Sandbox must run the
+`traffic-proxy` runtime. Declare it on the Sandbox, or on the SandboxTemplate or SandboxSet it derives from, as
+described in [Enroll a Sandbox](./traffic-access-control.md#enroll-a-sandbox):
+
+```yaml
+spec:
+  runtimes:
+    - name: traffic-proxy
+```
+
+For pooled Sandboxes, declare the runtime in the template. A sidecar cannot be injected when a Sandbox is claimed from
+the pool, so a pool whose template omits `traffic-proxy` produces Sandboxes where injection never takes effect.
+
+:::caution
+Without the `traffic-proxy` runtime, outbound requests bypass the egress proxy entirely: the `SecurityProfile` is never
+applied, the placeholder header leaves the Sandbox unchanged, and the upstream call fails authentication. Confirm the
+sidecar is running before relying on credential injection.
+:::
+
 ## How It Works
 
 1. The administrator stores the upstream credential in a Kubernetes Secret.
