@@ -78,8 +78,10 @@ admin key。向 `patch_e2b` 传入 `validate_key=False` 可跳过本地格式校
 
 ### 配置服务端
 
-默认部署清单使用动态解析，不传递 `--e2b-domain`。如果 Helm Chart 或已有 Deployment 设置了域名，请将其清空
-（例如使用 `--set-string e2b.domain=""`），或移除 `--e2b-domain` 参数以启用动态解析。
+从源码构建的部署（`config/manager`）不传递 `--e2b-domain`，因此默认使用动态解析。而 0.3.0 Helm Chart
+始终将 `e2b.domain` 的值传给 `--e2b-domain`，且该参数在 chart 中的默认值是不可用的占位符
+`your.domain.com`——请将其清空（例如使用 `--set e2b.domain=""`）或设置为你的真实域名来控制此行为
+（参见[安装文档第 0 步](../installation.md#第-0-步准备安装参数)）。
 
 如果需要在通过 Helm 安装或升级 Sandbox Manager 时保留静态域名，请显式设置 `e2b.domain`：
 
@@ -203,16 +205,17 @@ kubectl create secret tls sandbox-manager-tls \
 
 :::tip 集群内配置
 当客户端、`sandbox-manager` 和 `sandbox-gateway` 位于同一集群时，可以直接使用 Kubernetes Service 地址，
-好处是无需配置公网 DNS 解析：
+好处是无需配置公网 DNS 解析。下方 Service 名称跟随[安装](../installation.md)文档的默认 Helm release 名——
+如果你使用了其他 release 名，请替换为你的实际名称：
 
 ```shell
-export E2B_API_URL="http://sandbox-manager.sandbox-system.svc.cluster.local:8080"
+export E2B_API_URL="http://agents-sandbox-manager.sandbox-system.svc.cluster.local:8080"
 export E2B_SANDBOX_URL="http://sandbox-gateway.sandbox-system.svc.cluster.local:7788"
 export E2B_API_KEY=<your-api-key>
 ```
 
-如果未安装外置的 `sandbox-gateway`，可以将 `E2B_SANDBOX_URL` 改为使用 `sandbox-manager`，继续使用其内置
-流量代理，但不推荐这种方式。
+如果未安装外置的 `sandbox-gateway`，可以将 `E2B_SANDBOX_URL` 改为指向 `agents-sandbox-manager`（端口
+7788），继续使用其内置流量代理，但不推荐这种方式。
 :::
 
 > ⚠️ **限制说明**：上层库 `e2b-code-interpreter` 和 `e2b-desktop` 的以下扩展功能不读取 `E2B_API_URL` /
@@ -234,10 +237,11 @@ export E2B_API_KEY=<your-api-key>
 > 这种方式可以快速自动化部署，无需配置域名和证书。仅推荐用于 E2E 测试场景，或经过严格评估后使用。
 
 1. 确保客户端（agent）和 sandbox-manager 在同一集群中。
-2. 客户端配置环境变量：
+2. 客户端配置环境变量（Service 名称跟随[安装](../installation.md)文档的默认 Helm release 名；端口 `7788`
+   是 manager Service 上 Envoy 数据面端口，同样承载 `/kruise/api`）：
     ```shell
     # 如果服务端配置了静态 E2B 域名，其值必须与客户端相同
-    export E2B_DOMAIN=sandbox-manager.sandbox-system.svc.cluster.local
+    export E2B_DOMAIN=agents-sandbox-manager.sandbox-system.svc.cluster.local:7788
     export E2B_API_KEY=<your-api-key>
     ```
 3. 修改客户端并禁用 HTTPS：
@@ -254,9 +258,10 @@ export E2B_API_KEY=<your-api-key>
     export E2B_DOMAIN=localhost
     export E2B_API_KEY=<your-api-key>
     ```
-2. 端口转发 sandbox-manager 到本地机器：
+2. 端口转发 sandbox-manager 到本地机器（Service 名称跟随[安装](../installation.md)文档的默认 Helm release
+   名；Linux 上绑定 80 端口需要 `sudo`）：
    ```shell
-   sudo kubectl port-forward services/sandbox-manager 80:7788 -n sandbox-system
+   kubectl port-forward service/agents-sandbox-manager 80:7788 -n sandbox-system
    ```
 3. 修改客户端：
     ```python

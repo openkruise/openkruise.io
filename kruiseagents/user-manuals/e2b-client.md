@@ -85,9 +85,11 @@ preserve or rewrite `Host` to the public authority expected by the client.
 
 ### Configure the server
 
-The default manifests use dynamic resolution and do not pass `--e2b-domain`. If your Helm chart or existing Deployment
-sets a domain, clear it (for example, `--set-string e2b.domain=""`) or remove the `--e2b-domain` argument to enable
-dynamic resolution.
+Deployments built from source (`config/manager`) pass no `--e2b-domain` and therefore use dynamic resolution by
+default. The 0.3.0 Helm chart instead always passes `--e2b-domain` with the `e2b.domain` value, whose chart default
+is the unusable placeholder `your.domain.com` — clear it (for example, `--set e2b.domain=""`) or set your real
+domain to control this behavior (see
+[Installation, Step 0](../installation.md#step-0-prepare-installation-parameters)).
 
 To retain a static domain when installing or upgrading Sandbox Manager with Helm, set `e2b.domain` explicitly:
 
@@ -216,16 +218,17 @@ kubectl create secret tls sandbox-manager-tls \
 
 :::tip In-cluster configuration
 When the client, `sandbox-manager`, and `sandbox-gateway` are in the same cluster, use their Kubernetes Service URLs
-directly. This avoids public DNS configuration:
+directly. This avoids public DNS configuration. The Service names below follow the default Helm release names from
+[Installation](../installation.md) — substitute your own if you deployed with different release names:
 
 ```shell
-export E2B_API_URL="http://sandbox-manager.sandbox-system.svc.cluster.local:8080"
+export E2B_API_URL="http://agents-sandbox-manager.sandbox-system.svc.cluster.local:8080"
 export E2B_SANDBOX_URL="http://sandbox-gateway.sandbox-system.svc.cluster.local:7788"
 export E2B_API_KEY=<your-api-key>
 ```
 
-If the external `sandbox-gateway` is not installed, `E2B_SANDBOX_URL` can use `sandbox-manager` instead to continue
-using its built-in traffic proxy, although this is not recommended.
+If the external `sandbox-gateway` is not installed, `E2B_SANDBOX_URL` can point at `agents-sandbox-manager` (port
+7788) instead to continue using its built-in traffic proxy, although this is not recommended.
 :::
 
 > ⚠️ **Limitation**: The following extended features in the upper-level libraries `e2b-code-interpreter` and
@@ -249,10 +252,12 @@ using its built-in traffic proxy, although this is not recommended.
 > for E2E testing scenarios only, or after rigorous evaluation.
 
 1. Ensure client(agent) and sandbox-manager are in the same cluster.
-2. Client configuration environment variables:
+2. Client configuration environment variables (the Service name follows the default Helm release name from
+   [Installation](../installation.md); port `7788` is the manager Service's Envoy data-plane port, which also serves
+   `/kruise/api`):
     ```shell
     # A static server-side E2B domain, if configured, must use the same value
-    export E2B_DOMAIN=sandbox-manager.sandbox-system.svc.cluster.local
+    export E2B_DOMAIN=agents-sandbox-manager.sandbox-system.svc.cluster.local:7788
     export E2B_API_KEY=<your-api-key>
     ```
 3. Patch client and disable HTTPS:
@@ -269,9 +274,10 @@ using its built-in traffic proxy, although this is not recommended.
     export E2B_DOMAIN=localhost
     export E2B_API_KEY=<your-api-key>
     ```
-2. Port forward sandbox-manager to local machine:
+2. Port forward sandbox-manager to local machine (the Service name follows the default Helm release name from
+   [Installation](../installation.md); on Linux, binding port 80 requires `sudo`):
    ```shell
-   sudo kubectl port-forward services/sandbox-manager 80:7788 -n sandbox-system
+   kubectl port-forward service/agents-sandbox-manager 80:7788 -n sandbox-system
    ```
 3. Patch client:
     ```python
