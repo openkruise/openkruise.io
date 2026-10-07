@@ -13,7 +13,10 @@ import TabItem from '@theme/TabItem';
 ## 前提条件
 
 - 已创建 `SandboxSet`，且沙箱已被 Agent 认领。参见[温池管理](./warmpool-management.md)和[沙箱认领](./sandbox-claim.md)。
-- 探针驱动的自动休眠与定时唤醒要求 `sandbox-controller` 已开启 `AutoPauseController` 特性门控（Feature Gate）。
+- 探针驱动的自动休眠与定时唤醒要求 `sandbox-controller` 开启 `AutoPauseController` 特性门控（Feature Gate），该门控默认开启。
+  **真实节点**上的探针还需要集群安装 OpenKruise（kruise-daemon）并开启 `KruiseIntegration` 特性门控，可通过
+  `--set 'controller.featureGates=KruiseIntegration=true'` 开启。不开启时，真实节点的探针 condition 会一直处于 `Unknown`，
+  自动休眠不会触发；虚拟 kubelet 节点上的探针不受影响。参见[第三方依赖](../installation.md#第三方依赖)。
 - 入站流量唤醒仅对经由 [Sandbox Gateway](../architecture.md#sandbox-gateway) 路由到沙箱的请求生效，且网关需启用
   `enable-wake-on-traffic` 配置。其 `wake-timeout-seconds`（默认 `60`）限定网关等待沙箱就绪的时长，超时后请求以
   `503 sandbox wake failed` 失败。这两个配置项均作用于网关，不能按沙箱单独设置。

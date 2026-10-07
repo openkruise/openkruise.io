@@ -4,25 +4,40 @@ title: 安装
 
 ## 概述
 
-Sandbox Controller、Sandbox Manager 和 Sandbox Gateway 是 OpenKruise 生态中的三个核心组件，共同构成完整的 Sandbox 运行环境：
+Kruise Agents 通过两个 Helm Chart 安装，分别部署 Sandbox Controller 与 Sandbox Manager，其中 Manager chart 还内置了
+Sandbox Gateway，共同构成完整的 Sandbox 运行环境。
 
-- **Sandbox Controller**：负责管理 Sandbox 相关的 CRD 资源，包括 Sandbox、SandboxSet、SandboxClaim、SandboxTemplate、
-  SandboxUpdateOps、Checkpoint、Commit 和 PoolAutoscaler 的生命周期管理。
-- **Sandbox Manager**：提供 Sandbox 的 API 服务和控制面，负责 Sandbox 实例的调度、创建与回收，支持 E2B 协议访问。
-- **Sandbox Gateway**：独立的数据面网关服务，基于 Envoy + Golang Filter 构建，负责流量路由、负载均衡与熔断保护，支持独立扩缩容。
+- **Sandbox Controller**（`agents-sandbox-controller` chart）是管理全部 Sandbox CRD 资源的控制面，chart 中包含：
+  - 8 个 `agents.kruise.io` CRD：Sandbox、SandboxSet、SandboxClaim、SandboxTemplate、SandboxUpdateOps、
+    Checkpoint、Commit 和 PoolAutoscaler；
+  - 负责调谐这些资源的 sandbox-controller Deployment：Sandbox 生命周期管理、预热池维护、Sandbox 申领、
+    原地升级、Checkpoint/Commit 以及池自动扩缩容；
+  - Mutating/Validating Webhook、RBAC、ServiceAccount 以及 metrics Service；
+  - `sandbox-injection-config` ConfigMap，定义 `agent-runtime` sidecar 与每个 Sandbox 的 `traffic-proxy`
+    注入模板；
+  - 启用 `enableTLS=true` 时可选创建的 TLS 资源：共享根 CA、运行时客户端/服务端证书以及 trust-manager CA bundle。
+- **Sandbox Manager**（`agents-sandbox-manager` chart）是 Sandbox 的数据面组件，同时提供 E2B API 的适配服务，
+  chart 中包含：
+  - sandbox-manager Deployment 及其 Service、Secret 和 Ingress 资源；
+  - Sandbox Gateway Deployment：基于 Envoy + Golang Filter 的数据面，负责流量路由、负载均衡与熔断保护，
+    可与 Manager 独立扩缩容；
+  - 启用 `prometheus.enabled=true` 时可选创建的 ServiceMonitor，采集 Manager 与 Gateway 指标；
+  - 启用 `enableTLS=true` 时可选创建的 TLS 资源：Ingress 服务端证书、运行时客户端证书以及 manager↔gateway
+    peer 证书；
+  - 可选的嵌入式 Agentio 组件（`agentio.enabled`，默认关闭），提供 Sandbox 出入向流量管控：`agentiod`
+    控制面、EPE 流量扩展组件和 egress gateway；
+  - 描述 Sandbox 出入向流量策略的 `TrafficPolicy`、`GlobalTrafficPolicy`、`SecurityProfile`、
+    `GlobalSecurityProfile` CRD，随 chart 一起安装。
 
 ---
 
 ## 版本兼容性
 
-| 组件                 | Chart 版本  | 镜像版本          | Kubernetes 兼容性 |
-|--------------------|-----------|---------------|----------------|
-| Sandbox Controller | 0.6.0-rc1 | v0.6.0-alpha4 | `>= 1.28`      |
-| Sandbox Manager    | 0.6.0-rc1 | v0.6.0-alpha4 | `>= 1.28`      |
-| Sandbox Gateway    | —         | v0.6.0-alpha4 | `>= 1.28`      |
+| Sandbox 组件版本 | Kubernetes 版本 | E2B 版本   |
+|------------------|-----------------|------------|
+| 0.6.0-rc1        | `>= 1.28`       | `>= 2.8.0` |
 
 > **说明**：
-> - Sandbox Gateway 随 Sandbox Manager chart 一起部署，无需单独安装。
 > - `agent-runtime` sidecar 注入需要 Kubernetes >= 1.29（native sidecar containers），参见
 >   [Agent Runtime 注入](#agent-runtime-注入)。
 > - `enableTLS=true` 需要集群安装 [cert-manager](https://cert-manager.io/)，以及用于 CA bundle 的 trust-manager。

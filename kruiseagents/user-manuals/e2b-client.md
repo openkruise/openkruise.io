@@ -143,7 +143,12 @@ docs:
 - [use-self-signed-cert.md](../best-practices/use-self-signed-cert.md)
 - [cert-manager.md](../best-practices/cert-manager.md)
 
-You can install your certificate with the following command:
+When you deploy with the Helm chart, you do not need to create this Secret manually: with `enableTLS=true` the chart
+has cert-manager issue the ingress certificate into the same `sandbox-manager-tls` Secret that the Ingress
+references. To cover extra domains, pass `--set e2b.extraDomains={example2.com}` and the chart derives all SANs
+automatically, with no manual `dnsNames` editing.
+
+You can also install your certificate manually with the following command:
 
 ```shell
 # ingress-nginx example, adjust according to your ingress controller

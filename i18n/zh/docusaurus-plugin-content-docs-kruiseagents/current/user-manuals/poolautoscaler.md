@@ -16,7 +16,7 @@ PoolAutoscaler 用于自动调整预热池的大小。它以未被领取的可�
 
 使用前请确认：
 
-1. 已安装 `agent-sandbox-controller` 且版本支持 PoolAutoscaler：较新版本已默认启用，无需额外配置；旧版本需通过启动参数 `--feature-gates=PoolAutoscaler=true` 显式开启（安装方式见[安装](../installation.md)）。
+1. 已安装 `agent-sandbox-controller` 且版本支持 PoolAutoscaler：较新版本已默认启用，无需额外配置；旧版本需显式开启该门控，例如使用 chart 安装时设置 `--set 'controller.featureGates=PoolAutoscaler=true'`（安装方式见[安装](../installation.md)）。
 2. 已按[预热池管理](./warmpool-management.md)创建待管理的 SandboxSet，且 SandboxSet controller 正常运行。
 3. 同一 namespace 内，一个 SandboxSet 最多只能由一个 PoolAutoscaler 管理。
 4. PoolAutoscaler 至少配置一种策略：`capacityPolicy` 或 `cronPolicies`。

@@ -78,7 +78,7 @@ API Key 决定了：
 | `GET`    | `/teams`         | 列出当前用户可见的 Team                                       |
 | `GET`    | `/api-keys`      | 列出当前用户所属 Team 的所有 API Key                            |
 | `POST`   | `/api-keys`      | 为当前用户所属 Team 创建 API Key（管理员可以为其他 Team 创建）            |
-| `GET`    | `/api-keys/compatible` | 获取当前 API Key 的 E2B SDK 兼容格式（从 **v0.4.0** 起支持）   |
+| `GET`    | `/api-keys/compatible` | 获取当前 API Key 的 E2B SDK 兼容格式（从 **v0.6.0** 起支持）   |
 | `DELETE` | `/api-keys/{id}` | 按 UUID 删除 API Key                                    |
 
 所有请求都必须带上请求头 `X-API-KEY: <your-api-key>`。
@@ -250,7 +250,7 @@ resp.raise_for_status()
 ## E2B SDK Key 格式兼容性
 
 :::info 版本支持
-本节描述的兼容性功能从 **v0.4.0** 版本开始支持。
+本节描述的兼容性功能从 **v0.6.0** 版本开始支持。
 :::
 
 ### 背景
@@ -259,16 +259,16 @@ resp.raise_for_status()
 模式的 Key。不符合该格式的 Key——例如老版本的 UUID 格式 Key 或用户自定义的 admin Key（如 `admin-987654321`）——会在到达服务端之前
 就被 SDK **直接拒绝**。
 
-为此，`sandbox-manager` v0.4.0 引入了兼容层，将原始 Key 编码为 SDK 兼容的 `e2b_...` 格式，同时服务端的存储与鉴权语义完全不变。
+为此，`sandbox-manager` v0.6.0 引入了兼容层，将原始 Key 编码为 SDK 兼容的 `e2b_...` 格式，同时服务端的存储与鉴权语义完全不变。
 
-### 增量 Key（v0.4.0+）
+### 增量 Key（v0.6.0+）
 
-从 **v0.4.0** 起，`POST /api-keys` 返回的所有 API Key 已自动编码为 `e2b_[0-9a-f]+` 格式，无需任何额外操作——新 Key
+从 **v0.6.0** 起，`POST /api-keys` 返回的所有 API Key 已自动编码为 `e2b_[0-9a-f]+` 格式，无需任何额外操作——新 Key
 同时兼容新旧版本的 E2B SDK。
 
-### 存量 Key（v0.4.0 之前）
+### 存量 Key（v0.6.0 之前）
 
-v0.4.0 之前创建的 API Key（包括用户自定义的 admin Key）仍然完全有效。存量 Key 与新的 SDK 兼容 Key **功能上完全等价**——它们
+v0.6.0 之前创建的 API Key（包括用户自定义的 admin Key）仍然完全有效。存量 Key 与新的 SDK 兼容 Key **功能上完全等价**——它们
 鉴权到的是同一份凭证，授权行为没有任何差异。你可以继续在旧版 E2B SDK（< 2.25.0）上使用存量 Key，不存在任何兼容性问题。
 
 如需在 E2B SDK >= 2.25.0 上使用存量 Key，有以下三种方式：
@@ -357,6 +357,11 @@ patch_e2b(https=True, validate_key=False)
 
 `sandbox-manager` 为 API Key 提供了两种可插拔的存储后端，通过 `sandbox-manager` 的命令行参数选择
 （参见 [cmd/sandbox-manager/main.go](https://github.com/openkruise/agents/blob/master/cmd/sandbox-manager/main.go)）。
+
+使用 Helm Chart 部署时无需直接传递这些命令行参数，Chart 会将自己的 values 映射为对应的参数与环境变量。例如开启
+MySQL 后端可通过
+`--set e2b.keyStorage.mode=mysql --set e2b.keyStorage.mysql.dsn=<dsn> --set e2b.keyStorage.mysql.hashPepper=<pepper>`。
+Chart 层面的开关说明见[第三方依赖](../installation.md#第三方依赖)。
 
 ### 公共参数
 

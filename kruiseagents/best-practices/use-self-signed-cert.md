@@ -4,6 +4,14 @@ This document provides a best practice for accessing sandbox-manager via self-si
 create certificates through an optimized script, how to install certificates in the cluster, and how to configure the
 E2B client.
 
+:::note
+If your deployment uses the Helm charts together with cert-manager, you can skip the manual certificate steps below:
+with `enableTLS=true` on both charts, cert-manager issues the ingress certificate directly into the
+`sandbox-manager-tls` Secret and trust-manager distributes the shared CA. See
+[Managing sandbox-manager Self-Signed Certificates with cert-manager](./cert-manager.md) for the chart-native
+workflow.
+:::
+
 ## Prerequisites
 
 1. `sandbox-manager` is installed in the cluster

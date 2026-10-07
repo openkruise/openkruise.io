@@ -21,8 +21,12 @@ timeout-based auto-pause — see [Pausing and Resuming](./pause-resume.md).
 
 - A `SandboxSet` has been created and its sandboxes have been claimed by agents. See
   [Warm Pool Management](./warmpool-management.md) and [Sandbox Claim](./sandbox-claim.md).
-- Probe-driven automatic pause and scheduled wake-up require the `AutoPauseController` feature gate to be enabled on
-  `sandbox-controller`.
+- Probe-driven automatic pause and scheduled wake-up require the `AutoPauseController` feature gate on
+  `sandbox-controller`, which is enabled by default. Probes on **real nodes** additionally require OpenKruise (for
+  kruise-daemon) and the `KruiseIntegration` feature gate — enable it with
+  `--set 'controller.featureGates=KruiseIntegration=true'`. Without it, real-node probe conditions stay `Unknown` and
+  automatic pause does not trigger; probes on virtual-kubelet nodes are unaffected. See
+  [Third-Party Dependencies](../installation.md#third-party-dependencies).
 - Inbound-traffic wake-up only takes effect for requests routed to the sandbox through the
   [Sandbox Gateway](../architecture.md#sandbox-gateway), and the gateway must be configured with
   `enable-wake-on-traffic` enabled. Its `wake-timeout-seconds` (default `60`) bounds how long the gateway waits for

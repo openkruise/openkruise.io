@@ -132,7 +132,11 @@ export E2B_DOMAIN=your.domain.com
 - [使用自签名证书](../best-practices/use-self-signed-cert.md)
 - [使用 cert-manager](../best-practices/cert-manager.md)
 
-您可以使用以下命令安装证书：
+使用 Helm Chart 部署时无需手动创建该 Secret：设置 `enableTLS=true` 后，Chart 会通过 cert-manager 签发 Ingress 证书，
+并写入 Ingress 引用的同一个 `sandbox-manager-tls` Secret。如需覆盖更多域名，可通过
+`--set e2b.extraDomains={example2.com}` 传入，Chart 会自动推导全部 SAN，无需手动编辑 `dnsNames`。
+
+您也可以使用以下命令手动安装证书：
 
 ```shell
 # ingress-nginx 示例，根据您的 ingress controller 进行调整

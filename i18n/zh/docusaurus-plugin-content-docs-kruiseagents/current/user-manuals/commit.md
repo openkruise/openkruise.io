@@ -28,11 +28,15 @@
 
 `Commit` 受 `Commit` feature gate 控制。当前社区实现中，该能力是 Alpha 功能，默认关闭。
 
-需要在 sandbox controller 上显式开启：
+安装或升级 sandbox controller 时通过 chart 显式开启：
 
 ```shell
---feature-gates=Commit=true
+helm upgrade --install agents-sandbox-controller openkruise/agents-sandbox-controller \
+  -n sandbox-system \
+  --set 'controller.featureGates=Commit=true'
 ```
+
+对应的二进制参数为 `--feature-gates=Commit=true`。如需在同一个 `--set` 中开启多个门控，请按[安装文档](../installation.md#sandbox-controller-安装参数)的说明转义逗号。
 
 ## 前置条件
 
@@ -42,7 +46,7 @@
 - 集群中已注册 `Commit` CRD（`commits.agents.kruise.io`）。
 - 目标 Sandbox Pod 正在运行且已经调度，目标容器由 containerd 管理。Pod status 中该容器的 container ID 必须带有 `containerd://` 前缀；仅使用 Docker 或 CRI-O 的节点暂不支持。
 - 目标节点在 `/run/containerd/containerd.sock` 暴露 containerd socket。commit Job 会从目标节点挂载 `/run/containerd/`，并通过 nerdctl 连接该 socket。
-- sandbox controller 已配置 `AGENT_JOB_IMAGE`，且该镜像包含 `commit-job` 二进制和 `nerdctl`。commit Job Pod 创建时不会带任何 `imagePullSecrets`，因此该镜像必须能被目标节点直接拉取：要么是公开镜像，要么已预加载到节点上，要么可通过节点级的镜像仓库凭证获取。私有或缺失的 `commit-job` 镜像会导致 Job Pod 卡在 `ErrImagePull`。
+- sandbox controller 已配置 `AGENT_JOB_IMAGE`，且该镜像包含 `commit-job` 二进制和 `nerdctl`。commit Job Pod 创建时不会带任何 `imagePullSecrets`，因此该镜像必须能被目标节点直接拉取：要么是公开镜像，要么已预加载到节点上，要么可通过节点级的镜像仓库凭证获取。私有或缺失的 `commit-job` 镜像会导致 Job Pod 卡在 `ErrImagePull`。使用 chart 时该变量由 `commitJob.image.repository`/`commitJob.image.tag` 自动设置（默认 `openkruise/commit-job:v0.3.0`）。
 - 目标节点能够访问要推送的镜像仓库。
 - 对于 registry TLS 校验，commit Job 默认使用 nerdctl 的 hosts 目录 `/etc/containerd/certs.d`，该目录来自目标节点挂载。若 registry 使用私有 CA、自定义 endpoint 或 mirror 配置，需要在所有可能运行目标 Sandbox Pod 的节点上准备对应的 `/etc/containerd/certs.d/<registry-host>/hosts.toml` 和 CA 文件。
 - 如果镜像仓库需要认证，同 namespace 下已创建 Docker config Secret，且该 registry 用户对目标镜像仓库具备 push 权限。
@@ -60,7 +64,7 @@ docker build -f dockerfiles/commit-job.Dockerfile \
   -t openkruise/commit-job:<version> .
 ```
 
-构建完成后，将该镜像配置为 sandbox controller 的 `AGENT_JOB_IMAGE`。
+构建完成后，将该镜像配置为 sandbox controller 的 `AGENT_JOB_IMAGE`，或通过 chart 指定：`--set commitJob.image.repository=<repo> --set commitJob.image.tag=<tag>`。
 
 ## Commit CRD
 

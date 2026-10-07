@@ -4,28 +4,42 @@ title: Installation
 
 ## Overview
 
-Sandbox Controller, Sandbox Manager, and Sandbox Gateway are three core components in the OpenKruise ecosystem that
-together form a complete Sandbox runtime environment:
+Kruise Agents is installed through two Helm charts, which deploy the Sandbox Controller and the Sandbox Manager —
+together with the Sandbox Gateway bundled in the Manager chart — forming a complete Sandbox runtime environment.
 
-- **Sandbox Controller**: Manages CRD resources related to Sandbox, including lifecycle management of Sandbox,
-  SandboxSet, SandboxClaim, SandboxTemplate, SandboxUpdateOps, Checkpoint, Commit, and PoolAutoscaler.
-- **Sandbox Manager**: Provides API services and control plane for Sandbox, responsible for scheduling, creating, and
-  recycling Sandbox instances, supporting E2B protocol access.
-- **Sandbox Gateway**: An independent data plane gateway service built on Envoy + Golang Filter, responsible for
-  traffic routing, load balancing, and circuit breaking protection, supporting independent scaling.
+- **Sandbox Controller** (`agents-sandbox-controller` chart) is the control plane that manages all Sandbox CRD
+  resources. The chart contains:
+  - Eight `agents.kruise.io` CRDs: Sandbox, SandboxSet, SandboxClaim, SandboxTemplate, SandboxUpdateOps, Checkpoint,
+    Commit, and PoolAutoscaler.
+  - The sandbox-controller Deployment that reconciles these resources: sandbox lifecycle management, warm pool
+    maintenance, claiming, in-place updates, Checkpoint/Commit, and pool autoscaling.
+  - Mutating and validating webhooks, RBAC, the ServiceAccount, and the metrics Service.
+  - The `sandbox-injection-config` ConfigMap, defining the in-pod injection templates for the `agent-runtime`
+    sidecar and the per-sandbox `traffic-proxy`.
+  - Optional TLS resources when `enableTLS=true`: the shared root CA, the runtime client and server certificates,
+    and the trust-manager CA bundle.
+- **Sandbox Manager** (`agents-sandbox-manager` chart) is the sandbox data plane component and also provides the
+  E2B API adaptation service. The chart contains:
+  - The sandbox-manager Deployment, along with the chart's Service, Secret, and Ingress resources.
+  - The Sandbox Gateway Deployment: an Envoy + Golang Filter data plane responsible for traffic routing, load
+    balancing, and circuit-breaking protection, scaling independently from the Manager.
+  - An optional ServiceMonitor for Manager and Gateway metrics when `prometheus.enabled=true`.
+  - Optional TLS resources when `enableTLS=true`: the ingress server certificate, the runtime client certificates,
+    and the manager↔gateway peer certificates.
+  - An optional embedded Agentio stack for sandbox ingress/egress control (`agentio.enabled`, disabled by default):
+    the `agentiod` control plane, the EPE traffic extension, and the egress gateway.
+  - The `TrafficPolicy`, `GlobalTrafficPolicy`, `SecurityProfile`, and `GlobalSecurityProfile` CRDs describing
+    sandbox ingress/egress policies, installed with the chart.
 
 ---
 
 ## Version Compatibility
 
-| Component          | Chart Version | Image Version | Kubernetes Compatibility |
-|--------------------|---------------|---------------|--------------------------|
-| Sandbox Controller | 0.6.0-rc1     | v0.6.0-alpha4 | `>= 1.28`                |
-| Sandbox Manager    | 0.6.0-rc1     | v0.6.0-alpha4 | `>= 1.28`                |
-| Sandbox Gateway    | —             | v0.6.0-alpha4 | `>= 1.28`                |
+| Sandbox Component Version | Kubernetes Version | E2B Version |
+|---------------------------|--------------------|-------------|
+| 0.6.0-rc1                 | `>= 1.28`          | `>= 2.8.0`  |
 
 > **Note**:
-> - Sandbox Gateway is deployed together with the Sandbox Manager chart and does not require separate installation.
 > - The `agent-runtime` sidecar injection requires Kubernetes >= 1.29 (native sidecar containers), see
 >   [Agent Runtime Injection](#agent-runtime-injection).
 > - `enableTLS=true` requires [cert-manager](https://cert-manager.io/) and, for the CA bundle, trust-manager to be
