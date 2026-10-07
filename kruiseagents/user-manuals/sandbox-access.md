@@ -206,12 +206,15 @@ certificate.
 
 `sandbox-gateway` forwards control-plane requests to `sandbox-manager`, so forwarding the gateway Service alone covers
 both planes. Point the E2B URL parameters at the single local address (see
-[Using the E2B SDK](./e2b-client.md#3-external-access-using-e2b-url-parameters)):
+[Using the E2B SDK](./e2b-client.md#3-external-access-using-e2b-url-parameters)). The control-plane URL must include the
+`/kruise/api` prefix — it is the only route the gateway forwards to `sandbox-manager`, so without it native
+control-plane paths such as `POST /sandboxes` fall through to the data-plane route and the SDK fails with
+`503 no healthy upstream`:
 
 ```shell
 export E2B_API_KEY=<your-api-key>
 # One forward covers both planes: the gateway passes control traffic to sandbox-manager.
-export E2B_API_URL="http://localhost:7788"
+export E2B_API_URL="http://localhost:7788/kruise/api"
 export E2B_SANDBOX_URL="http://localhost:7788"
 
 kubectl port-forward services/sandbox-gateway 7788:7788 -n sandbox-system
@@ -226,8 +229,12 @@ sbx.kill()
 ```
 
 :::note
-The upper-level `e2b-code-interpreter` and `e2b-desktop` libraries do not read `E2B_API_URL` / `E2B_SANDBOX_URL`, so
-use the base `e2b` Sandbox for this local-debugging setup.
+Upper-level libraries such as `e2b-code-interpreter` read `E2B_API_URL` and `E2B_SANDBOX_URL` the same way as the base
+SDK, so `create`, `commands`, and `files` all work through the forwarded gateway. One exception (verified with
+`e2b-code-interpreter` 2.8.1): `run_code()` builds its Jupyter URL from the sandbox domain —
+`https://{port}-{sandboxID}.{domain}` — and ignores `E2B_SANDBOX_URL`, so it cannot target `localhost` and fails with
+an SSL error. Over a port-forward, execute code through `commands.run` instead, for example
+`sbx.commands.run("python3 -c 'print(1)'")`.
 :::
 
 ### Runtime SDK clients

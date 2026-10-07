@@ -193,12 +193,14 @@ func main() {
 
 `sandbox-gateway` 会将控制面请求转发给 `sandbox-manager`，因此只转发 gateway Service 即可覆盖两个平面。通过
 `E2B_API_URL` 和 `E2B_SANDBOX_URL` 将两个平面指向同一个本地地址（参见
-[使用 E2B SDK](./e2b-client.md#3-使用-e2b-url-参数实现集群外访问)）：
+[使用 E2B SDK](./e2b-client.md#3-使用-e2b-url-参数实现集群外访问)）。控制面 URL 必须包含 `/kruise/api` 前缀——这是
+gateway 唯一转发到 `sandbox-manager` 的路由，缺少它时，`POST /sandboxes` 等原生控制面路径会落入数据面路由，SDK 将报
+`503 no healthy upstream` 错误：
 
 ```shell
 export E2B_API_KEY=<your-api-key>
 # 一次转发覆盖两个平面：gateway 会将管控流量转发给 sandbox-manager。
-export E2B_API_URL="http://localhost:7788"
+export E2B_API_URL="http://localhost:7788/kruise/api"
 export E2B_SANDBOX_URL="http://localhost:7788"
 
 kubectl port-forward services/sandbox-gateway 7788:7788 -n sandbox-system
@@ -213,8 +215,11 @@ sbx.kill()
 ```
 
 :::note
-上层库 `e2b-code-interpreter` 和 `e2b-desktop` 不读取 `E2B_API_URL` / `E2B_SANDBOX_URL`，因此该本地调试配置请使用基础
-`e2b` Sandbox。
+`e2b-code-interpreter` 等上层库与基础 SDK 以相同方式读取 `E2B_API_URL` 和 `E2B_SANDBOX_URL`，因此 `create`、
+`commands`、`files` 都可以经由转发的 gateway 正常工作。一个例外（已在 `e2b-code-interpreter` 2.8.1 上验证）：
+`run_code()` 基于沙箱域名构造 Jupyter URL（`https://{port}-{sandboxID}.{domain}`），而不读取 `E2B_SANDBOX_URL`，
+因此无法指向 `localhost`，会报 SSL 错误。端口转发场景下，请改用 `commands.run` 执行代码，例如
+`sbx.commands.run("python3 -c 'print(1)'")`。
 :::
 
 ### Runtime SDK 客户端
