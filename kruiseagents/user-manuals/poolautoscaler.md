@@ -16,7 +16,7 @@ This capability is suited to the following scenarios:
 
 Before you begin, confirm that:
 
-1. `agent-sandbox-controller` is installed at a version that supports PoolAutoscaler: newer versions enable it by default with no extra configuration; older versions require the startup flag `--feature-gates=PoolAutoscaler=true` (see [Installation](../installation.md)).
+1. `agent-sandbox-controller` is installed at a version that supports PoolAutoscaler: newer versions enable it by default with no extra configuration; older versions require the gate to be turned on explicitly, for example `--set 'controller.featureGates=PoolAutoscaler=true'` when installing with the chart (see [Installation](../installation.md)).
 2. A target SandboxSet has been created following [Warm Pool Management](./warmpool-management.md), and the SandboxSet controller is running normally.
 3. Within a namespace, a SandboxSet can be managed by at most one PoolAutoscaler.
 4. At least one policy is configured: `capacityPolicy` or `cronPolicies`.

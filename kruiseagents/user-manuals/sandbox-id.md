@@ -80,13 +80,18 @@ Do not edit this label out of band; the supported protocol is the only writer.
 
 ## Enabling Short Sandbox IDs
 
-Short-ID assignment is **disabled by default**. It is controlled by two sandbox-manager startup
-flags:
+Short-ID assignment is **disabled by default** in the `sandbox-manager` binary. It is controlled by two
+sandbox-manager startup flags:
 
 | Flag | Default | Description |
 |------|---------|-------------|
 | `--enable-short-sandbox-id` | `false` | Assign short IDs to successfully claimed or cloned sandboxes |
 | `--short-sandbox-id-prefix` | `""` | Prefix prepended verbatim to newly assigned short IDs |
+
+When you deploy with the Helm chart, these flags are driven by the `controller.enableShortSandboxId` value, which
+**defaults to `true`** — short IDs are therefore enabled out of the box. Set the prefix with
+`--set controller.shortSandboxIdPrefix=<prefix>` (empty prefix means no prefix, and the flag is only passed when the
+prefix is non-empty).
 
 For example:
 

@@ -84,7 +84,7 @@ accordingly. For example `GET /api-keys` becomes `GET https://your.domain.com/kr
 | `GET`    | `/teams`              | List teams the current user can see                        |
 | `GET`    | `/api-keys`           | List API keys owned by the current user's team             |
 | `POST`   | `/api-keys`           | Create a new API key for the current user's team (or another team if admin) |
-| `GET`    | `/api-keys/compatible`| Get the E2B SDK-compatible form of the current API key (since **v0.4.0**) |
+| `GET`    | `/api-keys/compatible`| Get the E2B SDK-compatible form of the current API key (since **v0.6.0**) |
 | `DELETE` | `/api-keys/{id}`      | Delete the API key with the given UUID                     |
 
 Every request must set the header `X-API-KEY: <your-api-key>`.
@@ -257,7 +257,7 @@ resp.raise_for_status()
 ## E2B SDK Key Format Compatibility
 
 :::info Version
-The compatibility features described in this section are available since **v0.4.0**.
+The compatibility features described in this section are available since **v0.6.0**.
 :::
 
 ### Background
@@ -266,18 +266,18 @@ Starting from **E2B SDK >= 2.25.0**, the SDK performs client-side validation on 
 Only keys matching the pattern `e2b_[0-9a-f]+` are accepted. Keys that do not match this format — such as legacy
 UUID keys or custom admin keys like `admin-987654321` — are rejected by the SDK **before** they ever reach the server.
 
-To address this, `sandbox-manager` v0.4.0 introduces a compatibility layer that encodes raw API keys into the
+To address this, `sandbox-manager` v0.6.0 introduces a compatibility layer that encodes raw API keys into the
 SDK-compatible `e2b_...` format while keeping the server-side storage and authentication semantics completely unchanged.
 
-### New Keys (v0.4.0+)
+### New Keys (v0.6.0+)
 
-Starting from **v0.4.0**, all API keys returned by `POST /api-keys` are automatically encoded in the
+Starting from **v0.6.0**, all API keys returned by `POST /api-keys` are automatically encoded in the
 `e2b_[0-9a-f]+` format. No additional action is required — new keys work with both old and new E2B SDK versions
 out of the box.
 
-### Legacy Keys (Pre-v0.4.0)
+### Legacy Keys (Pre-v0.6.0)
 
-API keys created before v0.4.0 (including user-defined admin keys) remain fully valid. These legacy keys are
+API keys created before v0.6.0 (including user-defined admin keys) remain fully valid. These legacy keys are
 **functionally equivalent** to the new SDK-compatible keys — they authenticate to the same credential and have no
 difference in authorization behavior. You can continue using legacy keys with older E2B SDK versions (< 2.25.0)
 without any compatibility issues.
@@ -371,6 +371,11 @@ Legacy raw keys and SDK-compatible `e2b_...` keys are **fully interchangeable**:
 
 `sandbox-manager` supports two pluggable storage backends for API keys. The backend is selected via command-line
 flags of the `sandbox-manager` binary (see [cmd/sandbox-manager/main.go](https://github.com/openkruise/agents/blob/master/cmd/sandbox-manager/main.go)).
+
+When you deploy with the Helm chart, you do not pass these flags directly. The chart translates its own values into
+the flags and environment variables: for example, the MySQL backend is enabled with
+`--set e2b.keyStorage.mode=mysql --set e2b.keyStorage.mysql.dsn=<dsn> --set e2b.keyStorage.mysql.hashPepper=<pepper>`.
+See [Third-Party Dependencies](../installation.md#third-party-dependencies) for the chart-level switches.
 
 ### Common Flags
 

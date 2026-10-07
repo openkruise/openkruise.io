@@ -33,11 +33,15 @@ Unlike [Snapshot Management](./checkpoint.md), which captures Sandbox runtime st
 
 `Commit` is controlled by the `Commit` feature gate. In the current community implementation, it is an Alpha feature and is disabled by default.
 
-Enable it on the sandbox controller:
+Enable it when installing or upgrading the sandbox controller with the chart:
 
 ```shell
---feature-gates=Commit=true
+helm upgrade --install agents-sandbox-controller openkruise/agents-sandbox-controller \
+  -n sandbox-system \
+  --set 'controller.featureGates=Commit=true'
 ```
+
+The equivalent binary flag is `--feature-gates=Commit=true`. To enable several gates in one `--set`, escape the commas as described in [Installation](../installation.md#sandbox-controller-installation-parameters).
 
 ## Prerequisites
 
@@ -47,7 +51,7 @@ Before creating a `Commit`, make sure that:
 - The `Commit` CRD (`commits.agents.kruise.io`) is registered in the cluster.
 - The target Sandbox Pod is running and scheduled, and the target container is managed by containerd. Its container ID in Pod status must use the `containerd://` prefix; Docker-only or CRI-O-only nodes are not supported.
 - The target node exposes the containerd socket at `/run/containerd/containerd.sock`. The commit Job mounts `/run/containerd/` from the target node and connects to this socket with nerdctl.
-- The sandbox controller is configured with `AGENT_JOB_IMAGE`, and that image contains the `commit-job` binary and `nerdctl`. The commit Job Pod is created without any `imagePullSecrets`, so this image must be pullable by the target node directly: either public, pre-loaded on the node, or available through node-level registry credentials. A private or missing `commit-job` image leaves the Job Pod stuck in `ErrImagePull`.
+- The sandbox controller is configured with `AGENT_JOB_IMAGE`, and that image contains the `commit-job` binary and `nerdctl`. The commit Job Pod is created without any `imagePullSecrets`, so this image must be pullable by the target node directly: either public, pre-loaded on the node, or available through node-level registry credentials. A private or missing `commit-job` image leaves the Job Pod stuck in `ErrImagePull`. The chart sets this variable from `commitJob.image.repository`/`commitJob.image.tag` (default `openkruise/commit-job:v0.3.0`).
 - The target registry is reachable from the target node.
 - For registry TLS verification, the commit Job uses nerdctl's default hosts directory `/etc/containerd/certs.d`, which is mounted from the target node. For a registry using a private CA, custom endpoint, or mirror configuration, prepare the corresponding `hosts.toml` and CA files under `/etc/containerd/certs.d/<registry-host>/` on every node that may run the target Sandbox Pod.
 - If the registry requires authentication, a Docker config Secret exists in the same namespace as the `Commit`, and the registry user has push permission to the destination repository.
@@ -65,7 +69,7 @@ docker build -f dockerfiles/commit-job.Dockerfile \
   -t openkruise/commit-job:<version> .
 ```
 
-Set the resulting image as `AGENT_JOB_IMAGE` on the sandbox controller.
+Set the resulting image as `AGENT_JOB_IMAGE` on the sandbox controller, or point the chart at it with `--set commitJob.image.repository=<repo> --set commitJob.image.tag=<tag>`.
 
 ## Commit CRD
 

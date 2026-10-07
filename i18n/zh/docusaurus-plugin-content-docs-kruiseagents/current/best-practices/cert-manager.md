@@ -1,26 +1,68 @@
 # 使用 cert-manager 管理 sandbox-manager 自签证书
 
-本文提供了一种使用 cert-manager 来管理和部署 sandbox-manager 自签证书的最佳实践。
+Sandbox Controller 与 Sandbox Manager chart 已原生支持 cert-manager：所有证书签发都由 `enableTLS`（默认
+`false`）控制，该开关要求集群安装 cert-manager 以及用于 CA Bundle 的 trust-manager。本文介绍如何启用该集成并验证
+签发的证书。全部 TLS 开关说明见
+[TLS（cert-manager / trust-manager）](../installation.md#tlscert-manager--trust-manager)。
 
 ## 前提条件
 
-1. 集群中已安装 sandbox-manager
-2. 确保具备 kubectl 命令行工具并具有相应权限
+1. Sandbox Controller 与 Sandbox Manager 已安装在**同一 Namespace**（默认 `sandbox-system`）。共享根 CA 由
+   Sandbox Controller chart 持有，Sandbox Manager chart 仅按名称引用 CA Issuer。
+2. 确保具备 kubectl 和 helm 命令行工具并具有相应权限。
 
-## 步骤一：安装 cert-manager
+## 步骤一：安装 cert-manager 与 trust-manager
 
-如果您还没有安装 cert-manager，请参考 [官方文档](https://cert-manager.io/docs/installation/) 进行安装。
+如果您还没有安装，请参考官方文档：
 
-## 步骤二：通过 cert-manager 自动管理证书
+- [cert-manager 安装](https://cert-manager.io/docs/installation/)
+- [trust-manager 安装](https://cert-manager.io/docs/trust/trust-manager/installation/)
 
-1. 选择合适的示例：
-   - 使用单个域名时，替换
-     [cert-manager.yaml](https://github.com/openkruise/agents/blob/master/docs/best-practices/cert-manager.yaml) 中的
-     `your.domain.com` 与 `*.your.domain.com`。
-   - 使用多个域名时，替换
-     [cert-manager-multi-domain.yaml](https://github.com/openkruise/agents/blob/master/docs/best-practices/cert-manager-multi-domain.yaml)
-     的 `dnsNames` 列表。对于每个原生 E2B 域名，都需要同时包含基础域名与通配符域名。
-2. 将选定的配置添加到 Kubernetes 集群中，例如：`kubectl apply -f cert-manager-multi-domain.yaml`。
+trust-manager 通过 Bundle 资源把共享 CA 以 `ca.crt` ConfigMap 的形式分发出去，供工作负载作为信任锚复用。
+
+## 步骤二：在 Chart 中启用 TLS
+
+### 2.1 创建共享根 CA（Sandbox Controller）
+
+为 Sandbox Controller 设置 `enableTLS=true` 进行升级。在默认的 `tls.createCA=true` 下，chart 会创建共享根 CA：
+
+```bash
+helm upgrade --install agents-sandbox-controller openkruise/agents-sandbox-controller \
+  -n sandbox-system \
+  --set enableTLS=true
+```
+
+将创建以下资源：
+
+- 自签名引导 Issuer `sandbox-selfsigned-issuer` → CA Certificate `sandbox-ca` → 签发 Issuer
+  `sandbox-signing-issuer`，所有叶子证书都由它签发。
+- CA 密钥对 Secret `sandbox-ca-key-pair`（`tls.crt` / `tls.key`）。
+- trust-manager Bundle `sandbox-ca-bundle`，以 `ca.crt` ConfigMap 分发 CA。
+
+### 2.2 签发 Ingress 证书（Sandbox Manager）
+
+在同一 Namespace 中为 Sandbox Manager 设置 `enableTLS=true` 进行升级：
+
+```bash
+helm upgrade --install agents-sandbox-manager openkruise/agents-sandbox-manager \
+  -n sandbox-system \
+  --set enableTLS=true \
+  --set e2b.domain=<your-domain> \
+  --set e2b.adminApiKey=<your-api-key> \
+  --set ingress.className=<your-ingress-class>
+```
+
+将创建 Certificate `sandbox-manager-ingress-cert`，其证书存放在 Ingress 的 `spec.tls` 已引用的 Secret
+`sandbox-manager-tls`（`ingress.certSecretName`）中。证书覆盖 `api.<domain>`、`*.<domain>` 和 `<domain>`；使用多个
+域名时，通过 `--set e2b.extraDomains={example2.com}` 添加即可，无需手动编辑 `dnsNames`。
+
+叶子证书默认有效期为 90 天（`tls.certDuration: 2160h`），到期前 15 天续期
+（`tls.certRenewBefore: 360h`），由 cert-manager 自动完成，无需手动轮换。
+
+:::note
+仅设置 `enableTLS=true` 时只会签发 Ingress 证书。runtime mTLS、peer mTLS 和 EPE 证书是相互独立的按需开关，详见
+[TLS（cert-manager / trust-manager）](../installation.md#tlscert-manager--trust-manager)。
+:::
 
 ## 步骤三：验证证书状态
 
