@@ -163,9 +163,9 @@ spec:
           - |
             # Example only; define the idle state according to your business.
             if openclaw sessions list --active 900 2>/dev/null | grep -q .; then
-              printf 'active\n'
+              printf 'active'
             else
-              printf 'inactive\n'
+              printf 'inactive'
             fi
   autoPausePolicy:
     pause:
