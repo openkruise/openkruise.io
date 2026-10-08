@@ -144,9 +144,9 @@ spec:
           - |
             # 示例，请根据实际业务定义空闲状态。
             if openclaw sessions list --active 900 2>/dev/null | grep -q .; then
-              echo "active"
+              printf 'active\n'
             else
-              echo "inactive"
+              printf 'inactive\n'
             fi
   autoPausePolicy:
     pause:
