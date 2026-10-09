@@ -35,7 +35,7 @@ Sandbox Gateway，共同构成完整的 Sandbox 运行环境。
 
 | Sandbox 组件版本 | Kubernetes 版本 | E2B 版本   |
 |------------------|-----------------|------------|
-| 0.6.0-rc1        | `>= 1.28`       | `>= 2.8.0` |
+| 0.6.0        | `>= 1.28`       | `>= 2.8.0` |
 
 > **说明**：
 > - `agent-runtime` sidecar 注入需要 Kubernetes >= 1.29（native sidecar containers），参见
@@ -78,7 +78,7 @@ kubectl create ns sandbox-system
 ```bash
 helm install agents-sandbox-controller openkruise/agents-sandbox-controller \
   -n sandbox-system \
-  --version 0.6.0-rc1
+  --version 0.6.0
 ```
 
 > ⚠️ **不支持 server-side apply**：sandbox-controller 会在运行时以自己的 field manager（`manager`）管理 mutating 和
@@ -97,7 +97,7 @@ helm install agents-sandbox-controller openkruise/agents-sandbox-controller \
 ```bash
 helm install agents-sandbox-manager openkruise/agents-sandbox-manager \
   -n sandbox-system \
-  --version 0.6.0-rc1 \
+  --version 0.6.0 \
   --set e2b.domain=<your-domain> \
   --set e2b.adminApiKey=<your-api-key> \
   --set ingress.className=<your-ingress-class>
@@ -117,9 +117,9 @@ helm install agents-sandbox-manager openkruise/agents-sandbox-manager \
 
 | 组件                 | 镜像地址                                                                                  | 版本             |
 |--------------------|---------------------------------------------------------------------------------------|----------------|
-| Sandbox Controller | `openkruise-registry.cn-shanghai.cr.aliyuncs.com/openkruise/agent-sandbox-controller` | `v0.6.0-alpha4` |
-| Sandbox Manager    | `openkruise-registry.cn-shanghai.cr.aliyuncs.com/openkruise/sandbox-manager`          | `v0.6.0-alpha4` |
-| Sandbox Gateway    | `openkruise-registry.cn-shanghai.cr.aliyuncs.com/openkruise/sandbox-gateway`          | `v0.6.0-alpha4` |
+| Sandbox Controller | `openkruise-registry.cn-shanghai.cr.aliyuncs.com/openkruise/agent-sandbox-controller` | `v0.6.0` |
+| Sandbox Manager    | `openkruise-registry.cn-shanghai.cr.aliyuncs.com/openkruise/sandbox-manager`          | `v0.6.0` |
+| Sandbox Gateway    | `openkruise-registry.cn-shanghai.cr.aliyuncs.com/openkruise/sandbox-gateway`          | `v0.6.0` |
 
 ### 使用国内镜像安装
 
@@ -131,7 +131,7 @@ Gateway，以及 `agent-runtime`、Commit job 等辅助镜像）切换到国内�
 ```bash
 helm install agents-sandbox-controller openkruise/agents-sandbox-controller \
   -n sandbox-system \
-  --version 0.6.0-rc1 \
+  --version 0.6.0 \
   --set image.registry=openkruise-registry.cn-shanghai.cr.aliyuncs.com
 ```
 
@@ -140,7 +140,7 @@ helm install agents-sandbox-controller openkruise/agents-sandbox-controller \
 ```bash
 helm install agents-sandbox-manager openkruise/agents-sandbox-manager \
   -n sandbox-system \
-  --version 0.6.0-rc1 \
+  --version 0.6.0 \
   --set e2b.domain=<your-domain> \
   --set e2b.adminApiKey=<your-api-key> \
   --set ingress.className=<your-ingress-class> \
@@ -167,7 +167,7 @@ helm install agents-sandbox-manager openkruise/agents-sandbox-manager \
 ```bash
 helm upgrade agents-sandbox-controller openkruise/agents-sandbox-controller \
   -n sandbox-system \
-  --version 0.6.0-rc1 \
+  --version 0.6.0 \
   --server-side=false
 ```
 
@@ -176,7 +176,7 @@ helm upgrade agents-sandbox-controller openkruise/agents-sandbox-controller \
 ```bash
 helm upgrade agents-sandbox-manager openkruise/agents-sandbox-manager \
   -n sandbox-system \
-  --version 0.6.0-rc1
+  --version 0.6.0
 ```
 
 > **注意：**
@@ -196,7 +196,7 @@ CRD**，否则新功能将无法正常工作。0.6.0 版本新增了 `Commit` �
 
 ```bash
 # 从 chart 包中提取 CRD 并应用（以在线安装为例）
-helm pull openkruise/agents-sandbox-controller --version 0.6.0-rc1 --untar
+helm pull openkruise/agents-sandbox-controller --version 0.6.0 --untar
 kubectl apply -f agents-sandbox-controller/crds/
 rm -rf agents-sandbox-controller
 ```
@@ -238,7 +238,7 @@ helm install/upgrade agents-sandbox-manager /PATH/TO/MANAGER/CHART -n sandbox-sy
 | `replicaCount`           | Controller 副本数                                                       | `2`                                    |
 | `image.registry`         | 应用于本 chart 所有镜像的仓库地址前缀                                                 | `docker.io`                            |
 | `image.repository`       | sandbox-controller 镜像仓库                                             | `openkruise/agent-sandbox-controller`  |
-| `image.tag`              | sandbox-controller 镜像版本                                             | `v0.6.0-alpha4`                        |
+| `image.tag`              | sandbox-controller 镜像版本                                             | `v0.6.0`                        |
 | `image.pullPolicy`       | Controller 镜像拉取策略                                                    | `IfNotPresent`                         |
 | `imagePullSecrets`       | 镜像拉取密钥列表                                                             | `[]`                                   |
 | `namespace.name`         | 部署的命名空间                                                              | `sandbox-system`                       |
@@ -294,7 +294,7 @@ helm install/upgrade agents-sandbox-manager /PATH/TO/MANAGER/CHART -n sandbox-sy
 | `agentRuntime.image.tag`                 | 注入的 agent-runtime sidecar 镜像版本                                             | `v0.3.0`                                                                                                                |
 | `agentRuntime.image.pullPolicy`          | 注入的 agent-runtime sidecar 镜像拉取策略                                           | `IfNotPresent`                                                                                                          |
 | `commitJob.image.repository`             | Commit job Pod 的镜像仓库                                                       | `openkruise/commit-job`                                                                                                 |
-| `commitJob.image.tag`                    | Commit job Pod 的镜像版本                                                       | `v0.3.0`                                                                                                                |
+| `commitJob.image.tag`                    | Commit job Pod 的镜像版本                                                       | `v0.6.0`                                                                                                                |
 | `enableTLS`                              | 基于 cert-manager / trust-manager 的 TLS 总开关；为 `false` 时 `templates/tls/` 下的内容不会渲染，Controller 保持明文运行行为 | `false`                             |
 | `tls.createCA`                           | 创建共享根 CA（selfSigned Issuer → CA Certificate → CA Issuer）。根 CA 由 Controller chart 持有；sandbox-manager chart 将此值设为 `false` 并通过名称引用该 Issuer | `true`                                                |
 | `tls.selfSignedIssuerName`               | 自签名引导 Issuer 名称                                                            | `sandbox-selfsigned-issuer`                                                                                             |
@@ -360,7 +360,7 @@ helm install/upgrade agents-sandbox-manager /PATH/TO/MANAGER/CHART -n sandbox-sy
 | `image.registry`           | 应用于本 chart 所有镜像的仓库地址前缀                                     | `docker.io`                  |
 | `imagePullSecrets`         | 镜像拉取密钥列表                                                   | `{}`                         |
 | `controller.repository`    | sandbox-manager controller 镜像仓库                            | `openkruise/sandbox-manager` |
-| `controller.tag`           | sandbox-manager controller 镜像版本                            | `v0.6.0-alpha4`              |
+| `controller.tag`           | sandbox-manager controller 镜像版本                            | `v0.6.0`              |
 | `controller.pullPolicy`    | Controller 容器镜像拉取策略                                         | `IfNotPresent`               |
 | `controller.resources.cpu` | Controller 容器 CPU 资源                                        | `2`                          |
 | `controller.resources.memory` | Controller 容器内存资源                                        | `4Gi`                        |
@@ -372,7 +372,7 @@ helm install/upgrade agents-sandbox-manager /PATH/TO/MANAGER/CHART -n sandbox-sy
 | `prometheus.enabled`       | 为 manager 和 gateway 指标创建 ServiceMonitor                       | `false`                      |
 | `gateway.replicaCount`     | sandbox-gateway 副本数                                         | `2`                          |
 | `gateway.image.repository` | sandbox-gateway 镜像仓库                                       | `openkruise/sandbox-gateway` |
-| `gateway.image.tag`        | sandbox-gateway 镜像版本                                       | `v0.6.0-alpha4`              |
+| `gateway.image.tag`        | sandbox-gateway 镜像版本                                       | `v0.6.0`              |
 | `gateway.image.pullPolicy` | sandbox-gateway 镜像拉取策略                                     | `IfNotPresent`               |
 | `gateway.resources.cpu`    | sandbox-gateway 容器 CPU 资源                                  | `2`                          |
 | `gateway.resources.memory` | sandbox-gateway 容器内存资源                                     | `4Gi`                        |
@@ -697,7 +697,7 @@ runtime 不包含在内；如果你的环境需要，请单独部署这些组件
 ```bash
 helm install agents-sandbox-controller openkruise/agents-sandbox-controller \
   -n sandbox-system \
-  --version 0.6.0-rc1 \
+  --version 0.6.0 \
   --set resources.limits.cpu=4 \
   --set resources.limits.memory=8Gi \
   --set resources.requests.cpu=2 \
@@ -709,7 +709,7 @@ helm install agents-sandbox-controller openkruise/agents-sandbox-controller \
 ```bash
 helm install agents-sandbox-manager openkruise/agents-sandbox-manager \
   -n sandbox-system \
-  --version 0.6.0-rc1 \
+  --version 0.6.0 \
   --set e2b.domain=<your-domain> \
   --set e2b.adminApiKey=<your-api-key> \
   --set ingress.className=<your-ingress-class> \
@@ -724,7 +724,7 @@ helm install agents-sandbox-manager openkruise/agents-sandbox-manager \
 ```bash
 helm install agents-sandbox-manager openkruise/agents-sandbox-manager \
   -n sandbox-system \
-  --version 0.6.0-rc1 \
+  --version 0.6.0 \
   --set e2b.domain=sandbox.example.com \
   --set e2b.enableAuth=true \
   --set e2b.adminApiKey=your-secure-api-key \
@@ -736,7 +736,7 @@ helm install agents-sandbox-manager openkruise/agents-sandbox-manager \
 ```bash
 helm install agents-sandbox-manager openkruise/agents-sandbox-manager \
   -n sandbox-system \
-  --version 0.6.0-rc1 \
+  --version 0.6.0 \
   --set e2b.domain=<your-domain> \
   --set e2b.adminApiKey=<your-api-key> \
   --set ingress.className=nginx \
@@ -749,7 +749,7 @@ helm install agents-sandbox-manager openkruise/agents-sandbox-manager \
 ```bash
 helm install agents-sandbox-manager openkruise/agents-sandbox-manager \
   -n sandbox-system \
-  --version 0.6.0-rc1 \
+  --version 0.6.0 \
   --set e2b.domain=<your-domain> \
   --set e2b.adminApiKey=<your-api-key> \
   --set ingress.className=<your-ingress-class> \
@@ -766,7 +766,7 @@ helm install agents-sandbox-manager openkruise/agents-sandbox-manager \
 ```bash
 helm install agents-sandbox-manager openkruise/agents-sandbox-manager \
   -n sandbox-system \
-  --version 0.6.0-rc1 \
+  --version 0.6.0 \
   --set e2b.domain=<your-domain> \
   --set e2b.adminApiKey=<your-api-key> \
   --set ingress.className=<your-ingress-class> \

@@ -37,7 +37,7 @@ together with the Sandbox Gateway bundled in the Manager chart — forming a com
 
 | Sandbox Component Version | Kubernetes Version | E2B Version |
 |---------------------------|--------------------|-------------|
-| 0.6.0-rc1                 | `>= 1.28`          | `>= 2.8.0`  |
+| 0.6.0                 | `>= 1.28`          | `>= 2.8.0`  |
 
 > **Note**:
 > - The `agent-runtime` sidecar injection requires Kubernetes >= 1.29 (native sidecar containers), see
@@ -82,7 +82,7 @@ kubectl create ns sandbox-system
 ```bash
 helm install agents-sandbox-controller openkruise/agents-sandbox-controller \
   -n sandbox-system \
-  --version 0.6.0-rc1
+  --version 0.6.0
 ```
 
 > ⚠️ **Server-side apply is not supported**: The sandbox-controller manages the `template` annotation on the mutating
@@ -103,7 +103,7 @@ helm install agents-sandbox-controller openkruise/agents-sandbox-controller \
 ```bash
 helm install agents-sandbox-manager openkruise/agents-sandbox-manager \
   -n sandbox-system \
-  --version 0.6.0-rc1 \
+  --version 0.6.0 \
   --set e2b.domain=<your-domain> \
   --set e2b.adminApiKey=<your-api-key> \
   --set ingress.className=<your-ingress-class>
@@ -124,9 +124,9 @@ to use China mirrors provided by Alibaba Cloud Container Registry.
 
 | Component          | Image Address                                                                         | Version        |
 |--------------------|---------------------------------------------------------------------------------------|----------------|
-| Sandbox Controller | `openkruise-registry.cn-shanghai.cr.aliyuncs.com/openkruise/agent-sandbox-controller` | `v0.6.0-alpha4` |
-| Sandbox Manager    | `openkruise-registry.cn-shanghai.cr.aliyuncs.com/openkruise/sandbox-manager`          | `v0.6.0-alpha4` |
-| Sandbox Gateway    | `openkruise-registry.cn-shanghai.cr.aliyuncs.com/openkruise/sandbox-gateway`          | `v0.6.0-alpha4` |
+| Sandbox Controller | `openkruise-registry.cn-shanghai.cr.aliyuncs.com/openkruise/agent-sandbox-controller` | `v0.6.0` |
+| Sandbox Manager    | `openkruise-registry.cn-shanghai.cr.aliyuncs.com/openkruise/sandbox-manager`          | `v0.6.0` |
+| Sandbox Gateway    | `openkruise-registry.cn-shanghai.cr.aliyuncs.com/openkruise/sandbox-gateway`          | `v0.6.0` |
 
 ### Install with China Mirrors
 
@@ -138,7 +138,7 @@ All images in both charts resolve through the chart-wide `image.registry`, so a 
 ```bash
 helm install agents-sandbox-controller openkruise/agents-sandbox-controller \
   -n sandbox-system \
-  --version 0.6.0-rc1 \
+  --version 0.6.0 \
   --set image.registry=openkruise-registry.cn-shanghai.cr.aliyuncs.com
 ```
 
@@ -147,7 +147,7 @@ helm install agents-sandbox-controller openkruise/agents-sandbox-controller \
 ```bash
 helm install agents-sandbox-manager openkruise/agents-sandbox-manager \
   -n sandbox-system \
-  --version 0.6.0-rc1 \
+  --version 0.6.0 \
   --set e2b.domain=<your-domain> \
   --set e2b.adminApiKey=<your-api-key> \
   --set ingress.className=<your-ingress-class> \
@@ -176,7 +176,7 @@ helm install agents-sandbox-manager openkruise/agents-sandbox-manager \
 ```bash
 helm upgrade agents-sandbox-controller openkruise/agents-sandbox-controller \
   -n sandbox-system \
-  --version 0.6.0-rc1 \
+  --version 0.6.0 \
   --server-side=false
 ```
 
@@ -185,7 +185,7 @@ helm upgrade agents-sandbox-controller openkruise/agents-sandbox-controller \
 ```bash
 helm upgrade agents-sandbox-manager openkruise/agents-sandbox-manager \
   -n sandbox-system \
-  --version 0.6.0-rc1
+  --version 0.6.0
 ```
 
 > **Note:**
@@ -208,7 +208,7 @@ adds the `Commit` and `PoolAutoscaler` CRDs and updates the schemas of existing 
 
 ```bash
 # Extract CRDs from chart package and apply (online installation example)
-helm pull openkruise/agents-sandbox-controller --version 0.6.0-rc1 --untar
+helm pull openkruise/agents-sandbox-controller --version 0.6.0 --untar
 kubectl apply -f agents-sandbox-controller/crds/
 rm -rf agents-sandbox-controller
 ```
@@ -252,7 +252,7 @@ The following tables list the configurable parameters of the Sandbox Controller 
 | `replicaCount`           | Number of sandbox-controller replicas                                | `2`                                    |
 | `image.registry`         | Registry prepended to every image in this chart                      | `docker.io`                            |
 | `image.repository`       | sandbox-controller image repository                                  | `openkruise/agent-sandbox-controller`  |
-| `image.tag`              | sandbox-controller image tag                                         | `v0.6.0-alpha4`                        |
+| `image.tag`              | sandbox-controller image tag                                         | `v0.6.0`                        |
 | `image.pullPolicy`       | Controller image pull policy                                         | `IfNotPresent`                         |
 | `imagePullSecrets`       | Image pull secrets list                                              | `[]`                                   |
 | `namespace.name`         | Namespace name for deployment                                        | `sandbox-system`                       |
@@ -308,7 +308,7 @@ All remaining parameters are optional. Sensible defaults apply and most installs
 | `agentRuntime.image.tag`                 | Injected agent-runtime sidecar image tag                                   | `v0.3.0`                                                                                                                |
 | `agentRuntime.image.pullPolicy`          | Injected agent-runtime sidecar image pull policy                           | `IfNotPresent`                                                                                                          |
 | `commitJob.image.repository`             | Image repository of the Commit job pods                                    | `openkruise/commit-job`                                                                                                 |
-| `commitJob.image.tag`                    | Image tag of the Commit job pods                                           | `v0.3.0`                                                                                                                |
+| `commitJob.image.tag`                    | Image tag of the Commit job pods                                           | `v0.6.0`                                                                                                                |
 | `enableTLS`                              | Master switch for cert-manager / trust-manager based TLS provisioning; when `false` nothing under `templates/tls/` renders and the controller keeps plaintext runtime behavior | `false`                             |
 | `tls.createCA`                           | Create the shared root CA (selfSigned Issuer → CA Certificate → CA Issuer). The controller chart owns the CA; the sandbox-manager chart sets this to `false` and references the Issuer by name | `true`                                                |
 | `tls.selfSignedIssuerName`               | Self-signed bootstrap Issuer name                                          | `sandbox-selfsigned-issuer`                                                                                             |
@@ -374,7 +374,7 @@ The following tables list the configurable parameters of the Sandbox Manager cha
 | `image.registry`           | Registry prepended to every image in this chart            | `docker.io`                  |
 | `imagePullSecrets`         | Image pull secrets list                                    | `{}`                         |
 | `controller.repository`    | sandbox-manager controller image repository                | `openkruise/sandbox-manager` |
-| `controller.tag`           | sandbox-manager controller image tag                       | `v0.6.0-alpha4`              |
+| `controller.tag`           | sandbox-manager controller image tag                       | `v0.6.0`              |
 | `controller.pullPolicy`    | Controller container image pull policy                     | `IfNotPresent`               |
 | `controller.resources.cpu` | Controller container CPU resource                          | `2`                          |
 | `controller.resources.memory` | Controller container memory resource                    | `4Gi`                        |
@@ -386,7 +386,7 @@ The following tables list the configurable parameters of the Sandbox Manager cha
 | `prometheus.enabled`       | Create a ServiceMonitor for manager and gateway metrics    | `false`                      |
 | `gateway.replicaCount`     | Number of sandbox-gateway replicas                         | `2`                          |
 | `gateway.image.repository` | sandbox-gateway image repository                           | `openkruise/sandbox-gateway` |
-| `gateway.image.tag`        | sandbox-gateway image tag                                  | `v0.6.0-alpha4`              |
+| `gateway.image.tag`        | sandbox-gateway image tag                                  | `v0.6.0`              |
 | `gateway.image.pullPolicy` | sandbox-gateway image pull policy                          | `IfNotPresent`               |
 | `gateway.resources.cpu`    | sandbox-gateway container CPU resources                    | `2`                          |
 | `gateway.resources.memory` | sandbox-gateway container memory resources                 | `4Gi`                        |
@@ -725,7 +725,7 @@ Based on your cluster scale, it is recommended to adjust the following resource 
 ```bash
 helm install agents-sandbox-controller openkruise/agents-sandbox-controller \
   -n sandbox-system \
-  --version 0.6.0-rc1 \
+  --version 0.6.0 \
   --set resources.limits.cpu=4 \
   --set resources.limits.memory=8Gi \
   --set resources.requests.cpu=2 \
@@ -737,7 +737,7 @@ helm install agents-sandbox-controller openkruise/agents-sandbox-controller \
 ```bash
 helm install agents-sandbox-manager openkruise/agents-sandbox-manager \
   -n sandbox-system \
-  --version 0.6.0-rc1 \
+  --version 0.6.0 \
   --set e2b.domain=<your-domain> \
   --set e2b.adminApiKey=<your-api-key> \
   --set ingress.className=<your-ingress-class> \
@@ -752,7 +752,7 @@ helm install agents-sandbox-manager openkruise/agents-sandbox-manager \
 ```bash
 helm install agents-sandbox-manager openkruise/agents-sandbox-manager \
   -n sandbox-system \
-  --version 0.6.0-rc1 \
+  --version 0.6.0 \
   --set e2b.domain=sandbox.example.com \
   --set e2b.enableAuth=true \
   --set e2b.adminApiKey=your-secure-api-key \
@@ -764,7 +764,7 @@ helm install agents-sandbox-manager openkruise/agents-sandbox-manager \
 ```bash
 helm install agents-sandbox-manager openkruise/agents-sandbox-manager \
   -n sandbox-system \
-  --version 0.6.0-rc1 \
+  --version 0.6.0 \
   --set e2b.domain=<your-domain> \
   --set e2b.adminApiKey=<your-api-key> \
   --set ingress.className=nginx \
@@ -777,7 +777,7 @@ helm install agents-sandbox-manager openkruise/agents-sandbox-manager \
 ```bash
 helm install agents-sandbox-manager openkruise/agents-sandbox-manager \
   -n sandbox-system \
-  --version 0.6.0-rc1 \
+  --version 0.6.0 \
   --set e2b.domain=<your-domain> \
   --set e2b.adminApiKey=<your-api-key> \
   --set ingress.className=<your-ingress-class> \
@@ -794,7 +794,7 @@ If special initialization operations are needed (such as sysctl tuning, etc.), y
 ```bash
 helm install agents-sandbox-manager openkruise/agents-sandbox-manager \
   -n sandbox-system \
-  --version 0.6.0-rc1 \
+  --version 0.6.0 \
   --set e2b.domain=<your-domain> \
   --set e2b.adminApiKey=<your-api-key> \
   --set ingress.className=<your-ingress-class> \
