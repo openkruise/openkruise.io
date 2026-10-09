@@ -834,4 +834,4 @@ kubectl delete ns sandbox-system
 | **标识符与 CLI**      | 简短、稳定的 Sandbox ID 在缩短标识符长度的同时保持跨生命周期操作的唯一性；新增 `okactl` CLI 用于 Sandbox 操作；多架构镜像发布                                                                                                                                               |
 | **可观测性**          | 新增异常 runtime 容器指标；Pod 创建失败和 Sandbox 生命周期的事件与 conditions；Controller 和 Manager 的生命周期链路追踪                                                                                                                                             |
 
-详细变更请参考 [Change Log](https://github.com/openkruise/agents/blob/master/CHANGELOG.md#v060-alpha1)。
+详细变更请参考 [Change Log](https://github.com/openkruise/agents/blob/master/CHANGELOG.md#v060)。

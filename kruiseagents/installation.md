@@ -868,4 +868,4 @@ kubectl delete ns sandbox-system
 | **Observability**               | New metrics for abnormal runtime containers; events and conditions for Pod creation failures and sandbox lifecycle; lifecycle tracing for controller and manager                                                                                                                                                                                                                                                                                     |
 
 For detailed changes, please refer to the
-[Change Log](https://github.com/openkruise/agents/blob/master/CHANGELOG.md#v060-alpha1).
+[Change Log](https://github.com/openkruise/agents/blob/master/CHANGELOG.md#v060).
