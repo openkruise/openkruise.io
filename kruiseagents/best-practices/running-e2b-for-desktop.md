@@ -3,7 +3,7 @@
 This example demonstrates how to deploy an [E2B](https://e2b.dev/) desktop sandbox through OpenKruise Agents and invoke
 it via the E2B SDK.
 
-For basic concepts, please refer to [Running E2B Code Interpreter Sandbox](../code_interpreter)
+For basic concepts, please refer to [Running E2B Code Interpreter Sandbox](./running-e2b-for-code-interpreter)
 
 > If you have configured a security group on your cloud platform, please ensure that port 6080 is open to access the remote desktop.
 

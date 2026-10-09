@@ -2,7 +2,7 @@
 
 该示例演示了如何通过 OpenKruise Agents 部署 [E2B](https://e2b.dev/) desktop 沙箱并通过 E2B SDK 进行调用。
 
-关于基础概念，请参考 [运行 E2B 代码执行沙箱](../code_interpreter)
+关于基础概念，请参考 [运行 E2B 代码执行沙箱](./running-e2b-for-code-interpreter)
 
 > 如果您在云平台上配置了安全组，请确保 6080 端口已打开，以便访问远程桌面。
 
