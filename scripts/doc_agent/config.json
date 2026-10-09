@@ -1,0 +1,28 @@
+{
+  "doc_paths": [
+    "docs",
+    "blog",
+    "rollouts",
+    "kruisegame",
+    "kruiseagents"
+  ],
+  "versioned_doc_paths": [
+    "versioned_docs"
+  ],
+  "report_output_dir": "docs/reports",
+  "staleness_warning_days": 180,
+  "staleness_critical_days": 365,
+  "link_check_timeout_seconds": 10,
+  "link_check_retries": 1,
+  "link_check_external": false,
+  "todo_markers": ["TODO", "FIXME", "PLACEHOLDER", "TBD"],
+  "min_content_length": 50,
+  "enabled_checkers": [
+    "broken_links",
+    "staleness",
+    "todo_scan",
+    "structure"
+  ],
+  "enable_auto_fix": false,
+  "external_urls": []
+}
