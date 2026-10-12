@@ -27,10 +27,10 @@ OpenKruise 私有协议（不会修改磁盘上的 E2B 代码）。前置要求�
 - `e2b>=2.8.0`
 - `e2b-code-interpreter>=2.4.1`
 
-从 `agents-api` 仓库安装，并从 [releases 页面](https://github.com/openkruise/agents-api/releases) 选择版本 tag 固定版本。Python SDK 自 `v0.6.0-alpha2` 起提供（可替换为您需要的版本）：
+从 `agents-api` 仓库安装，并从 [releases 页面](https://github.com/openkruise/agents-api/releases) 选择版本 tag 固定版本。Python SDK 自 `v0.6.0` 起提供（可替换为您需要的版本）：
 
 ```bash
-pip install git+https://github.com/openkruise/agents-api.git@v0.6.0-alpha2#subdirectory=e2b/python
+pip install git+https://github.com/openkruise/agents-api.git@v0.6.0#subdirectory=e2b/python
 ```
 
 或从源码安装：

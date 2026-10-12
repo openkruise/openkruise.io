@@ -4,8 +4,26 @@ title: Java 客户端
 
 ## 依赖导入
 
-该包暂未发布到 Maven Central，需要从 [e2b/java](https://github.com/openkruise/agents-api/tree/master/e2b/java)
-手动下载项目并打包成 JAR 文件使用。
+该包已发布到 Maven Central，坐标为 [io.openkruise:agents-client-e2b](https://repo1.maven.org/maven2/io/openkruise/agents-client-e2b/)。
+
+**Maven**（`pom.xml`）：
+
+```xml
+<dependency>
+    <groupId>io.openkruise</groupId>
+    <artifactId>agents-client-e2b</artifactId>
+    <version>0.6.0</version>
+</dependency>
+```
+
+**Gradle**（`build.gradle`）：
+
+```groovy
+implementation 'io.openkruise:agents-client-e2b:0.6.0'
+```
+
+该 jar 同时打包了 Runtime 层的类（`io.openkruise.agents.client.runtime.*`），因此下文“K8s 直连模式”一节中的
+Runtime 用法无需额外依赖。源码位于 [agents-api/e2b/java](https://github.com/openkruise/agents-api/tree/master/e2b/java)。
 
 ---
 

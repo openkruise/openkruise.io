@@ -32,10 +32,10 @@ memory to use the OpenKruise private protocol (no E2B code is modified on disk).
 
 Install it from the `agents-api` repository and pin a version tag from the
 [releases page](https://github.com/openkruise/agents-api/releases). The Python SDK is available starting from
-`v0.6.0-alpha2` (replace it with the version you need):
+`v0.6.0` (replace it with the version you need):
 
 ```bash
-pip install git+https://github.com/openkruise/agents-api.git@v0.6.0-alpha2#subdirectory=e2b/python
+pip install git+https://github.com/openkruise/agents-api.git@v0.6.0#subdirectory=e2b/python
 ```
 
 Or install from source:
