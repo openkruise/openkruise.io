@@ -9,8 +9,23 @@ CRD Java model definitions for Agents resources, generated based on Fabric8 Kube
 
 ## Installation
 
-**Maven Repository**: This package is not published to the official Maven repository. You need to manually download
-the project and package it as a JAR file.
+The package is published to Maven Central as [io.openkruise:agents-client-k8s](https://repo1.maven.org/maven2/io/openkruise/agents-client-k8s/).
+
+**Maven** (`pom.xml`):
+
+```xml
+<dependency>
+    <groupId>io.openkruise</groupId>
+    <artifactId>agents-client-k8s</artifactId>
+    <version>0.6.0</version>
+</dependency>
+```
+
+**Gradle** (`build.gradle`):
+
+```groovy
+implementation 'io.openkruise:agents-client-k8s:0.6.0'
+```
 
 ## Available CRD Models
 

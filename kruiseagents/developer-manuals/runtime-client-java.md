@@ -4,8 +4,29 @@ title: Java Client
 
 ## Dependency Import
 
-This package is not yet published to Maven Central. You need to download the project
-from [client-java](https://github.com/openkruise/agents-api/tree/master/runtime/java) and manually build the JAR file.
+The Runtime layer classes (`io.openkruise.agents.client.runtime.*`) are bundled inside the published
+[io.openkruise:agents-client-e2b](https://repo1.maven.org/maven2/io/openkruise/agents-client-e2b/) jar, so there is no
+separate Maven artifact to depend on. Add the E2B client dependency and the Runtime client is ready to use:
+
+**Maven** (`pom.xml`):
+
+```xml
+<dependency>
+    <groupId>io.openkruise</groupId>
+    <artifactId>agents-client-e2b</artifactId>
+    <version>0.6.0</version>
+</dependency>
+```
+
+**Gradle** (`build.gradle`):
+
+```groovy
+implementation 'io.openkruise:agents-client-e2b:0.6.0'
+```
+
+> The bundled Runtime layer supports direct connections via `RuntimeClient.create()`. The `newFromK8s` K8s
+> auto-discovery and `K8sHelper` are only available when building from the source at
+> [agents-api/runtime/java](https://github.com/openkruise/agents-api/tree/master/runtime/java).
 
 ---
 
