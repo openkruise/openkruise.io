@@ -10,8 +10,8 @@
 
 
 <link rel="search" type="application/opensearchdescription+xml" title="OpenKruise" href="/zh/opensearch.xml"><link rel="stylesheet" href="/zh/assets/css/styles.6697599b.css">
-<script src="/zh/assets/js/runtime~main.081ec7ec.js" defer="defer"></script>
-<script src="/zh/assets/js/main.e4c28a98.js" defer="defer"></script>
+<script src="/zh/assets/js/runtime~main.3e1910c3.js" defer="defer"></script>
+<script src="/zh/assets/js/main.261f4681.js" defer="defer"></script>
 </head>
 <body class="navigation-with-keyboard">
 <svg style="display: none;"><defs>
@@ -33,7 +33,7 @@
 <hr>
 <h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="一架构发生了什么变化">一、架构发生了什么变化<a href="#一架构发生了什么变化" class="hash-link" aria-label="Direct link to heading" title="Direct link to heading" translate="no">​</a></h2>
 <p>如果说 v0.3.0 是一个工作负载层，那么 v0.6.0 是一个<strong>自带数据面</strong>的工作负载层。完整组件模型见<a href="https://openkruise.io/zh/kruiseagents/architecture" target="_blank" rel="noopener noreferrer" class="">架构</a>文档，一句话概括：流量检查、策略下发、身份凭证都变成了独立的一等组件，而不再是外部插件。</p>
-<p><img decoding="async" loading="lazy" alt="alt" src="/zh/assets/images/architecture-9f18f2b791a27901fddaa6eabfeb6b6b.png" width="3200" height="3200" class="img_ev3q"></p>
+<p><img decoding="async" loading="lazy" alt="alt" src="/zh/assets/images/architecture-515e7d6a713b53866239efe69d883f04.png" width="3200" height="1703" class="img_ev3q"></p>
 <h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="11-从四个组件到六个组件">1.1 从四个组件到六个组件<a href="#11-从四个组件到六个组件" class="hash-link" aria-label="Direct link to heading" title="Direct link to heading" translate="no">​</a></h3>
 <table><thead><tr><th>组件</th><th>v0.6.0 中的职责</th></tr></thead><tbody><tr><td><code>sandbox-manager</code></td><td>无状态后端服务，对外提供 E2B 兼容的北向 API，负责 Sandbox 生命周期、配额、以及路由与 Traffic Token 编排</td></tr><tr><td><code>sandbox-controller</code></td><td>负责 <code>Sandbox</code>、<code>SandboxSet</code>、<code>SandboxClaim</code> 与预热池等资源的协调，并托管准入 Webhook。v0.6.0 中还承载自动休眠唤醒控制器</td></tr><tr><td><code>sandbox-gateway</code></td><td>数据面，基于 Envoy Go Filter 构建。<strong>入口网关</strong>将用户流量代理到 Sandbox，支持 Host/Path 路由、访问令牌与流量唤醒；<strong>出口网关</strong>代理 Sandbox 的出向流量，并执行策略化的 7 层出口管控</td></tr><tr><td><code>traffic-control-plane</code></td><td><strong>新增。</strong><code>istiod</code> 向网关与 Pod 内代理下发 xDS 配置；**出口策略执行器（EPE）**在出向流量上执行 7 层策略、MCP ACL 与令牌注入</td></tr><tr><td><code>agent-runtime</code></td><td>Sidecar，提供 E2B envd 兼容的命令、文件与端口（49983）操作能力</td></tr><tr><td><code>traffic-proxy</code></td><td>**新增。**Sidecar，作为 Pod 内出口流量策略的 4 层执行点</td></tr></tbody></table>
 <p>其中有两个结论值得记住。第一，<strong>出向流量不再是 Pod 自己的事</strong> —— 它在 Pod 内被捕获，经过出口网关路由，由一个能看见完整请求（而不只是 socket）的策略引擎做决策。第二，<strong>入口网关可以把 Sandbox 唤醒</strong>，这正是流量唤醒得以实现、且不需要外部轮询器的原因。</p>
