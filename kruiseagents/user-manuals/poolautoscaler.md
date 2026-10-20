@@ -39,6 +39,8 @@ metadata:
   namespace: default        # deployment namespace; PoolAutoscaler must live in the same namespace
 spec:
   replicas: 2               # initial pool size; the PoolAutoscaler takes over once applied, so keep it small to reduce cost
+  scaleStrategy:
+    maxUnavailable: "30%"   # recommended: caps concurrent scale-up and doubles as the startup budget; percentages are rounded up against spec.replicas
   runtimes:
     - name: agent-runtime   # injects the envd-compatible runtime required by E2B code execution / files / commands
   template:
@@ -57,6 +59,10 @@ spec:
 
 :::note
 The `runtimes: agent-runtime` entry is required for the E2B verification in Step 3 (`run_code`, file reads/writes, command execution all rely on the injected envd runtime). For how runtime injection works and its dependency on the `sandbox-injection-config` ConfigMap, see [Runtime Injection](./runtime-injection.md).
+:::
+
+:::note
+`scaleStrategy.maxUnavailable` is a key protection parameter for warm pool elasticity, and setting it explicitly (for example `30%`) is recommended. It caps how many Sandboxes can be created concurrently during scale-up and doubles as the startup budget behind the `ScalingLimited` throttling; when unset it defaults to the current replica count (equivalent to 100%, i.e. no cap), so a broken underlying supply can let a large batch of scale-up creations fail or time out simultaneously. For the throttling mechanism, see [Failure Scenario: Scale-Up Throttling, Trigger and Recovery](#failure-scenario-scale-up-throttling-trigger-and-recovery).
 :::
 
 ```bash
@@ -87,7 +93,7 @@ spec:
     scaleUp:
       stabilizationWindowSeconds: 60    # minimum interval between consecutive scale-ups; a smaller value refills the pool faster but scales more aggressively
     scaleDown:
-      stabilizationWindowSeconds: 300   # minimum interval between consecutive scale-downs; a longer value avoids recycling the pool during nightly dips
+      stabilizationWindowSeconds: 300   # minimum interval between consecutive scale-downs; recommended to be longer than the scale-up window (60s here) so capacity is reclaimed slowly and stays stable during traffic dips
 ```
 
 ```bash
@@ -96,6 +102,8 @@ kubectl get poolautoscaler sandbox-pool-autoscaler -n default
 ```
 
 `minReplicas` and `maxReplicas` are always enforced: every replica count computed by any policy is clamped to this range. The values of `targetAvailable`, `tolerance`, and `minReplicas` together determine whether an idle pool can shrink to `minReplicas`; see [Capacity Policy Parameters Tuning Guide](#capacity-policy-parameters-tuning-guide).
+
+For `stabilizationWindowSeconds`, it is recommended to set the scale-down window longer than the scale-up window (the defaults are 300s vs 60s, and the example above keeps that relationship): scaling up quickly refills the pool to protect claim latency, while scaling down slowly avoids recycling capacity during transient traffic dips, keeping the overall system capacity stable.
 
 ### Step 3: Verify with E2B Business Traffic
 
@@ -307,7 +315,7 @@ status:
 
 and emits a Warning-level `ScalingLimited` event. On detecting this condition, PoolAutoscaler:
 
-- Pauses scale-up: `status.desiredReplicas` stops rising even when availability is below the lower watermark; while waiting, it periodically emits Normal-level `ScaleBlocked` events.
+- Pauses scale-up: `status.desiredReplicas` stops rising even when availability is below the lower watermark; a Normal-level `ScaleBlocked` event is emitted when the block starts or the underlying condition changes (repeated reports are deduplicated).
 - Leaves scale-down unaffected: upper-watermark scale-downs proceed as usual.
 - The controller fails open: only an explicit `True` reported against the SandboxSet's current generation blocks scaling; a missing, stale, or `Unknown` condition is treated as no signal so upgrades and first-time reconciles do not stall scale-up.
 
@@ -350,6 +358,19 @@ kubectl delete sandbox <name> -n default
 The SandboxSet recreates a new instance automatically; if the configuration is not fixed, the new instance fails again and re-triggers throttling.
 
 - **Mostly TimedOut**: the underlying creation speed cannot keep up with the scaling rate. Lower the SandboxSet's `scaleStrategy.maxUnavailable` to reduce the per-batch creation volume, or contact the cluster administrator to evaluate underlying supply capacity.
+
+### Common Events
+
+PoolAutoscaler records the following events on the PoolAutoscaler object (view them with `kubectl describe poolautoscaler <name>` or `kubectl get events --field-selector involvedObject.name=<poolautoscaler-name>`):
+
+- `ScaledUp` (Normal): replicas were raised, with the from/to counts and the decision reason (for example, availability below the lower watermark, or a Cron policy firing).
+- `ScaledDown` (Normal): replicas were lowered, with the from/to counts and the decision reason.
+- `ScaleBlocked` (Normal): a scale-up was suppressed — either it is still inside the stabilization-window cooldown (the message includes the remaining cooldown, and the event repeats on each reconcile while blocked), or the SandboxSet's `ScalingLimited` startup budget is exhausted (emitted when the block starts or the underlying condition changes).
+- `FailedGetScale` (Warning): the target SandboxSet could not be read; check that `scaleTargetRef.name` is correct and that the SandboxSet exists in the same namespace.
+- `FailedComputeReplicas` (Warning): the desired replica count could not be computed, usually from an invalid policy configuration; check `capacityPolicy`/`cronPolicies` values against [Parameter Validation Constraints](#parameter-validation-constraints).
+- `FailedScale` (Warning): writing the new replica count to the SandboxSet failed, for example due to an API conflict or webhook rejection; the controller retries automatically — investigate if it persists.
+
+In addition, the SandboxSet itself emits a Warning-level `ScalingLimited` event when the startup budget is exhausted (see [What Triggers Throttling](#what-triggers-throttling)).
 
 ## Capacity Policy Parameters Tuning Guide
 

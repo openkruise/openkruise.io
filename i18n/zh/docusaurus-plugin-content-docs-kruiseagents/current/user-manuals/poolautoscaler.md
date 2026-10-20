@@ -39,6 +39,8 @@ metadata:
   namespace: default        # 部署命名空间；PoolAutoscaler 必须与它同 namespace
 spec:
   replicas: 2               # 初始预热池大小；应用 PoolAutoscaler 后由其接管，可按成本设小一些
+  scaleStrategy:
+    maxUnavailable: "30%"   # 建议配置：限制并发扩容量，同时作为启动预算；百分比按 spec.replicas 向上取整
   runtimes:
     - name: agent-runtime   # 注入 envd 兼容运行时，步骤三的 E2B 代码执行/文件/命令能力依赖它
   template:
@@ -57,6 +59,10 @@ spec:
 
 :::note
 `runtimes: agent-runtime` 是步骤三 E2B 验证的必要条件（`run_code`、文件读写、命令执行均依赖注入的 envd 运行时）。运行时注入机制及其对 `sandbox-injection-config` ConfigMap 的依赖见[运行时注入](./runtime-injection.md)。
+:::
+
+:::note
+`scaleStrategy.maxUnavailable` 是预热池弹性的重要保护参数，建议显式配置（例如 `30%`）。它限制扩容时并发创建的 Sandbox 数量，同时作为 `ScalingLimited` 限流机制的启动预算；未设置时默认为当前副本数（相当于 100%，即不限制），底层供给异常时可能导致大批扩容创建同时失败或超时。限流机制详见[异常场景：扩容限流的触发与恢复](#异常场景扩容限流的触发与恢复)。
 :::
 
 ```bash
@@ -87,7 +93,7 @@ spec:
     scaleUp:
       stabilizationWindowSeconds: 60    # 连续扩容最小间隔；设小可加快补池，但过小会导致扩容过于频繁
     scaleDown:
-      stabilizationWindowSeconds: 300   # 连续缩容最小间隔；拉长可避免夜间流量波动频繁回收预热池
+      stabilizationWindowSeconds: 300   # 连续缩容最小间隔；建议长于扩容间隔（此处为 60 秒），缓慢回收容量，保证流量波动时系统容量稳定
 ```
 
 ```bash
@@ -96,6 +102,8 @@ kubectl get poolautoscaler sandbox-pool-autoscaler -n default
 ```
 
 `minReplicas` 和 `maxReplicas` 始终生效，所有策略计算出的副本数都会被限制在这个范围内。`targetAvailable`、`tolerance` 和 `minReplicas` 的取值共同决定空闲预热池能否收缩到 `minReplicas`，配置规则见[容量策略参数调优指南](#容量策略参数调优指南)。
+
+`stabilizationWindowSeconds` 建议将缩容窗口设置得比扩容窗口更长（默认即为 300 秒对 60 秒，上方示例也保持了这一关系）：快速扩容可及时补齐预热池、保障领取延迟，缓慢缩容则避免在瞬时流量回落时回收容量，从而保证系统整体容量的稳定性。
 
 ### 步骤三：使用 E2B 业务流量验证
 
@@ -307,7 +315,7 @@ status:
 
 同时发出 Warning 级 `ScalingLimited` 事件。PoolAutoscaler 检测到该 condition 后：
 
-- 暂停扩容：`status.desiredReplicas` 不再抬升，即使可用数量已低于下水位；等待期间周期性发出 Normal 级 `ScaleBlocked` 事件。
+- 暂停扩容：`status.desiredReplicas` 不再抬升，即使可用数量已低于下水位；阻塞开始或对应 condition 发生变化时发出 Normal 级 `ScaleBlocked` 事件（重复上报会被去重）。
 - 缩容不受影响：上水位触发的缩容照常执行。
 - 容错处理：仅当 SandboxSet 报告的是当前 generation 的显式 `True` 才阻塞；condition 缺失、陈旧或 `Unknown` 时按无信号处理，扩容照常，避免升级或首次调谐期间误阻塞。
 
@@ -350,6 +358,19 @@ kubectl delete sandbox <name> -n default
 SandboxSet 会自动重建新实例；若配置未修复，新实例仍会失败并再次触发限流。
 
 - **TimedOut 为主**：底层创建速度跟不上扩容节奏。可调小 SandboxSet 的 `scaleStrategy.maxUnavailable` 降低单批创建量，或联系集群管理员评估底层供给能力。
+
+### 常见事件
+
+PoolAutoscaler 会在自身对象上记录以下事件（可通过 `kubectl describe poolautoscaler <name>` 或 `kubectl get events --field-selector involvedObject.name=<poolautoscaler-name>` 查看）：
+
+- `ScaledUp`（Normal）：副本数已上调，附带调整前后数值与决策原因（例如可用数量低于下水位，或 Cron 策略触发）。
+- `ScaledDown`（Normal）：副本数已下调，附带调整前后数值与决策原因。
+- `ScaleBlocked`（Normal）：一次扩容被抑制——要么仍处于稳定窗口冷却期内（message 中包含剩余冷却时间，阻塞期间每次调谐都会重复发出），要么 SandboxSet 的 `ScalingLimited` 启动预算已耗尽（在阻塞开始或对应 condition 变化时发出）。
+- `FailedGetScale`（Warning）：无法读取目标 SandboxSet；检查 `scaleTargetRef.name` 是否正确、SandboxSet 是否位于同一 namespace。
+- `FailedComputeReplicas`（Warning）：期望副本数计算失败，通常由策略配置非法导致；对照[参数配置约束](#参数配置约束)检查 `capacityPolicy`/`cronPolicies` 取值。
+- `FailedScale`（Warning）：向 SandboxSet 写入新副本数失败，例如 API 冲突或 Webhook 拒绝；控制器会自动重试，持续出现时需排查。
+
+此外，SandboxSet 自身在启动预算耗尽时会发出 Warning 级 `ScalingLimited` 事件（见[限流的触发](#限流的触发)）。
 
 ## 容量策略参数调优指南
 
