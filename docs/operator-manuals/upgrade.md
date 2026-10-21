@@ -19,7 +19,7 @@ and the users are suggested to upgrade their applications to v1beta1 before upgr
 | BroadcastJob                                                                                                                                   | 1.9 | not planed yet        |
 | ImageListPullJob                                                                                                                               | 1.9 | not planed yet        |
 | ImagePullJob                                                                                                                                   | 1.9 | not planed yet        |
-| NodeImage<br/>                                                                                                                                 | 1.9 | not planed yet        |
+| NodeImage                                                                                                                                      | 1.9 | not planed yet        |
 | CloneSet                                                                                                                                       | 2.0 (planned) | not planed yet        |
 | WorkloadSpread                                                                                                                                 | 2.0 (planned) | not planed yet        |
 | UnitedDeployment                          | 2.0 (planned) | not planed yet        |
