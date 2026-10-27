@@ -300,6 +300,97 @@ kubectl patch sbx my-sandbox -n default --type=merge \
 </TabItem>
 </Tabs>
 
+## Lifecycle Hooks (prePause / postResume)
+
+OpenKruise Agents lets you attach **user-defined commands** to the pause and resume transitions of a sandbox:
+
+- **`prePause`** runs inside the still-running sandbox **before** the Pod is paused — flush buffers, commit
+  transactions, close external connections, or write application state to disk.
+- **`postResume`** runs **after** the resumed Pod is Ready and runtime/credential/storage initialization has
+  completed, **before** the sandbox reports `Ready` externally — rebuild connection pools, restart schedulers, or
+  validate restored state.
+
+Hooks share the same execution path for every pause/resume source: manual pause (`spec.paused`), timeout-driven
+auto-pause, `PauseTime` expiry, probe-driven auto-pause, and every normal resume (SDK `connect`, wake-on-traffic,
+scheduled resume).
+
+### Configuring Hooks
+
+Hooks are declared in `spec.lifecycle` on the `Sandbox` (or, for pool-created sandboxes, on the `SandboxSet`):
+
+```yaml
+apiVersion: agents.kruise.io/v1alpha1
+kind: Sandbox
+metadata:
+  name: demo-hooks
+  namespace: default
+spec:
+  lifecycle:
+    prePause:
+      exec:
+        command: ["/bin/bash", "-c", "/workspace/flush.sh"]
+      timeoutSeconds: 10
+    postResume:
+      exec:
+        command: ["/bin/bash", "-c", "/workspace/reconnect.sh"]
+      timeoutSeconds: 10
+  # ... template etc.
+```
+
+| Field            | Behavior                                                                                                                                    |
+|------------------|---------------------------------------------------------------------------------------------------------------------------------------------|
+| `exec.command`   | Required. The first element is the executable, the rest are arguments. Request a shell explicitly, e.g. `["/bin/bash", "-c", "..."]`.         |
+| `timeoutSeconds` | Optional, default `60`, allowed range `1–60`. Bounds a single execution — the command is killed server-side when it expires.                  |
+
+Notes:
+
+- Hooks run as `root` inside the sandbox (the same identity upgrade hooks use).
+- A `prePause` hook runs **before** the Pod is deleted (and before any checkpoint is captured on platforms that
+  checkpoint), so its effects are included in the captured state. A `postResume` hook runs only after the runtime
+  has been re-initialized; it never runs on initial sandbox creation.
+- Pool-level configuration: `SandboxSet.spec.lifecycle` is copied to every pool-created sandbox and participates in
+  the revision hash — changing pool-level hooks triggers a rolling update of unclaimed pool members. Claimed
+  sandboxes are never silently overwritten; update them (or use [Sandbox Update](./sandbox-update.md)) explicitly.
+
+### Failure Semantics
+
+Hook failure is **terminal and non-blocking**: each hook executes **once** per pause/resume cycle, and a failed
+execution records the result and lets the lifecycle transition continue — the pause still completes after a failed
+`prePause`, and the sandbox still becomes `Ready` after a failed `postResume`.
+
+```yaml
+status:
+  phase: Paused
+  conditions:
+    - type: PrePauseHook
+      status: "False"
+      reason: Failed
+      message: "hook failed: execution error; lifecycle transition continues"
+    - type: SandboxPaused
+      status: "True"
+      reason: StopPauseSucceed
+```
+
+- Results are observable on the `PrePauseHook` / `PostResumeHook` conditions (`Succeeded`, `Failed`, `Skipped`) and
+  through Warning events; the condition survives the completed transition as the record of the cycle.
+- `prePause` records `Skipped` when the Pod is already gone (e.g. deleted out-of-band) — the pause continues
+  without executing anything.
+- Retrying failed hooks is not supported in the current release; write hooks so that a single run either succeeds
+  or fails fast.
+
+### Writing Hook Scripts
+
+> **Commands must be idempotent.** The controller may replay a hook whose outcome is uncertain (for example, a
+> controller crash between command execution and persisting the result). Guard non-idempotent work with locks or
+> markers inside the sandbox.
+
+- Prefer atomic writes (write to a temp file, rename) so a timeout cannot leave half-written state.
+- If a hook forks background children, terminate them explicitly on exit — the timeout kills the command process,
+  not the whole process tree. Take mutual-exclusion locks (e.g. `flock`) in scripts that must not overlap
+  themselves.
+- Keep `timeoutSeconds` short (10 s is a good default) and remember that pause/resume latency includes one hook
+  execution; wake-on-traffic requests should budget for Pod start + initialization + hook runtime.
+
 ## Capability Matrix
 
 | Capability                                                           | E2B SDK                       | Kubernetes CRD                       |
@@ -313,6 +404,8 @@ kubectl patch sbx my-sandbox -n default --type=merge \
 | Set / refresh the sandbox timeout together with resume               | ✅ `Sandbox.connect(id, timeout=...)` | ✅ write `spec.shutdownTime` / `spec.pauseTime` in the same patch |
 | Extend-only guard on timeout refresh while running                   | ✅                             | ❌ user-written value may shorten    |
 | Observe paused/running state                                         | via SDK response              | `status.phase` (`Paused` / `Running`)|
+| Run a command before pause (`prePause`)                              | ❌ (SDK has no hook fields)   | ✅ `spec.lifecycle.prePause`          |
+| Run a command after resume (`postResume`)                            | ❌ (SDK has no hook fields)   | ✅ `spec.lifecycle.postResume`        |
 
 If you need "extend-only, never shorten" timeout semantics, use the E2B SDK. The CRD path is better suited for
 declarative / GitOps control over the paused/running bit plus absolute scheduling times.
@@ -328,3 +421,8 @@ declarative / GitOps control over the paused/running bit plus absolute schedulin
 - **State-preservation caveats.** Whether memory is preserved across pause/resume depends on the runtime platform.
   If you need explicit memory + filesystem snapshots that can also be cloned into brand-new sandboxes, use
   [Snapshot Management](./checkpoint.md) instead.
+- **Hooks are CRD-only.** The E2B SDK exposes no hook fields; hooks apply to every pause/resume regardless of which
+  interface triggered it, but can only be declared through the Kubernetes API.
+- **Hooks travel with snapshots.** A sandbox created from a checkpoint or snapshot inherits the captured
+  `prePause` / `postResume` configuration, so cloned sandboxes pause and resume with the same hooks. Upgrade hooks
+  (`preUpgrade` / `postUpgrade`) are never copied into clones.
