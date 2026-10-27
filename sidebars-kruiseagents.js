@@ -27,19 +27,47 @@ module.exports = {
             label: 'User Manuals',
             collapsed: false,
             items: [
-                'user-manuals/warmpool-management',
-                'user-manuals/sandbox-claim',
-                'user-manuals/sandbox-id',
-                'user-manuals/pause-resume',
-                'user-manuals/runtime-injection',
+                {
+                    type: 'category',
+                    label: 'Sandbox Lifecycle Management',
+                    collapsed: false,
+                    items: [
+                        'user-manuals/sandbox-claim',
+                        'user-manuals/sandbox-access',
+                        'user-manuals/pause-resume',
+                        'user-manuals/auto-pause-resume',
+                        'user-manuals/sandbox-update',
+                        'user-manuals/commit',
+                        'user-manuals/runtime-injection',
+                        'user-manuals/sandbox-id',
+                    ],
+                },
+                {
+                    type: 'category',
+                    label: 'Warm Pool Management',
+                    collapsed: true,
+                    items: [
+                        'user-manuals/warmpool-management',
+                        'user-manuals/poolautoscaler',
+                    ],
+                },
+                {
+                    type: 'category',
+                    label: 'Security',
+                    collapsed: true,
+                    items: [
+                        'user-manuals/security/traffic-access-token',
+                        'user-manuals/security/traffic-access-control',
+                        'user-manuals/security/e2b-network-controls',
+                        'user-manuals/security/credential-injection',
+                    ],
+                },
                 'user-manuals/checkpoint',
-                'user-manuals/commit',
-                'user-manuals/sandbox-update',
                 'user-manuals/api-keys-and-teams',
                 {
                     type: 'category',
                     label: 'Storage Management',
-                    collapsed: false,
+                    collapsed: true,
                     items: [
                         'user-manuals/volume-claim-template',
                         'user-manuals/ondemand-volume-mount',
@@ -49,8 +77,16 @@ module.exports = {
         },
         {
             type: 'category',
+            label: 'Operator Manuals',
+            collapsed: true,
+            items: [
+                'operator-manuals/metrics',
+            ],
+        },
+        {
+            type: 'category',
             label: 'Best Practices',
-            collapsed: false,
+            collapsed: true,
             items: [
                 'best-practices/running-e2b-for-code-interpreter',
                 'best-practices/running-e2b-for-desktop',
@@ -69,6 +105,14 @@ module.exports = {
                 'user-cases/ack-kimi',
                 'user-cases/ack-lixiang',
                 'user-cases/ack-minimax',
+            ],
+        },
+        {
+            type: 'category',
+            label: 'Blog & Video',
+            collapsed: false,
+            items: [
+                'blog-video/community-resources',
             ],
         },
         {

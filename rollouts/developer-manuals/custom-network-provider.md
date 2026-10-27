@@ -247,7 +247,7 @@ When designing test cases, at least the release strategies listed below are supp
       value: ".*demo"
 ```
 
-**Please visit** [API Specifications | OpenKruise](https://openkruise.io/zh/rollouts/user-manuals/api-specifications) **for more information about the difference of the above mentioned two release strategies.**
+**Please visit** [API Specifications | OpenKruise](https://openkruise.io/rollouts/user-manuals/api-specifications) **for more information about the difference of the above mentioned two release strategies.**
 
 - Release strategy without header matches, and the traffic is routed to canary service with a certain weight.
 

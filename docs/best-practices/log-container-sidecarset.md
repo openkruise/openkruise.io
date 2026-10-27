@@ -207,9 +207,9 @@ Below are two windows, and on the right is a client request to access the nginx 
 
 ![k8s log sidecar](/img/docs/best-practices/update-sidecarset.gif)
 
-This feature relies on the ability of [Kruise InPlace Update](https://openkruise.io/docs/next/core-concepts/inplace-update/).
+This feature relies on the ability of [Kruise InPlace Update](https://openkruise.io/docs/core-concepts/inplace-update/).
 However, upgrading sidecar independently comes with a risk, if the sidecar upgrade process fails, it will make Pod Not Ready and potentially affects the business, so SidecarSet itself provides rich progressive delivery capability to mitigate the risk.
-Refer to [Kruise SidecarSet](https://openkruise.io/zh/docs/next/user-manuals/sidecarset#sidecar%E6%9B%B4%E6%96%B0%E7%AD%96%E7%95%A5), as follows:
+Refer to [Kruise SidecarSet](https://openkruise.io/docs/user-manuals/sidecarset#sidecarset-update-strategy), as follows:
 ```yaml
 apiVersion: apps.kruise.io/v1alpha1
 kind: SidecarSet
@@ -230,7 +230,7 @@ spec:
         # or any other labels where a small number of pods can be selected
         deploy-env: canary
 ```
-**In addition, if it is similar to the ServiceMesh Envoy Mesh Container, you need to use the SidecarSet hot upgrade feature,** Refer to [SidecarSet HotUpgrade](https://openkruise.io/docs/next/user-manuals/sidecarset#sidecar%E7%83%AD%E5%8D%87%E7%BA%A7%E7%89%B9%E6%80%A7).
+**In addition, if it is similar to the ServiceMesh Envoy Mesh Container, you need to use the SidecarSet hot upgrade feature,** Refer to [SidecarSet HotUpgrade](https://openkruise.io/docs/user-manuals/sidecarset#hot-upgrade-sidecar).
 
 ### Argo-cd Deploy SidecarSet (Optional)
 If you use Argo-cd to deploy Kruise SidecarSet, you need to configure [Custom CRD Health Checks](https://argo-cd.readthedocs.io/en/stable/operator-manual/health/#custom-health-checks).

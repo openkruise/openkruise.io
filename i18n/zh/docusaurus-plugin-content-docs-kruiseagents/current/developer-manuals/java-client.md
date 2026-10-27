@@ -9,7 +9,23 @@ CRD Java 模型定义，基于 Fabric8 Kubernetes Client 生成。
 
 ## 依赖导入
 
-**Maven 仓库**：该包未发布到官方 Maven 仓库，你需要手动下载项目并打包成 JAR 文件使用。
+该包已发布到 Maven Central，坐标为 [io.openkruise:agents-client-k8s](https://repo1.maven.org/maven2/io/openkruise/agents-client-k8s/)。
+
+**Maven**（`pom.xml`）：
+
+```xml
+<dependency>
+    <groupId>io.openkruise</groupId>
+    <artifactId>agents-client-k8s</artifactId>
+    <version>0.6.0</version>
+</dependency>
+```
+
+**Gradle**（`build.gradle`）：
+
+```groovy
+implementation 'io.openkruise:agents-client-k8s:0.6.0'
+```
 
 ## 可用的 CRD 模型
 

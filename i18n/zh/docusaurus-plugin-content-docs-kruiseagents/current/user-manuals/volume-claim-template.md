@@ -1,4 +1,4 @@
-# Volume Claim Templates
+# 存储卷声明模板
 
 本文介绍如何在 `SandboxSet` 中使用 `volumeClaimTemplates`，为 OpenKruise Agents 沙箱提供持久化存储。
 

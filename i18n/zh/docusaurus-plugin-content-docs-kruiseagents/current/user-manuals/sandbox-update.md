@@ -3,7 +3,8 @@
 本文档介绍如何升级由 OpenKruise Agents 管理的沙箱，包括 **预热池沙箱**（由 SandboxSet 管理）和 **已认领沙箱**（已分配给用户）。
 
 :::info 版本
-本文档描述的所有特性自 **v0.3.0** 起可用。
+基础升级流程（SandboxSet 滚动升级和 SandboxUpdateOps 重建升级）自 **v0.3.0** 起可用。
+升级已暂停沙箱（`stateFilter`）以及 `CheckpointRestore` 升级模式需要 **v0.6.0**。
 :::
 
 ## 概述
@@ -128,6 +129,94 @@ spec:
 - `timeoutSeconds`：等待钩子完成的最长时间（秒）。默认为 60 秒。
 - `exec.command` 通过 agent-runtime（envd）接口在沙箱内部执行。
 
+### Patch 能力
+
+`spec.patch` 字段会以
+[Strategic Merge Patch](https://kubernetes.io/docs/tasks/manage-kubernetes-objects/update-api-object-kubectl-patch/)
+的方式应用到每个被选中的沙箱。它支持以下操作：
+
+- **更新（Update）**：修改已有字段，例如容器镜像或环境变量。
+- **新增（Add）**：引入新字段，例如新增一个 volume 或 volume mount。
+- **删除（Delete）**：通过使用 `$patch: delete` 及其 merge key 标记某个列表项（如 volume 或 mount）来将其删除。
+
+```yaml
+apiVersion: agents.kruise.io/v1alpha1
+kind: SandboxUpdateOps
+metadata:
+  name: patch-demo
+  namespace: default
+spec:
+  patch:
+    spec:
+      containers:
+        - name: sandbox
+          image: my-registry/sandbox-image:v2   # 更新
+          env:
+            - name: LOG_LEVEL                    # 新增
+              value: debug
+      volumes:
+        - name: legacy-cache                     # 删除
+          $patch: delete
+```
+
+### 升级模式
+
+:::info 版本
+`CheckpointRestore` 模式自 **v0.6.0** 起可用。
+:::
+
+`spec.updateStrategy.type` 用于选择每个沙箱的升级方式：
+
+| 模式 | 说明 | 约束 |
+|---|---|---|
+| `Recreate`（默认） | 删除旧 Pod 并创建新 Pod。**不会**保留 rootfs、内存或 IP。 | 标准升级方式；使用生命周期钩子来备份和恢复数据。 |
+| `CheckpointRestore` | 在升级前对 rootfs 做一次 checkpoint，并在升级后恢复，从而保留文件系统状态。 | **不能**修改业务容器镜像。仅支持更新 Sidecar 版本（通过 annotation）或非镜像字段（env、resources、volumes）。 |
+
+:::warning
+在 `CheckpointRestore` 模式下修改业务容器镜像会导致 rootfs 丢失。请仅在更新 Sidecar 或非镜像字段时使用 `CheckpointRestore`；当必须修改业务镜像时，请使用 `Recreate`。
+:::
+
+**示例：使用 CheckpointRestore 更新 Sidecar**
+
+```yaml
+apiVersion: agents.kruise.io/v1alpha1
+kind: SandboxUpdateOps
+metadata:
+  name: upgrade-sidecar
+  namespace: default
+spec:
+  updateStrategy:
+    type: CheckpointRestore
+  patch:
+    metadata:
+      annotations:
+        # 修改此值以触发 Sidecar 版本更新
+        agents.kruise.io/upgrade-sidecar: "20260714"
+```
+
+### 升级已暂停的沙箱
+
+:::info 版本
+升级已暂停沙箱自 **v0.6.0** 起可用。
+:::
+
+默认情况下，SandboxUpdateOps 只会升级处于 `Running` 状态的沙箱。若要将已暂停的沙箱纳入升级范围，请在
+`spec.stateFilter.states` 中加入 `Paused`。控制器会唤醒每个已暂停的沙箱、对其进行升级，然后在该沙箱的
+`spec.paused` 仍为 `true` 时重新将其暂停。
+
+```yaml
+apiVersion: agents.kruise.io/v1alpha1
+kind: SandboxUpdateOps
+metadata:
+  name: upgrade-with-paused
+  namespace: default
+spec:
+  stateFilter:
+    states:
+      - Running
+      - Paused
+```
+
 ### 应用升级
 
 ```bash
@@ -188,6 +277,13 @@ kubectl get sandbox <sandbox-name> -o yaml
 升级过程中的 condition 示例：
 
 ```yaml
+apiVersion: agents.kruise.io/v1alpha1
+kind: Sandbox
+metadata:
+  name: my-sandbox
+  namespace: default
+spec:
+  paused: false
 status:
   phase: Upgrading
   conditions:
@@ -277,7 +373,19 @@ kubectl get sandbox <sandbox-name> -o jsonpath='{.status.conditions}' | jq .
 
 ### 回滚
 
-回滚一次失败的升级：
+有两种可用的回滚方式：
+
+- **推荐（当存在 checkpoint 时）**：如果在升级前已经创建了 `Checkpoint`（例如在 `CheckpointRestore` 模式下），可以从该
+  Checkpoint 克隆沙箱以恢复到之前的状态。参见
+  [快照管理](./checkpoint.md#从-checkpoint-创建沙箱)。
+- **使用原配置重建**：新建一个 SandboxUpdateOps，让其 `patch` 回退到原始的镜像/配置。
+
+:::tip
+对于在 Pod 已经重建**之后**执行的任何重试（例如从 `UpgradePodFailed` 或 `PostUpgradeFailed` 状态恢复），请移除
+`preUpgrade` 钩子，以免再次执行备份步骤。如果仍需要恢复数据，则只保留 `postUpgrade` 钩子。
+:::
+
+通过使用原配置重建来回滚：
 
 1. 删除当前的 SandboxUpdateOps：
    ```bash
@@ -292,9 +400,6 @@ kubectl get sandbox <sandbox-name> -o jsonpath='{.status.conditions}' | jq .
      name: rollback-sandboxes
      namespace: default
    spec:
-     selector:
-       matchLabels:
-         agents.kruise.io/sandbox-template: my-sandbox-pool
      patch:
        spec:
          containers:
@@ -319,6 +424,11 @@ kubectl get sandbox <sandbox-name> -o jsonpath='{.status.conditions}' | jq .
 你可以暂停一个正在进行的 SandboxUpdateOps，以阻止它继续升级更多的沙箱：
 
 ```yaml
+apiVersion: agents.kruise.io/v1alpha1
+kind: SandboxUpdateOps
+metadata:
+  name: upgrade-my-sandboxes
+  namespace: default
 spec:
   paused: true
 ```

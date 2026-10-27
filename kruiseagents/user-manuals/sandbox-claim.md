@@ -275,18 +275,21 @@ spec:
 
 ### Resource Adjustment
 
-You can specify resource adjustment options when claiming a sandbox. Currently, only CPU requests and limits for the
-sandbox's main container are supported. CPU resize can also be combined with image replacement in the same claim.
+You can specify resource adjustment options when claiming a sandbox. CPU and memory requests and limits for the
+sandbox's main container are supported. Resource resize can also be combined with image replacement in the same claim.
 
 The specific behavior of this feature is:
 
 - If claiming from the SandboxSet warm pool, an in-place resource resize will be performed on the running sandbox Pod.
-- If creating based on the SandboxSet, a new Sandbox will be created directly with the specified CPU resources.
+- If creating based on the SandboxSet, a new Sandbox will be created directly with the specified resources.
 
 :::note
-- Currently, only CPU resize is supported. Memory and other resources are ignored.
+- Only CPU and memory are supported; other resources are rejected.
+- Memory can only be increased. A lower target is rejected.
 - Only the main container is resized.
 - The resize must not change the Pod QoS class; otherwise, the claim will be rejected.
+- Memory resize may restart the main container when its `resizePolicy` sets `resourceName: memory` and
+  `restartPolicy: RestartContainer`.
 - In-place resource resize requires Kubernetes in-place Pod resize support. Use Kubernetes 1.33 or later, where this
   feature is beta and enabled by default. Kubernetes 1.27 to 1.32 can also be used if the `InPlacePodVerticalScaling`
   feature gate is enabled.
@@ -296,15 +299,17 @@ The specific behavior of this feature is:
 <Tabs>
   <TabItem value="E2B" label="E2B">
 
-> `e2b.agents.kruise.io/cpu-request` and `e2b.agents.kruise.io/cpu-limit` are OpenKruise Agents extension fields and
-> will not be added to the Sandbox resource as metadata.
+> The `cpu-request`, `cpu-limit`, `memory-request`, and `memory-limit` keys below are OpenKruise Agents extension
+> fields and will not be added to the Sandbox resource as metadata.
 
 ```python
 from e2b_code_interpreter import Sandbox
 
 sbx = Sandbox.create(template="some-template", metadata={
     "e2b.agents.kruise.io/cpu-request": "1000m",
-    "e2b.agents.kruise.io/cpu-limit": "2"
+    "e2b.agents.kruise.io/cpu-limit": "2",
+    "e2b.agents.kruise.io/memory-request": "2Gi",
+    "e2b.agents.kruise.io/memory-limit": "2Gi"
 })
 ```
 
@@ -323,20 +328,22 @@ spec:
     resources:
       requests:
         cpu: "1000m"
+        memory: "2Gi"
       limits:
         cpu: "2"
+        memory: "2Gi"
 ```
 
   </TabItem>
 </Tabs>
 
-### Ondemand Persistent Volume Mounting
+### On-demand Persistent Volume Mounting
 
 You can dynamically mount a PV when claiming a sandbox, specifying a separate mount volume for each sandbox. This
 capability relies on `agent-runtime` injected into the Sandbox
 and will also affect delivery efficiency to some extent.
 
-> ⚠️ To use ondemand persistent volume mounting, you must configure `csi` in the `runtimes` field of your SandboxSet. For
+> ⚠️ To use on-demand persistent volume mounting, you must configure `csi` in the `runtimes` field of your SandboxSet. For
 > details, refer to the [Runtime Injection](./runtime-injection.md) documentation.
 
 <Tabs>

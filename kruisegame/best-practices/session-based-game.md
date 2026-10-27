@@ -89,14 +89,14 @@ WaitToBeDeleted (About to be deleted, waiting for OKG to recycle the pod)
 These three states can be recorded in the GameServer Spec using OpsState. OKG provides two ways to mark the server state:
 
 1. Modifying GameServer.Spec.OpsState directly by calling the Kubernetes API (usually after the matchmaking system assigns the game server, it can be marked as Allocated).
-2. Exposing and converting the business state in a container to the corresponding GameServer.Spec.OpsState by [Service Quality](https://openkruise.io/zh/kruisegame/user-manuals/service-qualities).
+2. Exposing and converting the business state in a container to the corresponding GameServer.Spec.OpsState by [Service Quality](https://openkruise.io/kruisegame/user-manuals/service-qualities).
 
 
 The simplest state transition model is shown in the figure:
 
 1. The default state after the room server is pulled up is available. At this time, OpsState is **None**
 2. When matching requirements are generated, the matching service searches for available (Infrastructure Ready & OpsState is None) room servers, and after allocation, sets its OpsState to **Allocated** (set through Kubernetes API, please refer to [kruise-game -allocator code for open-match-director](https://github.com/CloudNativeGame/kruise-game-open-match-director/blob/main/pkg/allocator.go). Not required if using OKG + Open Match Settings, Director has already done the above work)
-3. Setting OpsState as **WaitToBeDeleted** when game over by [Service Quality](https://openkruise.io/zh/kruisegame/user-manuals/service-qualities). 这样对应的pod将被OKG自动进行回收删除，后续弹性伸缩部分将展开介绍。
+3. Setting OpsState as **WaitToBeDeleted** when game over by [Service Quality](https://openkruise.io/kruisegame/user-manuals/service-qualities). OKG then recycles and deletes the corresponding Pod; the elastic scaling section below covers this in more detail.
 
 <img src={require('/static/img/kruisegame/best-practices/session-based-game-state-1.png').default} style={{  width: '150px'}} />
 
@@ -104,8 +104,8 @@ Of course, if you want to start and stop pods less frequently, you can also chan
 
 1. Same as above, the default state after the room server is pulled up is available, at this time OpsState is **None**
 2. Same as above, after assigning the room server, the matching system will set it to **Allocated**
-3. When the game ends, set OpsState to **None** through [Customized Service Quality](https://openkruise.io/zh/kruisegame/user-manuals/service-qualities)
-4. When the room server status is judged to be None for a long time through the coroutine, the OpsState will be set to ** through [Customized Service Quality](https://openkruise.io/zh/kruisegame/user-manuals/service-qualities) WaitToBeDeleted. **
+3. When the game ends, set OpsState to **None** through [Customized Service Quality](https://openkruise.io/kruisegame/user-manuals/service-qualities)
+4. When the room server status is judged to be None for a long time through the coroutine, the OpsState will be set to **WaitToBeDeleted** through [Customized Service Quality](https://openkruise.io/kruisegame/user-manuals/service-qualities).
 
 <img src={require('/static/img/kruisegame/best-practices/session-based-game-state-2.png').default} style={{  width: '200px'}} />
 
@@ -198,7 +198,7 @@ The ideal state for elastic scaling of conversational games is that during peak 
 
 ### Room service is automatically reduced
 
-In the state management section, we also mentioned that the GameServer whose opsState is WaitToBeDeleted will be automatically recycled by OKG. In this way, as long as the business decides that it will no longer provide services, it can set WaitToBeDeleted through custom service quality. For specific configuration of the scaling strategy, please refer to [https://openkruise.io/zh/kruisegame/user-manuals/gameservers-scale#Usage Example](https://openkruise.io/zh/kruisegame/user-manuals /gameservers-scale#%E4%BD%BF%E7%94%A8%E7%A4%BA%E4%BE%8B)
+In the state management section, we also mentioned that the GameServer whose opsState is WaitToBeDeleted will be automatically recycled by OKG. In this way, as long as the business decides that it will no longer provide services, it can set WaitToBeDeleted through custom service quality. For specific configuration of the scaling strategy, please refer to [Gameservers Scale](https://openkruise.io/kruisegame/user-manuals/gameservers-scale#strategy-of-scale-down).
 
 ### Room service automatically added
 

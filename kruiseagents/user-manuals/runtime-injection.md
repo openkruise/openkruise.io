@@ -17,7 +17,7 @@ Runtime Injection currently supports the following two injection types:
 | Injection Type    | `runtimes.name` | Description                                                                                                                                                    |
 |-------------------|-----------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | **Agent Runtime** | `agent-runtime` | Injects the `agent-runtime` (envd compatible) component, providing E2B command execution (`commands.run`), file system read/write, and other advanced features |
-| **CSI Mount**     | `csi`           | Injects the CSI mount sidecar, enabling [dynamic persistent volume mounting](./sandbox-claim.md#dynamic-persistent-volume-mounting)                            |
+| **CSI Mount**     | `csi`           | Injects the CSI mount sidecar, enabling [on-demand persistent volume mounting](./sandbox-claim.md#on-demand-persistent-volume-mounting)                            |
 
 ## How It Works
 
@@ -146,7 +146,7 @@ For more details, see the [E2B SDK Integration Documentation](./e2b-client.md).
 
 You should configure `csi` injection when:
 
-- You need to use [dynamic persistent volume mounting](./sandbox-claim.md#dynamic-persistent-volume-mounting) to mount
+- You need to use [on-demand persistent volume mounting](./sandbox-claim.md#on-demand-persistent-volume-mounting) to mount
   PVs into sandboxes at claim time
 
 > `csi` injection is typically used together with `agent-runtime` injection.

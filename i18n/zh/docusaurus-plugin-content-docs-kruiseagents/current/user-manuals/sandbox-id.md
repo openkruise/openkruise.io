@@ -1,4 +1,4 @@
-# Sandbox ID
+# 沙箱 ID
 
 OpenKruise Agents 中的每个沙箱都通过 **Sandbox ID** 来标识。默认情况下，ID 由底层 `Sandbox` CR 的 Kubernetes namespace
 和名称拼接而成。此外，还可以启用可选的 **短 Sandbox ID**：新交付的沙箱会获得一个短小且稳定的标识符，避免因过长而无法放入 E2B
@@ -37,6 +37,8 @@ prod-aae57hpxaaqac
 `Sandbox` CR 上：
 
 ```yaml
+apiVersion: agents.kruise.io/v1alpha1
+kind: Sandbox
 metadata:
   labels:
     agents.kruise.io/sandbox-id: aae57hpxaaqac
@@ -64,12 +66,15 @@ metadata:
 
 ## 启用短 Sandbox ID
 
-短 ID 分配 **默认关闭**，由 sandbox-manager 的两个启动参数控制：
+`sandbox-manager` 二进制中短 ID 分配 **默认关闭**，由两个启动参数控制：
 
 | 参数                        | 默认值  | 说明                                       |
 |-----------------------------|---------|--------------------------------------------|
 | `--enable-short-sandbox-id` | `false` | 为成功认领或克隆的沙箱分配短 ID            |
 | `--short-sandbox-id-prefix` | `""`    | 拼接在每个新分配短 ID 前面的前缀，原样使用 |
+
+使用 Helm Chart 部署时，上述参数由 `controller.enableShortSandboxId` 控制，该值默认 **为 `true`**，即开箱即用；
+如需设置前缀，可通过 `--set controller.shortSandboxIdPrefix=<prefix>` 指定（空前缀表示不加前缀，仅当前缀非空时才会传递该参数）。
 
 例如：
 
@@ -185,6 +190,11 @@ kubectl get sbx -A -l agents.kruise.io/sandbox-id=<sandbox-id>
   `sandboxResource=<namespace>/<name>`。
 
 未找到和未授权的响应不会泄露 namespace 或名称。
+
+## Checkpoint 与分页
+
+- [Checkpoint](./checkpoint.md) 在创建时会记录源沙箱当时的 ID。如果该沙箱之后被回收并再次交付，已有 Checkpoint 会保留此前交付的 ID，新的 Checkpoint 会记录新的 ID；历史记录不会被改写。
+- 沙箱列表仅将解析后的 ID 作为分页中的不透明唯一性组成部分。两次列表请求之间发生身份切换时，这个组成部分可能会变化，与其他可变的列表状态一致。
 
 ## 上线与回滚
 

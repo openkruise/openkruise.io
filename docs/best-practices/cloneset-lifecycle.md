@@ -39,7 +39,7 @@ CloneSet Lifecycle defines the pod life cycle via the following 5 states:
 - Updated: the pod upgrade is completed.
 - PreparingDelete: the CloneSet is preparing to delete the pod. The pod deletion will be blocked, so as to wait for users to execute hook and do some preprocessing operations before deletion;
 
-The transition logic among the above five states is controlled by a state machine, which is explained in detail in [CloneSet official document] (https://openkruise.io/docs/user-manuals/cloneset/#lifecycle-hook). Users can select one or more of their concerns, implement an independent operator to manage the pod life cycle states, control the life cycle of pod, and insert customized logic at the time spots they are concerned about.
+The transition logic among the above five states is controlled by a state machine, which is explained in detail in [CloneSet official document](https://openkruise.io/docs/user-manuals/cloneset/#lifecycle-hook). Users can select one or more of their concerns, implement an independent operator to manage the pod life cycle states, control the life cycle of pod, and insert customized logic at the time spots they are concerned about.
 
 ### CloneSet Lifecycle Configuration
 ```yaml
