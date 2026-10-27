@@ -328,13 +328,15 @@ kubectl patch sbx my-sandbox -n default --type=merge \
 
 ## Lifecycle Hooks (prePause / postResume)
 
+Lifecycle hooks are available since **v0.6.7**.
+
 OpenKruise Agents lets you attach **user-defined commands** to the pause and resume transitions of a sandbox:
 
 - **`prePause`** runs inside the still-running sandbox **before** the Pod is paused — flush buffers, commit
   transactions, close external connections, or write application state to disk.
 - **`postResume`** runs **after** the resumed Pod is Ready and runtime/credential/storage initialization has
-  completed, **before** the sandbox reports `Ready` externally — rebuild connection pools, restart schedulers, or
-  validate restored state.
+  completed, **before** the sandbox reports `Ready` externally — rebuild connection pools, re-initialise
+  applications, or validate restored state.
 
 Hooks share the same execution path for every pause/resume source: manual pause (`spec.paused`), timeout-driven
 auto-pause, `PauseTime` expiry, probe-driven auto-pause, and every normal resume (SDK `connect`, wake-on-traffic,
@@ -377,6 +379,9 @@ Notes:
 - Pool-level configuration: `SandboxSet.spec.lifecycle` is copied to every pool-created sandbox and participates in
   the revision hash — changing pool-level hooks triggers a rolling update of unclaimed pool members. Claimed
   sandboxes are never silently overwritten; update them (or use [Sandbox Update](./sandbox-update.md)) explicitly.
+  Because the copied `spec.lifecycle` is part of the sandbox itself, hooks configured at the pool level **are**
+  triggered by any pause source, including the E2B SDK (`beta_pause`) and timeout-driven auto-pause; only the
+  *declaration* of hooks is Kubernetes-API-only.
 
 ### Failure Semantics
 
@@ -385,6 +390,11 @@ execution records the result and lets the lifecycle transition continue — the 
 `prePause`, and the sandbox still becomes `Ready` after a failed `postResume`.
 
 ```yaml
+apiVersion: agents.kruise.io/v1alpha1
+kind: Sandbox
+metadata:
+  name: demo-hooks
+  namespace: default
 status:
   phase: Paused
   conditions:

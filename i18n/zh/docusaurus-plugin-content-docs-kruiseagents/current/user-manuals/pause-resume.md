@@ -293,10 +293,12 @@ kubectl patch sbx my-sandbox -n default --type=merge \
 
 ## 生命周期钩子（prePause / postResume）
 
+生命周期钩子自 **v0.6.7** 起可用。
+
 OpenKruise Agents 允许在沙箱的休眠 / 唤醒转换点挂载 **用户自定义命令**：
 
 - **`prePause`** 在 Pod 仍运行时、真正休眠 **之前** 执行——可用于刷新缓冲区、提交事务、关闭外部连接，或将应用状态落盘。
-- **`postResume`** 在唤醒后的 Pod Ready 且运行时 / 凭证 / 存储初始化完成之后、沙箱对外报告 `Ready` **之前** 执行——可用于重建连接池、重启调度器，或校验恢复后的状态。
+- **`postResume`** 在唤醒后的 Pod Ready 且运行时 / 凭证 / 存储初始化完成之后、沙箱对外报告 `Ready` **之前** 执行——可用于重建连接池、重新初始化应用，或校验恢复后的状态。
 
 所有休眠 / 唤醒来源共享同一条钩子执行路径：手动休眠（`spec.paused`）、到 timeout 自动休眠、`PauseTime` 到期、探针驱动的自动休眠，以及所有正常唤醒（SDK `connect`、流量唤醒、定时唤醒）。
 
@@ -332,13 +334,18 @@ spec:
 
 - 钩子以 `root` 身份在沙箱内执行（与升级钩子使用的身份一致）。
 - `prePause` 在 Pod 删除 **之前**（以及平台做检查点的场景下、检查点捕获之前）执行，因此钩子的效果会被包含在捕获的状态里。`postResume` 仅在运行时重新初始化完成后才会执行；沙箱初次创建时不会执行。
-- 池级配置：`SandboxSet.spec.lifecycle` 会被复制到每个池化创建的沙箱，并参与 revision hash 计算——修改池级钩子会触发未认领池成员的滚动更新。已认领的沙箱不会被静默覆盖；需要变更时请显式更新（或使用 [沙箱更新](./sandbox-update.md)）。
+- 池级配置：`SandboxSet.spec.lifecycle` 会被复制到每个池化创建的沙箱，并参与 revision hash 计算——修改池级钩子会触发未认领池成员的滚动更新。已认领的沙箱不会被静默覆盖；需要变更时请显式更新（或使用 [沙箱更新](./sandbox-update.md)）。由于复制后的 `spec.lifecycle` 已是沙箱自身的一部分，池级配置的钩子**同样会被**任何休眠来源触发——包括 E2B SDK（`beta_pause`）与到 timeout 自动休眠；只有钩子的**声明**本身仅支持 Kubernetes API。
 
 ### 失败语义
 
 钩子失败是 **终态且不阻塞**：每个钩子在每个休眠 / 唤醒周期内只执行 **一次**，失败的执行会记录结果并放行生命周期转换——`prePause` 失败后休眠照常完成，`postResume` 失败后沙箱仍会变为 `Ready`。
 
 ```yaml
+apiVersion: agents.kruise.io/v1alpha1
+kind: Sandbox
+metadata:
+  name: demo-hooks
+  namespace: default
 status:
   phase: Paused
   conditions:
