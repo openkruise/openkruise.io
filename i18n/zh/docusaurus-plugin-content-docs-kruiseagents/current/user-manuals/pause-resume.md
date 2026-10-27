@@ -293,7 +293,7 @@ kubectl patch sbx my-sandbox -n default --type=merge \
 
 ## 生命周期钩子（prePause / postResume）
 
-生命周期钩子自 **v0.6.7** 起可用。
+生命周期钩子自 **v0.7.0** 起可用。
 
 OpenKruise Agents 允许在沙箱的休眠 / 唤醒转换点挂载 **用户自定义命令**：
 

@@ -328,7 +328,7 @@ kubectl patch sbx my-sandbox -n default --type=merge \
 
 ## Lifecycle Hooks (prePause / postResume)
 
-Lifecycle hooks are available since **v0.6.7**.
+Lifecycle hooks are available since **v0.7.0**.
 
 OpenKruise Agents lets you attach **user-defined commands** to the pause and resume transitions of a sandbox:
 
