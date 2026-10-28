@@ -291,6 +291,85 @@ kubectl patch sbx my-sandbox -n default --type=merge \
 </TabItem>
 </Tabs>
 
+## 生命周期钩子（prePause / postResume）
+
+生命周期钩子自 **v0.7.0** 起可用。
+
+OpenKruise Agents 允许在沙箱的休眠 / 唤醒转换点挂载 **用户自定义命令**：
+
+- **`prePause`** 在 Pod 仍运行时、真正休眠 **之前** 执行——可用于刷新缓冲区、提交事务、关闭外部连接，或将应用状态落盘。
+- **`postResume`** 在唤醒后的 Pod Ready 且运行时 / 凭证 / 存储初始化完成之后、沙箱对外报告 `Ready` **之前** 执行——可用于重建连接池、重新初始化应用，或校验恢复后的状态。
+
+所有休眠 / 唤醒来源共享同一条钩子执行路径：手动休眠（`spec.paused`）、到 timeout 自动休眠、`PauseTime` 到期、探针驱动的自动休眠，以及所有正常唤醒（SDK `connect`、流量唤醒、定时唤醒）。
+
+### 配置钩子
+
+钩子声明在 `Sandbox` 的 `spec.lifecycle`（池化创建的沙箱则声明在 `SandboxSet` 上）：
+
+```yaml
+apiVersion: agents.kruise.io/v1alpha1
+kind: Sandbox
+metadata:
+  name: demo-hooks
+  namespace: default
+spec:
+  lifecycle:
+    prePause:
+      exec:
+        command: ["/bin/bash", "-c", "/workspace/flush.sh"]
+      timeoutSeconds: 10
+    postResume:
+      exec:
+        command: ["/bin/bash", "-c", "/workspace/reconnect.sh"]
+      timeoutSeconds: 10
+  # ... 其余 template 等字段
+```
+
+| 字段            | 行为                                                                                                                                          |
+|------------------|---------------------------------------------------------------------------------------------------------------------------------------------|
+| `exec.command`   | 必填。第一个元素是可执行文件，其余是参数。如需 shell 请显式声明，例如 `["/bin/bash", "-c", "..."]`。                                              |
+| `timeoutSeconds` | 可选，默认 `60`，取值范围 `1–60`。限定单次执行的时长——到期后命令会在服务端被终止。                                                                |
+
+说明：
+
+- 钩子以 `root` 身份在沙箱内执行（与升级钩子使用的身份一致）。
+- `prePause` 在 Pod 删除 **之前**（以及平台做检查点的场景下、检查点捕获之前）执行，因此钩子的效果会被包含在捕获的状态里。`postResume` 仅在运行时重新初始化完成后才会执行；沙箱初次创建时不会执行。
+- 池级配置：`SandboxSet.spec.lifecycle` 会被复制到每个池化创建的沙箱，并参与 revision hash 计算——修改池级钩子会触发未认领池成员的滚动更新。已认领的沙箱不会被静默覆盖；需要变更时请显式更新（或使用 [沙箱更新](./sandbox-update.md)）。由于复制后的 `spec.lifecycle` 已是沙箱自身的一部分，池级配置的钩子**同样会被**任何休眠来源触发——包括 E2B SDK（`beta_pause`）与到 timeout 自动休眠；只有钩子的**声明**本身仅支持 Kubernetes API。
+
+### 失败语义
+
+钩子失败是 **终态且不阻塞**：每个钩子在每个休眠 / 唤醒周期内只执行 **一次**，失败的执行会记录结果并放行生命周期转换——`prePause` 失败后休眠照常完成，`postResume` 失败后沙箱仍会变为 `Ready`。
+
+```yaml
+apiVersion: agents.kruise.io/v1alpha1
+kind: Sandbox
+metadata:
+  name: demo-hooks
+  namespace: default
+status:
+  phase: Paused
+  conditions:
+    - type: PrePauseHook
+      status: "False"
+      reason: Failed
+      message: "hook failed: execution error; lifecycle transition continues"
+    - type: SandboxPaused
+      status: "True"
+      reason: StopPauseSucceed
+```
+
+- 结果可通过 `PrePauseHook` / `PostResumeHook` 条件（`Succeeded`、`Failed`、`Skipped`）以及 Warning 事件观测；条件在转换完成后仍会保留，作为该周期的记录。
+- `prePause` 在 Pod 已经不存在（例如被带外删除）时记录 `Skipped`——不做任何执行，休眠继续。
+- 当前版本不支持对失败的钩子重试；请将钩子写成「一次运行要么成功、要么快速失败」。
+
+### 编写钩子脚本
+
+> **命令必须幂等。** 控制器可能会重放结果不确定的钩子（例如控制器在命令执行后、结果持久化前崩溃）。请在沙箱内部用锁或标记保护非幂等操作。
+
+- 优先使用原子写（先写临时文件再 rename），避免超时留下半写状态。
+- 若钩子 fork 了后台子进程，退出时请显式终止它们——超时只会终止命令进程本身，不会杀掉整个进程树。不允许自我重叠的脚本请自行加互斥锁（如 `flock`）。
+- `timeoutSeconds` 建议保持较短（10 秒是个好默认值）；注意休眠 / 唤醒时延包含一次钩子执行，流量唤醒请求应为 Pod 启动 + 初始化 + 钩子运行时间预留预算。
+
 ## 能力矩阵
 
 | 能力                                           | E2B SDK                          | Kubernetes CRD                          |
@@ -304,6 +383,8 @@ kubectl patch sbx my-sandbox -n default --type=merge \
 | 唤醒的同时设置 / 刷新 timeout                   | ✅ `Sandbox.connect(id, timeout=...)` | ✅ 同一次 patch 中写 `spec.shutdownTime` / `spec.pauseTime` |
 | 运行态下对 timeout 的只延长（extend-only）保护  | ✅                                | ❌ 用户写入值可缩短                    |
 | 观察 paused / running 状态                      | 通过 SDK 响应                     | `status.phase`（`Paused` / `Running`）   |
+| 在休眠前执行命令（`prePause`）                     | ❌（SDK 无钩子字段）           | ✅ `spec.lifecycle.prePause`           |
+| 在唤醒后执行命令（`postResume`）                   | ❌（SDK 无钩子字段）           | ✅ `spec.lifecycle.postResume`        |
 
 如果你需要「只延长、永不缩短」的 timeout 刷新语义，请走 E2B SDK；CRD 路径更适合声明式 / GitOps 批量管控「暂停 / 运行 + 绝对时间」的场景。
 
@@ -314,3 +395,5 @@ kubectl patch sbx my-sandbox -n default --type=merge \
   休眠保留策略可以基于 pause 转换执行时间重新计算它。
 - **旧版 SDK。** 遗留的 `POST /sandboxes/{sandboxID}/resume` 端点仅为旧版 SDK 兼容保留。新代码一律使用 `Sandbox.connect(...)`。
 - **状态保留取决于平台。** 跨休眠/唤醒是否保留内存状态依赖具体的运行时平台。若需控制休眠过程中文件系统的保留内容，可在 `SandboxSet` 上配置休眠策略（参见[休眠策略](./auto-pause-resume.md#休眠策略)）。如果你需要显式的内存 + 文件系统快照、并且希望能克隆出全新沙箱，请使用 [快照管理](./checkpoint.md)。
+- **钩子仅限 CRD。** E2B SDK 未暴露钩子字段；钩子对任何来源触发的休眠 / 唤醒都生效，但只能通过 Kubernetes API 声明。
+- **钩子随快照传播。** 从 checkpoint / 快照创建的沙箱会继承捕获的 `prePause` / `postResume` 配置，克隆出的沙箱会以相同的钩子休眠 / 唤醒。升级钩子（`preUpgrade` / `postUpgrade`）不会被复制进克隆。
