@@ -1795,8 +1795,13 @@ serviceAccount:
     eks.amazonaws.com/role-arn: "arn:aws:iam::xxxxxxxxx:role/test"
 aws:
   region: "us-east-1"
-  endpoint_url: "https://elasticloadbalancing.us-east-1.amazonaws.com"
 ```
+
+请将 `aws.region` 设置为 EKS 集群所在的地域，ELB 的 endpoint 会根据该地域自动解析。
+
+:::caution
+不要将 `aws.endpoint_url` 设置为 ELB 的 endpoint。该参数是全局的 endpoint 覆盖配置，会作用于 elbv2-controller 发起的所有 AWS API 调用，包括启动时的 `STS GetCallerIdentity` 调用。将其指向 ELB endpoint 会导致控制器启动失败，并报错 `InvalidAction: Could not find operation GetCallerIdentity`。如果确实需要自定义 endpoint（例如使用 VPC 终端节点），请同时将 `aws.identity_endpoint_url` 设置为 STS 的 endpoint。
+:::
 
 部署该项目最关键的在于授权k8s ServiceAccount访问NLB SDK，推荐通过IAM角色的方式：
 
