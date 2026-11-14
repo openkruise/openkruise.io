@@ -42,8 +42,10 @@ by setting the `X-API-KEY` request header. The API key determines:
 
 - Which team the caller belongs to.
 - Whether the caller is a regular tenant or the cluster administrator (i.e. belongs to the `admin` team).
-- Which sandboxes the caller is allowed to access — a caller may only operate on sandboxes owned by its own API key
-  (admin can access every sandbox).
+- Which sandboxes the caller is allowed to access — a caller may only list and operate on sandboxes owned by its own
+  API key. This also applies to admin keys: the `admin` team grants the API key and team management permissions
+  below, not access to sandboxes created with other keys. Sandboxes created while authentication is disabled are owned
+  by the built-in admin key.
 
 ### Authorization Model
 
