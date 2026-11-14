@@ -39,7 +39,7 @@ API Key 决定了：
 
 - 调用方属于哪个 Team；
 - 调用方是普通租户还是集群管理员（即是否属于 `admin` Team）；
-- 调用方可以访问哪些 Sandbox——普通租户只能访问由自身 API Key 创建的 Sandbox，管理员则可以访问全部 Sandbox。
+- 调用方可以访问哪些 Sandbox——调用方只能列出和操作由自身 API Key 创建的 Sandbox。管理员 Key 同样如此：`admin` Team 授予的是下文的 API Key 与 Team 管理权限，而不是访问其他 Key 所创建 Sandbox 的权限。关闭鉴权期间创建的 Sandbox 归属于内置的管理员 Key。
 
 ### 授权模型
 
